@@ -27,25 +27,31 @@ public abstract class BedrockSubCommand {
 
     //region Constructors
 
+
     /**
-     * Instantiates a new Sub command.
+     * Instantiates a new Bedrock SubCommand.
      *
-     * @param name the name of the SubCommand
+     * @param name the name
+     * @param help the help
      */
-    public BedrockSubCommand(String name) {
+    public BedrockSubCommand(String name, List<String> help) {
         this.name = name;
+        this.help = help;
     }
 
     /**
-     * Instantiates a new Sub command.
+     * Instantiates a new Bedrock SubCommand.
      *
-     * @param name    the name of the SubCommand
-     * @param aliases the aliases of the SubCommand
+     * @param name the name
+     * @param aliases the aliases
+     * @param help the help
      */
-    public BedrockSubCommand(String name, String... aliases) {
+    public BedrockSubCommand(String name, String[] aliases, List<String> help) {
         this.name = name;
         this.aliases = aliases;
+        this.help = help;
     }
+
     //endregion
 
 
