@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.cubenation.bedrock</groupId>
+    <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <name>Bedrock</name>
 
     <repositories>
@@ -19,6 +19,17 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>de.cube-nation.nexus.release</id>
+            <url>http://nexus.cube-nation.de/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>de.cube-nation.nexus.snapshot</id>
+            <url>http://nexus.cube-nation.de/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <build>
         <finalName>${artifactId}-${project.version}</finalName>
