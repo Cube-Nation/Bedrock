@@ -20,7 +20,9 @@ public class BedrockCommandExecutor implements CommandExecutor, TabCompleter {
 
     private List<BedrockSubCommand> subCommands;
 
-    private HelpCommand helpCommand = new HelpCommand("help", new ArrayList<String>(){{add("Zeigt die Hilfe an");}});
+    private HelpCommand helpCommand = new HelpCommand("help", new ArrayList<String>() {{
+        add("Zeigt die Hilfe an");
+    }});
 
     public BedrockCommandExecutor(List<BedrockSubCommand> subCommands) {
         this.subCommands = subCommands;
@@ -77,21 +79,28 @@ public class BedrockCommandExecutor implements CommandExecutor, TabCompleter {
         }
 
 
-
-
-
         return true;
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
-        System.out.println("Command:" + command + "\nAlias:" + alias + "\nargs:" + args);
-
         ArrayList<String> completionList = new ArrayList<>();
 
-        for (BedrockSubCommand subCommand : subCommands) {
-            completionList.add(subCommand.getName());
+        if (args.length == 1) {
+            if (args[0].equals("")) {
+                for (BedrockSubCommand subCommand : subCommands) {
+                    completionList.add(subCommand.getName());
+                }
+            } else {
+                for (BedrockSubCommand subCommand : subCommands) {
+                    if (subCommand.getName().startsWith(args[0])) {
+                        completionList.add(subCommand.getName());
+                    }
+                }
+            }
+        } else {
+            // TODO: Handling for SubSubCommand.
         }
 
         return completionList;
