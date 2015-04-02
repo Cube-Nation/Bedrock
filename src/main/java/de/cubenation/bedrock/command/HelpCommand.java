@@ -14,9 +14,10 @@ public class HelpCommand extends BedrockSubCommand {
 
     private List<BedrockSubCommand> subCommands;
 
-    public HelpCommand(String name) {
-        super(name);
+    public HelpCommand(String name, List<String> help) {
+        super(name, help);
     }
+
 
     @Override
     public void execute(CommandSender sender, String label, String[] args) throws CommandException {

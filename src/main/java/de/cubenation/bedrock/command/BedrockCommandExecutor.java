@@ -20,7 +20,7 @@ public class BedrockCommandExecutor implements CommandExecutor, TabCompleter {
 
     private List<BedrockSubCommand> subCommands;
 
-    private HelpCommand helpCommand = new HelpCommand("help");
+    private HelpCommand helpCommand = new HelpCommand("help", new ArrayList<String>(){{add("Zeigt die Hilfe an");}});
 
     public BedrockCommandExecutor(List<BedrockSubCommand> subCommands) {
         this.subCommands = subCommands;
