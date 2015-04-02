@@ -1,5 +1,6 @@
 package de.cubenation.bedrock;
 
+import org.bukkit.craftbukkit.libs.jline.internal.Log;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -22,9 +23,5 @@ public class BasePlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.setInstance(this);
-
-        saveDefaultConfig();
-        reloadConfig();
-
     }
 }
