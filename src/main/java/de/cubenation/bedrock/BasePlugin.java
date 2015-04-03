@@ -13,6 +13,10 @@ import java.util.*;
  */
 public class BasePlugin extends JavaPlugin {
 
+    public BasePlugin() {
+        super();
+    }
+
     @Override
     public void onEnable() {
         super.onEnable();
