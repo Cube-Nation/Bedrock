@@ -11,7 +11,12 @@ import java.util.*;
  * Project: Bedrock
  * Package: de.cubenation.bedrock
  */
-public abstract class BasePlugin extends JavaPlugin {
+public class BasePlugin extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+    }
 
     public void registerCommand(String command, SubCommand[] subCommands) {
         CommandManager commandManager = new CommandManager(new ArrayList<SubCommand>(Arrays.asList(subCommands)));
