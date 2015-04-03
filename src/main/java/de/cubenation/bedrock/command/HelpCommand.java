@@ -10,19 +10,19 @@ import java.util.List;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
-public class HelpCommand extends BedrockSubCommand {
+public class HelpCommand extends SubCommand {
 
-    private List<BedrockSubCommand> subCommands;
+    private List<SubCommand> subCommands;
 
-    public HelpCommand(String name, List<String> help) {
-        super(name, help);
+    public HelpCommand() {
+        super("help", new String[]{"Hilfe"});
     }
 
 
     @Override
     public void execute(CommandSender sender, String label, String[] args) throws CommandException {
         sender.sendMessage("Should display fancy help");
-        for (BedrockSubCommand subCommand : subCommands) {
+        for (SubCommand subCommand : subCommands) {
             sender.sendMessage(subCommand.getName() + " - " + subCommand.getHelp().toString());
         }
     }
@@ -36,4 +36,5 @@ public class HelpCommand extends BedrockSubCommand {
     public String getArgumentsHelp() {
         return null;
     }
+
 }

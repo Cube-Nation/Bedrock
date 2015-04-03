@@ -1,27 +1,24 @@
 package de.cubenation.bedrock;
 
-import org.bukkit.craftbukkit.libs.jline.internal.Log;
+import de.cubenation.bedrock.command.CommandManager;
+import de.cubenation.bedrock.command.SubCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.*;
 
 /**
  * Created by B1acksheep on 30.03.15.
  * Project: Bedrock
  * Package: de.cubenation.bedrock
  */
-public class BasePlugin extends JavaPlugin {
+public abstract class BasePlugin extends JavaPlugin {
 
-    public static BasePlugin instance;
+    public void registerCommand(String command, SubCommand[] subCommands) {
+        CommandManager commandManager = new CommandManager(new ArrayList<SubCommand>(Arrays.asList(subCommands)));
 
-    public static BasePlugin getInstance() {
-        return BasePlugin.instance;
+        getCommand(command).setExecutor(commandManager);
+        getCommand(command).setTabCompleter(commandManager);
     }
 
-    private void setInstance(JavaPlugin instance) {
-        BasePlugin.instance = (BasePlugin) instance;
-    }
 
-    @Override
-    public void onEnable() {
-        this.setInstance(this);
-    }
 }

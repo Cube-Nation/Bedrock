@@ -10,7 +10,7 @@ import java.util.List;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
-public abstract class BedrockSubCommand {
+public abstract class SubCommand {
 
     //region Properties
     private String name;
@@ -19,7 +19,7 @@ public abstract class BedrockSubCommand {
 
     private String permission;
 
-    private List<String> help;
+    private String[] help;
 
     private CommandExecutorType commandExecutorType = CommandExecutorType.PLAYER;
     //endregion
@@ -34,7 +34,7 @@ public abstract class BedrockSubCommand {
      * @param name the name
      * @param help the help
      */
-    public BedrockSubCommand(String name, List<String> help) {
+    public SubCommand(String name, String[] help) {
         this.name = name;
         this.help = help;
     }
@@ -46,7 +46,7 @@ public abstract class BedrockSubCommand {
      * @param aliases the aliases
      * @param help the help
      */
-    public BedrockSubCommand(String name, String[] aliases, List<String> help) {
+    public SubCommand(String name, String[] aliases, String[] help) {
         this.name = name;
         this.aliases = aliases;
         this.help = help;
@@ -135,7 +135,7 @@ public abstract class BedrockSubCommand {
      *
      * @return the help
      */
-    public List<String> getHelp() {
+    public String[] getHelp() {
         return help;
     }
 

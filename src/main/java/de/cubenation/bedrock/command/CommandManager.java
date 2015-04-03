@@ -5,7 +5,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,23 +15,21 @@ import java.util.List;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
-public class BedrockCommandExecutor implements CommandExecutor, TabCompleter {
+public class CommandManager implements CommandExecutor, TabCompleter {
 
-    private List<BedrockSubCommand> subCommands;
+    private List<SubCommand> subCommands;
 
-    private HelpCommand helpCommand = new HelpCommand("help", new ArrayList<String>() {{
-        add("Zeigt die Hilfe an");
-    }});
+    private HelpCommand helpCommand = new HelpCommand();
 
-    public BedrockCommandExecutor(List<BedrockSubCommand> subCommands) {
+    public CommandManager(List<SubCommand> subCommands) {
         this.subCommands = subCommands;
     }
 
-    public void registerSubCommand(BedrockSubCommand subCommand) {
+    public void registerSubCommand(SubCommand subCommand) {
         subCommands.add(subCommand);
     }
 
-    public List<BedrockSubCommand> getSubCommands() {
+    public List<SubCommand> getSubCommands() {
         return subCommands;
     }
 
@@ -45,7 +42,7 @@ public class BedrockCommandExecutor implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        for (BedrockSubCommand subCommand : subCommands) {
+        for (SubCommand subCommand : subCommands) {
             if (subCommand.isValidTrigger(args[0])) {
 
                 // TODO: CommandSenderType Check?
@@ -89,11 +86,11 @@ public class BedrockCommandExecutor implements CommandExecutor, TabCompleter {
 
         if (args.length == 1) {
             if (args[0].equals("")) {
-                for (BedrockSubCommand subCommand : subCommands) {
+                for (SubCommand subCommand : subCommands) {
                     completionList.add(subCommand.getName());
                 }
             } else {
-                for (BedrockSubCommand subCommand : subCommands) {
+                for (SubCommand subCommand : subCommands) {
                     if (subCommand.getName().startsWith(args[0])) {
                         completionList.add(subCommand.getName());
                     }
