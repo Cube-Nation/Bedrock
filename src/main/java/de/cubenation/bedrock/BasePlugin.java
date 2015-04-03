@@ -2,6 +2,7 @@ package de.cubenation.bedrock;
 
 import de.cubenation.bedrock.command.CommandManager;
 import de.cubenation.bedrock.command.SubCommand;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -22,11 +23,11 @@ public class BasePlugin extends JavaPlugin {
         super.onEnable();
     }
 
-    public void registerCommand(String command, SubCommand[] subCommands) {
+    public void registerCommand(PluginCommand pluginCommand, SubCommand[] subCommands) {
         CommandManager commandManager = new CommandManager(new ArrayList<SubCommand>(Arrays.asList(subCommands)));
 
-        getCommand(command).setExecutor(commandManager);
-        getCommand(command).setTabCompleter(commandManager);
+        pluginCommand.setExecutor(commandManager);
+        pluginCommand.setTabCompleter(commandManager);
     }
 
 

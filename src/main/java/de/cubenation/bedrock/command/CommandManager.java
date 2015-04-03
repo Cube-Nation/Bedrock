@@ -9,6 +9,7 @@ import org.bukkit.command.TabCompleter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -81,7 +82,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
         ArrayList<String> completionList = new ArrayList<>();
 
         if (args.length == 1) {
@@ -97,9 +97,40 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
             }
         } else {
-            // TODO: Handling for SubSubCommand.
+            for (SubCommand subCommand : subCommands) {
+                subTabCompletion(completionList, 0, subCommand, args);
+            }
         }
 
         return completionList;
+    }
+
+
+    public ArrayList<String> subTabCompletion(ArrayList<String> completion, int i, SubCommand subCommand, String[] args) {
+        if (i < args.length) {
+            if (args[i].equals(subCommand.getName())) {
+                for (Map.Entry<Integer, SubCommand[]> entry : subCommand.getSubcommands().entrySet()) {
+                    if ((i + 1) + entry.getKey() == (args.length - 1)) {
+
+                        if (args[args.length - 1].equals("")) {
+                            for (SubCommand sub : entry.getValue()) {
+                                completion.add(sub.getName());
+                            }
+                        } else {
+                            for (SubCommand sub : entry.getValue()) {
+                                if (sub.getName().startsWith(args[args.length - 1])) {
+                                    completion.add(sub.getName());
+                                }
+                            }
+                        }
+                    } else {
+                        for (SubCommand sub : entry.getValue()) {
+                            subTabCompletion(completion, i + 1 + entry.getKey(), sub, args);
+                        }
+                    }
+                }
+            }
+        }
+        return completion;
     }
 }

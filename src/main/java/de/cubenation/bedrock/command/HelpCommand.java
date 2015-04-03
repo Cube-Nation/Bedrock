@@ -24,7 +24,7 @@ public class HelpCommand extends SubCommand {
     public void execute(CommandSender sender, String label, String[] args) throws CommandException {
         sender.sendMessage("Should display fancy help");
         for (SubCommand subCommand : subCommands) {
-            sender.sendMessage(subCommand.getName() + " - " + subCommand.getHelp().toString());
+            sender.sendMessage(subCommand.getName() + " - " + subCommand.getHelp());
         }
     }
 
