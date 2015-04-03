@@ -3,6 +3,7 @@ package de.cubenation.bedrock.command;
 import de.cubenation.bedrock.exception.CommandException;
 import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,6 +35,11 @@ public class HelpCommand extends SubCommand {
 
     @Override
     public String getArgumentsHelp() {
+        return null;
+    }
+
+    @Override
+    public HashMap<Integer, SubCommand[]> getSubcommands() {
         return null;
     }
 

@@ -3,6 +3,7 @@ package de.cubenation.bedrock.command;
 import de.cubenation.bedrock.exception.CommandException;
 import org.bukkit.command.CommandSender;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,7 +25,6 @@ public abstract class SubCommand {
     private CommandExecutorType commandExecutorType = CommandExecutorType.PLAYER;
     //endregion
 
-
     //region Constructors
 
 
@@ -42,9 +42,9 @@ public abstract class SubCommand {
     /**
      * Instantiates a new Bedrock SubCommand.
      *
-     * @param name the name
+     * @param name    the name
      * @param aliases the aliases
-     * @param help the help
+     * @param help    the help
      */
     public SubCommand(String name, String[] aliases, String[] help) {
         this.name = name;
@@ -65,10 +65,16 @@ public abstract class SubCommand {
      */
     public abstract void execute(CommandSender sender, String label, String[] args) throws CommandException;
 
-
     public abstract int getMinimumArguments();
 
     public abstract String getArgumentsHelp();
+
+    /**
+     * Gets the number of the previous arguments and subcommands.
+     *
+     * @return the number of the previous arguments and the subcommands
+     */
+    public abstract HashMap<Integer, SubCommand[]> getSubcommands();
 
 
     /**
