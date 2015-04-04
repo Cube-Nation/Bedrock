@@ -1,10 +1,11 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.permission.Permission;
+import de.cubenation.bedrock.permission.Role;
 import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by B1acksheep on 30.03.15.
@@ -18,25 +19,25 @@ public abstract class SubCommand {
 
     private String[] aliases;
 
-    private String permission;
+    private Permission permission;
 
     private String[] help;
+
 
     private CommandExecutorType commandExecutorType = CommandExecutorType.PLAYER;
     //endregion
 
     //region Constructors
-
-
     /**
      * Instantiates a new Bedrock SubCommand.
      *
      * @param name the name
      * @param help the help
      */
-    public SubCommand(String name, String[] help) {
+    public SubCommand(String name, String[] help, Permission permission) {
         this.name = name;
         this.help = help;
+        this.permission = permission;
     }
 
     /**
@@ -46,10 +47,13 @@ public abstract class SubCommand {
      * @param aliases the aliases
      * @param help    the help
      */
-    public SubCommand(String name, String[] aliases, String[] help) {
+    public SubCommand(String name, String[] aliases, String[] help, Permission permission) {
         this.name = name;
         this.aliases = aliases;
         this.help = help;
+        this.permission = permission;
+    }
+
     }
 
     //endregion
@@ -105,7 +109,14 @@ public abstract class SubCommand {
      */
     public final boolean hasPermission(CommandSender sender) {
         if (permission == null) return true;
-        return sender.hasPermission(permission);
+        if (sender.hasPermission(permission.getPermission())) return true;
+        if (sender.hasPermission(permission.getRole().getRolePermission().getPermission())) return true;
+        if (permission.getRole().getParentRoles() != null) {
+            for (Role role : permission.getRole().getParentRoles()) {
+                if (sender.hasPermission(role.getRolePermission().getPermission())) return true;
+            }
+        }
+        return false;
     }
 
 
@@ -132,7 +143,7 @@ public abstract class SubCommand {
      *
      * @return the permission
      */
-    public String getPermission() {
+    public Permission getPermission() {
         return permission;
     }
 
