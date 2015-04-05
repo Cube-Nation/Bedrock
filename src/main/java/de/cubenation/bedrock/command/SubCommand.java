@@ -70,11 +70,13 @@ public abstract class SubCommand {
     public abstract String getArgumentsHelp();
 
     /**
-     * Gets the number of the previous arguments and subcommands.
+     * Get tab completion list for argument.
+     * Argument 0 ist the first.
      *
-     * @return the number of the previous arguments and the subcommands
+     * @param argument the argument
+     * @return the completionString.
      */
-    public abstract HashMap<Integer, SubCommand[]> getSubcommands();
+    public abstract String[] getTabCompletionListForArgument(int argument);
 
 
     /**

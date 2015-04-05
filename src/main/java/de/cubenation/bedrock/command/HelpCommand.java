@@ -39,7 +39,7 @@ public class HelpCommand extends SubCommand {
     }
 
     @Override
-    public HashMap<Integer, SubCommand[]> getSubcommands() {
+    public String[] getTabCompletionListForArgument(int argument) {
         return null;
     }
 
