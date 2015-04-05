@@ -16,7 +16,7 @@ public class HelpCommand extends SubCommand {
     private List<SubCommand> subCommands;
 
     public HelpCommand() {
-        super("help", new String[]{"Hilfe"});
+        super("help", new String[]{"Hilfe"}, null);
     }
 
 

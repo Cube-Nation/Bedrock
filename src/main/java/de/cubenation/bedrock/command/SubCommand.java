@@ -23,7 +23,6 @@ public abstract class SubCommand {
 
     private String[] help;
 
-
     private CommandExecutorType commandExecutorType = CommandExecutorType.PLAYER;
     //endregion
 
@@ -53,9 +52,6 @@ public abstract class SubCommand {
         this.help = help;
         this.permission = permission;
     }
-
-    }
-
     //endregion
 
 
