@@ -1,5 +1,11 @@
 package de.cubenation.bedrock.permission;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
+import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -26,12 +32,13 @@ public class Role {
 
 
     //region Constructor
+
     /**
      * Instantiates a new Role.
      *
-     * @param name the name
+     * @param name           the name
      * @param rolePermission the role permission
-     * @param permissions the permissions
+     * @param permissions    the permissions
      */
     public Role(String name, Permission rolePermission, ArrayList<Permission> permissions) {
         this.name = name;
@@ -42,9 +49,9 @@ public class Role {
     /**
      * Instantiates a new Role.
      *
-     * @param name the name
+     * @param name           the name
      * @param rolePermission the role permission
-     * @param permissions the permissions
+     * @param permissions    the permissions
      */
     public Role(String name, Permission rolePermission, Permission... permissions) {
         this.name = name;
@@ -55,6 +62,7 @@ public class Role {
 
 
     //region ParentRole n-n KindRole
+
     /**
      * Gets parent roles.
      *
@@ -89,6 +97,7 @@ public class Role {
 
 
     //region KindRole n-n ParentRole
+
     /**
      * Gets kind roles.
      *
@@ -121,8 +130,36 @@ public class Role {
     }
     //endregion
 
+    @Nullable
+    public boolean userHasRole(CommandSender sender) {
+        if (sender instanceof Player) {
+            PermissionUser user = PermissionsEx.getUser((Player) sender);
+            if (checkRoleForUser(user)) return true;
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkRoleForUser(PermissionUser user) {
+        if (user.has(getRolePermission().getPermission())) {
+            return true;
+        }
+
+        if (getParentRoles() != null) {
+            for (Role parentRole : getParentRoles()) {
+                if (parentRole.checkRoleForUser(user)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     //region Permission n-1 Role
+
     /**
      * Gets permissions.
      *
@@ -157,6 +194,7 @@ public class Role {
 
 
     //region Getter
+
     /**
      * Gets role permission.
      *

@@ -39,6 +39,11 @@ public class HelpCommand extends SubCommand {
     }
 
     @Override
+    public boolean isPlayerCommand() {
+        return false;
+    }
+
+    @Override
     public String[] getTabCompletionListForArgument(int argument) {
         return null;
     }

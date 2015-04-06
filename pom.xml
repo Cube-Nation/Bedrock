@@ -11,12 +11,17 @@
 
     <repositories>
         <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+        </repository>
+        <repository>
             <id>de.cube-nation.nexus.public</id>
             <url>http://nexus.cube-nation.de/content/groups/public/</url>
         </repository>
+
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+            <id>pex-repo</id>
+            <url>http://pex-repo.aoeu.xyz/</url>
         </repository>
     </repositories>
 
@@ -83,6 +88,13 @@
             <artifactId>spigot</artifactId>
             <version>1.8-R0.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>ru.tehkode</groupId>
+            <artifactId>PermissionsEx</artifactId>
+            <version>1.23</version>
+        </dependency>
+
     </dependencies>
 
 

@@ -4,6 +4,7 @@ import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.permission.Role;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 
 import java.util.HashMap;
 
@@ -23,10 +24,10 @@ public abstract class SubCommand {
 
     private String[] help;
 
-    private CommandExecutorType commandExecutorType = CommandExecutorType.PLAYER;
     //endregion
 
     //region Constructors
+
     /**
      * Instantiates a new Bedrock SubCommand.
      *
@@ -69,6 +70,8 @@ public abstract class SubCommand {
 
     public abstract String getArgumentsHelp();
 
+    public abstract boolean isPlayerCommand();
+
     /**
      * Get tab completion list for argument.
      * Argument 0 ist the first.
@@ -106,13 +109,17 @@ public abstract class SubCommand {
      * @return true, if the sender has Permissions, else false.
      */
     public final boolean hasPermission(CommandSender sender) {
-        if (permission == null) return true;
-        if (sender.hasPermission(permission.getPermission())) return true;
-        if (sender.hasPermission(permission.getRole().getRolePermission().getPermission())) return true;
-        if (permission.getRole().getParentRoles() != null) {
-            for (Role role : permission.getRole().getParentRoles()) {
-                if (sender.hasPermission(role.getRolePermission().getPermission())) return true;
-            }
+        if (isPlayerCommand()) {
+            if (permission == null) {
+                        return true;
+                    } else {
+                        if (permission.userHasPermission(sender)) return true;
+                        if (permission.getRole() != null) {
+                            if (permission.getRole().userHasRole(sender)) return true;
+                        }
+                    }
+        } else {
+            return true;
         }
         return false;
     }
@@ -154,26 +161,4 @@ public abstract class SubCommand {
         return help;
     }
 
-    /**
-     * Gets the type of the command executor.
-     *
-     * @return the type of the command executor
-     */
-    public CommandExecutorType getCommandExecutorType() {
-        return commandExecutorType;
-    }
-
-    /**
-     * Sets the type of the command executor.
-     *
-     * @param commandExecutorType the command executor
-     */
-    public void setCommandExecutorType(CommandExecutorType commandExecutorType) {
-        this.commandExecutorType = commandExecutorType;
-    }
-
-    public enum CommandExecutorType {
-        PLAYER,
-        COMMANDLINE
-    }
 }

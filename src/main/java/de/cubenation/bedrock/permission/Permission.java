@@ -1,5 +1,11 @@
 package de.cubenation.bedrock.permission;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
+import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 /**
  * Created by B1acksheep on 04.04.15.
  * Project: Bedrock
@@ -35,6 +41,16 @@ public class Permission {
         this.role = role;
     }
     //endregion
+
+    @Nullable
+    public boolean userHasPermission(CommandSender sender) {
+        if (sender instanceof Player) {
+            PermissionUser user = PermissionsEx.getUser((Player) sender);
+            return user.has(getPermission());
+        } else {
+            return true;
+        }
+    }
 
 
     //region Role 1-n Permission

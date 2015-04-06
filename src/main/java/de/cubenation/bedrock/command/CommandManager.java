@@ -73,7 +73,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             commandSender.sendMessage(e.getMessage());
         }
 
-
         return true;
     }
 
