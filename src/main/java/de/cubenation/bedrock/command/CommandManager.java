@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -54,6 +55,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     try {
                         subCommand.execute(commandSender, label, Arrays.copyOfRange(args, 1, args.length));
                     } catch (CommandException e) {
+                        commandSender.sendMessage(e.getMessage());
+                    } catch (IllegalCommandArgumentException e) {
                         commandSender.sendMessage(e.getMessage());
                     }
                 } else {

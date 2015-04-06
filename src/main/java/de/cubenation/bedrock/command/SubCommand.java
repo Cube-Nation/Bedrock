@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.permission.Role;
 import org.bukkit.command.CommandSender;
@@ -64,7 +65,7 @@ public abstract class SubCommand {
      * @param args   the args
      * @throws CommandException the command exception
      */
-    public abstract void execute(CommandSender sender, String label, String[] args) throws CommandException;
+    public abstract void execute(CommandSender sender, String label, String[] args) throws CommandException, IllegalCommandArgumentException;
 
     public abstract int getMinimumArguments();
 
