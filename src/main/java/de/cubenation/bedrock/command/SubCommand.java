@@ -3,11 +3,7 @@ package de.cubenation.bedrock.command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
-import de.cubenation.bedrock.permission.Role;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
-
-import java.util.HashMap;
 
 /**
  * Created by B1acksheep on 30.03.15.
@@ -28,7 +24,6 @@ public abstract class SubCommand {
     //endregion
 
     //region Constructors
-
     /**
      * Instantiates a new Bedrock SubCommand.
      *
