@@ -109,17 +109,14 @@ public abstract class SubCommand {
      * @return true, if the sender has Permissions, else false.
      */
     public final boolean hasPermission(CommandSender sender) {
-        if (isPlayerCommand()) {
-            if (permission == null) {
-                        return true;
-                    } else {
-                        if (permission.userHasPermission(sender)) return true;
-                        if (permission.getRole() != null) {
-                            if (permission.getRole().userHasRole(sender)) return true;
-                        }
-                    }
-        } else {
+        if (permission == null) {
+            System.out.println("Permission == null");
             return true;
+        } else {
+            if (permission.userHasPermission(sender)) return true;
+            if (permission.getRole() != null) {
+                if (permission.getRole().userHasRole(sender)) return true;
+            }
         }
         return false;
     }
