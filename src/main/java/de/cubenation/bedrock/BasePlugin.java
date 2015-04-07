@@ -38,7 +38,7 @@ public class BasePlugin extends JavaPlugin {
     }
 
     public void registerCommand(PluginCommand pluginCommand, SubCommand[] subCommands) {
-        CommandManager commandManager = new CommandManager(new ArrayList<SubCommand>(Arrays.asList(subCommands)));
+        CommandManager commandManager = new CommandManager(this, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
 
         pluginCommand.setExecutor(commandManager);
         pluginCommand.setTabCompleter(commandManager);
