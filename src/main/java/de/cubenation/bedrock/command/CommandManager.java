@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.command;
 
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import org.bukkit.command.Command;
@@ -16,11 +17,14 @@ import java.util.*;
  */
 public class CommandManager implements CommandExecutor, TabCompleter {
 
+    private BasePlugin plugin;
+
     private List<SubCommand> subCommands;
 
-    private HelpCommand helpCommand = new HelpCommand();
+    private HelpCommand helpCommand = new HelpCommand(this);
 
-    public CommandManager(List<SubCommand> subCommands) {
+    public CommandManager(BasePlugin plugin, List<SubCommand> subCommands) {
+        this.plugin = plugin;
         this.subCommands = subCommands;
     }
 
@@ -87,6 +91,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (args[0].equals("")) {
                 for (SubCommand subCommand : subCommands) {
                     completionList.add(subCommand.getName());
+                    if (subCommand.getAliases() != null) {
+                        Collections.addAll(completionList, subCommand.getAliases());
+                    }
                 }
             } else {
                 for (SubCommand subCommand : subCommands) {
@@ -106,7 +113,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
         }
 
+        if (completionList.isEmpty()) {
+            return null;
+        }
+
         return completionList;
     }
 
+
+    public BasePlugin getPlugin() {
+        return plugin;
+    }
 }
