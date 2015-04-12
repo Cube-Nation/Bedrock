@@ -1,9 +1,13 @@
 package de.cubenation.bedrock.command;
 
+import com.google.common.collect.LinkedListMultimap;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
+
+import java.util.*;
 
 /**
  * Created by B1acksheep on 30.03.15.
@@ -13,42 +17,69 @@ import org.bukkit.command.CommandSender;
 public abstract class SubCommand {
 
     //region Properties
-    private String name;
 
-    private String[] aliases;
-
-    private Permission permission;
+    private ArrayList<String[]> commands;
 
     private String[] help;
 
+    private Permission permission;
+
     //endregion
 
+
     //region Constructors
+
+
     /**
-     * Instantiates a new Bedrock SubCommand.
+     * Instantiates a new Sub command.
      *
-     * @param name the name
+     * @param command the command
      * @param help the help
+     * @param permission the permission
      */
-    public SubCommand(String name, String[] help, Permission permission) {
-        this.name = name;
+    public SubCommand(final String command, String[] help, Permission permission) {
+        init(new ArrayList<String[]>() {{
+            add(new String[]{command});
+        }}, help, permission);
+    }
+
+    /**
+     * Instantiates a new Sub command.
+     *
+     * @param commands the commands
+     * @param help the help
+     * @param permission the permission
+     */
+    public SubCommand(final String[] commands, String[] help, Permission permission) {
+        ArrayList<String[]> list = new ArrayList<>();
+        for (String command : commands) {
+            list.add(new String[]{command});
+        }
+
+        init(list, help, permission);
+    }
+
+    /**
+     * Instantiates a new Sub command.
+     * Each String[]-element in commands symbolizes a new command like 'set' 'bonus'.
+     * The String[] contains a single command or aliases like 's' 'set'
+     *
+     * @param commands the commands
+     * @param help the help
+     * @param permission the permission
+     */
+    public SubCommand(ArrayList<String[]> commands, String[] help, Permission permission) {
+        this.commands = commands;
         this.help = help;
         this.permission = permission;
     }
 
-    /**
-     * Instantiates a new Bedrock SubCommand.
-     *
-     * @param name    the name
-     * @param aliases the aliases
-     * @param help    the help
-     */
-    public SubCommand(String name, String[] aliases, String[] help, Permission permission) {
-        this.name = name;
-        this.aliases = aliases;
+    private void init(ArrayList<String[]> commands, String[] help, Permission permission) {
+        this.commands = commands;
         this.help = help;
         this.permission = permission;
     }
+
     //endregion
 
 
@@ -56,45 +87,102 @@ public abstract class SubCommand {
      * Execute the SubCommand.
      *
      * @param sender the sender
-     * @param label  the label
-     * @param args   the args
+     * @param label the label
+     * @param args the args
+     * @throws CommandException the command exception
      * @throws CommandException the command exception
      */
     public abstract void execute(CommandSender sender, String label, String[] args) throws CommandException, IllegalCommandArgumentException;
 
-    public abstract int getMinimumArguments();
-
-    public abstract String getArgumentsHelp();
-
-    public abstract boolean isPlayerCommand();
 
     /**
-     * Get tab completion list for argument.
-     * Argument 0 ist the first.
+     * Gets arguments help.
+     * The Key describes the Argument. For example {value}.
+     * {} - means required.
+     * [] - means optional.
      *
-     * @param argument the argument
-     * @return the completionString.
+     * The Value is the help for the Argument.
+     *
+     * @return the arguments help
      */
-    public abstract String[] getTabCompletionListForArgument(int argument);
-
+    public abstract HashMap<String, String> getArguments();
 
     /**
-     * Returns if the SubCommand is a valid trigger.
+     * Gets arguments help.
      *
-     * @param name the name
-     * @return the boolean
+     * @return the arguments help
      */
-    public final boolean isValidTrigger(String name) {
-        if (this.name.equalsIgnoreCase(name)) {
-            return true;
+    public final ArrayList<String> getArgumentsHelp() {
+        if (getArguments() != null) {
+            ArrayList<String> list = new ArrayList<>();
+            for (Map.Entry<String, String> entry : getArguments().entrySet()) {
+                list.add(entry.getKey());
+            }
+            return list;
         }
-        if (aliases != null) {
-            for (String alias : aliases) {
-                if (alias.equalsIgnoreCase(name)) {
-                    return true;
+        return null;
+    }
+
+
+    /**
+     * Gets tab completion for argument.
+     *
+     * @param args the args
+     * @return the tab completion list for argument
+     */
+    @Nullable
+    public final String[] getTabCompletionListForArgument(String[] args) {
+        System.out.println("Arg.length" + args.length);
+        System.out.println(Arrays.toString(args));
+        if (commands.size() >= args.length) {
+            for (int i = 0; i < args.length; i++) {
+                boolean result = false;
+                if (!args[i].equals("")) {
+                    result = false;
+                    for (String com : commands.get(i)) {
+                        if (com.startsWith(args[i])) {
+                            result = true;
+                        }
+                    }
+                } else {
+                    result = true;
+                }
+
+                if (!result) {
+                    return null;
                 }
             }
+            return commands.get(args.length - 1);
         }
+        return null;
+    }
+
+
+    /**
+     * Returns if the subcommand is a valid trigger.
+     *
+     * @param args the args
+     * @return true if it is a valid trigge, else false
+     */
+    public final boolean isValidTrigger(String[] args) {
+
+        if (args.length >= commands.size()) {
+            // Check previous Arguments
+            boolean prevResult = true;
+            for (int i = 0; i < commands.size(); i++) {
+                boolean res = false;
+                for (String com : commands.get(i)) {
+                    if (args[i].equalsIgnoreCase(com)) {
+                        res = true;
+                    }
+                }
+                if (!res) {
+                    prevResult = false;
+                }
+            }
+            return prevResult;
+        }
+        // Not enough arguments
         return false;
     }
 
@@ -106,34 +194,30 @@ public abstract class SubCommand {
      */
     public final boolean hasPermission(CommandSender sender) {
         if (permission == null) {
-            System.out.println("Permission == null");
             return true;
         } else {
             if (permission.userHasPermission(sender)) return true;
-            if (permission.getRole() != null) {
-                if (permission.getRole().userHasRole(sender)) return true;
-            }
         }
         return false;
     }
 
 
     /**
-     * Gets name.
+     * Gets commands.
      *
-     * @return the name
+     * @return the commands
      */
-    public String getName() {
-        return name;
+    public ArrayList<String[]> getCommands() {
+        return commands;
     }
 
     /**
-     * Get aliases.
+     * Get help.
      *
-     * @return the aliases
+     * @return the string [ ]
      */
-    public String[] getAliases() {
-        return aliases;
+    public String[] getHelp() {
+        return help;
     }
 
     /**
@@ -143,15 +227,6 @@ public abstract class SubCommand {
      */
     public Permission getPermission() {
         return permission;
-    }
-
-    /**
-     * Gets help.
-     *
-     * @return the help
-     */
-    public String[] getHelp() {
-        return help;
     }
 
 }

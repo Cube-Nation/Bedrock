@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -19,7 +18,17 @@ import java.util.logging.Logger;
  * Project: Bedrock
  * Package: de.cubenation.bedrock
  */
-public class BasePlugin extends JavaPlugin {
+public class BasePlugin extends JavaPlugin  {
+
+    private static BasePlugin instance;
+
+    public static BasePlugin getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(BasePlugin instance) {
+        BasePlugin.instance = instance;
+    }
 
     public BasePlugin() {
         super();
@@ -27,26 +36,18 @@ public class BasePlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
-        try {
-            this.getPermissionsExPlugin();
-        } catch (NoSuchPluginException e) {
-            disable(e);
-        }
+        setInstance(this);
 
         super.onEnable();
     }
 
-    public void registerCommand(PluginCommand pluginCommand, SubCommand[] subCommands) {
-        CommandManager commandManager = new CommandManager(this, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
+    public void registerCommand(JavaPlugin plugin, PluginCommand pluginCommand, SubCommand[] subCommands) {
+        CommandManager commandManager = new CommandManager(new ArrayList<SubCommand>(Arrays.asList(subCommands)));
 
         pluginCommand.setExecutor(commandManager);
         pluginCommand.setTabCompleter(commandManager);
     }
 
-    public PermissionsEx getPermissionsExPlugin() throws NoSuchPluginException {
-        return (PermissionsEx) getPlugin("PermissionsEx");
-    }
 
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
@@ -56,14 +57,12 @@ public class BasePlugin extends JavaPlugin {
         return plugin;
     }
 
-
     public void log(Level level, String message) {
         Logger.getLogger("Minecraft").log(
                 level,
                 ChatColor.stripColor(String.format("%s %s", this.getMessagePrefix(), message))
         );
     }
-
 
     public void disable(Exception e) {
         log(Level.SEVERE, "Unrecoverable error: " + e.getMessage());
@@ -78,9 +77,18 @@ public class BasePlugin extends JavaPlugin {
 
 
     public String getMessagePrefix() {
-        return 	ChatColor.WHITE + "[" +
-                ChatColor.AQUA + this.getName() +
-                ChatColor.WHITE + "]" +
+        return 	ChatColor.GRAY + "[" +
+                getPrimaryColor() + this.getDescription().getName() +
+                ChatColor.GRAY + "]" +
                 ChatColor.RESET;
     }
+
+    public ChatColor getPrimaryColor() {
+        return ChatColor.AQUA;
+    }
+
+    public ChatColor getSecondaryColor() {
+        return ChatColor.BLUE;
+    }
+
 }

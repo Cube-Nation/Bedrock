@@ -6,7 +6,7 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.3~spigot183+1</version>
     <name>Bedrock</name>
 
     <repositories>
@@ -37,7 +37,7 @@
     </distributionManagement>
 
     <build>
-        <finalName>${artifactId}-${project.version}</finalName>
+        <finalName>${artifactId} ${project.version}</finalName>
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
@@ -71,6 +71,7 @@
     </build>
 
     <dependencies>
+
         <dependency>
             <groupId>org.avaje</groupId>
             <artifactId>ebean</artifactId>
@@ -78,21 +79,17 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.3-R0.1-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
             <version>1.8.3-R0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.tehkode</groupId>
-            <artifactId>PermissionsEx</artifactId>
-            <version>1.23</version>
         </dependency>
 
     </dependencies>

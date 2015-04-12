@@ -3,6 +3,7 @@ package de.cubenation.bedrock.command;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,15 +18,14 @@ import java.util.*;
  */
 public class CommandManager implements CommandExecutor, TabCompleter {
 
-    private BasePlugin plugin;
-
     private List<SubCommand> subCommands;
 
     private HelpCommand helpCommand = new HelpCommand(this);
+    private String helpPrefix;
 
-    public CommandManager(BasePlugin plugin, List<SubCommand> subCommands) {
-        this.plugin = plugin;
+    public CommandManager(List<SubCommand> subCommands) {
         this.subCommands = subCommands;
+        this.subCommands.add(helpCommand);
     }
 
     public void registerSubCommand(SubCommand subCommand) {
@@ -38,15 +38,17 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
-
         if (args.length == 0) {
-            // TODO: Print Error/Help
-            commandSender.sendMessage("Zu wenig Argumente");
+            try {
+                helpCommand.execute(commandSender, label, args);
+            } catch (CommandException e) {
+                commandSender.sendMessage(e.getLocalizedMessage());
+            }
             return true;
         }
 
         for (SubCommand subCommand : subCommands) {
-            if (subCommand.isValidTrigger(args[0])) {
+            if (subCommand.isValidTrigger(args)) {
 
                 // TODO: CommandSenderType Check?
 
@@ -55,31 +57,19 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                if (args.length - 1 >= subCommand.getMinimumArguments()) {
-                    try {
-                        subCommand.execute(commandSender, label, Arrays.copyOfRange(args, 1, args.length));
-                    } catch (CommandException e) {
-                        commandSender.sendMessage(e.getMessage());
-                    } catch (IllegalCommandArgumentException e) {
-                        commandSender.sendMessage(e.getMessage());
-                    }
-                } else {
-                    commandSender.sendMessage("Usage: /" + label + " " + subCommand.getName() + " " + subCommand.getArgumentsHelp());
+                try {
+                    subCommand.execute(commandSender, label, Arrays.copyOfRange(args, 1, args.length));
+                    return true;
+                } catch (CommandException e) {
+                    commandSender.sendMessage(e.getMessage());
+                } catch (IllegalCommandArgumentException e) {
+                    commandSender.sendMessage(e.getMessage());
                 }
-
                 return true;
             }
         }
 
-        commandSender.sendMessage("Kein SubCommand gefunden.");
-
-        // TODO: Help anzeigen
-        try {
-            helpCommand.execute(commandSender, label, args);
-        } catch (CommandException e) {
-            commandSender.sendMessage(e.getMessage());
-        }
-
+        commandSender.sendMessage(BasePlugin.getInstance().getMessagePrefix() + ChatColor.RED + " Invalid command");
         return true;
     }
 
@@ -87,27 +77,19 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         ArrayList<String> completionList = new ArrayList<>();
 
-        if (args.length == 1) {
-            if (args[0].equals("")) {
-                for (SubCommand subCommand : subCommands) {
-                    completionList.add(subCommand.getName());
-                    if (subCommand.getAliases() != null) {
-                        Collections.addAll(completionList, subCommand.getAliases());
-                    }
-                }
-            } else {
-                for (SubCommand subCommand : subCommands) {
-                    if (subCommand.getName().startsWith(args[0])) {
-                        completionList.add(subCommand.getName());
-                    }
-                }
-            }
-        } else {
-            for (SubCommand subCommand : subCommands) {
-                if (args[0].equals(subCommand.getName())) {
-                    String[] list = subCommand.getTabCompletionListForArgument(args.length - 2);
-                    if (list != null) {
-                        Collections.addAll(completionList, list);
+        for (SubCommand subCommand : subCommands) {
+            String[] completionCommands = subCommand.getTabCompletionListForArgument(args);
+            if (completionCommands != null) {
+                System.out.println("completionCommands:" + Arrays.toString(completionCommands));
+                for (String completionCommand : completionCommands) {
+                    if (!completionList.contains(completionCommand)) {
+                        if (!args[args.length - 1].equals("")) {
+                            if (completionCommand.startsWith(args[args.length - 1])) {
+                                completionList.add(completionCommand);
+                            }
+                        } else {
+                            completionList.add(completionCommand);
+                        }
                     }
                 }
             }
@@ -120,8 +102,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return completionList;
     }
 
-
-    public BasePlugin getPlugin() {
-        return plugin;
+    public String getHelpPrefix() {
+        return helpPrefix;
     }
 }
