@@ -45,7 +45,7 @@ public abstract class SubCommand {
 
     /**
      * Instantiates a new Sub command.
-     * Each element in commands symbolizes a new command like 'set' 'bonus'.
+     * Each element in commands symbolizes an alias for a command like 'teleport' 'tp'.
      *
      * @param commands the commands
      * @param help the help
@@ -53,9 +53,7 @@ public abstract class SubCommand {
      */
     public SubCommand(final String[] commands, String[] help, Permission permission) {
         ArrayList<String[]> list = new ArrayList<>();
-        for (String command : commands) {
-            list.add(new String[]{command});
-        }
+        list.add(commands);
 
         init(list, help, permission);
     }
@@ -106,7 +104,7 @@ public abstract class SubCommand {
      *
      * @return the arguments help
      */
-    public abstract HashMap<String, String> getArguments();
+    public abstract LinkedHashMap<String, String> getArguments();
 
     /**
      * Gets arguments help.

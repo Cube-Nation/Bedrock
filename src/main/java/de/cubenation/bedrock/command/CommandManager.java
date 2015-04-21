@@ -18,12 +18,14 @@ import java.util.*;
  */
 public class CommandManager implements CommandExecutor, TabCompleter {
 
-    private List<SubCommand> subCommands;
+    private final BasePlugin plugin;
+
+    private List<SubCommand> subCommands = new ArrayList<>();
 
     private HelpCommand helpCommand = new HelpCommand(this);
-    private String helpPrefix;
 
-    public CommandManager(List<SubCommand> subCommands) {
+    public CommandManager(BasePlugin plugin, List<SubCommand> subCommands) {
+        this.plugin = plugin;
         this.subCommands = subCommands;
         this.subCommands.add(helpCommand);
     }
@@ -50,10 +52,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         for (SubCommand subCommand : subCommands) {
             if (subCommand.isValidTrigger(args)) {
 
-                // TODO: CommandSenderType Check?
-
                 if (!subCommand.hasPermission(commandSender)) {
-                    commandSender.sendMessage("You don't have permission.");
+                    commandSender.sendMessage(ChatColor.RED + "You don't have permission.");
                     return true;
                 }
 
@@ -69,7 +69,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
         }
 
-        commandSender.sendMessage(BasePlugin.getInstance().getMessagePrefix() + ChatColor.RED + " Invalid command");
+        commandSender.sendMessage(plugin.getMessagePrefix() + ChatColor.RED + " Invalid command");
         return true;
     }
 
@@ -102,7 +102,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return completionList;
     }
 
-    public String getHelpPrefix() {
-        return helpPrefix;
+    public BasePlugin getPlugin() {
+        return plugin;
     }
 }

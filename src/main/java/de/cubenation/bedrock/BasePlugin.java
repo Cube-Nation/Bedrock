@@ -20,34 +20,21 @@ import java.util.logging.Logger;
  */
 public class BasePlugin extends JavaPlugin  {
 
-    private static BasePlugin instance;
-
-    public static BasePlugin getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(BasePlugin instance) {
-        BasePlugin.instance = instance;
-    }
-
     public BasePlugin() {
         super();
     }
 
     @Override
     public void onEnable() {
-        setInstance(this);
-
         super.onEnable();
     }
 
-    public void registerCommand(JavaPlugin plugin, PluginCommand pluginCommand, SubCommand[] subCommands) {
-        CommandManager commandManager = new CommandManager(new ArrayList<SubCommand>(Arrays.asList(subCommands)));
+    public void registerCommand(BasePlugin plugin, PluginCommand pluginCommand, SubCommand[] subCommands) {
+        CommandManager commandManager = new CommandManager(plugin, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
 
         pluginCommand.setExecutor(commandManager);
         pluginCommand.setTabCompleter(commandManager);
     }
-
 
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
