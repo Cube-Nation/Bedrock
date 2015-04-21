@@ -5,6 +5,8 @@ import org.apache.logging.log4j.core.helpers.KeyValuePair;
 import org.bukkit.ChatColor;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by B1acksheep on 07.04.15.
@@ -18,6 +20,8 @@ public class MessagePart {
     private ChatColor color;
     private ChatColor[] styles;
 
+    private ArrayList<ChatColor> chatColors = new ArrayList<>();
+
     private KeyValuePair action;
     private KeyValuePair hover;
 
@@ -26,14 +30,21 @@ public class MessagePart {
         this.message = message;
     }
 
-    public MessagePart color(ChatColor color) {
-        if (!color.isColor()) {
+    public void chatcolor(ChatColor chatColor) {
+        this.chatColors.add(chatColor);
+    }
 
-        }
+    public void chatcolors(ChatColor... chatColors) {
+        Collections.addAll(this.chatColors, chatColors);
+    }
+
+    @Deprecated
+    public MessagePart color(ChatColor color) {
         this.color = color;
         return this;
     }
 
+    @Deprecated
     public MessagePart style(ChatColor... styles) {
         for (ChatColor style : styles) {
             if (!style.isFormat()) {
@@ -99,5 +110,6 @@ public class MessagePart {
         }
         return json.endObject();
     }
+
 
 }

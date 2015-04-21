@@ -45,6 +45,7 @@ public abstract class SubCommand {
 
     /**
      * Instantiates a new Sub command.
+     * Each element in commands symbolizes a new command like 'set' 'bonus'.
      *
      * @param commands the commands
      * @param help the help
@@ -62,7 +63,7 @@ public abstract class SubCommand {
     /**
      * Instantiates a new Sub command.
      * Each String[]-element in commands symbolizes a new command like 'set' 'bonus'.
-     * The String[] contains a single command or aliases like 's' 'set'
+     * The String[] contains a single command or aliases like 's' and 'set'.
      *
      * @param commands the commands
      * @param help the help
