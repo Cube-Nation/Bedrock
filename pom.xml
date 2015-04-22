@@ -6,7 +6,7 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.3~spigot183+4</version>
+    <version>0.3~spigot183+5</version>
     <name>Bedrock</name>
 
     <repositories>
@@ -33,7 +33,18 @@
     </distributionManagement>
 
     <build>
-        <finalName>${artifactId} ${project.version}</finalName>
+        <finalName>${artifactId}-${project.version}</finalName>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>*.yml</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

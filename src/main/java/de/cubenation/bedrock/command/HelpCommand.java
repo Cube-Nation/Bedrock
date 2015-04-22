@@ -73,7 +73,7 @@ public class HelpCommand extends SubCommand {
 
                 String toolTipHelp = "";
                 for (String helpString : subCommand.getHelp()) {
-                    toolTipHelp += "\n" + ChatColor.GRAY + helpString;
+                    toolTipHelp += "\n" + ChatColor.WHITE + helpString;
                 }
 
                 if (subCommand.getArguments() != null) {

@@ -88,7 +88,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         for (SubCommand subCommand : subCommands) {
             String[] completionCommands = subCommand.getTabCompletionListForArgument(args);
             if (completionCommands != null) {
-                System.out.println("completionCommands:" + Arrays.toString(completionCommands));
                 for (String completionCommand : completionCommands) {
                     if (!completionList.contains(completionCommand)) {
                         if (!args[args.length - 1].equals("")) {
