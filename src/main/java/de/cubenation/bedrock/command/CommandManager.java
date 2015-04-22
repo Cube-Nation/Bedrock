@@ -22,10 +22,20 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private List<SubCommand> subCommands = new ArrayList<>();
 
-    private HelpCommand helpCommand = new HelpCommand(this);
+    private String helpPrefix;
+
+    private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
 
     public CommandManager(BasePlugin plugin, List<SubCommand> subCommands) {
         this.plugin = plugin;
+        this.subCommands = subCommands;
+        this.subCommands.add(helpCommand);
+    }
+
+    public CommandManager(BasePlugin plugin, String helpPrefix, List<SubCommand> subCommands) {
+        this.plugin = plugin;
+        this.helpPrefix = helpPrefix;
+        helpCommand.setHelpPrefix(helpPrefix);
         this.subCommands = subCommands;
         this.subCommands.add(helpCommand);
     }
@@ -60,10 +70,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 try {
                     subCommand.execute(commandSender, label, Arrays.copyOfRange(args, 1, args.length));
                     return true;
-                } catch (CommandException e) {
-                    commandSender.sendMessage(e.getMessage());
-                } catch (IllegalCommandArgumentException e) {
-                    commandSender.sendMessage(e.getMessage());
+                } catch (CommandException | IllegalCommandArgumentException e) {
+                    commandSender.sendMessage(plugin.getMessagePrefix() + e.getMessage());
                 }
                 return true;
             }

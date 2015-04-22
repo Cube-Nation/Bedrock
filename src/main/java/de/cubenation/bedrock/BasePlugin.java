@@ -36,6 +36,13 @@ public class BasePlugin extends JavaPlugin  {
         pluginCommand.setTabCompleter(commandManager);
     }
 
+    public void registerCommand(BasePlugin plugin, String helpPrefix, PluginCommand pluginCommand, SubCommand[] subCommands) {
+        CommandManager commandManager = new CommandManager(plugin, helpPrefix, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
+
+        pluginCommand.setExecutor(commandManager);
+        pluginCommand.setTabCompleter(commandManager);
+    }
+
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
         if (plugin == null) {
@@ -64,9 +71,9 @@ public class BasePlugin extends JavaPlugin  {
 
 
     public String getMessagePrefix() {
-        return 	ChatColor.GRAY + "[" +
+        return 	getFlagColor() + "[" +
                 getPrimaryColor() + this.getDescription().getName() +
-                ChatColor.GRAY + "]" +
+                getFlagColor() + "]" +
                 ChatColor.RESET;
     }
 
@@ -76,6 +83,10 @@ public class BasePlugin extends JavaPlugin  {
 
     public ChatColor getSecondaryColor() {
         return ChatColor.BLUE;
+    }
+
+    public ChatColor getFlagColor() {
+        return ChatColor.GRAY;
     }
 
 }

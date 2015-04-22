@@ -19,10 +19,12 @@ import java.util.Map;
 public class HelpCommand extends SubCommand {
 
     private final CommandManager commandManager;
+    private String helpPrefix;
 
-    public HelpCommand(CommandManager commandManager) {
+    public HelpCommand(CommandManager commandManager, String helpPrefix) {
         super("help", new String[]{"Plugin help"}, null);
         this.commandManager = commandManager;
+        this.helpPrefix = helpPrefix;
     }
 
     @Override
@@ -32,17 +34,24 @@ public class HelpCommand extends SubCommand {
 
         ChatColor primary = commandManager.getPlugin().getPrimaryColor();
         ChatColor secondary = commandManager.getPlugin().getSecondaryColor();
+        ChatColor flag = commandManager.getPlugin().getFlagColor();
 
         if (sender instanceof Player) {
             player = (Player) sender;
 
             String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
+            if (helpPrefix != null) {
+                commandHeaderName = helpPrefix;
+                System.out.println("helpPrefix: " + helpPrefix);
+            } else {
+                System.out.println("no HelpPrefix.");
+            }
 
-            String header = ChatColor.WHITE + "==== " +
+            String header = flag + "==== " +
                     primary +
                     commandHeaderName
                     + " Help " +
-                    ChatColor.WHITE + "==== ";
+                    flag + "==== ";
 
             new JsonMessage(header).send(player);
         }
@@ -95,5 +104,7 @@ public class HelpCommand extends SubCommand {
         return null;
     }
 
-
+    public void setHelpPrefix(String helpPrefix) {
+        this.helpPrefix = helpPrefix;
+    }
 }
