@@ -91,7 +91,7 @@ public abstract class SubCommand {
      * @throws CommandException the command exception
      * @throws CommandException the command exception
      */
-    public abstract void execute(CommandSender sender, String label, String[] args) throws CommandException, IllegalCommandArgumentException;
+    public abstract void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException;
 
 
     /**

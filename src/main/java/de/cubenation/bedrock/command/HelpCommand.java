@@ -28,7 +28,7 @@ public class HelpCommand extends SubCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String label, String[] args) throws CommandException {
+    public void execute(CommandSender sender, String label,String[] subCommands, String[] args) throws CommandException {
 
         Player player = null;
 

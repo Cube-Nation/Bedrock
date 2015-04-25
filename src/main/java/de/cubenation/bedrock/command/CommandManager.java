@@ -52,7 +52,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         if (args.length == 0) {
             try {
-                helpCommand.execute(commandSender, label, args);
+                helpCommand.execute(commandSender, label, null, args);
             } catch (CommandException e) {
                 commandSender.sendMessage(e.getLocalizedMessage());
             }
@@ -68,7 +68,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
 
                 try {
-                    subCommand.execute(commandSender, label, Arrays.copyOfRange(args, 1, args.length));
+                    subCommand.execute(
+                            commandSender,
+                            label,
+                            Arrays.copyOfRange(args, 0, subCommand.getCommands().size() - 1),
+                            Arrays.copyOfRange(args, subCommand.getCommands().size(), args.length));
+
                     return true;
                 } catch (CommandException | IllegalCommandArgumentException e) {
                     commandSender.sendMessage(plugin.getMessagePrefix() + e.getMessage());
