@@ -3,6 +3,9 @@ package de.cubenation.bedrock;
 import de.cubenation.bedrock.command.CommandManager;
 import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
+import de.cubenation.bedrock.helper.Const;
+import de.cubenation.bedrock.service.message.MessageService;
+import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -18,7 +21,13 @@ import java.util.logging.Logger;
  * Project: Bedrock
  * Package: de.cubenation.bedrock
  */
-public class BasePlugin extends JavaPlugin  {
+public abstract class BasePlugin extends JavaPlugin  {
+
+    private Boolean usePermissionService = true;
+    private Boolean useMessageService = true;
+
+    private PermissionService permissionService;
+    private MessageService messageService;
 
     public BasePlugin() {
         super();
@@ -115,6 +124,39 @@ public class BasePlugin extends JavaPlugin  {
     public ChatColor getFlagColor() {
         return ChatColor.GRAY;
     }
+
+    public String getString(String key) {
+        if (!useMessageService()) {
+            return Const.NO_MESSAGE_SERVICE;
+        }
+
+        if (messageService == null) {
+            return Const.NO_MESSAGE_SERVICE;
+        } else {
+            return messageService.getString(key);
+        }
+    }
+
+
+    //region Getter/Setter
+    public Boolean usePermissionService() {
+        return usePermissionService;
+    }
+
+    public void setUsePermissionService(Boolean usePermissionService) {
+        this.usePermissionService = usePermissionService;
+    }
+
+    public Boolean useMessageService() {
+        return useMessageService;
+    }
+
+    public void setUseMessageService(Boolean useMessageService) {
+        this.useMessageService = useMessageService;
+    }
+    //endregion
+
+
 
     public void onPreEnable() {
 
