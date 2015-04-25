@@ -66,18 +66,22 @@ public abstract class BasePlugin extends JavaPlugin  {
 
 
     public void registerCommand(BasePlugin plugin, PluginCommand pluginCommand, SubCommand[] subCommands) {
-        CommandManager commandManager = new CommandManager(plugin, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
-
-        pluginCommand.setExecutor(commandManager);
-        pluginCommand.setTabCompleter(commandManager);
+        addCommandManager(plugin, null, pluginCommand, subCommands);
     }
 
     public void registerCommand(BasePlugin plugin, String helpPrefix, PluginCommand pluginCommand, SubCommand[] subCommands) {
+        addCommandManager(plugin, helpPrefix, pluginCommand, subCommands);
+    }
+
+    private void addCommandManager(BasePlugin plugin, String helpPrefix, PluginCommand pluginCommand, SubCommand[] subCommands) {
         CommandManager commandManager = new CommandManager(plugin, helpPrefix, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
 
         pluginCommand.setExecutor(commandManager);
         pluginCommand.setTabCompleter(commandManager);
+
+        commandManagers.add(commandManager);
     }
+
 
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
