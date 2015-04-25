@@ -1,5 +1,5 @@
 author: Cube-Nation, B1acksheep, d1rty
 description: Cube-Nation Plugin Base
-main: de.cubenation.bedrock.BasePlugin
+main: de.cubenation.bedrock.BedrockPlugin
 name: Bedrock
 version: "${project.version}"

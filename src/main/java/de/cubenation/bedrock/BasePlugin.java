@@ -25,9 +25,36 @@ public class BasePlugin extends JavaPlugin  {
     }
 
     @Override
-    public void onEnable() {
-        super.onEnable();
+    public final void onEnable() {
+        onPreEnable();
+
+        setupConfig();
+
+        setupPermissionService();
+        setupMessageService();
+
+        log(Level.INFO, "version " + getDescription().getVersion() + " enabled");
+
+        onPostEnable();
     }
+
+    private void setupPermissionService() {
+
+    }
+
+    private void setupMessageService() {
+
+    }
+
+
+    private void setupConfig() {
+        if (getResource("config.yml") != null) {
+            getLogger().info("save default config");
+            saveDefaultConfig();
+        }
+    }
+
+
 
     public void registerCommand(BasePlugin plugin, PluginCommand pluginCommand, SubCommand[] subCommands) {
         CommandManager commandManager = new CommandManager(plugin, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
@@ -87,6 +114,14 @@ public class BasePlugin extends JavaPlugin  {
 
     public ChatColor getFlagColor() {
         return ChatColor.GRAY;
+    }
+
+    public void onPreEnable() {
+
+    }
+
+    public void onPostEnable() {
+
     }
 
 }
