@@ -29,6 +29,8 @@ public abstract class BasePlugin extends JavaPlugin  {
     private PermissionService permissionService;
     private MessageService messageService;
 
+    private ArrayList<CommandManager> commandManagers = new ArrayList<>();
+
     public BasePlugin() {
         super();
     }
@@ -48,7 +50,7 @@ public abstract class BasePlugin extends JavaPlugin  {
     }
 
     private void setupPermissionService() {
-
+        permissionService = new PermissionService(this, commandManagers);
     }
 
     private void setupMessageService() {
