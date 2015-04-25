@@ -24,6 +24,8 @@ public abstract class SubCommand {
 
     private Permission permission;
 
+    private CommandManager commandManager;
+
     //endregion
 
 
@@ -33,11 +35,11 @@ public abstract class SubCommand {
     /**
      * Instantiates a new Sub command.
      *
-     * @param command the command
-     * @param help the help
+     * @param command    the command
+     * @param help       the help
      * @param permission the permission
      */
-    public SubCommand(final String command, String[] help, Permission permission) {
+    public SubCommand(final String command, String[] help, String permission) {
         init(new ArrayList<String[]>() {{
             add(new String[]{command});
         }}, help, permission);
@@ -47,11 +49,11 @@ public abstract class SubCommand {
      * Instantiates a new Sub command.
      * Each element in commands symbolizes an alias for a command like 'teleport' 'tp'.
      *
-     * @param commands the commands
-     * @param help the help
+     * @param commands   the commands
+     * @param help       the help
      * @param permission the permission
      */
-    public SubCommand(final String[] commands, String[] help, Permission permission) {
+    public SubCommand(final String[] commands, String[] help, String permission) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
@@ -63,20 +65,18 @@ public abstract class SubCommand {
      * Each String[]-element in commands symbolizes a new command like 'set' 'bonus'.
      * The String[] contains a single command or aliases like 's' and 'set'.
      *
-     * @param commands the commands
-     * @param help the help
+     * @param commands   the commands
+     * @param help       the help
      * @param permission the permission
      */
-    public SubCommand(ArrayList<String[]> commands, String[] help, Permission permission) {
-        this.commands = commands;
-        this.help = help;
-        this.permission = permission;
+    public SubCommand(ArrayList<String[]> commands, String[] help, String permission) {
+        init(commands, help, permission);
     }
 
-    private void init(ArrayList<String[]> commands, String[] help, Permission permission) {
+    private void init(ArrayList<String[]> commands, String[] help, String permission) {
         this.commands = commands;
         this.help = help;
-        this.permission = permission;
+        this.permission = new Permission(permission);
     }
 
     //endregion
@@ -86,8 +86,8 @@ public abstract class SubCommand {
      * Execute the SubCommand.
      *
      * @param sender the sender
-     * @param label the label
-     * @param args the args
+     * @param label  the label
+     * @param args   the args
      * @throws CommandException the command exception
      * @throws CommandException the command exception
      */
@@ -99,7 +99,7 @@ public abstract class SubCommand {
      * The Key describes the Argument. For example {value}.
      * {} - means required.
      * [] - means optional.
-     *
+     * <p/>
      * The Value is the help for the Argument.
      *
      * @return the arguments help
@@ -228,4 +228,8 @@ public abstract class SubCommand {
         return permission;
     }
 
+
+    public void setCommandManager(CommandManager commandManager) {
+        this.commandManager = commandManager;
+    }
 }

@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class CommandManager implements CommandExecutor, TabCompleter {
 
-    private final BasePlugin plugin;
+    private BasePlugin plugin;
 
     private List<SubCommand> subCommands = new ArrayList<>();
 
@@ -27,26 +27,29 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
 
     public CommandManager(BasePlugin plugin, List<SubCommand> subCommands) {
-        this.plugin = plugin;
-        this.subCommands = subCommands;
-        this.subCommands.add(helpCommand);
+        init(plugin, null, subCommands);
     }
 
     public CommandManager(BasePlugin plugin, String helpPrefix, List<SubCommand> subCommands) {
+        init(plugin, helpPrefix, subCommands);
+    }
+
+    private void init(BasePlugin plugin, String helpPrefix, List<SubCommand> subCommands) {
         this.plugin = plugin;
         this.helpPrefix = helpPrefix;
         helpCommand.setHelpPrefix(helpPrefix);
         this.subCommands = subCommands;
         this.subCommands.add(helpCommand);
+
+        setCommandManager();
     }
 
-    public void registerSubCommand(SubCommand subCommand) {
-        subCommands.add(subCommand);
+    private void setCommandManager() {
+        for (SubCommand subCommand : subCommands) {
+            subCommand.setCommandManager(this);
+        }
     }
 
-    public List<SubCommand> getSubCommands() {
-        return subCommands;
-    }
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
@@ -116,7 +119,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         return completionList;
     }
 
+
+
+    //region Getter
     public BasePlugin getPlugin() {
         return plugin;
     }
+
+    public List<SubCommand> getSubCommands() {
+        return subCommands;
+    }
+    //endregion
 }
