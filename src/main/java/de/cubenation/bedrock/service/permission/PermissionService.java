@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * Created by B1acksheep on 25.04.15.
@@ -37,11 +39,15 @@ public class PermissionService {
         // Get all placeholder Permissions
         for (CommandManager commandManager : commandManagers) {
             for (SubCommand subCommand : commandManager.getSubCommands()) {
-                System.out.println("Add Permission: " + subCommand.getPermission().getPermission());
                 Permission  permission = subCommand.getPermission();
+
                 if (permission != null) {
-                    plainOldPermissions.add(permission);
+                    if (permission.getPermission() != null) {
+                        plainOldPermissions.add(permission);
+                        System.out.println("Add Permission: " + subCommand.getPermission().getPermission());
+                    }
                 }
+
             }
         }
 
@@ -50,57 +56,69 @@ public class PermissionService {
 
     }
 
-    public void writePermission() {
+    @SuppressWarnings("unchecked")
+    private void writePermission() {
+        plugin.log(Level.INFO, "Write default Permissions!");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
+
+        ArrayList<String> defaultPermission = new ArrayList<>();
 
         for (Permission permission : plainOldPermissions) {
             Boolean contains = false;
             for (String key : configuration.getKeys(false)) {
-                ConfigurationSection configurationSection = configuration.getConfigurationSection(key);
-                if (configurationSection.contains(permission.getPermission())) {
+                ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
+                if (configList.contains(permission.getPermission())) {
                     contains = true;
                 }
             }
             if (!contains) {
-                try {
-                    addPermissionToDefault(permission);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                defaultPermission.add(permission.getPermission());
             }
         }
 
 
+        try {
+            if (!defaultPermission.isEmpty()) {
+                configuration.set(Const.NO_ROLE, defaultPermission);
+                configuration.save(permissionsFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    private void addPermissionToDefault(Permission permission) throws IOException {
-        System.out.println("addPermissionToDefault: " + permission.getPermission());
+    @SuppressWarnings("unchecked")
+    private void loadPermission() {
+        plugin.log(Level.INFO, "Load Permissions!");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
-        configuration.set(Const.NO_ROLE + "." +  permission.getPermission(), null);
-        configuration.save(permissionsFile);
-    }
 
-    public void loadPermission() {
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
+        HashMap<String,Permission> loadedPermission = new HashMap<>();
 
         for (String key : configuration.getKeys(false)) {
-            ConfigurationSection configurationSection = configuration.getConfigurationSection(key);
+            ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
 
-            Set<String> permissions = configurationSection.getKeys(false);
+            String replacementKey = "";
+            if (!key.equalsIgnoreCase(Const.NO_ROLE)) {
+                replacementKey = "." + key;
+            }
 
-            for (String permission : permissions) {
-                System.out.println("Add new RolePermission:");
-                System.out.println("From: " + permission);
-                if (key.equals(Const.ROLE_PLACEHOLDER)) {
-                    String rolePermission = permission.replace("." + Const.ROLE_PLACEHOLDER, "");
-                    roledPermissions.put(permission, new Permission(rolePermission));
-                    System.out.println("to: " + rolePermission);
+            for (String permission : configList) {
+
+                String rolePermission = permission.replace("." + Const.ROLE_PLACEHOLDER, replacementKey);
+                // If list contains permission -> replace to prevent Issues!
+                if (loadedPermission.containsKey(permission)) {
+                    loadedPermission.replace(permission, new Permission(rolePermission));
                 } else {
-                    String rolePermission = permission.replace(Const.ROLE_PLACEHOLDER, key);
-                    roledPermissions.put(permission, new Permission(rolePermission));
-                    System.out.println("to: " + rolePermission);
+                    loadedPermission.put(permission, new Permission(rolePermission));
                 }
             }
+        }
+
+        roledPermissions = loadedPermission;
+
+        for (Map.Entry<String, Permission> entry : loadedPermission.entrySet()) {
+            plugin.log(Level.INFO, "Perm: " + entry.getKey() + "    ->  " + entry.getValue().getPermission());
         }
 
     }
@@ -110,6 +128,11 @@ public class PermissionService {
 
         return roledPermissions.get(permission.getPermission());
     }
+
+    //TODO: Error Handling
+    // File corrupted?
+    // No R/W access?
+    // Permissions if Services disabled?
 
 
 }
