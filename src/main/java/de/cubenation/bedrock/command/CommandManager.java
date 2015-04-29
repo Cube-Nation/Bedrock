@@ -1,13 +1,13 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.permission.PermissionListCommand;
+import de.cubenation.bedrock.command.permission.PermissionReloadCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
 
 import java.util.*;
 
@@ -20,26 +20,32 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private BasePlugin plugin;
 
+    private PluginCommand pluginCommand;
+
     private List<SubCommand> subCommands = new ArrayList<>();
 
     private String helpPrefix;
-
     private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
 
-    public CommandManager(BasePlugin plugin, List<SubCommand> subCommands) {
-        init(plugin, null, subCommands);
+    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, SubCommand... subCommands) {
+        System.out.println("[[]] INIT Manager for Cmd: " + pluginCommand.getName());
+        init(plugin, pluginCommand, helpPrefix, subCommands);
     }
 
-    public CommandManager(BasePlugin plugin, String helpPrefix, List<SubCommand> subCommands) {
-        init(plugin, helpPrefix, subCommands);
-    }
-
-    private void init(BasePlugin plugin, String helpPrefix, List<SubCommand> subCommands) {
+    private void init(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, SubCommand[] subCommands) {
         this.plugin = plugin;
+        this.pluginCommand = pluginCommand;
         this.helpPrefix = helpPrefix;
-        helpCommand.setHelpPrefix(helpPrefix);
-        this.subCommands = subCommands;
+
+        Collections.addAll(this.subCommands, subCommands);
+
         this.subCommands.add(helpCommand);
+        helpCommand.setHelpPrefix(helpPrefix);
+
+        if (plugin.usePermissionService()) {
+            this.subCommands.add(new PermissionReloadCommand());
+            this.subCommands.add(new PermissionListCommand());
+        }
 
         setCommandManager();
     }
@@ -74,7 +80,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     subCommand.execute(
                             commandSender,
                             label,
-                            Arrays.copyOfRange(args, 0, subCommand.getCommands().size() - 1),
+                            Arrays.copyOfRange(args, 0, subCommand.getCommands().size()),
                             Arrays.copyOfRange(args, subCommand.getCommands().size(), args.length));
 
                     return true;
@@ -120,10 +126,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
 
-
     //region Getter
     public BasePlugin getPlugin() {
         return plugin;
+    }
+
+    public PluginCommand getPluginCommand() {
+        return pluginCommand;
     }
 
     public List<SubCommand> getSubCommands() {

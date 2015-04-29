@@ -2,14 +2,14 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.helper.LengthComparator;
 import de.cubenation.bedrock.message.JsonMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -64,7 +64,8 @@ public class HelpCommand extends SubCommand {
                 String useCommand = command;
                 if (subCommand.getCommands() != null) {
                     for (String[] commands : subCommand.getCommands()) {
-                        command += " " + StringUtils.join(commands, '|');
+                        Arrays.sort(commands, new LengthComparator());
+                        command += " " + StringUtils.join(commands, primary + "|" + secondary);
                         useCommand += " " + commands[0];
                     }
                 }

@@ -1,6 +1,6 @@
 package de.cubenation.bedrock.command;
 
-import com.google.common.collect.LinkedListMultimap;
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
@@ -25,6 +25,7 @@ public abstract class SubCommand {
     private Permission permission;
 
     private CommandManager commandManager;
+    private String permissionString;
 
     //endregion
 
@@ -76,7 +77,8 @@ public abstract class SubCommand {
     private void init(ArrayList<String[]> commands, String[] help, String permission) {
         this.commands = commands;
         this.help = help;
-        this.permission = new Permission(permission);
+        this.permissionString = permission;
+
     }
 
     //endregion
@@ -131,8 +133,6 @@ public abstract class SubCommand {
      */
     @Nullable
     public final String[] getTabCompletionListForArgument(String[] args) {
-        System.out.println("Arg.length" + args.length);
-        System.out.println(Arrays.toString(args));
         if (commands.size() >= args.length) {
             for (int i = 0; i < args.length; i++) {
                 boolean result = false;
@@ -193,10 +193,14 @@ public abstract class SubCommand {
      */
     public final boolean hasPermission(CommandSender sender) {
         if (permission == null) {
-            return true;
-        } else {
-            if (permission.userHasPermission(sender)) return true;
+            System.out.println("Permission not available. No one gets Permission to prevent security issues!");
+            return false;
         }
+
+        if (permission.userHasPermission(sender)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -231,5 +235,18 @@ public abstract class SubCommand {
 
     public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
+        BasePlugin plugin = commandManager.getPlugin();
+        if (plugin != null) {
+            this.permission = new Permission(permissionString, plugin);
+        }
+    }
+
+    /**
+     * Gets command manager.
+     *
+     * @return the command manager
+     */
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 }

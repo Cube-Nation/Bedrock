@@ -1,7 +1,6 @@
 package de.cubenation.bedrock;
 
 import de.cubenation.bedrock.command.CommandManager;
-import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.helper.Const;
 import de.cubenation.bedrock.service.message.MessageService;
@@ -9,10 +8,12 @@ import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,15 +22,15 @@ import java.util.logging.Logger;
  * Project: Bedrock
  * Package: de.cubenation.bedrock
  */
-public abstract class BasePlugin extends JavaPlugin  {
+public abstract class BasePlugin extends JavaPlugin {
 
-    private Boolean usePermissionService = true;
     private Boolean useMessageService = true;
 
     private PermissionService permissionService;
     private MessageService messageService;
 
-    private ArrayList<CommandManager> commandManagers = new ArrayList<>();
+    private String explicitPermissionPrefix;
+
 
     public BasePlugin() {
         super();
@@ -37,52 +38,65 @@ public abstract class BasePlugin extends JavaPlugin  {
 
     @Override
     public final void onEnable() {
+        setupConfig();
+
         onPreEnable();
 
-        setupConfig();
+        initPermissionService();
+        initCommands();
+
 
         setupPermissionService();
         setupMessageService();
 
-        log(Level.INFO, "version " + getDescription().getVersion() + " enabled");
-
         onPostEnable();
     }
 
+    private void initCommands() {
+        if (getCommandManager() != null) {
+            for (CommandManager manager : getCommandManager()) {
+                manager.getPluginCommand().setExecutor(manager);
+                manager.getPluginCommand().setTabCompleter(manager);
+            }
+        }
+    }
+
     private void setupPermissionService() {
-        permissionService = new PermissionService(this, commandManagers);
+        if (usePermissionService()) {
+            permissionService.reloadPermissions();
+        }
+    }
+
+    private void initPermissionService() {
+        if (usePermissionService()) {
+            permissionService = new PermissionService(this);
+        }
     }
 
     private void setupMessageService() {
 
     }
 
-
     private void setupConfig() {
-        if (getResource("config.yml") != null) {
-            getLogger().info("save default config");
-            saveDefaultConfig();
+        if (getResource("config.yml") == null) {
+            log(Level.INFO, "Save default config");
+            try {
+                saveDefaultConfig();
+            } catch (IllegalArgumentException e) {
+                File file = new File(
+                        this.getDataFolder().getAbsolutePath() +
+                                java.lang.System.getProperty("file.separator") +
+                                "config.yml");
+                try {
+                    new YamlConfiguration().save(file.getAbsolutePath());
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
         }
     }
 
-
-
-    public void registerCommand(BasePlugin plugin, PluginCommand pluginCommand, SubCommand[] subCommands) {
-        addCommandManager(plugin, null, pluginCommand, subCommands);
-    }
-
-    public void registerCommand(BasePlugin plugin, String helpPrefix, PluginCommand pluginCommand, SubCommand[] subCommands) {
-        addCommandManager(plugin, helpPrefix, pluginCommand, subCommands);
-    }
-
-    private void addCommandManager(BasePlugin plugin, String helpPrefix, PluginCommand pluginCommand, SubCommand[] subCommands) {
-        CommandManager commandManager = new CommandManager(plugin, helpPrefix, new ArrayList<SubCommand>(Arrays.asList(subCommands)));
-
-        pluginCommand.setExecutor(commandManager);
-        pluginCommand.setTabCompleter(commandManager);
-
-        commandManagers.add(commandManager);
-    }
+    public abstract ArrayList<CommandManager> getCommandManager();
 
 
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
@@ -113,7 +127,7 @@ public abstract class BasePlugin extends JavaPlugin  {
 
 
     public String getMessagePrefix() {
-        return 	getFlagColor() + "[" +
+        return getFlagColor() + "[" +
                 getPrimaryColor() + this.getDescription().getName() +
                 getFlagColor() + "]" +
                 ChatColor.RESET;
@@ -145,13 +159,7 @@ public abstract class BasePlugin extends JavaPlugin  {
 
 
     //region Getter/Setter
-    public Boolean usePermissionService() {
-        return usePermissionService;
-    }
 
-    public void setUsePermissionService(Boolean usePermissionService) {
-        this.usePermissionService = usePermissionService;
-    }
 
     public Boolean useMessageService() {
         return useMessageService;
@@ -160,16 +168,37 @@ public abstract class BasePlugin extends JavaPlugin  {
     public void setUseMessageService(Boolean useMessageService) {
         this.useMessageService = useMessageService;
     }
+
+    public PermissionService getPermissionService() {
+        return permissionService;
+    }
+
+    public MessageService getMessageService() {
+        return messageService;
+    }
+
+    public void setExplicitPermissionPrefix(String explicitPermissionPrefix) {
+        this.explicitPermissionPrefix = explicitPermissionPrefix;
+    }
+
+    public String getExplicitPermissionPrefix() {
+        if (explicitPermissionPrefix == null) {
+            return getName().toLowerCase();
+        }
+        return explicitPermissionPrefix;
+    }
+
     //endregion
 
 
+    protected void onPreEnable() {
 
-    public void onPreEnable() {
+    }
+
+    protected void onPostEnable() {
 
     }
 
-    public void onPostEnable() {
-
-    }
+    public abstract Boolean usePermissionService();
 
 }

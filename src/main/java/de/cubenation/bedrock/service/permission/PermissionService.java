@@ -1,12 +1,7 @@
 package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.command.CommandManager;
-import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.helper.Const;
-import de.cubenation.bedrock.permission.Permission;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -14,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 /**
@@ -28,32 +22,17 @@ public class PermissionService {
 
     private final File permissionsFile;
 
-    ArrayList<Permission> plainOldPermissions = new ArrayList<>();
+    private Boolean activePermissionService = true;
 
-    HashMap<String,Permission> roledPermissions = new HashMap<>();
+    ArrayList<String> plainOldPermissions = new ArrayList<>();
 
-    public PermissionService(BasePlugin plugin, ArrayList<CommandManager> commandManagers) {
+    HashMap<String, String> roledPermissions = new HashMap<>();
+
+    HashMap<String, ArrayList<String>> permissionRoleDump = new HashMap<>();
+
+    public PermissionService(BasePlugin plugin) {
         this.plugin = plugin;
         permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), Const.PERMISSIONS_FILE_NAME);
-
-        // Get all placeholder Permissions
-        for (CommandManager commandManager : commandManagers) {
-            for (SubCommand subCommand : commandManager.getSubCommands()) {
-                Permission  permission = subCommand.getPermission();
-
-                if (permission != null) {
-                    if (permission.getPermission() != null) {
-                        plainOldPermissions.add(permission);
-                        System.out.println("Add Permission: " + subCommand.getPermission().getPermission());
-                    }
-                }
-
-            }
-        }
-
-        writePermission();
-        loadPermission();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -61,21 +40,24 @@ public class PermissionService {
         plugin.log(Level.INFO, "Write default Permissions!");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
 
-        ArrayList<String> defaultPermission = new ArrayList<>();
+        ArrayList<String> defaultPermission = (ArrayList<String>) configuration.get(Const.NO_ROLE);
+        if (defaultPermission == null) {
+            defaultPermission = new ArrayList<>();
+        }
 
-        for (Permission permission : plainOldPermissions) {
+        for (String permission : plainOldPermissions) {
+            System.out.println("POJO Perm: " + permission);
             Boolean contains = false;
             for (String key : configuration.getKeys(false)) {
                 ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
-                if (configList.contains(permission.getPermission())) {
+                if (configList.contains(permission)) {
                     contains = true;
                 }
             }
             if (!contains) {
-                defaultPermission.add(permission.getPermission());
+                defaultPermission.add(permission);
             }
         }
-
 
         try {
             if (!defaultPermission.isEmpty()) {
@@ -93,41 +75,88 @@ public class PermissionService {
         plugin.log(Level.INFO, "Load Permissions!");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
 
-        HashMap<String,Permission> loadedPermission = new HashMap<>();
+        HashMap<String, String> loadedPermission = new HashMap<>();
+        HashMap<String, ArrayList<String>> roleDump = new HashMap<>();
 
         for (String key : configuration.getKeys(false)) {
             ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
+            roleDump.put(key, new ArrayList<String>());
 
-            String replacementKey = "";
+            String replacementKey = plugin.getExplicitPermissionPrefix() + ".";
             if (!key.equalsIgnoreCase(Const.NO_ROLE)) {
-                replacementKey = "." + key;
+                replacementKey += key + ".";
             }
 
             for (String permission : configList) {
 
-                String rolePermission = permission.replace("." + Const.ROLE_PLACEHOLDER, replacementKey);
+                String rolePermission = replacementKey + permission;
+
+                roleDump.get(key).add(rolePermission);
+
                 // If list contains permission -> replace to prevent Issues!
                 if (loadedPermission.containsKey(permission)) {
-                    loadedPermission.replace(permission, new Permission(rolePermission));
+                    loadedPermission.replace(permission, rolePermission);
                 } else {
-                    loadedPermission.put(permission, new Permission(rolePermission));
+                    loadedPermission.put(permission, rolePermission);
                 }
             }
         }
 
         roledPermissions = loadedPermission;
+        permissionRoleDump = roleDump;
 
-        for (Map.Entry<String, Permission> entry : loadedPermission.entrySet()) {
-            plugin.log(Level.INFO, "Perm: " + entry.getKey() + "    ->  " + entry.getValue().getPermission());
+        for (Map.Entry<String, String> entry : loadedPermission.entrySet()) {
+            plugin.log(Level.INFO, "Perm: " + entry.getKey() + "    ->  " + entry.getValue());
         }
 
     }
 
+    public void reloadPermissions() {
+        if (plugin.getConfig().get(Const.PERMISSION_ROLE_KEY) == null) {
+            System.out.println("activePermissionService == null set to " + activePermissionService);
+            plugin.getConfig().set(Const.PERMISSION_ROLE_KEY, activePermissionService);
+            plugin.saveConfig();
+        }
+        plugin.reloadConfig();
+        activePermissionService = plugin.getConfig().getBoolean(Const.PERMISSION_ROLE_KEY);
 
-    public Permission getPermissionWithRole(Permission permission) {
+        System.out.println("activePermissionService: " + activePermissionService);
 
-        return roledPermissions.get(permission.getPermission());
+        if (activePermissionService) {
+            writePermission();
+            loadPermission();
+        }
     }
+
+
+    public String getPermissionWithRole(String permission) {
+
+        if (activePermissionService == null || !activePermissionService) {
+            System.out.println("Permission service disabled or no Config Entry found.");
+            return plugin.getExplicitPermissionPrefix() + "." + permission;
+        } else {
+            return roledPermissions.get(permission);
+        }
+
+    }
+
+    public void registerPermission(String permission) {
+        if (permission != null) {
+            if (!plainOldPermissions.contains(permission)) {
+                System.out.println("[[BEDROCK]]: Register Permission: " + permission);
+                plainOldPermissions.add(permission);
+            }
+        }
+    }
+
+    public Boolean getActivePermissionService() {
+        return activePermissionService;
+    }
+
+    public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
+        return permissionRoleDump;
+    }
+
 
     //TODO: Error Handling
     // File corrupted?
