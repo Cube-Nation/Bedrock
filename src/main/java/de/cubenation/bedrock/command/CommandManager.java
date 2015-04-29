@@ -5,11 +5,13 @@ import de.cubenation.bedrock.command.permission.PermissionListCommand;
 import de.cubenation.bedrock.command.permission.PermissionReloadCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.ChatColor;
 import org.bukkit.command.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -28,7 +30,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
 
     public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, SubCommand... subCommands) {
-        System.out.println("[[]] INIT Manager for Cmd: " + pluginCommand.getName());
         init(plugin, pluginCommand, helpPrefix, subCommands);
     }
 

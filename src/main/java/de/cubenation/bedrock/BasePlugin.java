@@ -96,7 +96,22 @@ public abstract class BasePlugin extends JavaPlugin {
         }
     }
 
+
+    //region Abstract
     public abstract ArrayList<CommandManager> getCommandManager();
+
+    public abstract Boolean usePermissionService();
+    //endregion
+
+
+    //region Implementation
+    protected void onPreEnable() {
+    }
+
+    protected void onPostEnable() {
+    }
+    //endregion
+
 
 
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
@@ -124,7 +139,6 @@ public abstract class BasePlugin extends JavaPlugin {
         sender.sendMessage(this.getMessagePrefix() + "Unrecoverable error. Disabling plugin");
         this.disable(e);
     }
-
 
     public String getMessagePrefix() {
         return getFlagColor() + "[" +
@@ -191,14 +205,8 @@ public abstract class BasePlugin extends JavaPlugin {
     //endregion
 
 
-    protected void onPreEnable() {
 
-    }
 
-    protected void onPostEnable() {
 
-    }
-
-    public abstract Boolean usePermissionService();
 
 }

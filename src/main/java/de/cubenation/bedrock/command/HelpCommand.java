@@ -1,6 +1,5 @@
 package de.cubenation.bedrock.command;
 
-import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.LengthComparator;
 import de.cubenation.bedrock.message.JsonMessage;
@@ -9,7 +8,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -42,9 +43,6 @@ public class HelpCommand extends SubCommand {
             String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
             if (helpPrefix != null) {
                 commandHeaderName = helpPrefix;
-                System.out.println("helpPrefix: " + helpPrefix);
-            } else {
-                System.out.println("no HelpPrefix.");
             }
 
             String header = flag + "==== " +

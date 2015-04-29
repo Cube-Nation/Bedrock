@@ -3,8 +3,6 @@ package de.cubenation.bedrock.permission;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
-import org.bukkit.entity.Player;
 
 /**
  * Created by B1acksheep on 04.04.15.
@@ -82,15 +80,11 @@ public class Permission {
     }
 
     private String getServicePermission() {
-        String perm = permissionService.getPermissionWithRole(getName());
-        System.out.println("Request Service Permission: " + perm);
-        return perm;
+        return permissionService.getPermissionWithRole(getName());
     }
 
     public String getDefaultPermission() {
-        String perm = plugin.getExplicitPermissionPrefix() + "." + getName();
-        System.out.println("Request Default Permission: " + perm);
-        return perm;
+        return plugin.getExplicitPermissionPrefix() + "." + getName();
     }
     //endregion
 

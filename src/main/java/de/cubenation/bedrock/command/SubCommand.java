@@ -193,15 +193,11 @@ public abstract class SubCommand {
      */
     public final boolean hasPermission(CommandSender sender) {
         if (permission == null) {
-            System.out.println("Permission not available. No one gets Permission to prevent security issues!");
+            // Permission not available. No one gets Permission to prevent security issues!
             return false;
         }
 
-        if (permission.userHasPermission(sender)) {
-            return true;
-        }
-
-        return false;
+        return permission.userHasPermission(sender);
     }
 
 

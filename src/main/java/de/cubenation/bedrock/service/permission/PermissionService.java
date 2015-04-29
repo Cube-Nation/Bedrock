@@ -46,7 +46,6 @@ public class PermissionService {
         }
 
         for (String permission : plainOldPermissions) {
-            System.out.println("POJO Perm: " + permission);
             Boolean contains = false;
             for (String key : configuration.getKeys(false)) {
                 ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
@@ -113,14 +112,12 @@ public class PermissionService {
 
     public void reloadPermissions() {
         if (plugin.getConfig().get(Const.PERMISSION_ROLE_KEY) == null) {
-            System.out.println("activePermissionService == null set to " + activePermissionService);
             plugin.getConfig().set(Const.PERMISSION_ROLE_KEY, activePermissionService);
             plugin.saveConfig();
         }
         plugin.reloadConfig();
         activePermissionService = plugin.getConfig().getBoolean(Const.PERMISSION_ROLE_KEY);
 
-        System.out.println("activePermissionService: " + activePermissionService);
 
         if (activePermissionService) {
             writePermission();
@@ -132,7 +129,6 @@ public class PermissionService {
     public String getPermissionWithRole(String permission) {
 
         if (activePermissionService == null || !activePermissionService) {
-            System.out.println("Permission service disabled or no Config Entry found.");
             return plugin.getExplicitPermissionPrefix() + "." + permission;
         } else {
             return roledPermissions.get(permission);
@@ -143,7 +139,6 @@ public class PermissionService {
     public void registerPermission(String permission) {
         if (permission != null) {
             if (!plainOldPermissions.contains(permission)) {
-                System.out.println("[[BEDROCK]]: Register Permission: " + permission);
                 plainOldPermissions.add(permission);
             }
         }
@@ -161,7 +156,5 @@ public class PermissionService {
     //TODO: Error Handling
     // File corrupted?
     // No R/W access?
-    // Permissions if Services disabled?
-
 
 }

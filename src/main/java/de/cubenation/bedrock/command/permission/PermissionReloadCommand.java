@@ -6,7 +6,6 @@ import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 /**

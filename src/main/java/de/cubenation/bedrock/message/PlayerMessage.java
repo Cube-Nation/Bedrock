@@ -37,7 +37,6 @@ public class PlayerMessage {
 
     public void send(Player player) {
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a(toJSONString())));
-        System.out.println(toJSONString());
     }
 
     private String toJSONString() {
