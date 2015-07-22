@@ -209,15 +209,4 @@ public abstract class BasePlugin extends JavaPlugin {
         return explicitPermissionPrefix;
     }
 
-	public Plugin getInstance() {
-		return this;
-	}
-
-    //endregion
-
-
-
-
-
-
 }
