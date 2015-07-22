@@ -51,11 +51,9 @@ public class HelpCommand extends SubCommand {
             commandHeaderName = helpPrefix;
         }
 
-        ComponentBuilder header = new ComponentBuilder("==== ").color(primary)
+        ComponentBuilder header = new ComponentBuilder("==== ").color(flag)
                 .append(commandHeaderName + " Help").color(primary)
                 .append(" ====").color(flag);
-        player.spigot().sendMessage(header.create());
-
 
         // =========================
         // create help for each subcommand
@@ -102,9 +100,6 @@ public class HelpCommand extends SubCommand {
                 textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(help)));
 
                 commandsList.add(textComponent);
-
-                player.spigot().sendMessage(textComponent);
-
             }
         }
 
