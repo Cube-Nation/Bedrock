@@ -1,6 +1,7 @@
 package de.cubenation.bedrock;
 
 import de.cubenation.bedrock.command.CommandManager;
+import de.cubenation.bedrock.exception.CustomConfigurationFileNotFoundException;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,10 @@ import java.util.ArrayList;
  * Package: de.cubenation.bedrock
  */
 public class BedrockPlugin extends BasePlugin {
+
+    @Override
+    public void loadCustomConfiguration() throws CustomConfigurationFileNotFoundException {
+    }
 
     @Override
     public ArrayList<CommandManager> getCommandManager() {

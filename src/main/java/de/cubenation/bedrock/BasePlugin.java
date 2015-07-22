@@ -1,15 +1,19 @@
 package de.cubenation.bedrock;
 
 import de.cubenation.bedrock.command.CommandManager;
+import de.cubenation.bedrock.exception.CustomConfigurationFileNotFoundException;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.helper.Const;
-import de.cubenation.bedrock.service.message.MessageService;
 import de.cubenation.bedrock.service.permission.PermissionService;
+
+import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -27,10 +31,8 @@ public abstract class BasePlugin extends JavaPlugin {
     private Boolean useMessageService = true;
 
     private PermissionService permissionService;
-    private MessageService messageService;
 
     private String explicitPermissionPrefix;
-
 
     public BasePlugin() {
         super();
@@ -44,7 +46,6 @@ public abstract class BasePlugin extends JavaPlugin {
 
         initPermissionService();
         initCommands();
-
 
         setupPermissionService();
         setupMessageService();
@@ -94,9 +95,23 @@ public abstract class BasePlugin extends JavaPlugin {
                 }
             }
         }
+        
+        // try loading custom configurations files of the current plugin
+        // and disable plugin if there an exception was thrown
+        try {
+        	this.loadCustomConfiguration();
+        } catch (CustomConfigurationFileNotFoundException e) {
+        	this.disable(e);
+        }
+
     }
 
-
+    /*
+     * 	CustomConfigurationRegistry.register(new de_DE(this));
+	 *	CustomConfigurationRegistry.register(new SchematicPlaceholder(this));
+     */
+	public abstract void loadCustomConfiguration() throws CustomConfigurationFileNotFoundException;
+    
     //region Abstract
     public abstract ArrayList<CommandManager> getCommandManager();
 
@@ -164,11 +179,7 @@ public abstract class BasePlugin extends JavaPlugin {
             return Const.NO_MESSAGE_SERVICE;
         }
 
-        if (messageService == null) {
-            return Const.NO_MESSAGE_SERVICE;
-        } else {
-            return messageService.getString(key);
-        }
+        return null;
     }
 
 
@@ -187,10 +198,6 @@ public abstract class BasePlugin extends JavaPlugin {
         return permissionService;
     }
 
-    public MessageService getMessageService() {
-        return messageService;
-    }
-
     public void setExplicitPermissionPrefix(String explicitPermissionPrefix) {
         this.explicitPermissionPrefix = explicitPermissionPrefix;
     }
@@ -201,6 +208,10 @@ public abstract class BasePlugin extends JavaPlugin {
         }
         return explicitPermissionPrefix;
     }
+
+	public Plugin getInstance() {
+		return this;
+	}
 
     //endregion
 

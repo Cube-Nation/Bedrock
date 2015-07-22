@@ -4,7 +4,7 @@ import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.service.permission.PermissionService;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -33,6 +33,8 @@ public class PermissionListCommand extends SubCommand {
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
         if (permissionService != null) {
+
+
 
             ChatColor sec = getCommandManager().getPlugin().getSecondaryColor();
 

@@ -2,15 +2,15 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.LengthComparator;
-import de.cubenation.bedrock.message.JsonMessage;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.Map;
+
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -31,72 +31,102 @@ public class HelpCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String label,String[] subCommands, String[] args) throws CommandException {
 
-        Player player = null;
+        if (!(sender instanceof Player)) {
+            return;
+        }
 
-        ChatColor primary = commandManager.getPlugin().getPrimaryColor();
+        ChatColor primary   = commandManager.getPlugin().getPrimaryColor();
         ChatColor secondary = commandManager.getPlugin().getSecondaryColor();
-        ChatColor flag = commandManager.getPlugin().getFlagColor();
+        ChatColor flag      = commandManager.getPlugin().getFlagColor();
+        Player player       = (Player) sender;
 
-        if (sender instanceof Player) {
-            player = (Player) sender;
 
-            String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
-            if (helpPrefix != null) {
-                commandHeaderName = helpPrefix;
-            }
-
-            String header = flag + "==== " +
-                    primary +
-                    commandHeaderName
-                    + " Help " +
-                    flag + "==== ";
-
-            new JsonMessage(header).send(player);
+        // =========================
+        // create header
+        // =========================
+        String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
+        if (helpPrefix != null) {
+            commandHeaderName = helpPrefix;
         }
 
+        ComponentBuilder header = new ComponentBuilder("==== ").color(primary)
+                .append(commandHeaderName + " Help").color(primary)
+                .append(" ====").color(flag);
+        player.spigot().sendMessage(header.create());
+
+
+        // =========================
+        // create help for subcommand
+        // =========================
         for (SubCommand subCommand : commandManager.getSubCommands()) {
-            if (subCommand.hasPermission(sender)) {
 
-                String command = primary + "/" + label + "" +
-                        secondary;
-                String useCommand = command;
-                if (subCommand.getCommands() != null) {
-                    for (String[] commands : subCommand.getCommands()) {
-                        Arrays.sort(commands, new LengthComparator());
-                        command += " " + StringUtils.join(commands, primary + "|" + secondary);
-                        useCommand += " " + commands[0];
+            // check permission
+            if (!subCommand.hasPermission(sender)) {
+                continue;
+            }
+
+            // the command help component
+            TextComponent command_help = new TextComponent("/" + label);
+            command_help.setColor(primary);
+
+            // create duplicate suggest from command_help
+            TextComponent _suggest_command = (TextComponent) command_help.duplicate();
+
+            // add subcommands
+            if (subCommand.getCommands() != null) {
+                for (String[] commands : subCommand.getCommands()) {
+                    Arrays.sort(commands, new LengthComparator());
+
+                    for (String c : commands) {
+                        TextComponent subcommand_help = new TextComponent(c);
+                        subcommand_help.setColor(secondary);
+                        subcommand_help.addExtra("|");
                     }
-                }
 
-                String cmdWithArgument = command;
-
-                String toolTipHelp = "";
-                for (String helpString : subCommand.getHelp()) {
-                    toolTipHelp += "\n" + ChatColor.WHITE + helpString;
-                }
-
-                if (subCommand.getArguments() != null) {
-                    for (Map.Entry<String, String> entry : subCommand.getArguments().entrySet()) {
-                        cmdWithArgument += " " + entry.getKey();
-                        toolTipHelp += "\n" + ChatColor.GRAY + ChatColor.ITALIC + entry.getKey();
-                        if (entry.getValue() != null) {
-                            toolTipHelp += " - " + entry.getValue();
-                        }
-                    }
-                }
-
-                String help = secondary + "" + cmdWithArgument + toolTipHelp;
-
-                if (player != null) {
-
-                    new JsonMessage(cmdWithArgument)
-                            .suggest(ChatColor.stripColor(useCommand))
-                            .tooltip(help)
-                            .send(player);
+                    _suggest_command.addExtra(" " + commands[0]);
                 }
             }
-        }
+
+
+            // =========================
+            // create tooltip
+            // =========================
+            TextComponent tooltip = new TextComponent();
+
+            for (String helpString : subCommand.getHelp()) {
+                TextComponent _tooltip = new TextComponent("\n" + ChatColor.WHITE + helpString);
+                tooltip.addExtra(_tooltip);
+            }
+/*
+            if (subCommand.getArguments() != null) {
+                for (Map.Entry<String, String> entry : subCommand.getArguments().entrySet()) {
+                    cmdWithArgument += " " + entry.getKey();
+                    TextComponent _tooltip_sub = new TextComponent("\n" + entry.getKey());
+
+                    if (entry.getValue() != null) {
+                        _tooltip_sub.addExtra(" - " + entry.getValue());
+                    }
+
+                    _tooltip_sub.setColor(ChatColor.GRAY);
+                    _tooltip_sub.setItalic(true);
+                    tooltip.addExtra(_tooltip_sub);
+                }
+
+            }
+*/
+            //String help = secondary + "" + cmdWithArgument + toolTipHelp;
+
+            // assign click event (suggest command)
+            command_help.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, _suggest_command.toString()));
+
+            // assign hover event (tooltip)
+            //command_help.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, _hover_text));
+
+            // send message
+            player.spigot().sendMessage(command_help);
+        } // for
     }
+
 
     @Override
     public LinkedHashMap<String, String> getArguments() {
