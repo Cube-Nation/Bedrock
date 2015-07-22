@@ -108,7 +108,7 @@ public class HelpCommand extends SubCommand {
             }
         }
 
-        player.spigot().sendMessage((BaseComponent[]) commandsList.toArray());
+        player.spigot().sendMessage((TextComponent[]) commandsList.toArray());
 
     }
 

@@ -5,9 +5,10 @@ import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.jline.internal.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by B1acksheep on 30.03.15.
@@ -131,7 +132,6 @@ public abstract class SubCommand {
      * @param args the args
      * @return the tab completion list for argument
      */
-    @Nullable
     public final String[] getTabCompletionListForArgument(String[] args) {
         if (commands.size() >= args.length) {
             for (int i = 0; i < args.length; i++) {
