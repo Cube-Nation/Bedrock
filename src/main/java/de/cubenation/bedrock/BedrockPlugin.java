@@ -12,6 +12,20 @@ import java.util.ArrayList;
  */
 public class BedrockPlugin extends BasePlugin {
 
+    private static BedrockPlugin instance;
+
+    public static void setInstance(BedrockPlugin plugin) {
+        instance = plugin;
+    }
+
+    public static BedrockPlugin getInstance() {
+        return instance;
+    }
+
+    public void onPreEnable() {
+        setInstance(this);
+    }
+
     @Override
     public void loadCustomConfiguration() throws CustomConfigurationFileNotFoundException {
     }
