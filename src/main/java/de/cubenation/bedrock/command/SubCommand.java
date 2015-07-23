@@ -6,9 +6,7 @@ import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by B1acksheep on 30.03.15.
@@ -132,7 +130,7 @@ public abstract class SubCommand {
      * @param args the args
      * @return the tab completion list for argument
      */
-    public final String[] getTabCompletionListForArgument(String[] args) {
+    public final String getTabCompletionListForArgument(String[] args) {
         if (commands.size() >= args.length) {
             for (int i = 0; i < args.length; i++) {
                 boolean result = false;
@@ -151,7 +149,17 @@ public abstract class SubCommand {
                     return null;
                 }
             }
-            return commands.get(args.length - 1);
+
+            ArrayList<String> list = new ArrayList<>(Arrays.asList(commands.get(args.length - 1)));
+
+            Collections.sort(list, new Comparator<String>() {
+                @Override
+                public int compare(String s1, String s2) {
+                    return s2.compareToIgnoreCase(s1);
+                }
+            });
+
+            return list.get(0);
         }
         return null;
     }
@@ -161,7 +169,7 @@ public abstract class SubCommand {
      * Returns if the subcommand is a valid trigger.
      *
      * @param args the args
-     * @return true if it is a valid trigge, else false
+     * @return true if it is a valid trigger, else false
      */
     public final boolean isValidTrigger(String[] args) {
 
@@ -183,6 +191,29 @@ public abstract class SubCommand {
         }
         // Not enough arguments
         return false;
+    }
+
+    /**
+     * Returns if the subcommand is a valid help trigger.
+     *
+     * @param args the args
+     * @return true if it is a valid trigger, else false
+     */
+    public boolean isValidHelpTrigger(String[] args) {
+
+        //Check if all Args match commands
+
+        if (commands.size() >= args.length) {
+            for (int i = 0; i < args.length; i++) {
+                if (!Arrays.asList(commands.get(i)).contains(args[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
+
     }
 
     /**
@@ -245,4 +276,6 @@ public abstract class SubCommand {
     public CommandManager getCommandManager() {
         return commandManager;
     }
+
+
 }

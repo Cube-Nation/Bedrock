@@ -5,13 +5,16 @@ import de.cubenation.bedrock.command.permission.PermissionListCommand;
 import de.cubenation.bedrock.command.permission.PermissionReloadCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
-import org.bukkit.ChatColor;
+import de.cubenation.bedrock.helper.LengthComparator;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.*;
+import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -85,11 +88,34 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                             Arrays.copyOfRange(args, subCommand.getCommands().size(), args.length));
 
                     return true;
-                } catch (CommandException | IllegalCommandArgumentException e) {
+                } catch (CommandException e) {
                     commandSender.sendMessage(plugin.getMessagePrefix() + e.getMessage());
+
+                } catch (IllegalCommandArgumentException e) {
+                    commandSender.sendMessage(plugin.getMessagePrefix() + e.getMessage());
+
+                    if (commandSender instanceof Player) {
+                        Player player = (Player) commandSender;
+                        player.spigot().sendMessage(getHelpForSubCommand(subCommand, player, label));
+                    }
+
                 }
                 return true;
             }
+        }
+
+        boolean canHelp = false;
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.isValidHelpTrigger(args)) {
+                if (commandSender instanceof Player) {
+                    Player player = (Player) commandSender;
+                    player.spigot().sendMessage(getHelpForSubCommand(subCommand, player, label));
+                }
+                canHelp = true;
+            }
+        }
+        if (canHelp) {
+            return true;
         }
 
         commandSender.sendMessage(plugin.getMessagePrefix() + ChatColor.RED + " Invalid command");
@@ -101,22 +127,26 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         ArrayList<String> completionList = new ArrayList<>();
 
         for (SubCommand subCommand : subCommands) {
-            if (subCommand.hasPermission(sender)) {
-                String[] completionCommands = subCommand.getTabCompletionListForArgument(args);
-                if (completionCommands != null) {
-                    for (String completionCommand : completionCommands) {
-                        if (!completionList.contains(completionCommand)) {
-                            if (!args[args.length - 1].equals("")) {
-                                if (completionCommand.startsWith(args[args.length - 1])) {
-                                    completionList.add(completionCommand);
-                                }
-                            } else {
+
+            if (!subCommand.hasPermission(sender)) {
+                continue;
+            }
+
+            String completionCommand = subCommand.getTabCompletionListForArgument(args);
+            if (completionCommand != null) {
+//                for (String completionCommand : completionCommands) {
+                    if (!completionList.contains(completionCommand)) {
+                        if (!args[args.length - 1].equals("")) {
+                            if (completionCommand.startsWith(args[args.length - 1])) {
                                 completionList.add(completionCommand);
                             }
+                        } else {
+                            completionList.add(completionCommand);
                         }
-                    }
+//                    }
                 }
             }
+
         }
 
         if (completionList.isEmpty()) {
@@ -124,6 +154,60 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         return completionList;
+    }
+
+    /**
+     * Get a TextComponent with the help for a SubCommand
+     *
+     * @param subCommand the SubCommand
+     * @param sender     the command sender
+     * @param label      the label of the command
+     * @return the TextComponent with the help.
+     */
+    public TextComponent getHelpForSubCommand(SubCommand subCommand, CommandSender sender, String label) {
+
+        if (!subCommand.hasPermission(sender)) {
+            return null;
+        }
+
+        net.md_5.bungee.api.ChatColor primary = this.getPlugin().getPrimaryColor();
+        net.md_5.bungee.api.ChatColor secondary = this.getPlugin().getSecondaryColor();
+
+        String command = primary + "/" + label + "" +
+                secondary;
+        String useCommand = command;
+        if (subCommand.getCommands() != null) {
+            for (String[] commands : subCommand.getCommands()) {
+                Arrays.sort(commands, new LengthComparator());
+                command += " " + StringUtils.join(commands, primary + "|" + secondary);
+                useCommand += " " + commands[0];
+            }
+        }
+
+        String cmdWithArgument = command;
+
+        String toolTipHelp = "";
+        for (String helpString : subCommand.getHelp()) {
+            toolTipHelp += "\n" + net.md_5.bungee.api.ChatColor.WHITE + helpString;
+        }
+
+        if (subCommand.getArguments() != null) {
+            for (Map.Entry<String, String> entry : subCommand.getArguments().entrySet()) {
+                cmdWithArgument += " " + entry.getKey();
+                toolTipHelp += "\n" + net.md_5.bungee.api.ChatColor.GRAY + net.md_5.bungee.api.ChatColor.ITALIC + entry.getKey();
+                if (entry.getValue() != null) {
+                    toolTipHelp += " - " + entry.getValue();
+                }
+            }
+        }
+
+        String help = secondary + "" + cmdWithArgument + toolTipHelp;
+
+        TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText(cmdWithArgument));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, net.md_5.bungee.api.ChatColor.stripColor(useCommand)));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(help)));
+
+        return textComponent;
     }
 
 
