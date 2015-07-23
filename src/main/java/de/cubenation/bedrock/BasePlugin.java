@@ -3,17 +3,12 @@ package de.cubenation.bedrock;
 import de.cubenation.bedrock.command.CommandManager;
 import de.cubenation.bedrock.exception.CustomConfigurationFileNotFoundException;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
-import de.cubenation.bedrock.helper.Const;
 import de.cubenation.bedrock.service.permission.PermissionService;
-
 import net.md_5.bungee.api.ChatColor;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -28,8 +23,6 @@ import java.util.logging.Logger;
  */
 public abstract class BasePlugin extends JavaPlugin {
 
-    private Boolean useMessageService = true;
-
     private PermissionService permissionService;
 
     private String explicitPermissionPrefix;
@@ -37,6 +30,9 @@ public abstract class BasePlugin extends JavaPlugin {
     public BasePlugin() {
         super();
     }
+
+
+    protected void onPreEnable() { }
 
     @Override
     public final void onEnable() {
@@ -48,10 +44,14 @@ public abstract class BasePlugin extends JavaPlugin {
         initCommands();
 
         setupPermissionService();
-        setupMessageService();
 
         onPostEnable();
     }
+
+    protected void onPostEnable() { }
+
+
+    public abstract ArrayList<CommandManager> getCommandManager();
 
     private void initCommands() {
         if (getCommandManager() != null) {
@@ -74,9 +74,6 @@ public abstract class BasePlugin extends JavaPlugin {
         }
     }
 
-    private void setupMessageService() {
-
-    }
 
     private void setupConfig() {
         if (getResource("config.yml") == null) {
@@ -112,22 +109,6 @@ public abstract class BasePlugin extends JavaPlugin {
      */
 	public abstract void loadCustomConfiguration() throws CustomConfigurationFileNotFoundException;
     
-    //region Abstract
-    public abstract ArrayList<CommandManager> getCommandManager();
-
-    public abstract Boolean usePermissionService();
-    //endregion
-
-
-    //region Implementation
-    protected void onPreEnable() {
-    }
-
-    protected void onPostEnable() {
-    }
-    //endregion
-
-
 
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
@@ -137,11 +118,17 @@ public abstract class BasePlugin extends JavaPlugin {
         return plugin;
     }
 
+
     public void log(Level level, String message) {
         Logger.getLogger("Minecraft").log(
                 level,
                 ChatColor.stripColor(String.format("%s %s", this.getMessagePrefix(), message))
         );
+    }
+
+    public void log(Level level, String message, Throwable t) {
+        this.log(level, message);
+        t.printStackTrace();
     }
 
     public void disable(Exception e) {
@@ -155,12 +142,14 @@ public abstract class BasePlugin extends JavaPlugin {
         this.disable(e);
     }
 
+
     public String getMessagePrefix() {
         return getFlagColor() + "[" +
                 getPrimaryColor() + this.getDescription().getName() +
                 getFlagColor() + "]" +
                 ChatColor.RESET;
     }
+
 
     public ChatColor getPrimaryColor() {
         return ChatColor.AQUA;
@@ -174,25 +163,9 @@ public abstract class BasePlugin extends JavaPlugin {
         return ChatColor.GRAY;
     }
 
-    public String getString(String key) {
-        if (!useMessageService()) {
-            return Const.NO_MESSAGE_SERVICE;
-        }
-
-        return null;
-    }
 
 
-    //region Getter/Setter
-
-
-    public Boolean useMessageService() {
-        return useMessageService;
-    }
-
-    public void setUseMessageService(Boolean useMessageService) {
-        this.useMessageService = useMessageService;
-    }
+    public abstract Boolean usePermissionService();
 
     public PermissionService getPermissionService() {
         return permissionService;
