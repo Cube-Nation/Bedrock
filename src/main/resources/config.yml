@@ -1,0 +1,3 @@
+service.confirm.timeout: 30
+service.pageablelist.timeout: 180
+service.pageablelist.next_amount: 10
