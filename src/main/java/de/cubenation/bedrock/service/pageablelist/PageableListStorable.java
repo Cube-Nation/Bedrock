@@ -7,15 +7,15 @@ public class PageableListStorable<T> {
 	public PageableListStorable() { }
 	
 	public PageableListStorable(T t) {
-		object = t;
+		this.set(t);
 	}
 	
 	public T get() {
-		return object;
+		return this.object;
 	}
 	
 	public void set(T t) {
-		object = t;
+		this.object = t;
 	}
 	
 }
