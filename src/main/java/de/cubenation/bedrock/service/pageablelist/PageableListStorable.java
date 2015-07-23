@@ -1,21 +1,5 @@
 package de.cubenation.bedrock.service.pageablelist;
 
-public class PageableListStorable<T> {
+import de.cubenation.bedrock.helper.GenericStorable;
 
-	private T object;
-	
-	public PageableListStorable() { }
-	
-	public PageableListStorable(T t) {
-		this.set(t);
-	}
-	
-	public T get() {
-		return this.object;
-	}
-	
-	public void set(T t) {
-		this.object = t;
-	}
-	
-}
+public class PageableListStorable<T> extends GenericStorable { }
