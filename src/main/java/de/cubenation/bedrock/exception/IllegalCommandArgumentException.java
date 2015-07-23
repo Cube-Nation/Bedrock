@@ -10,6 +10,6 @@ public class IllegalCommandArgumentException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public IllegalCommandArgumentException(String message) {
-        super(message);
+        super(" " + message);
     }
 }
