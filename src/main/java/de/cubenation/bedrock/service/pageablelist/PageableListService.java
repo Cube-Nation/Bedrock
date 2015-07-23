@@ -1,19 +1,21 @@
 package de.cubenation.bedrock.service.pageablelist;
 
+import de.cubenation.bedrock.BedrockPlugin;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public abstract class PageableListService {
 
-	private int next										= 10;
+	private int next;
 
 	private int page										= 1;
 
 	private List<PageableListStorable> storage				= new ArrayList<PageableListStorable>();
 
 	public PageableListService() {
-		this(10);
+		this(BedrockPlugin.getInstance().getConfig().getInt("service.pageablelist.next_amount"));
 	}
 	
 	public PageableListService(int next) {
