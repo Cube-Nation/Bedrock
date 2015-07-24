@@ -1,49 +1,71 @@
 package de.cubenation.bedrock.service.pageablelist;
 
 import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.registry.Registerable;
+import de.cubenation.bedrock.service.ServiceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class PageableListService {
+public abstract class PageableListServiceInterface implements ServiceInterface, Registerable {
 
-	private int next;
+	private int next                                        = 10;
 
 	private int page										= 1;
 
-	private List<PageableListStorable> storage				= new ArrayList<PageableListStorable>();
+	private List<PageableListStorable> storage;
 
-	public PageableListService() {
+    @SuppressWarnings("unused")
+	public PageableListServiceInterface() {
 		this(BedrockPlugin.getInstance().getConfig().getInt("service.pageablelist.next_amount"));
 	}
 	
-	public PageableListService(int next) {
+	public PageableListServiceInterface(int next) {
 		this.next = next;
+		this.init();
+	}
+
+    @Override
+	public void init() {
+		this.storage = new ArrayList<>();
+	}
+
+	@Override
+	public void reload() {
+		this.init();
 	}
 
 	public void store(PageableListStorable<?> cs) {
 		this.storage.add(cs);
 	}
 
+    @SuppressWarnings("unused")
 	public void store(Set<PageableListStorable> list) {
 		for (PageableListStorable<?> pls : list) {
 			this.store(pls);
 		}
 	}
 
+    @SuppressWarnings("unused")
 	public int size() {
 		return this.storage.size();
 	}
 
+    @SuppressWarnings("unused")
 	public List<PageableListStorable> next() {
 		List<PageableListStorable> list = this.next(this.next, this.page);
 		this.page++;
 		return list;
 	}
 
+    @SuppressWarnings("unused")
+    public List<PageableListStorable> next(int page) {
+        return this.next(this.next, page);
+    }
+
 	public List<PageableListStorable> next(int next, int page) {
-		List<PageableListStorable> list = new ArrayList<PageableListStorable>();
+		List<PageableListStorable> list = new ArrayList<>();
 
 		int start 	= (page - 1) * next;
 		int end		= start + next - 1;
