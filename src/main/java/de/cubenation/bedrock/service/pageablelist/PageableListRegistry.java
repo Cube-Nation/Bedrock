@@ -35,7 +35,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
     }
 
 
-    public static void register(BasePlugin plugin, String ident, CommandSender sender, PageableListServiceInterface object) {
+    public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, PageableListServiceInterface object) {
         getInstance()._register(plugin, ident, sender, object);
 
         Bukkit.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
