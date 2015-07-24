@@ -1,7 +1,7 @@
 package de.cubenation.bedrock;
 
 import de.cubenation.bedrock.command.CommandManager;
-import de.cubenation.bedrock.exception.CustomConfigurationFileNotFoundException;
+import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 
 import java.util.ArrayList;
 
@@ -27,11 +27,12 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public void loadCustomConfiguration() throws CustomConfigurationFileNotFoundException {
+    public ArrayList<CommandManager> getCommandManager() {
+        return null;
     }
 
     @Override
-    public ArrayList<CommandManager> getCommandManager() {
+    public ArrayList<CustomConfigurationFile> getCustomConfigurationFiles() {
         return null;
     }
 
