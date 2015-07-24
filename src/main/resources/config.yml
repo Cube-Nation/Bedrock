@@ -1,5 +1,13 @@
-service.confirm.timeout: 30
-service.pageablelist.timeout: 180
-service.pageablelist.next_amount: 10
-service.localization.locale: "de_DE"
-metrics.use: false
+service:
+  confirm:
+    timeout: 30
+  pageablelist:
+    timeout: 180
+    next_amount: 10
+  localization:
+    locale: "de_DE"
+    file_name: "permissions.yml"
+    no_role: "no_role"
+    role_key: "permission_roles_enabled"
+metrics:
+  use: false
