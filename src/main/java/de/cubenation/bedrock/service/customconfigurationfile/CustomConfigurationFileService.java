@@ -15,11 +15,8 @@ public class CustomConfigurationFileService implements ServiceInterface {
 
     private List<CustomConfigurationFile> ccf_list;
 
-    public CustomConfigurationFileService(BasePlugin plugin) {
-        this.setPlugin(plugin);
-    }
-
     public CustomConfigurationFileService(BasePlugin plugin, List<CustomConfigurationFile> list) throws ServiceInitException {
+        this.setPlugin(plugin);
         this.ccf_list = list;
         this.init();
     }
