@@ -1,43 +1,49 @@
 package de.cubenation.bedrock.service.customconfigurationfile;
 
-import java.util.HashMap;
+import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.exception.NoSuchRegisterableException;
+import de.cubenation.bedrock.registry.AbstractRegistry;
+import de.cubenation.bedrock.registry.RegistryInterface;
+import org.bukkit.command.CommandSender;
 
-import org.bukkit.configuration.file.YamlConfiguration;
+public class CustomConfigurationRegistry extends AbstractRegistry implements RegistryInterface{
 
-import de.cubenation.bedrock.exception.CustomConfigurationFileNotFoundException;
-
-public class CustomConfigurationRegistry {
-	
-	public static HashMap<String,CustomConfigurationFile> data		= new HashMap<String,CustomConfigurationFile>();
-
-	public static void register(CustomConfigurationFile c) {
-		CustomConfigurationRegistry.data.put((String) c.getFilename(), c);
-		c.load();
+    /*
+     * make explicit singleton
+     */
+    private static final class InstanceHolder {
+		static final CustomConfigurationRegistry INSTANCE = new CustomConfigurationRegistry();
 	}
 
-	public static boolean exists(String filename) {
-		return (CustomConfigurationRegistry.data.containsKey(filename));
-	}
-	
-	public static YamlConfiguration get(String filename) throws CustomConfigurationFileNotFoundException {
-		if (CustomConfigurationRegistry.exists(filename)) {
-			CustomConfigurationFile cc = (CustomConfigurationFile) CustomConfigurationRegistry.data.get(filename);
-			return cc.load();
-		}
-		throw new CustomConfigurationFileNotFoundException();
-	}
-	
-	public static CustomConfigurationFile getFileObject(String filename) throws CustomConfigurationFileNotFoundException {
-		if (CustomConfigurationRegistry.exists(filename)) {
-			return (CustomConfigurationFile) CustomConfigurationRegistry.data.get(filename);
-		}
-		throw new CustomConfigurationFileNotFoundException();
-	}
-	
-	public static void reload(String filename) throws CustomConfigurationFileNotFoundException {
-		if (CustomConfigurationRegistry.data.containsKey(filename)) {
-			CustomConfigurationRegistry.data.get(filename).reload();
-		}
-		throw new CustomConfigurationFileNotFoundException();
-	}
+	/*
+	 * private constructor
+	 */
+	private CustomConfigurationRegistry() { }
+
+     /*
+     * instance methods
+     */
+    public static CustomConfigurationRegistry getInstance () {
+        return InstanceHolder.INSTANCE;
+    }
+
+
+    public static void register(BasePlugin plugin, String ident, CommandSender sender, CustomConfigurationFile object) {
+        getInstance()._register(plugin, ident, sender, object);
+
+        object.load();
+    }
+
+    public static boolean exists(BasePlugin plugin, String ident, CommandSender sender) {
+        return getInstance()._exists(plugin, ident, sender);
+    }
+
+    public static CustomConfigurationFile get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
+        return (CustomConfigurationFile) getInstance()._get(plugin, ident, sender);
+    }
+
+    public static void remove(BasePlugin plugin, String ident, CommandSender sender) {
+        getInstance()._remove(plugin, ident, sender);
+    }
+
 }
