@@ -23,6 +23,9 @@ public class CustomConfigurationFileService implements ServiceInterface {
 
     @Override
     public void init() throws ServiceInitException {
+        if (this.ccf_list == null)
+            return;
+
         for (CustomConfigurationFile file : this.ccf_list) {
             this.register(file);
         }
