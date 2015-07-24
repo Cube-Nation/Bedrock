@@ -53,22 +53,25 @@ public abstract class PageableListService implements ServiceInterface, Registera
 	}
 
     @SuppressWarnings("unused")
-	public List<PageableListStorable> next() {
-		List<PageableListStorable> list = this.next(this.next, this.page);
-		this.page++;
-		return list;
-	}
-
-    @SuppressWarnings("unused")
-    public List<PageableListStorable> next(int page) {
-        return this.next(this.next, page);
+    public List<PageableListStorable> getPage(int page) {
+        return this.getPage(this.next, page);
     }
 
-	public List<PageableListStorable> next(int next, int page) {
+    @SuppressWarnings("unused")
+    public int getPages() {
+        return (int) Math.round(this.storage.size() / this.next + 0.5);
+    }
+
+    public int getPageSize(int page) {
+		if (page == 0) page = 1;
+        return this.size() % ((page - 1 ) * this.next);
+    }
+
+	public List<PageableListStorable> getPage(int next, int page) {
 		List<PageableListStorable> list = new ArrayList<>();
 
 		int start 	= (page - 1) * next;
-		int end		= start + next - 1;
+		int end 	= start + this.getPageSize(page) - 1;
 
 		for (int i = start; i <= end; i++) {
 			list.add(this.storage.get(i));

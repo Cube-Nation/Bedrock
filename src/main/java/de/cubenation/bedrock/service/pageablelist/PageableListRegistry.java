@@ -35,7 +35,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
     }
 
 
-    public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, PageableListServiceInterface object) {
+    public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, PageableListService object) {
         getInstance()._register(plugin, ident, sender, object);
 
         Bukkit.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
@@ -50,8 +50,8 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
         return getInstance()._exists(plugin, ident, sender);
     }
 
-    public PageableListServiceInterface get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
-        return (PageableListServiceInterface) getInstance()._get(plugin, ident, sender);
+    public PageableListService get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
+        return (PageableListService) getInstance()._get(plugin, ident, sender);
     }
 
     public void remove(BasePlugin plugin, String ident, CommandSender sender) {
