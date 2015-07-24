@@ -10,29 +10,42 @@
     <name>Bedrock</name>
 
     <repositories>
+
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
+
         <repository>
             <id>de.cube-nation.nexus.public</id>
             <url>http://nexus.cube-nation.de/content/groups/public/</url>
         </repository>
+
         <repository>
             <id>shortbyte</id>
             <url>http://repo.shortbyte.de/content/repositories/minecraft/</url>
         </repository>
+
+        <repository>
+            <id>mcstats.releases</id>
+            <name>mcstats.org releases</name>
+            <url>http://repo.mcstats.org/content/repositories/releases/</url>
+        </repository>
+
     </repositories>
 
     <distributionManagement>
+
         <repository>
             <id>de.cube-nation.nexus.release</id>
             <url>http://nexus.cube-nation.de/content/repositories/releases</url>
         </repository>
+
         <snapshotRepository>
             <id>de.cube-nation.nexus.snapshot</id>
             <url>http://nexus.cube-nation.de/content/repositories/snapshots</url>
         </snapshotRepository>
+
     </distributionManagement>
 
     <build>
@@ -67,6 +80,12 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.7-R0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mcstats.bukkit</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R6</version>
         </dependency>
 
     </dependencies>
