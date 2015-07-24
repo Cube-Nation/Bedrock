@@ -5,6 +5,8 @@ package de.cubenation.bedrock.helper;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.helper
  */
+
+@Deprecated
 public class Const {
 
 
