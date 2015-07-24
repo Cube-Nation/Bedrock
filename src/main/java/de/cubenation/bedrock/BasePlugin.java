@@ -10,7 +10,7 @@ import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.localization.Locale;
-import de.cubenation.bedrock.service.localization.LocalizationServiceInterface;
+import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.permission.PermissionServiceInterface;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -208,7 +208,7 @@ public abstract class BasePlugin extends JavaPlugin {
         // register localization service
         this.serviceManager.registerService(
                 "localization",
-                new LocalizationServiceInterface(this, new Locale(this, this.getConfig().getString("locale")))
+                new LocalizationService(this, new Locale(this, this.getConfig().getString("service.localization.locale")))
         );
 
         // register custom configuration file service
@@ -245,7 +245,7 @@ public abstract class BasePlugin extends JavaPlugin {
         return null;
     }
 
-    //FIXME unused?
+    @SuppressWarnings("unused")
     public void setExplicitPermissionPrefix(String explicitPermissionPrefix) {
         this.explicitPermissionPrefix = explicitPermissionPrefix;
     }
@@ -261,9 +261,9 @@ public abstract class BasePlugin extends JavaPlugin {
     /*
      * Localization Service
      */
-    public LocalizationServiceInterface getLocalizationService() {
+    public LocalizationService getLocalizationService() {
         try {
-            return (LocalizationServiceInterface) this.getService("localization");
+            return (LocalizationService) this.getService("localization");
         } catch (UnknownServiceException e) {
             e.printStackTrace();
         }
@@ -282,7 +282,8 @@ public abstract class BasePlugin extends JavaPlugin {
         }
         return null;
     }
-    
+
+    @SuppressWarnings("unused")
     public YamlConfiguration getCustomConfigurationFile(String filename) throws NoSuchRegisterableException {
         return this.getCustomConfigurationFileService().get(filename);
     }

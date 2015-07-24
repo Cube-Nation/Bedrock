@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LocalizationServiceInterface implements ServiceInterface {
+public class LocalizationService implements ServiceInterface {
 
     private BasePlugin plugin;
 
@@ -21,7 +21,7 @@ public class LocalizationServiceInterface implements ServiceInterface {
 
     private YamlConfiguration data;
 
-    public LocalizationServiceInterface(BasePlugin plugin, Locale locale) throws ServiceInitException {
+    public LocalizationService(BasePlugin plugin, Locale locale) throws ServiceInitException {
         this.setPlugin(plugin);
         this.setLocale(locale);
 
