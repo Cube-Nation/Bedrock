@@ -3,7 +3,7 @@ package de.cubenation.bedrock.command.permission;
 import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.service.permission.PermissionService;
+import de.cubenation.bedrock.service.permission.PermissionServiceInterface;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -31,13 +31,10 @@ public class PermissionListCommand extends SubCommand {
     @Override
     @SuppressWarnings("unchecked")
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
-        PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
+        PermissionServiceInterface permissionService = getCommandManager().getPlugin().getPermissionService();
         if (permissionService != null) {
 
-
-
             ChatColor sec = getCommandManager().getPlugin().getSecondaryColor();
-
             sender.sendMessage(getCommandManager().getPlugin().getMessagePrefix() + " All Permissions");
 
             HashMap<String, ArrayList<String>> permissionDump = permissionService.getPermissionRoleDump();
