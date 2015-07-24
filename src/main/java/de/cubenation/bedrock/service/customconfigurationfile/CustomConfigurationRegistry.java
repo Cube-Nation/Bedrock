@@ -21,8 +21,8 @@ public class CustomConfigurationRegistry extends AbstractRegistry implements Reg
 	private CustomConfigurationRegistry() { }
 
      /*
-     * instance methods
-     */
+      * instance methods
+      */
     public static CustomConfigurationRegistry getInstance () {
         return InstanceHolder.INSTANCE;
     }

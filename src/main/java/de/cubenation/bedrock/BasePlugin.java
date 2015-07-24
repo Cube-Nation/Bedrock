@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.UnknownServiceException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,7 +50,7 @@ public abstract class BasePlugin extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        setupConfig();
+        this.setupConfig();
 
         try {
             this.onPreEnable();
@@ -94,7 +95,7 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     protected void enableMetrics() {
         if (!this.getConfig().getBoolean("metrics.use")) {
-            this.getLogger().info(ChatColor.stripColor(this.getMessagePrefix()) + "Disabling metrics");
+            this.getLogger().warning("Disabling metrics");
             return;
         }
 
@@ -102,7 +103,7 @@ public abstract class BasePlugin extends JavaPlugin {
             Metrics metrics = new Metrics(this);
             metrics.start();
         } catch (IOException e) {
-            this.getLogger().info(ChatColor.stripColor(this.getMessagePrefix()) + "Failed to submit metrics");
+            this.getLogger().warning("Failed to submit metrics");
         }
     }
 
@@ -110,21 +111,19 @@ public abstract class BasePlugin extends JavaPlugin {
      * Setup Plugin Configuration
      */
     private void setupConfig() {
-        if (getResource("config.yml") == null) {
-            log(Level.INFO, "Save default config");
-            try {
-                saveDefaultConfig();
-            } catch (IllegalArgumentException e) {
-                File file = new File(
-                        this.getDataFolder().getAbsolutePath() +
-                                java.lang.System.getProperty("file.separator") +
-                                "config.yml");
-                try {
-                    new YamlConfiguration().save(file.getAbsolutePath());
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+        try {
+            if (!getDataFolder().exists()) {
+                getDataFolder().mkdirs();
             }
+            File file = new File(getDataFolder(), "config.yml");
+            if (!file.exists()) {
+                log(Level.INFO, "config.yml not found, creating!");
+                saveDefaultConfig();
+            } else {
+                //getLogger().info("config.yml found, loading!");
+            }
+        } catch (Exception e) {
+            this.disable(e);
         }
     }
 
@@ -205,21 +204,29 @@ public abstract class BasePlugin extends JavaPlugin {
            );
         }
 
-        // register localization service
-        this.serviceManager.registerService(
-                "localization",
-                new LocalizationService(this, new Locale(this, this.getConfig().getString("service.localization.locale")))
-        );
 
         // register custom configuration file service
-        CustomConfigurationFileService ccf_service = (CustomConfigurationFileService) this.serviceManager.registerService(
+        List<CustomConfigurationFile> ccfiles = null;
+        try {
+            ccfiles = this.getCustomConfigurationFiles();
+        } catch (IOException e) {
+            this.disable(e);
+        }
+
+        this.serviceManager.registerService(
                 "customconfigurationfile",
-                new CustomConfigurationFileService(this)
+                new CustomConfigurationFileService(this, ccfiles)
         );
 
-        for (CustomConfigurationFile file : getCustomConfigurationFiles()) {
-            ccf_service.register(file);
-        }
+
+        // register localization service
+        // this needs to be instanciated _after_ the custom configuration file service
+        // because a locale file is a custom configuration file
+        Locale locale = new Locale(this, this.getConfig().getString("service.localization.locale"));
+        this.serviceManager.registerService(
+                "localization",
+                new LocalizationService(this, locale)
+        );
     }
 
     @SuppressWarnings("unused")
@@ -288,7 +295,7 @@ public abstract class BasePlugin extends JavaPlugin {
         return this.getCustomConfigurationFileService().get(filename);
     }
     
-    public abstract ArrayList<CustomConfigurationFile> getCustomConfigurationFiles();
+    public abstract List<CustomConfigurationFile> getCustomConfigurationFiles() throws IOException;
 
 
 

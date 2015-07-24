@@ -13,22 +13,31 @@ public class CustomConfigurationFileService implements ServiceInterface {
 
     private BasePlugin plugin;
 
+    private List<CustomConfigurationFile> ccf_list;
+
     public CustomConfigurationFileService(BasePlugin plugin) {
         this.setPlugin(plugin);
     }
 
-    public CustomConfigurationFileService(BasePlugin plugin, List<CustomConfigurationFile> list) {
-        // FIXME: tdb (init)
+    public CustomConfigurationFileService(BasePlugin plugin, List<CustomConfigurationFile> list) throws ServiceInitException {
+        this.ccf_list = list;
+        this.init();
     }
 
     @Override
     public void init() throws ServiceInitException {
-
+        for (CustomConfigurationFile file : this.ccf_list) {
+            this.register(file);
+        }
     }
 
     @Override
     public void reload() throws ServiceReloadException {
-
+        try {
+            this.init();
+        } catch (ServiceInitException e) {
+            throw new ServiceReloadException(e.getMessage());
+        }
     }
 
     public void register(CustomConfigurationFile file) {

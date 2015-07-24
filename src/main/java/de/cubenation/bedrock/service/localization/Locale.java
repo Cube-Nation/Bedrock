@@ -10,15 +10,11 @@ public class Locale {
 
 	private String locale_path		= "locale";	
 	
-	public Locale(BasePlugin plugin) {
-		this(plugin, null);
-	}
-	
 	public Locale(BasePlugin plugin, String locale) {
 		this.setPlugin(plugin);
 		
 		if (locale == null) {
-			locale = this.getPlugin().getConfig().getString("locale");
+			locale = this.getPlugin().getConfig().getString("service.localization.locale");
 		}
 		
 		this.setLocale(locale);
