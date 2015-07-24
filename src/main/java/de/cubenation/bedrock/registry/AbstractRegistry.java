@@ -18,12 +18,12 @@ public abstract class AbstractRegistry {
 
     protected static String getRegistryIdentifier(final BasePlugin plugin, final String ident, final CommandSender sender) {
         ArrayList<String> list = new ArrayList<String>() {{
-            add(plugin.getName());
+            add(plugin.getDescription().getName());
             add(ident);
-            if (sender != null)
+
+            if(sender != null)
                 add(sender.getName());
         }};
-
         return StringUtils.join(list, "|");
     }
 
@@ -32,6 +32,9 @@ public abstract class AbstractRegistry {
      * register object
      */
     public void _register(BasePlugin plugin, String ident, CommandSender sender, Registerable object) {
+        //System.out.printf("registering in plugin %s", getRegistryIdentifier(plugin, ident, sender));
+        // locale files: Bedrock|locale/de_DE.yml
+
         if (!_exists(plugin, ident, sender))
             registry.put(getRegistryIdentifier(plugin, ident, sender), object);
     }
