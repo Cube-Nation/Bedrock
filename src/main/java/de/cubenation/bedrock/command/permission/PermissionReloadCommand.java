@@ -3,6 +3,7 @@ package de.cubenation.bedrock.command.permission;
 import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.exception.ServiceReloadException;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -26,7 +27,12 @@ public class PermissionReloadCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
-        getCommandManager().getPlugin().getPermissionService().reloadPermissions();
+        try {
+            getCommandManager().getPlugin().getPermissionService().reload();
+        } catch (ServiceReloadException e) {
+            e.printStackTrace();
+            // FIXME: do something useful here
+        }
         sender.sendMessage(getCommandManager().getPlugin().getMessagePrefix() + " Permission reload complete.");
     }
 
