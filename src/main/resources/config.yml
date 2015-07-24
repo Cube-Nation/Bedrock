@@ -5,6 +5,7 @@ service:
     timeout: 180
     next_amount: 10
   localization:
+    locale_dir: "locale"
     locale: "de_DE"
     file_name: "permissions.yml"
     no_role: "no_role"
