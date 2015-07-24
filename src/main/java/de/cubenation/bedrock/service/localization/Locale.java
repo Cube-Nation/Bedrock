@@ -1,4 +1,4 @@
-package de.cubenation.bedrock.localization;
+package de.cubenation.bedrock.service.localization;
 
 import de.cubenation.bedrock.BasePlugin;
 
@@ -70,7 +70,4 @@ public class Locale {
 		this.locale_path = locale_path;
 	}
 	
-	
-	
 }
-
