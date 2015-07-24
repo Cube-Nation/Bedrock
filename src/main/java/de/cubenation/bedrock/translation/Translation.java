@@ -2,13 +2,13 @@ package de.cubenation.bedrock.translation;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
-import de.cubenation.bedrock.service.localization.LocalizationServiceInterface;
+import de.cubenation.bedrock.service.localization.LocalizationService;
 
 public class Translation {
 
     private final BasePlugin plugin;
 
-    private final LocalizationServiceInterface service;
+    private final LocalizationService service;
 
     private String locale_ident;
 
