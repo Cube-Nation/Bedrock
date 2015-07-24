@@ -9,7 +9,6 @@ import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
-import de.cubenation.bedrock.service.localization.Locale;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.permission.PermissionServiceInterface;
 import net.md_5.bungee.api.ChatColor;
@@ -222,10 +221,9 @@ public abstract class BasePlugin extends JavaPlugin {
         // register localization service
         // this needs to be instanciated _after_ the custom configuration file service
         // because a locale file is a custom configuration file
-        Locale locale = new Locale(this, this.getConfig().getString("service.localization.locale"));
         this.serviceManager.registerService(
                 "localization",
-                new LocalizationService(this, locale)
+                new LocalizationService(this, this.getConfig().getString("service.localization.locale"))
         );
     }
 
