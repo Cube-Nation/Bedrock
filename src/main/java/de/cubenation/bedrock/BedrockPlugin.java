@@ -1,8 +1,10 @@
 package de.cubenation.bedrock;
 
 import de.cubenation.bedrock.command.CommandManager;
+import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -32,8 +34,10 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public ArrayList<CustomConfigurationFile> getCustomConfigurationFiles() {
-        return null;
+    public ArrayList<CustomConfigurationFile> getCustomConfigurationFiles() throws IOException {
+        return new ArrayList<CustomConfigurationFile>() {{
+            add(new de_DE(BedrockPlugin.getInstance()));
+        }};
     }
 
     @Override
