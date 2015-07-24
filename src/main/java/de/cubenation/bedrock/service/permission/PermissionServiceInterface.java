@@ -1,7 +1,10 @@
 package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.exception.ServiceInitException;
+import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.helper.Const;
+import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -16,25 +19,62 @@ import java.util.logging.Level;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.service.permission
  */
-public class PermissionService {
+public class PermissionServiceInterface implements ServiceInterface {
 
     private final BasePlugin plugin;
 
     private final File permissionsFile;
 
-    private Boolean activePermissionService = true;
+    private Boolean activePermissionService                 = true;
 
-    ArrayList<String> plainOldPermissions = new ArrayList<>();
+    ArrayList<String> plainOldPermissions                   = new ArrayList<>();
 
-    HashMap<String, String> roledPermissions = new HashMap<>();
+    HashMap<String, String> roledPermissions                = new HashMap<>();
 
-    HashMap<String, ArrayList<String>> permissionRoleDump = new HashMap<>();
+    HashMap<String, ArrayList<String>> permissionRoleDump   = new HashMap<>();
 
-    public PermissionService(BasePlugin plugin) {
+
+    public PermissionServiceInterface(BasePlugin plugin) throws ServiceInitException {
         this.plugin = plugin;
         permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), Const.PERMISSIONS_FILE_NAME);
+
+        this.init();
+
+        try {
+            this.reload();
+        } catch (ServiceReloadException e) {
+            throw new ServiceInitException(e.getMessage());
+        }
     }
 
+    @Override
+    public void init() throws ServiceInitException {
+        // check if file is writeable
+        if (!permissionsFile.canWrite()) {
+            throw new ServiceInitException("Cannot write to file " + permissionsFile.getName());
+        }
+    }
+
+
+    @Override
+    public void reload() throws ServiceReloadException {
+        if (plugin.getConfig().get(Const.PERMISSION_ROLE_KEY) == null) {
+            plugin.getConfig().set(Const.PERMISSION_ROLE_KEY, activePermissionService);
+            plugin.saveConfig();
+        }
+        plugin.reloadConfig();
+        activePermissionService = plugin.getConfig().getBoolean(Const.PERMISSION_ROLE_KEY);
+
+
+        if (activePermissionService) {
+            writePermission();
+            loadPermission();
+        }
+    }
+
+    /*
+     * Write permissions to file
+     */
     @SuppressWarnings("unchecked")
     private void writePermission() {
         plugin.log(Level.INFO, "Write default Permissions!");
@@ -110,21 +150,6 @@ public class PermissionService {
 
     }
 
-    public void reloadPermissions() {
-        if (plugin.getConfig().get(Const.PERMISSION_ROLE_KEY) == null) {
-            plugin.getConfig().set(Const.PERMISSION_ROLE_KEY, activePermissionService);
-            plugin.saveConfig();
-        }
-        plugin.reloadConfig();
-        activePermissionService = plugin.getConfig().getBoolean(Const.PERMISSION_ROLE_KEY);
-
-
-        if (activePermissionService) {
-            writePermission();
-            loadPermission();
-        }
-    }
-
 
     public String getPermissionWithRole(String permission) {
 
@@ -144,6 +169,8 @@ public class PermissionService {
         }
     }
 
+
+    @SuppressWarnings("unused")
     public Boolean getActivePermissionService() {
         return activePermissionService;
     }
@@ -151,10 +178,5 @@ public class PermissionService {
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
         return permissionRoleDump;
     }
-
-
-    //TODO: Error Handling
-    // File corrupted?
-    // No R/W access?
 
 }
