@@ -18,9 +18,11 @@ public class ServiceManager {
         this.plugin = plugin;
     }
 
-    public void registerService(String name, ServiceInterface service) throws ServiceInitException {
+    public ServiceInterface registerService(String name, ServiceInterface service) throws ServiceInitException {
         this.services.put(name, service);
         this.services.get(name).init();
+
+        return this.services.get(name);
     }
 
     public ServiceInterface getService(String name) throws UnknownServiceException {
