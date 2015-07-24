@@ -2,13 +2,14 @@ package de.cubenation.bedrock.service.confirm;
 
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.TimeoutException;
+import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Date;
 import java.util.HashMap;
 
-public abstract class ConfirmService implements ConfirmInterface {
+public abstract class ConfirmServiceInterface implements ServiceInterface, ConfirmInterface {
 
     private int timeout;
 
@@ -17,19 +18,19 @@ public abstract class ConfirmService implements ConfirmInterface {
     protected BukkitTask task;
 
     @SuppressWarnings("rawtypes")
-    private HashMap<String, ConfirmStorable> storage	= new HashMap<>();
+    private HashMap<String, ConfirmStorable> storage;
 
     /*
      * constructors
      */
-    public ConfirmService() {
+    public ConfirmServiceInterface() {
         this(BedrockPlugin.getInstance().getConfig().getInt("service.confirm.timeout"));
     }
 
-    public ConfirmService(int timeout) {
+    public ConfirmServiceInterface(int timeout) {
         this.setTimeout(timeout);
 
-        final ConfirmService csi = this;
+        final ConfirmServiceInterface csi = this;
         // create task with timeout
         // this task needs to be canceled when call() is executed via task.cancel();
         task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), new Runnable() {
@@ -40,6 +41,17 @@ public abstract class ConfirmService implements ConfirmInterface {
             }
 
         }, (long) this.getTimeout() * 20L);
+    }
+
+
+    @Override
+    public void init() {
+        this.storage = new HashMap<>();
+    }
+
+    @Override
+    public void reload() {
+        this.init();
     }
 
     /*
