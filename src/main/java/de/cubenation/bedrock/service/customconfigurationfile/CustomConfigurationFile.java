@@ -1,15 +1,16 @@
 package de.cubenation.bedrock.service.customconfigurationfile;
 
+import de.cubenation.bedrock.registry.Registerable;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
-
-public abstract class CustomConfigurationFile  {
+public abstract class CustomConfigurationFile implements Registerable {
 
 	private String filename							= null;
 	
