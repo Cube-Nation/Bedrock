@@ -1,13 +1,14 @@
 package de.cubenation.bedrock.service.localization;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.*;
 import de.cubenation.bedrock.service.ServiceInterface;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,13 +16,13 @@ public class LocalizationService implements ServiceInterface {
 
     private BasePlugin plugin;
 
-    private Locale locale;
+    private String locale;
 
     private String locale_file;
 
     private YamlConfiguration data;
 
-    public LocalizationService(BasePlugin plugin, Locale locale) throws ServiceInitException {
+    public LocalizationService(BasePlugin plugin, String locale) throws ServiceInitException {
         this.setPlugin(plugin);
         this.setLocale(locale);
 
@@ -63,11 +64,11 @@ public class LocalizationService implements ServiceInterface {
     /*
      * Locale Getter/Setter
      */
-    public Locale getLocale() {
+    public String getLocale() {
         return locale;
     }
 
-    public void setLocale(Locale locale) {
+    public void setLocale(String locale) {
         this.locale = locale;
     }
 
@@ -85,16 +86,27 @@ public class LocalizationService implements ServiceInterface {
 
 
     private void loadLocaleFile() throws LocalizationFileNotFoundException {
+        // check if there are any locale files
+        String[] language_files = {
+                this.getLocale(),
+                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")
+        };
+
+        if (language_files == null) {
+            this.getPlugin().log(Level.WARNING, "No locale file(s) defined");
+            return;
+        }
+
         YamlConfiguration yc = null;
-        String[] language_files = {this.getLocale().getLocale(), this.getLocale().getDefaultLocale()};
 
         for (String file : language_files) {
-            String locale_file = this.getLocale().getLocalePath() +
+            String locale_file =
+                    BedrockPlugin.getInstance().getConfig().getString("service.localization.locale_dir") +
                     java.lang.System.getProperty("file.separator") +
                     file + ".yml";
+
             try {
-                CustomConfigurationFile ccrfile = CustomConfigurationRegistry.get(this.plugin, locale_file, null);
-                yc = ccrfile.load();
+                yc = CustomConfigurationRegistry.get(this.plugin, locale_file, null).load();
             } catch (NoSuchRegisterableException e) {
                 continue;
             }
@@ -110,6 +122,7 @@ public class LocalizationService implements ServiceInterface {
 
         this.data = yc;
     }
+
 
     public String getTranslation(String ident, String[] args) throws LocalizationNotFoundException {
         String s;
