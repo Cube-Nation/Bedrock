@@ -1,3 +1,5 @@
 service.confirm.timeout: 30
 service.pageablelist.timeout: 180
 service.pageablelist.next_amount: 10
+service.localization.locale: "de_DE"
+metrics.use: false
