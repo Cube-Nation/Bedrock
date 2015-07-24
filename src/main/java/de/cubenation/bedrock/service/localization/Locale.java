@@ -19,7 +19,6 @@ public class Locale {
 		
 		this.setLocale(locale);
 	}
-	
 	/**
 	 * @return the plugin
 	 */
