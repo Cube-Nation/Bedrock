@@ -5,9 +5,11 @@ import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
-public abstract class VersionCommand extends SubCommand {
+import java.util.LinkedHashMap;
 
-    public VersionCommand(String command, String[] help, String permission) {
+public class VersionCommand extends SubCommand {
+
+    public VersionCommand() {
         super(
                 new String[]{ "version", "v" },
                 new String[]{ "help.version" },
@@ -28,6 +30,11 @@ public abstract class VersionCommand extends SubCommand {
         ).getTranslation();
 
         sender.sendMessage(t);
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getArguments() {
+        return null;
     }
 
 }
