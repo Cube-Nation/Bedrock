@@ -12,8 +12,6 @@ public abstract class PageableListService implements ServiceInterface, Registera
 
     private int next = 10;
 
-    private int page = 1;
-
     private List<PageableListStorable> storage;
 
     @SuppressWarnings("unused")
@@ -63,7 +61,14 @@ public abstract class PageableListService implements ServiceInterface, Registera
     }
 
     public int getPageSize(int page) {
-        if (page == 0) page = 1;
+        if (page == 0) {
+            if (size() > this.next) {
+                return this.next;
+            } else {
+                return this.size();
+            }
+        }
+
         return this.size() % ((page - 1) * this.next);
     }
 
@@ -85,10 +90,6 @@ public abstract class PageableListService implements ServiceInterface, Registera
     }
 
     public boolean isEmpty() {
-        if (storage == null) {
-            return true;
-        }
-
-        return storage.isEmpty();
+        return storage == null || storage.isEmpty();
     }
 }
