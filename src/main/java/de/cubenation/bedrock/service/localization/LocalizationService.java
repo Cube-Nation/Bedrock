@@ -2,13 +2,16 @@ package de.cubenation.bedrock.service.localization;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
-import de.cubenation.bedrock.exception.*;
+import de.cubenation.bedrock.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.exception.NoSuchRegisterableException;
+import de.cubenation.bedrock.exception.ServiceInitException;
+import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.logging.Level;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,23 +21,19 @@ public class LocalizationService implements ServiceInterface {
 
     private String locale;
 
-    private String locale_file;
-
     private YamlConfiguration data;
 
     public LocalizationService(BasePlugin plugin, String locale) throws ServiceInitException {
         this.setPlugin(plugin);
         this.setLocale(locale);
-
-        this.init();
     }
 
     @Override
     public void init() throws ServiceInitException {
         // determine locale file and check if it exists
         try {
-            this.loadLocaleFile();
-        } catch (LocalizationFileNotFoundException e) {
+            this.loadLocaleFiles();
+        } catch (IOException e) {
             throw new ServiceInitException(e.getMessage());
         }
     }
@@ -73,54 +72,39 @@ public class LocalizationService implements ServiceInterface {
     }
 
 
-    /*
-     * Locale_file Getter/Setter
-     */
-    public String getLocale_file() {
-        return locale_file;
-    }
-
-    public void setLocale_file(String locale_file) {
-        this.locale_file = locale_file;
-    }
-
-
-    private void loadLocaleFile() throws LocalizationFileNotFoundException {
+    private void loadLocaleFiles() throws IOException {
         // check if there are any locale files
         String[] language_files = {
                 this.getLocale(),
                 BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")
         };
 
-        if (language_files == null) {
-            this.getPlugin().log(Level.WARNING, "No locale file(s) defined");
+        YamlConfiguration yc = null;
+        for (String file : language_files) {
+            try {
+                yc = this.loadLocaleFile(file);
+            } catch (NoSuchRegisterableException e) {
+                yc = null;
+            }
+        }
+
+        if (yc != null) {
+            this.data = yc;
             return;
         }
 
-        YamlConfiguration yc = null;
+        // create a default locale file
+        new DefaultLocale(this.getPlugin());
+    }
 
-        for (String file : language_files) {
-            String locale_file =
-                    BedrockPlugin.getInstance().getConfig().getString("service.localization.locale_dir") +
-                    java.lang.System.getProperty("file.separator") +
-                    file + ".yml";
 
-            try {
-                yc = CustomConfigurationRegistry.get(this.plugin, locale_file, null).load();
-            } catch (NoSuchRegisterableException e) {
-                continue;
-            }
+    private YamlConfiguration loadLocaleFile(String file) throws NoSuchRegisterableException {
+        String locale_file =
+                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale_dir") +
+                        java.lang.System.getProperty("file.separator") +
+                        file + ".yml";
 
-            if (yc != null) {
-                this.setLocale_file(file);
-                break;
-            }
-        }
-
-        if (yc == null)
-            throw new LocalizationFileNotFoundException("Could not find a suitable locale file");
-
-        this.data = yc;
+        return CustomConfigurationRegistry.get(this.plugin, locale_file, null).load();
     }
 
 
