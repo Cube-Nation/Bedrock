@@ -19,7 +19,7 @@ import java.util.logging.Level;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.service.permission
  */
-public class PermissionServiceInterface implements ServiceInterface {
+public class PermissionService implements ServiceInterface {
 
     private final BasePlugin plugin;
 
@@ -34,17 +34,9 @@ public class PermissionServiceInterface implements ServiceInterface {
     HashMap<String, ArrayList<String>> permissionRoleDump   = new HashMap<>();
 
 
-    public PermissionServiceInterface(BasePlugin plugin) throws ServiceInitException {
+    public PermissionService(BasePlugin plugin) {
         this.plugin = plugin;
         permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), Const.PERMISSIONS_FILE_NAME);
-
-        this.init();
-
-        try {
-            this.reload();
-        } catch (ServiceReloadException e) {
-            throw new ServiceInitException(e.getMessage());
-        }
     }
 
     @Override
