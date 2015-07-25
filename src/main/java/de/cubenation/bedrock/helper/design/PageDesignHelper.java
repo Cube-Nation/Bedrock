@@ -93,19 +93,7 @@ public class PageDesignHelper {
         if (totalPages <= NAVIGATIONSIZE) {
             //Display all, no formating logic needed.
             for (int i = 1; i <= totalPages; i++) {
-
-                pagination.append(i + "").color(secondary);
-                if (i == page) {
-                    pagination.bold(true);
-                    pagination.underlined(true);
-                }
-
-                pagination.event(
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", i + "")));
-
-                if (i != totalPages) {
-                    pagination.append("|").color(flag);
-                }
+                addPageNumber(i, page, pageExecutionCmd, pagination, secondary, flag, i != totalPages);
             }
 
         } else {
@@ -122,6 +110,34 @@ public class PageDesignHelper {
         return pagination;
     }
 
+
+    private static boolean addPageNumber(int page,
+                                      int currentPage,
+                                         String pageExecutionCmd,
+                                      ComponentBuilder pagination,
+                                      ChatColor secondary,
+                                      ChatColor flag,
+                                      boolean hasNext) {
+
+        boolean isCurrent = false;
+
+        pagination.append(page + "").color(secondary);
+        if (page == currentPage) {
+            pagination.bold(true);
+            pagination.append("").reset();
+            isCurrent = true;
+        }
+
+        pagination.event(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", page + "")));
+
+        if (hasNext) {
+            pagination.append("|").color(flag);
+        }
+
+        return isCurrent;
+
+    }
 
     private static double getSteps(int start, int end) {
         return (end - start) / (NAVIGATIONSIZE);
