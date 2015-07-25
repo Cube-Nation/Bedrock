@@ -5,7 +5,7 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 
 public interface ServiceInterface {
 
-     void init() throws ServiceInitException;
+    void init() throws ServiceInitException;
 
     void reload() throws ServiceReloadException;
 
