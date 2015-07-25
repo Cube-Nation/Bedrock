@@ -1,15 +1,15 @@
 package de.cubenation.bedrock.service.localization;
 
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 public class DefaultLocale extends CustomConfigurationFile {
 
-    public DefaultLocale(JavaPlugin plugin) throws IOException {
+    public DefaultLocale(BasePlugin plugin) throws IOException {
         super(
                 plugin,
                     "locale" +
