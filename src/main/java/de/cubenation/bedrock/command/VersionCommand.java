@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.command;
 
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.translation.Translation;
@@ -24,7 +25,7 @@ public class VersionCommand extends SubCommand {
         String plugin_version   = this.plugin.getDescription().getVersion();
 
         String t = new Translation(
-                this.plugin,
+                BedrockPlugin.getInstance(),
                 "version",
                 new String[]{"plugin", plugin_name, "version", plugin_version}
         ).getTranslation();
