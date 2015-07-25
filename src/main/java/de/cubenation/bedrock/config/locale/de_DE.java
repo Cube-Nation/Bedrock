@@ -20,7 +20,7 @@ public class de_DE extends CustomConfigurationFile {
         HashMap<String,Object> data		= new HashMap<String,Object>();
 
 
-        data.put("version",                     "&PRIMARY&%plugin% &SECONDARY&v&PRIMARY&%version%");
+        data.put("version",                     "Version &PRIMARY&%version%");
 
         /*
          * Help messages

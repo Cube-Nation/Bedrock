@@ -20,15 +20,12 @@ public class VersionCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
-
-        String plugin_name      = this.plugin.getDescription().getName();
-        String plugin_version   = this.plugin.getDescription().getVersion();
-
-        String t = new Translation(
-                BedrockPlugin.getInstance(),
-                "version",
-                new String[]{"plugin", plugin_name, "version", plugin_version}
-        ).getTranslation();
+        String t = this.plugin.getMessagePrefix(this.plugin.getDescription().getName()) + " " +
+                new Translation(
+                        BedrockPlugin.getInstance(),
+                        "version",
+                        new String[]{ "version", this.plugin.getDescription().getVersion() }
+                ).getTranslation();
 
         sender.sendMessage(t);
     }
