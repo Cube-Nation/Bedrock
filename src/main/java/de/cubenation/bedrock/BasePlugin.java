@@ -10,7 +10,7 @@ import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
-import de.cubenation.bedrock.service.permission.PermissionServiceInterface;
+import de.cubenation.bedrock.service.permission.PermissionService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -199,7 +199,7 @@ public abstract class BasePlugin extends JavaPlugin {
         if (this.usePermissionService()) {
            this.serviceManager.registerService(
                    "permission",
-                   new PermissionServiceInterface(this)
+                   new PermissionService(this)
            );
         }
 
@@ -238,12 +238,12 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     public abstract Boolean usePermissionService();
 
-    public PermissionServiceInterface getPermissionService() {
+    public PermissionService getPermissionService() {
         if (!this.usePermissionService())
             return null;
 
         try {
-            return (PermissionServiceInterface) this.getService("permission");
+            return (PermissionService) this.getService("permission");
         } catch (UnknownServiceException e) {
             e.printStackTrace();
         }

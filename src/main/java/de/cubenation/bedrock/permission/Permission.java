@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.permission;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.service.permission.PermissionServiceInterface;
+import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
  */
 public class Permission {
 
-    private final PermissionServiceInterface permissionService;
+    private final PermissionService permissionService;
     private final BasePlugin plugin;
     //region Properties
     private String name;
