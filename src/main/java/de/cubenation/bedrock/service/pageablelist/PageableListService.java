@@ -60,8 +60,13 @@ public abstract class PageableListService implements ServiceInterface, Registera
         return (int) Math.round(this.storage.size() / this.next + 0.5);
     }
 
-    public int getPageSize(int page) {
-        if (page == 0) {
+    public int getPageSize(int page) throws IndexOutOfBoundsException {
+        if (page > this.getPages())
+            throw new IndexOutOfBoundsException("page " + page + " is greater than " + this.getPages());
+
+        if (page == 0) page = 1;
+
+        if (page == 1) {
             if (size() > this.next) {
                 return this.next;
             } else {
