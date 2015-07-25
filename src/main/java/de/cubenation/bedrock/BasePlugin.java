@@ -235,9 +235,7 @@ public abstract class BasePlugin extends JavaPlugin {
     /*
      * Permission Service
      */
-    public boolean usePermissionService() {
-        return this.getConfig().getBoolean("service.permission.use", false);
-    }
+    public abstract boolean usePermissionService();
 
     public PermissionService getPermissionService() {
         if (!this.usePermissionService())
