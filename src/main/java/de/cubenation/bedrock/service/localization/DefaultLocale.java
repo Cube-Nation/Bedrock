@@ -21,7 +21,7 @@ public class DefaultLocale extends CustomConfigurationFile {
     }
 
     public static HashMap<String,Object> data() {
-        return new HashMap<String,Object>();
+        return new HashMap<>();
     }
 
 }
