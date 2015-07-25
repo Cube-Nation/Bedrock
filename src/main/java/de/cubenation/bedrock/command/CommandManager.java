@@ -49,6 +49,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         if (plugin.usePermissionService()) {
             this.subCommands.add(new PermissionReloadCommand());
             this.subCommands.add(new PermissionListCommand());
+            this.subCommands.add(new ReloadCommand());
         }
 
         setCommandManager();
