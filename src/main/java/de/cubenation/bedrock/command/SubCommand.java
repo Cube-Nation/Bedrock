@@ -28,7 +28,7 @@ public abstract class SubCommand {
 
     private String permissionString;
 
-    protected BasePlugin plugin = this.getCommandManager().getPlugin();
+    protected BasePlugin plugin;
 
     //endregion
 
@@ -79,16 +79,9 @@ public abstract class SubCommand {
     }
 
     private void init(ArrayList<String[]> commands, String[] help, String permission) {
-        this.commands = commands;
-        this.permissionString = permission;
-
-        // assign help strings
-        List<String> help_strings = new ArrayList<>();
-        for (String h : help) {
-            help_strings.add(new Translation(this.plugin, h).getTranslation());
-        }
-
-        this.help = (String[]) help_strings.toArray();
+        this.commands           = commands;
+        this.permissionString   = permission;
+        this.help               = help;
     }
 
     //endregion
@@ -273,10 +266,24 @@ public abstract class SubCommand {
 
     public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
-        BasePlugin plugin = commandManager.getPlugin();
+        this.plugin = commandManager.getPlugin();
+
+        if (plugin == null) {
+            System.out.println("plugin is null - wtf?");
+            throw new RuntimeException("plugin must not be null");
+        }
+
         if (plugin != null) {
             this.permission = new Permission(permissionString, plugin);
         }
+
+        // assign help strings
+        List<String> help_strings = new ArrayList<>();
+        for (String h : this.help) {
+            help_strings.add(new Translation(this.plugin, h).getTranslation());
+        }
+
+        this.help = help_strings.toArray(new String[help_strings.size()]);
     }
 
     /**

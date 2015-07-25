@@ -42,9 +42,11 @@ public class PermissionService implements ServiceInterface {
     @Override
     public void init() throws ServiceInitException {
         // check if file is writeable
+        /*
         if (!permissionsFile.canWrite()) {
             throw new ServiceInitException("Cannot write to file " + permissionsFile.getName());
         }
+        */
     }
 
 
