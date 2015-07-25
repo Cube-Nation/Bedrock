@@ -1,4 +1,4 @@
-package de.cubenation.bedrock.helper;
+package de.cubenation.bedrock.helper.design;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.service.pageablelist.PageableListService;
@@ -19,7 +19,7 @@ import java.util.logging.Level;
  */
 public class PageDesignHelper {
 
-    private static final int NAVIGATIONSIZE = 6;
+    private static final int NAVIGATIONSIZE = 7;
 
     public static void pagination(BasePlugin plugin, PageableListService service, int page, String pageExecutionCmd, Player player) {
         // Can't show pages, cause its empty
@@ -63,37 +63,63 @@ public class PageDesignHelper {
         }
 
         // Display Navigation
-        ComponentBuilder navigation = new ComponentBuilder("");
-        if (page == 0) {
-            // No Prev available
-            navigation.append("<-Prev- ").color(primary).event(
-                    new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", (page - 1) + "")));
+
+        ComponentBuilder pagination = getPagination(plugin, page, service.getPages(), pageExecutionCmd);
+        if (pagination != null) {
+            player.spigot().sendMessage(pagination.create());
+        }
+    }
+
+
+    private static ComponentBuilder getPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd) {
+        if (totalPages == 1) {
+            // No Pagination needed
+            return null;
         }
 
-        double currentPage = 1;
-        double step = getSteps(1, service.getPages());
-        for (int i = 0; i < NAVIGATIONSIZE;i++) {
-            int p = (int) currentPage;
+        ChatColor primary = plugin.getPrimaryColor();
+        ChatColor secondary = plugin.getSecondaryColor();
+        ChatColor flag = plugin.getFlagColor();
 
-            navigation.append(" ");
-            navigation.append(p + "").color(secondary).event(
+        ComponentBuilder pagination = new ComponentBuilder("");
+        if (page > 1) {
+            // Prev available
+            pagination.append("<=Prev=").color(flag).event(
                     new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", (page - 1) + "")));
-            navigation.append(" ");
+            pagination.append("");
+        }
 
-            if (p != service.getPages()) {
-                navigation.append("|").color(flag);
+
+        if (totalPages <= NAVIGATIONSIZE) {
+            //Display all, no formating logic needed.
+            for (int i = 1; i <= totalPages; i++) {
+
+                pagination.append(i + "").color(secondary);
+                if (i == page) {
+                    pagination.bold(true);
+                    pagination.underlined(true);
+                }
+
+                pagination.event(
+                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", i + "")));
+
+                if (i != totalPages) {
+                    pagination.append("|").color(flag);
+                }
             }
 
-            currentPage += step;
+        } else {
+
         }
 
-        if (page < service.getPages()) {
-            // No Prev available
-            navigation.append(" -Next->").color(primary).event(
+
+        if (page < totalPages) {
+            // Next available
+            pagination.append(" ");
+            pagination.append(" -Next->").color(flag).event(
                     new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replaceAll("%page%", (page + 1) + "")));
         }
-
-        player.spigot().sendMessage(navigation.create());
+        return pagination;
     }
 
 
