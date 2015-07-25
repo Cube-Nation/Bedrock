@@ -4,6 +4,7 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
+import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
@@ -19,12 +20,15 @@ public abstract class SubCommand {
 
     private ArrayList<String[]> commands;
 
-    private String[] help;
+    private String[] help = new String[]{};
 
     private Permission permission;
 
     private CommandManager commandManager;
+
     private String permissionString;
+
+    protected BasePlugin plugin = this.getCommandManager().getPlugin();
 
     //endregion
 
@@ -43,6 +47,7 @@ public abstract class SubCommand {
         init(new ArrayList<String[]>() {{
             add(new String[]{command});
         }}, help, permission);
+
     }
 
     /**
@@ -75,9 +80,15 @@ public abstract class SubCommand {
 
     private void init(ArrayList<String[]> commands, String[] help, String permission) {
         this.commands = commands;
-        this.help = help;
         this.permissionString = permission;
 
+        // assign help strings
+        List<String> help_strings = new ArrayList<>();
+        for (String h : help) {
+            help_strings.add(new Translation(this.plugin, h).getTranslation());
+        }
+
+        this.help = (String[]) help_strings.toArray();
     }
 
     //endregion

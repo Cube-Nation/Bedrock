@@ -19,7 +19,14 @@ public class de_DE extends CustomConfigurationFile {
     private static HashMap<String,Object> data() {
         HashMap<String,Object> data		= new HashMap<String,Object>();
 
-        // data.put("path.key",                 "value");
+
+        data.put("version",                     "%plugin% v%version%");
+
+        /*
+         * Help messages
+         */
+        data.put("help.version",                "Zeigt die Version des Plugins an");
+
         return data;
     }
 
