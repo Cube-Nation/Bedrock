@@ -48,9 +48,9 @@ public class PageDesignHelper {
         ChatColor flag = plugin.getFlagColor();
 
 
-        ComponentBuilder header = new ComponentBuilder("=== ").color(flag)
+        ComponentBuilder header = new ComponentBuilder("====== ").color(flag)
                 .append(page + "/" + service.getPages()).color(primary)
-                .append(" ===").color(flag);
+                .append(" ======").color(flag);
         player.spigot().sendMessage(header.create());
 
 
@@ -92,6 +92,8 @@ public class PageDesignHelper {
             navigation.append(" -Next->").color(primary).event(
                     new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replaceAll("%page%", (page + 1) + "")));
         }
+
+        player.spigot().sendMessage(navigation.create());
     }
 
 

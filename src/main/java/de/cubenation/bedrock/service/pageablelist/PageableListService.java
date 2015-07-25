@@ -61,16 +61,20 @@ public abstract class PageableListService implements ServiceInterface, Registera
     }
 
     public int getPageSize(int page) throws IndexOutOfBoundsException {
-        if (page == 0)
-            page = 1;
 
-        if (page > this.getPages())
+        System.out.println("page " + page);
+        System.out.println("size " + size());
+        System.out.println("getPages " + getPages());
+
+        if (page > this.getPages()) {
             throw new IndexOutOfBoundsException("page " + page + " is greater than " + this.getPages());
+        }
 
-        if (page < this.getPages())
+        if (page < this.getPages()) {
             return this.next;
+        }
 
-        return this.size() % ((page - 1) * this.next);
+        return this.size() % (page * this.next);
     }
 
     public List<PageableListStorable> getPage(int next, int page) {
@@ -79,6 +83,7 @@ public abstract class PageableListService implements ServiceInterface, Registera
         int start = (page - 1) * next;
         int end = start + this.getPageSize(page) - 1;
 
+        //FIXME ArrayIndexOutOfBoundsException bei letzter Seite
         for (int i = start; i <= end; i++) {
             list.add(this.storage.get(i));
         }
