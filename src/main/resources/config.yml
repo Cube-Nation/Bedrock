@@ -8,6 +8,7 @@ service:
     locale_dir: "locale"
     locale: "de_DE"
   permission:
+    use: true
     file_name: "permissions.yml"
     no_role: "no_role"
     role_key: "permission_roles_enabled"
