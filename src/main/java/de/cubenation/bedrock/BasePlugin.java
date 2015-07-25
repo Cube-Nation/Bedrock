@@ -71,7 +71,6 @@ public abstract class BasePlugin extends JavaPlugin {
         this.initCommands();
 
         // after commands have been initialized, permissions need to be reloaded
-        // FIXME: really? pls check
         if (this.usePermissionService())
             try {
                 this.getPermissionService().reload();
