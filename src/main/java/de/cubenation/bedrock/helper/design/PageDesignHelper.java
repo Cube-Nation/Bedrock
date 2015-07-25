@@ -48,9 +48,9 @@ public class PageDesignHelper {
         ChatColor flag = plugin.getFlagColor();
 
 
-        ComponentBuilder header = new ComponentBuilder("====== ").color(flag)
+        ComponentBuilder header = new ComponentBuilder("======= ").color(flag)
                 .append(page + "/" + service.getPages()).color(primary)
-                .append(" ======").color(flag);
+                .append(" =======").color(flag);
         player.spigot().sendMessage(header.create());
 
 
@@ -84,10 +84,15 @@ public class PageDesignHelper {
         ComponentBuilder pagination = new ComponentBuilder("");
         if (page > 1) {
             // Prev available
-            pagination.append("<=Prev=").color(flag).event(
+            pagination.append("<=").color(flag).event(
                     new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", (page - 1) + "")));
-            pagination.append("");
+            pagination.append("Prev").color(secondary);
+            pagination.append("=").color(flag);
+        } else {
+            pagination.append("=======").color(flag);
         }
+
+        pagination.append(" ").reset();
 
 
         if (totalPages <= NAVIGATIONSIZE) {
@@ -101,11 +106,16 @@ public class PageDesignHelper {
         }
 
 
+        pagination.append(" ").reset();
+
         if (page < totalPages) {
             // Next available
-            pagination.append(" ");
-            pagination.append(" -Next->").color(flag).event(
+            pagination.append("=").color(flag).event(
                     new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replaceAll("%page%", (page + 1) + "")));
+            pagination.append("Next").color(secondary);
+            pagination.append("=>").color(flag);
+        } else {
+            pagination.append("=======").color(flag);
         }
         return pagination;
     }
