@@ -156,8 +156,12 @@ public abstract class BasePlugin extends JavaPlugin {
      * Logging
      */
     public String getMessagePrefix() {
+        return getMessagePrefix(this.getDescription().getName());
+    }
+
+    public String getMessagePrefix(String plugin) {
         return getFlagColor() + "[" +
-                getPrimaryColor() + this.getDescription().getName() +
+                getPrimaryColor() + plugin +
                 getFlagColor() + "]" +
                 ChatColor.RESET;
     }
