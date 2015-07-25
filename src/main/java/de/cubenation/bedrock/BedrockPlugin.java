@@ -41,7 +41,7 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public Boolean usePermissionService() {
+    public boolean usePermissionService() {
         return false;
     }
 }
