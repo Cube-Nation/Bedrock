@@ -23,7 +23,7 @@ public class LocalizationService implements ServiceInterface {
 
     private YamlConfiguration data;
 
-    public LocalizationService(BasePlugin plugin, String locale) throws ServiceInitException {
+    public LocalizationService(BasePlugin plugin, String locale) {
         this.setPlugin(plugin);
         this.setLocale(locale);
     }
