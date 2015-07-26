@@ -20,12 +20,18 @@ import java.util.LinkedHashMap;
 public class HelpCommand extends SubCommand {
 
     private final CommandManager commandManager;
+
     private String helpPrefix;
 
     public HelpCommand(CommandManager commandManager, String helpPrefix) {
-        super("help", new String[]{"Plugin help"}, null);
+        super(
+                "help",
+                new String[] { "help.plugin" },
+                null
+        );
+
         this.commandManager = commandManager;
-        this.helpPrefix = helpPrefix;
+        this.helpPrefix     = helpPrefix;
     }
 
     @Override
@@ -70,7 +76,8 @@ public class HelpCommand extends SubCommand {
             }
 
         } else if (isNumeric(args[0])) {
-            String message = "Zeige (irgendwann) Seite: " +  args[0] + " der Hilfe.";
+            // FIXME: use PageableListService
+            String message = "Zeige (irgendwann) Seite: " +  args[0].toString() + " der Hilfe.";
             MessageHelper.send(commandManager.getPlugin(), sender, message);
 
         } else {

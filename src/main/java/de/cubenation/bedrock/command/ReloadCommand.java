@@ -30,7 +30,7 @@ public class ReloadCommand extends SubCommand {
             MessageHelper.send(
                     getCommandManager().getPlugin(),
                     sender,
-                    new Translation(
+                    getCommandManager().getPlugin().getMessagePrefix() + " " + new Translation(
                             BedrockPlugin.getInstance(),
                             "reload.complete"
                     ).getTranslation()
@@ -40,7 +40,7 @@ public class ReloadCommand extends SubCommand {
             MessageHelper.send(
                     getCommandManager().getPlugin(),
                     sender,
-                    new Translation(
+                    getCommandManager().getPlugin().getMessagePrefix() + " " + new Translation(
                             BedrockPlugin.getInstance(),
                             "reload.failed"
                     ).getTranslation()

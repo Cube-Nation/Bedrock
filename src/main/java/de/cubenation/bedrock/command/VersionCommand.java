@@ -12,7 +12,7 @@ public class VersionCommand extends SubCommand {
 
     public VersionCommand() {
         super(
-                new String[]{ "version", "v" },
+                "version",
                 new String[]{ "help.version" },
                 "version"
         );
@@ -20,7 +20,7 @@ public class VersionCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
-        String t = this.plugin.getMessagePrefix(this.plugin.getDescription().getName()) + " " +
+        String t = this.plugin.getMessagePrefix() + " " +
                 new Translation(
                         BedrockPlugin.getInstance(),
                         "version",

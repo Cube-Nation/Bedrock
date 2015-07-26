@@ -34,11 +34,12 @@ public class PermissionReloadCommand extends SubCommand {
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
             getCommandManager().getPlugin().getPermissionService().reload();
+
         } catch (ServiceReloadException e) {
             MessageHelper.send(
                     getCommandManager().getPlugin(),
                     sender,
-                    new Translation(
+                    getCommandManager().getPlugin().getMessagePrefix() + " " + new Translation(
                             BedrockPlugin.getInstance(),
                             "permission.reload.failed"
                     ).getTranslation()
@@ -49,7 +50,7 @@ public class PermissionReloadCommand extends SubCommand {
         MessageHelper.send(
                 getCommandManager().getPlugin(),
                 sender,
-                new Translation(
+                getCommandManager().getPlugin().getMessagePrefix() + " " + new Translation(
                         BedrockPlugin.getInstance(),
                         "permission.reload.complete"
                 ).getTranslation()

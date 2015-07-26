@@ -55,24 +55,22 @@ public class PermissionListCommand extends SubCommand {
                 MessageHelper.send(
                         getCommandManager().getPlugin(),
                         sender,
-                        getCommandManager().getPlugin().getMessagePrefix() + " " +
-                                new Translation(
-                                        BedrockPlugin.getInstance(),
-                                        "permission.list.role",
-                                        new String[] { "role", entry.getKey().toString() }
-                                ).getTranslation()
+                        new Translation(
+                                BedrockPlugin.getInstance(),
+                                "permission.list.role",
+                                new String[] { "role", entry.getKey().toString() }
+                        ).getTranslation()
                 );
 
                 for (String perm : (ArrayList<String>) entry.getValue()) {
                     MessageHelper.send(
                             getCommandManager().getPlugin(),
                             sender,
-                            getCommandManager().getPlugin().getMessagePrefix() + " " +
-                                    new Translation(
-                                            BedrockPlugin.getInstance(),
-                                            "permission.list.permission",
-                                            new String[] { "permission", perm }
-                                    ).getTranslation()
+                            new Translation(
+                                    BedrockPlugin.getInstance(),
+                                    "permission.list.permission",
+                                    new String[] { "permission", perm }
+                            ).getTranslation()
                     );
 
                 } // for (permission)
@@ -84,11 +82,10 @@ public class PermissionListCommand extends SubCommand {
             MessageHelper.send(
                     getCommandManager().getPlugin(),
                     sender,
-                    getCommandManager().getPlugin().getMessagePrefix() + " " +
-                            new Translation(
-                                    BedrockPlugin.getInstance(),
-                                    "permission.no_permissions"
-                            ).getTranslation()
+                    new Translation(
+                            BedrockPlugin.getInstance(),
+                            "permission.no_permissions"
+                    ).getTranslation()
             );
 
         } // if

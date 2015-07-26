@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
@@ -280,7 +281,18 @@ public abstract class SubCommand {
         // assign help strings
         List<String> help_strings = new ArrayList<>();
         for (String h : this.help) {
-            help_strings.add(new Translation(this.plugin, h).getTranslation());
+
+            // FIXME: move this to Translation class
+
+            // a help message *should* come from the plugin that uses it, so we try to take it from there
+            String foreign_plugin_help = new Translation(this.plugin, h).getTranslation();
+            if (!foreign_plugin_help.equals("")) {
+                help_strings.add(foreign_plugin_help);
+                continue;
+            }
+
+            // should be a Bedrock built-in command, take it from Bedrocks' locale file
+            help_strings.add(new Translation(BedrockPlugin.getInstance(), h).getTranslation());
         }
 
         this.help = help_strings.toArray(new String[help_strings.size()]);
