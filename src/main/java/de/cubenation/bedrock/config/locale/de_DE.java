@@ -17,24 +17,32 @@ public class de_DE extends CustomConfigurationFile {
     }
 
     private static HashMap<String,Object> data() {
-        HashMap<String,Object> data		= new HashMap<String,Object>();
+        HashMap<String,Object> data		= new HashMap<>();
 
+        /*
+         * Generic Messages
+         */
         data.put("version",                     "Version &PRIMARY&%version%");
 
         data.put("reload.complete",             "Plugin neu geladen");
         data.put("reload.failed",               "Plugin konnte nicht neu geladen werden");
 
-        data.put("permission.list.header",      "&PRIMARY&Alle Berechtigungen:");
-        data.put("permission.list.role",        "&SECONDARY&%role%&WHITE&:");
-        data.put("permission.list.permission",  " - %permission%");
-        data.put("permission.no_permissions",   "Dieses Plugin nutzt keine Berechtigungen");
+        data.put("permission.list.header",      "&SECONDARY&Alle Berechtigungen:");
+        data.put("permission.list.role",        "&PRIMARY&%role%&WHITE&:");
+        data.put("permission.list.permission",  " - &FLAG&%permission%");
+        data.put("permission.no_permissions",   "&RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen");
 
         data.put("permission.reload.complete",  "Berechtigungen neu geladen");
         data.put("permission.reload.failed",    "Berechtigungen konnten nicht neu geladen werden");
 
+        data.put("permission.insufficient",     "&RED&Für diesen Befehl hast Du keine Berechtigung");
+
+        data.put("command.invalid",             "&RED&Ungültiger Befehl");
+
         /*
          * Help messages
          */
+        data.put("help.header",                 "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
         data.put("help.plugin",                 "Hilfe zu allen Plugin Befehlen");
         data.put("help.version",                "Zeigt die Version des Plugins an");
         data.put("help.reload",                 "Lädt das Plugin neu");
