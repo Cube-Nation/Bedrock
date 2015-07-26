@@ -1,6 +1,8 @@
 package de.cubenation.bedrock.helper;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -12,6 +14,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MessageHelper {
+
+    public static void commandExecutionError(BasePlugin plugin, CommandSender sender, Exception e) {
+        MessageHelper.send(plugin, sender, plugin.getMessagePrefix() + " " + e.getMessage());
+    }
+
+    public static void insufficientPermission(BasePlugin plugin, CommandSender sender) {
+        MessageHelper.send(
+                plugin,
+                sender,
+                new Translation(BedrockPlugin.getInstance(), "permission.insufficient").getTranslation()
+        );
+    }
+
+    public static void invalidCommand(BasePlugin plugin, CommandSender sender) {
+        MessageHelper.send(
+                plugin,
+                sender,
+                plugin.getMessagePrefix() + " " +
+                        new Translation(BedrockPlugin.getInstance(), "command.invalid").getTranslation()
+        );
+    }
 
     public static void send(BasePlugin plugin, CommandSender sender, String message) {
         send(plugin, sender, new TextComponent(message));
