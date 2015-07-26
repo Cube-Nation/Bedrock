@@ -52,6 +52,14 @@ public class MessageHelper {
         if (message == null)
             return;
 
+
+        // apply colors from color scheme to message
+        TextComponent message_component = plugin.getColorScheme().applyColorScheme(message);
+
+        hover_event.getValue();
+
+
+
         if (sender instanceof Player) {
             if (hover_event != null)
                 message.setHoverEvent(hover_event);
@@ -89,15 +97,19 @@ public class MessageHelper {
                 } else {
                     hover_message =
                             " " +
-                            plugin.getFlagColor() + "(" +
+                            plugin.getColorScheme().getFlag() + "(" +
                             hover_message +
-                            plugin.getFlagColor() + ")";
+                            plugin.getColorScheme().getFlag() + ")";
                 }
             }
 
             // finally send message
             sender.sendMessage(message.toLegacyText() + hover_message);
         }
+    }
+
+    public static void sendPlayer(BasePlugin plugin, Player player, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
+
     }
 
     private static int longestLength(ArrayList<String> list){
@@ -119,7 +131,7 @@ public class MessageHelper {
                         "|" +
                         "STRIKETHROUGH|UNDERLINE|BOLD|MAGIC|ITALIC|RESET" +
                         "|" +
-                        "PRIMARY|SECONDARY|FLAG" +
+                        "PRIMARY|SECONDARY|FLAG|TEXT" +
                         ")" +
                 "&)";
 
@@ -129,11 +141,13 @@ public class MessageHelper {
 
         while (matcher.find()) {
             if (matcher.group(2).equals("PRIMARY")) {
-                matcher.appendReplacement(sb, "" + plugin.getPrimaryColor());
+                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getPrimary());
             } else if (matcher.group(2).equals("SECONDARY")) {
-                matcher.appendReplacement(sb, "" + plugin.getSecondaryColor());
+                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getSecondary());
             } else if (matcher.group(2).equals("FLAG")) {
-                matcher.appendReplacement(sb, "" + plugin.getFlagColor());
+                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getFlag());
+            } else if (matcher.group(2).equals("TEXT")) {
+                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getText());
             } else {
                 matcher.appendReplacement(sb, ChatColor.valueOf(matcher.group(2)).toString());
             }

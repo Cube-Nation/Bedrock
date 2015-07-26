@@ -19,6 +19,7 @@ import java.util.logging.Level;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.helper
  */
+@SuppressWarnings("unused")
 public class PageDesignHelper {
 
     private static final int NAVIGATIONSIZE = 7;
@@ -45,9 +46,9 @@ public class PageDesignHelper {
 
         List<PageableListStorable> list = service.getPage(page);
 
-        ChatColor primary = plugin.getPrimaryColor();
-        ChatColor secondary = plugin.getSecondaryColor();
-        ChatColor flag = plugin.getFlagColor();
+        ChatColor primary =     plugin.getColorScheme().getPrimary();
+        //ChatColor secondary =   plugin.getColorScheme().getSecondary();
+        ChatColor flag =        plugin.getColorScheme().getFlag();
 
 
         ComponentBuilder header = new ComponentBuilder("======= ").color(flag)
@@ -79,9 +80,9 @@ public class PageDesignHelper {
             return null;
         }
 
-        ChatColor primary = plugin.getPrimaryColor();
-        ChatColor secondary = plugin.getSecondaryColor();
-        ChatColor flag = plugin.getFlagColor();
+        //ChatColor primary =     plugin.getColorScheme().getPrimary();
+        ChatColor secondary =   plugin.getColorScheme().getSecondary();
+        ChatColor flag =        plugin.getColorScheme().getFlag();
 
         ComponentBuilder pagination = new ComponentBuilder("");
         if (page > 1) {

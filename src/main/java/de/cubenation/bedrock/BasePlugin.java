@@ -11,6 +11,8 @@ import de.cubenation.bedrock.service.customconfigurationfile.CustomConfiguration
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.permission.PermissionService;
+import de.cubenation.bedrock.style.ColorScheme;
+import de.cubenation.bedrock.style.scheme.DefaultColorScheme;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -37,6 +39,8 @@ public abstract class BasePlugin extends JavaPlugin {
 
     private ServiceManager serviceManager;
 
+    private ColorScheme scheme;
+
     public BasePlugin() {
         super();
     }
@@ -50,6 +54,9 @@ public abstract class BasePlugin extends JavaPlugin {
     @Override
     public final void onEnable() {
         this.setupConfig();
+
+        // set default color scheme
+        this.setColorScheme(ColorScheme.ColorSchemeName.DEFAULT);
 
         try {
             this.onPreEnable();
@@ -160,9 +167,10 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     public String getMessagePrefix(String plugin) {
-        return getFlagColor() + "[" +
-                getPrimaryColor() + plugin +
-                getFlagColor() + "]" +
+        return
+                this.scheme.getFlag() + "[" +
+                this.scheme.getPrimary() + plugin +
+                this.scheme.getFlag() + "]" +
                 ChatColor.RESET;
     }
 
@@ -301,24 +309,15 @@ public abstract class BasePlugin extends JavaPlugin {
 
 
     /*
-     * Plugin Colors
+     * Color Scheme
      */
-    public ChatColor getPrimaryColor() {
-        return ChatColor.valueOf(
-                this.getConfig().getString("color.primary", ChatColor.AQUA.getName()).toUpperCase()
-        );
+    public ColorScheme getColorScheme() {
+        // avoid NullPointerException
+        return (this.scheme == null) ? new DefaultColorScheme(this) : this.scheme;
     }
 
-    public ChatColor getSecondaryColor() {
-        return ChatColor.valueOf(
-                this.getConfig().getString("color.secondary", ChatColor.BLUE.getName()).toUpperCase()
-        );
-    }
-
-    public ChatColor getFlagColor() {
-        return ChatColor.valueOf(
-                this.getConfig().getString("color.flag", ChatColor.GRAY.getName()).toUpperCase()
-        );
+    public void setColorScheme(ColorScheme.ColorSchemeName name) {
+        this.scheme = ColorScheme.getColorScheme(this, name);
     }
 
 }

@@ -1,16 +1,56 @@
+# Each section and option in this file can be overridden by a plugin configuration that depends on the BedrockPlugin
+
+# Section for service configuration
 service:
+
+  # Confirm Service
   confirm:
+    # The timeout value. After this a confirm command is being invalidated
     timeout: 30
+
+  # Pageable List Service
   pageablelist:
+    # After this timeout a pageable list is being invalidated
     timeout: 180
+    # Amount of entries per page
     next_amount: 10
+
+  # Localization service
   localization:
+    # path to directory where locales reside
     locale_dir: "locale"
+    # the default locale that is being represented by a file, e.g. "de_DE.yml"
     locale: "de_DE"
+
+  # Permission service
   permission:
+    # Whether to use the Permission service
     use: true
+    # File where all permissions are stored and read from
     file_name: "permissions.yml"
+    # Default role name
     no_role: "no_role"
+    # tdb
     role_key: "permission_roles_enabled"
+
+# mcstats.org metrics
 metrics:
+  # Use plugin metrics on mcstats.org, defaults to false
   use: false
+
+# Color Scheme
+scheme:
+  # The name of the scheme to be used.
+  # Currently there are these schemes available:
+  #   DEFAULT, RED, GREEN, BLUE, CUSTOM
+  name: "DEFAULT"
+  # If you want to use a custom color scheme, you can specify colors like so:
+  #
+  #  name: "CUSTOM"
+  #  primary: "GOLD"
+  #  secondary: "YELLOW"
+  #  flag: "DARK_GRAY"
+  #  text: "WHITE"
+
+# Configuration version - do not touch
+version: "0.8.9~spigot187+1-SNAPSHOT"

@@ -8,12 +8,12 @@ import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class LocalizationService implements ServiceInterface {
 
@@ -109,8 +109,12 @@ public class LocalizationService implements ServiceInterface {
 
 
     public String getTranslation(String ident, String[] args) throws LocalizationNotFoundException {
-        // TODO: add &plugin_prefix% -> this.plugin.getMessagePrefix() to args
-        // TODO: and remove all occurencies of BasePlugin.getMessagePrefix()
+
+        List<String> more_args = new ArrayList<String>() {{
+            add("%plugin_prefix");
+            add(plugin.getMessagePrefix());
+        }};
+        Collections.addAll(more_args, args);
 
         String s;
         try {
@@ -122,11 +126,10 @@ public class LocalizationService implements ServiceInterface {
             throw new LocalizationNotFoundException(ident);
 
         // apply args
-        if (args.length % 2 == 0)
-            s = this.applyArgs(s, args);
+        if (more_args.size() % 2 == 0)
+            s = this.applyArgs(s, (ArrayList<String>) more_args);
 
-        // apply colors
-        return this.applyColors(s);
+        return s;
     }
 
     /*
@@ -160,46 +163,12 @@ public class LocalizationService implements ServiceInterface {
     */
 
     
-    private String applyArgs(String s, String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            s = s.replaceAll("%" + args[i] + "%", args[i + 1]);
+    private String applyArgs(String s, ArrayList<String> args) {
+        for (int i = 0; i < args.size(); i++) {
+            s = s.replaceAll("%" + args.get(i) + "%", args.get(i + 1));
             i++;
         }
-
         return s;
-    }
-
-    @Deprecated
-    private String applyColors(String s) {
-        String regex =
-                "(&" +
-                    "(" +
-                    "BLACK|DARK_BLUE|DARK_GREEN|DARK_AQUA|DARK_RED|DARK_PURPLE|GOLD|GRAY|DARK_GRAY|BLUE|GREEN|AQUA|RED|LIGHT_PURPLE|YELLOW|WHITE" +
-                    "|" +
-                    "STRIKETHROUGH|UNDERLINE|BOLD|MAGIC|ITALIC|RESET" +
-                    "|" +
-                    "PRIMARY|SECONDARY|FLAG" +
-                    ")" +
-                "&)";
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(s);
-        StringBuffer sb = new StringBuffer();
-
-        while (matcher.find()) {
-            if (matcher.group(2).equals("PRIMARY")) {
-                matcher.appendReplacement(sb, "" + this.plugin.getPrimaryColor());
-            } else if (matcher.group(2).equals("SECONDARY")) {
-                matcher.appendReplacement(sb, "" + this.plugin.getSecondaryColor());
-            } else if (matcher.group(2).equals("FLAG")) {
-                matcher.appendReplacement(sb, "" + this.plugin.getFlagColor());
-            } else {
-                matcher.appendReplacement(sb, ChatColor.valueOf(matcher.group(2)).toString());
-            }
-        }
-
-        matcher.appendTail(sb);
-        return sb.toString();
     }
 
 }

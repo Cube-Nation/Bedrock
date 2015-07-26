@@ -181,8 +181,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return null;
         }
 
-        ChatColor primary   = this.getPlugin().getPrimaryColor();
-        ChatColor secondary = this.getPlugin().getSecondaryColor();
+        ChatColor primary   = this.getPlugin().getColorScheme().getPrimary();
+        ChatColor secondary = this.getPlugin().getColorScheme().getSecondary();
 
         String command = primary + "/" + label + "" +
                 secondary;
