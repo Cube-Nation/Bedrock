@@ -13,8 +13,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class MessageHelper {
 
@@ -65,13 +63,14 @@ public class MessageHelper {
 
         } else {
             String hover_message = "";
+            // ClickEvents are not supported here
             //String click_message = "";
 
             if (hover_event != null) {
                 hover_event = plugin.getColorScheme().applyColorScheme(hover_event);
 
                 for (int i = 0; i < hover_event.getValue().length; i++) {
-                    hover_message += ChatColor.translateAlternateColorCodes('&', hover_event.getValue()[i].toLegacyText());
+                    hover_message += hover_event.getValue()[i].toLegacyText();
                 }
 
                 // check for multiline string
@@ -82,21 +81,33 @@ public class MessageHelper {
 
                     int max_len = longestLength(lines);
 
-                    lines.add(0, plugin.getColorScheme().getFlag() + "  " + new String(new char[max_len + 4]).replace('\0', '-'));
+                    // generate header and footer line
+                    String hf_line =
+                            ChatColor.DARK_GRAY + " " +
+                            new String(new char[max_len + 4]).replace('\0', '-') +
+                            ChatColor.RESET;
+                    ;
+                    lines.add(0, hf_line);
+
                     for (int i = 1; i < lines.size(); i++) {
                         int pad_length = max_len - ChatColor.stripColor(lines.get(i)).length();
-                        lines.set(i, plugin.getColorScheme().getFlag() + "  | " + lines.get(i) + new String(new char[pad_length]).replace('\0', ' ') + plugin.getColorScheme().getFlag() + " |");
+                        lines.set(i,
+                                ChatColor.DARK_GRAY + "  | " + ChatColor.RESET +
+                                lines.get(i) +
+                                new String(new char[pad_length]).replace('\0', ' ') +
+                                ChatColor.DARK_GRAY + " |" + ChatColor.RESET
+                        );
                     }
-                    lines.add("  " + plugin.getColorScheme().getFlag() + new String(new char[max_len + 4]).replace('\0', '-'));
 
+                    lines.add(hf_line);
                     hover_message = "\n" + StringUtils.join(lines, System.lineSeparator());
 
                 } else {
                     hover_message =
-                            " " +
-                            plugin.getColorScheme().getFlag() + "(" +
+                            " " +   // make explicit string
+                            ChatColor.DARK_GRAY + "(" + ChatColor.RESET +
                             hover_message +
-                            plugin.getColorScheme().getFlag() + ")";
+                            ChatColor.DARK_GRAY + ")" + ChatColor.RESET;
                 }
             }
 
@@ -115,43 +126,4 @@ public class MessageHelper {
         return longest.length();
     }
 
-    @SuppressWarnings("unused")
-    private static String applyColors(BasePlugin plugin, String s) {
-        String regex =
-                "(&" +
-                        "(" +
-                        "BLACK|DARK_BLUE|DARK_GREEN|DARK_AQUA|DARK_RED|DARK_PURPLE|GOLD|GRAY|DARK_GRAY|BLUE|GREEN|AQUA|RED|LIGHT_PURPLE|YELLOW|WHITE" +
-                        "|" +
-                        "STRIKETHROUGH|UNDERLINE|BOLD|MAGIC|ITALIC|RESET" +
-                        "|" +
-                        "PRIMARY|SECONDARY|FLAG|TEXT" +
-                        ")" +
-                "&)";
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(s);
-        StringBuffer sb = new StringBuffer();
-
-        while (matcher.find()) {
-            if (matcher.group(2).equals("PRIMARY")) {
-                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getPrimary());
-
-            } else if (matcher.group(2).equals("SECONDARY")) {
-                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getSecondary());
-
-            } else if (matcher.group(2).equals("FLAG")) {
-                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getFlag());
-
-            } else if (matcher.group(2).equals("TEXT")) {
-                matcher.appendReplacement(sb, "" + plugin.getColorScheme().getText());
-
-            } else {
-                matcher.appendReplacement(sb, ChatColor.valueOf(matcher.group(2)).toString());
-
-            }
-        }
-
-        matcher.appendTail(sb);
-        return ChatColor.translateAlternateColorCodes('&', sb.toString());
-    }
 }

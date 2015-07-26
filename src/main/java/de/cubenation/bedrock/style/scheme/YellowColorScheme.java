@@ -5,10 +5,10 @@ import de.cubenation.bedrock.style.ColorScheme;
 import net.md_5.bungee.api.ChatColor;
 
 @SuppressWarnings("unused")
-public class BlueColorScheme extends ColorScheme {
+public class YellowColorScheme extends ColorScheme {
 
-    public BlueColorScheme(BasePlugin plugin) {
-        super(ColorSchemeName.BLUE, ChatColor.BLUE, ChatColor.DARK_BLUE, ChatColor.GRAY, ChatColor.WHITE);
+    public YellowColorScheme(BasePlugin plugin) {
+        super(ColorSchemeName.YELLOW, ChatColor.YELLOW, ChatColor.GOLD, ChatColor.GRAY, ChatColor.WHITE);
     }
 
 }

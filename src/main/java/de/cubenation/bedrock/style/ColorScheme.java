@@ -26,7 +26,7 @@ public class ColorScheme {
     private ChatColor text;
 
     public enum ColorSchemeName {
-        DEFAULT, RED, GREEN, BLUE, CUSTOM
+        DEFAULT, RED, GREEN, BLUE, YELLOW, CUSTOM
     }
 
 
@@ -162,7 +162,9 @@ public class ColorScheme {
         }
 
         matcher.appendTail(sb);
-        return sb.toString();
+
+        // in case there are some old-school color codes left in the string, transform them and return
+        return ChatColor.translateAlternateColorCodes('&', sb.toString());
     }
 
 }
