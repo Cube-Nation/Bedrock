@@ -1,13 +1,13 @@
 package de.cubenation.bedrock.command;
 
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.MessageHelper;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 
@@ -39,11 +39,6 @@ public class HelpCommand extends SubCommand {
         if (args.length == 0) {
             // Display help for all commands
 
-            ChatColor primary = commandManager.getPlugin().getPrimaryColor();
-            ChatColor secondary = commandManager.getPlugin().getSecondaryColor();
-            ChatColor flag = commandManager.getPlugin().getFlagColor();
-
-
             // =========================
             // create header
             // =========================
@@ -52,39 +47,36 @@ public class HelpCommand extends SubCommand {
                 commandHeaderName = helpPrefix;
             }
 
-            ComponentBuilder header = new ComponentBuilder("==== ").color(flag)
-                    .append(commandHeaderName + " Help").color(primary)
-                    .append(" ====").color(flag);
-
+            TextComponent header = new TextComponent(
+                    new Translation(
+                            BedrockPlugin.getInstance(),
+                            "help.header",
+                            new String[] { "plugin", commandHeaderName}
+                    ).getTranslation()
+            );
+            MessageHelper.send(commandManager.getPlugin(), sender, header, null, null);
 
             // =========================
             // create help for each subcommand
             // =========================
 
-            ArrayList<TextComponent> commandsList = new ArrayList<>();
-            commandsList.add(new TextComponent(header.create()));
-
             for (SubCommand subCommand : commandManager.getSubCommands()) {
                 TextComponent subCommandHelp = commandManager.getHelpForSubCommand(subCommand, sender, label);
-                if (subCommandHelp != null) {
-                    commandsList.add(subCommandHelp);
-                }
+
+                if (subCommandHelp != null)
+                    MessageHelper.send(commandManager.getPlugin(), sender, subCommandHelp);
             }
 
-            for (TextComponent textComponent : commandsList) {
-                MessageHelper.send(commandManager.getPlugin(), sender, textComponent, null, null);
-            }
-
-        } else if (isNumeric(args[0])) {
+        } else if (StringUtils.isNumeric(args[0])) {
             // FIXME: use PageableListService
-            String message = "Zeige (irgendwann) Seite: " +  args[0].toString() + " der Hilfe.";
-            MessageHelper.send(commandManager.getPlugin(), sender, message);
+            String message = "Zeige (irgendwann) Seite: " + args[0] + " der Hilfe.";
+            MessageHelper.send(BedrockPlugin.getInstance(), sender, message);
 
         } else {
             for (SubCommand subCommand : commandManager.getSubCommands()) {
                 if (Arrays.asList(subCommand.getCommands().get(0)).contains(args[0])) {
                     MessageHelper.send(
-                            commandManager.getPlugin(),
+                            BedrockPlugin.getInstance(),
                             sender,
                             commandManager.getHelpForSubCommand(subCommand, sender, label)
                     );
@@ -93,16 +85,6 @@ public class HelpCommand extends SubCommand {
         }
 
     }
-
-    private boolean isNumeric(String arg) {
-        try {
-            int i = Integer.parseInt(arg);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
 
     @Override
     public LinkedHashMap<String, String> getArguments() {
