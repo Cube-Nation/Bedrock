@@ -6,32 +6,22 @@ import de.cubenation.bedrock.service.localization.LocalizationService;
 
 public class Translation {
 
-    private final BasePlugin plugin;
-
-    private final LocalizationService service;
-
     private String locale_ident;
 
     private String[] locale_args;
+
+    private final LocalizationService service;
+
 
     public Translation(BasePlugin plugin, String locale_ident) {
         this(plugin, locale_ident, new String[]{});
     }
 
     public Translation(BasePlugin plugin, String locale_ident, String[] locale_args) {
-        this.plugin     = plugin;
-        this.service    = this.plugin.getLocalizationService();
+        this.service    = plugin.getLocalizationService();
 
         this.setLocale_ident(locale_ident);
         this.setLocale_args(locale_args);
-    }
-
-    public String getTranslation() {
-        try {
-            return this.service.getTranslation(this.getLocale_ident(), this.getLocale_args());
-        } catch (LocalizationNotFoundException e) {
-            return "";
-        }
     }
 
     private String getLocale_ident() {
@@ -48,5 +38,17 @@ public class Translation {
 
     private void setLocale_args(String[] locale_args) {
         this.locale_args = locale_args;
+    }
+
+    public String getTranslation() {
+        try {
+            return this.service.getTranslation(this.getLocale_ident(), this.getLocale_args());
+        } catch (LocalizationNotFoundException e) {
+            // we do not return null to aboid NullPointerExceptions.
+            // If you see an empty string somewhere
+            //  a) the locale file is damaged/incomplete - try deleting it and restart the server
+            //  b) check if the plugin refers to the correct path in the YamlConfiguration object
+            return "";
+        }
     }
 }
