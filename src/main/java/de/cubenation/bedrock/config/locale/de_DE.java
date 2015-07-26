@@ -43,6 +43,8 @@ public class de_DE extends CustomConfigurationFile {
          * Help messages
          */
         data.put("help.header",                 "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
+        data.put("help.command",                "");
+        data.put("help.hover",                  "");
         data.put("help.plugin",                 "Hilfe zu allen Plugin Befehlen");
         data.put("help.version",                "Zeigt die Version des Plugins an");
         data.put("help.reload",                 "Lädt das Plugin neu");
