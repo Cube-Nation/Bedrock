@@ -105,7 +105,12 @@ public abstract class BasePlugin extends JavaPlugin {
 
 
         // initialize commands
-        this.initCommands();
+        if (getCommandManager() != null) {
+            for (CommandManager manager : getCommandManager()) {
+                manager.getPluginCommand().setExecutor(manager);
+                manager.getPluginCommand().setTabCompleter(manager);
+            }
+        }
 
 
         // after commands have been initialized, permissions need to be reloaded
@@ -118,11 +123,13 @@ public abstract class BasePlugin extends JavaPlugin {
         }
 
 
+        // call onPostEnable after we've set everything up
         try {
             this.onPostEnable();
         } catch (Exception e) {
             this.disable(e);
         }
+
 
         // start metrics
         this.enableMetrics();
@@ -175,16 +182,10 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     public abstract ArrayList<CommandManager> getCommandManager();
 
-    private void initCommands() {
-        if (getCommandManager() != null) {
-            for (CommandManager manager : getCommandManager()) {
-                manager.getPluginCommand().setExecutor(manager);
-                manager.getPluginCommand().setTabCompleter(manager);
-            }
-        }
-    }
 
-
+    /*
+     * get a foreign plugin object
+     */
     @SuppressWarnings("unused")
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
@@ -257,6 +258,7 @@ public abstract class BasePlugin extends JavaPlugin {
         return null;
     }
 
+
     /*
      * Permission Service
      */
@@ -320,9 +322,9 @@ public abstract class BasePlugin extends JavaPlugin {
     public abstract List<CustomConfigurationFile> getCustomConfigurationFiles() throws IOException;
 
 
-
     /*
-     * Color Scheme
+     * Color Scheme accessories
+     * TODO: move to ColorSchemeService
      */
     public ColorScheme getColorScheme() {
         // avoid NullPointerException
