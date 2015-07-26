@@ -9,17 +9,10 @@ package de.cubenation.bedrock.helper;
 @Deprecated
 public class Const {
 
-
-    public static final String NO_MESSAGE_SERVICE = "Kein Übersetzung vorhanden.";
-
-
     /**
      * Permission Service
      */
 
-
-    public static final String PERMISSIONS_FILE_NAME= "permissions.yml";
-    public static final String NO_ROLE = "no_role";
-    public static final String ROLE_PLACEHOLDER = "{}";
+    // TODO B1acksheep
     public static final String PERMISSION_ROLE_KEY = "permission_roles_enabled";
 }

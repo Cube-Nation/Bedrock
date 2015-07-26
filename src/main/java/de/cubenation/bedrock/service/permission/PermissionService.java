@@ -21,6 +21,10 @@ import java.util.logging.Level;
  */
 public class PermissionService implements ServiceInterface {
 
+    public static final String NO_ROLE = "no_role";
+    public static final String PERMISSIONS_FILE_NAME= "permissions.yml";
+
+
     private final BasePlugin plugin;
 
     private final File permissionsFile;
@@ -36,7 +40,7 @@ public class PermissionService implements ServiceInterface {
 
     public PermissionService(BasePlugin plugin) {
         this.plugin = plugin;
-        permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), Const.PERMISSIONS_FILE_NAME);
+        permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), PERMISSIONS_FILE_NAME);
     }
 
     @Override
@@ -74,7 +78,7 @@ public class PermissionService implements ServiceInterface {
         plugin.log(Level.INFO, "Write default Permissions!");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
 
-        ArrayList<String> defaultPermission = (ArrayList<String>) configuration.get(Const.NO_ROLE);
+        ArrayList<String> defaultPermission = (ArrayList<String>) configuration.get(NO_ROLE);
         if (defaultPermission == null) {
             defaultPermission = new ArrayList<>();
         }
@@ -94,7 +98,7 @@ public class PermissionService implements ServiceInterface {
 
         try {
             if (!defaultPermission.isEmpty()) {
-                configuration.set(Const.NO_ROLE, defaultPermission);
+                configuration.set(NO_ROLE, defaultPermission);
                 configuration.save(permissionsFile);
             }
         } catch (IOException e) {
@@ -116,7 +120,7 @@ public class PermissionService implements ServiceInterface {
             roleDump.put(key, new ArrayList<String>());
 
             String replacementKey = plugin.getExplicitPermissionPrefix() + ".";
-            if (!key.equalsIgnoreCase(Const.NO_ROLE)) {
+            if (!key.equalsIgnoreCase(NO_ROLE)) {
                 replacementKey += key + ".";
             }
 
