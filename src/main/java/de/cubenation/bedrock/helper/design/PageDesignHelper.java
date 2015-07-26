@@ -177,14 +177,16 @@ public class PageDesignHelper {
         for (int p = 0; p < pages.size(); p++) {
             int addPage = pages.get(p);
             boolean pipe = false;
-            if ((addPage + 1) == pages.get(p + 1)) {
-                pipe = true;
+            if (!(p == (pages.size() - 1))) {
+                if ((addPage + 1) == pages.get(p + 1)) {
+                                pipe = true;
+                            }
             }
 
             if (p == (pages.size() - 1)) {
-                addPageNumber(p, page, pageExecutionCmd, pagination, secondary, flag, false, false);
+                addPageNumber(addPage, page, pageExecutionCmd, pagination, secondary, flag, false, false);
             } else {
-                addPageNumber(p, page, pageExecutionCmd, pagination, secondary, flag, pipe, !pipe);
+                addPageNumber(addPage, page, pageExecutionCmd, pagination, secondary, flag, pipe, !pipe);
             }
         }
     }
