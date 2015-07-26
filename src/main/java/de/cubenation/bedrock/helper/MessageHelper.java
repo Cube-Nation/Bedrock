@@ -7,9 +7,12 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,17 +62,51 @@ public class MessageHelper {
 
         } else {
             String hover_message = "";
+            //String click_message = "";
 
             if (hover_event != null) {
-                hover_message = plugin.getFlagColor() + " (";
                 for (int i = 0; i < hover_event.getValue().length; i++) {
                     hover_message += ChatColor.translateAlternateColorCodes('&', hover_event.getValue()[i].toLegacyText());
                 }
-                hover_message += plugin.getFlagColor() + ")";
+
+                // check for multiline string
+                if (hover_message.contains("\n")) {
+
+                    ArrayList<String> lines = new ArrayList<>();
+                    lines.addAll(Arrays.asList(hover_message.split("\\r?\\n")));
+
+                    int max_len = longestLength(lines);
+
+                    lines.add(0, "  " + new String(new char[max_len + 4]).replace('\0', '-'));
+                    for (int i = 1; i < lines.size(); i++) {
+                        int pad_length = max_len - ChatColor.stripColor(lines.get(i)).length();
+                        lines.set(i, "  | " + lines.get(i) + new String(new char[pad_length]).replace('\0', ' ') + " |");
+                    }
+                    lines.add("  " + new String(new char[max_len + 4]).replace('\0', '-'));
+
+                    hover_message = "\n" + StringUtils.join(lines, System.lineSeparator());
+
+                } else {
+                    hover_message =
+                            plugin.getFlagColor() + "(" +
+                            hover_message +
+                            plugin.getFlagColor() + ")";
+                }
             }
 
-            sender.sendMessage(message.toPlainText() + hover_message);
+            // finally send message
+            sender.sendMessage(message.toLegacyText() + hover_message);
         }
+    }
+
+    private static int longestLength(ArrayList<String> list){
+        String longest = list.get(0);
+        for(String str : list){
+            if(str.length()> longest.length()){
+                longest = str;
+            }
+        }
+        return longest.length();
     }
 
     @SuppressWarnings("unused")
