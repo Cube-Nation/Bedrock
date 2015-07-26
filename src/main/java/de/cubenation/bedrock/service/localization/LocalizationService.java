@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 public class LocalizationService implements ServiceInterface {
 
@@ -77,6 +78,8 @@ public class LocalizationService implements ServiceInterface {
 
     private void loadLocaleFiles() throws IOException {
         // check if there are any locale files
+
+        // TODO: optimize stuff (duplicate check on BedrockPlugin)
         String[] language_files = {
                 this.getLocale(),
                 BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")
@@ -85,15 +88,17 @@ public class LocalizationService implements ServiceInterface {
         YamlConfiguration yc = null;
         for (String file : language_files) {
             try {
+                this.getPlugin().log(Level.INFO, "Trying locale file " + file);
                 yc = this.loadLocaleFile(file);
             } catch (NoSuchRegisterableException e) {
+                this.getPlugin().log(Level.SEVERE, "Could not load file: " + e.getMessage());
                 yc = null;
             }
-        }
 
-        if (yc != null) {
-            this.data = yc;
-            return;
+            if (yc != null) {
+                this.data = yc;
+                return;
+            }
         }
 
         // create a default locale file
@@ -112,25 +117,26 @@ public class LocalizationService implements ServiceInterface {
 
 
     public String getTranslation(String ident, String[] args) throws LocalizationNotFoundException {
-
-        List<String> more_args = new ArrayList<String>() {{
-            add("%plugin_prefix");
-            add(plugin.getMessagePrefix());
-        }};
-        Collections.addAll(more_args, args);
-
         String s;
         try {
             s = this.data.getString(ident);
+            if (s == null || s.isEmpty()) throw new NullPointerException();
+
         } catch (NullPointerException e) {
+            //e.printStackTrace();
             throw new LocalizationNotFoundException(ident);
         }
-        if (s == null)
-            throw new LocalizationNotFoundException(ident);
 
-        // apply args
-        if (more_args.size() % 2 == 0)
+        // bloat args
+        if (args.length % 2 == 0) {
+            List<String> more_args = new ArrayList<String>() {{
+                add("%plugin_prefix");
+                add(plugin.getMessagePrefix());
+            }};
+            Collections.addAll(more_args, args);
+
             s = this.applyArgs(s, (ArrayList<String>) more_args);
+        }
 
         return s;
     }
