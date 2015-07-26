@@ -103,7 +103,7 @@ public class ColorScheme {
     }
 
     public TextComponent applyColorScheme(TextComponent component) {
-        return null;
+        return new TextComponent(applyColorScheme(component.toLegacyText()));
     }
 
     public String applyColorScheme(String string) {
