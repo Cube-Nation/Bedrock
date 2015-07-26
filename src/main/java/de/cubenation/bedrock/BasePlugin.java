@@ -305,19 +305,19 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     public ChatColor getPrimaryColor() {
         return ChatColor.valueOf(
-                this.getConfig().getString("color.primary", String.valueOf(ChatColor.AQUA).toUpperCase())
+                this.getConfig().getString("color.primary", ChatColor.AQUA.getName()).toUpperCase()
         );
     }
 
     public ChatColor getSecondaryColor() {
         return ChatColor.valueOf(
-                this.getConfig().getString("color.secondary", String.valueOf(ChatColor.BLUE).toUpperCase())
+                this.getConfig().getString("color.secondary", ChatColor.BLUE.getName()).toUpperCase()
         );
     }
 
     public ChatColor getFlagColor() {
         return ChatColor.valueOf(
-                this.getConfig().getString("color.flag", String.valueOf(ChatColor.GRAY).toUpperCase())
+                this.getConfig().getString("color.flag", ChatColor.GRAY.getName()).toUpperCase()
         );
     }
 
