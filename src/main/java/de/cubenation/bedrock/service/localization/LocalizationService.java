@@ -109,6 +109,9 @@ public class LocalizationService implements ServiceInterface {
 
 
     public String getTranslation(String ident, String[] args) throws LocalizationNotFoundException {
+        // TODO: add &plugin_prefix% -> this.plugin.getMessagePrefix() to args
+        // TODO: and remove all occurencies of BasePlugin.getMessagePrefix()
+
         String s;
         try {
             s = this.data.getString(ident);
