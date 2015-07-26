@@ -44,7 +44,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.pluginCommand  = pluginCommand;
         this.helpPrefix     = helpPrefix;
 
-        Collections.addAll(this.subCommands, subCommands);
+        if (subCommands != null)
+            Collections.addAll(this.subCommands, subCommands);
 
         this.subCommands.add(helpCommand);
         helpCommand.setHelpPrefix(helpPrefix);
