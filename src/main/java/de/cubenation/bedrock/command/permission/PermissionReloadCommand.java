@@ -1,9 +1,12 @@
 package de.cubenation.bedrock.command.permission;
 
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.helper.MessageHelper;
+import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -17,12 +20,14 @@ import java.util.LinkedHashMap;
 public class PermissionReloadCommand extends SubCommand {
 
     public PermissionReloadCommand() {
-        super(new ArrayList<String[]>() {{
-                  add(new String[]{"permission", "perm"});
-                  add(new String[]{"reload", "r"});
-              }},
-                new String[]{"Reload all Permissions."},
-                "permission.reload");
+        super(
+                new ArrayList<String[]>() {{
+                    add(new String[] { "permission", "perm" } );
+                    add(new String[] { "reload", "r" } );
+                }},
+                new String[] { "help.permission.reload" },
+                "permission.reload"
+        );
     }
 
     @Override
@@ -30,10 +35,25 @@ public class PermissionReloadCommand extends SubCommand {
         try {
             getCommandManager().getPlugin().getPermissionService().reload();
         } catch (ServiceReloadException e) {
+            MessageHelper.send(
+                    getCommandManager().getPlugin(),
+                    sender,
+                    new Translation(
+                            BedrockPlugin.getInstance(),
+                            "permission.reload.failed"
+                    ).getTranslation()
+            );
             e.printStackTrace();
-            // FIXME: do something useful here
         }
-        sender.sendMessage(getCommandManager().getPlugin().getMessagePrefix() + " Permission reload complete.");
+
+        MessageHelper.send(
+                getCommandManager().getPlugin(),
+                sender,
+                new Translation(
+                        BedrockPlugin.getInstance(),
+                        "permission.reload.complete"
+                ).getTranslation()
+        );
     }
 
     @Override

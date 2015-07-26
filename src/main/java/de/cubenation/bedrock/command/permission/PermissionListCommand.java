@@ -1,10 +1,12 @@
 package de.cubenation.bedrock.command.permission;
 
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.service.permission.PermissionService;
-import net.md_5.bungee.api.ChatColor;
+import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -20,12 +22,14 @@ import java.util.Map;
 public class PermissionListCommand extends SubCommand {
 
     public PermissionListCommand() {
-        super(new ArrayList<String[]>() {{
-                  add(new String[]{"permission", "perm"});
-                  add(new String[]{"list", "l"});
-              }},
-                new String[]{"Display all Permissions."},
-                "permission.list");
+        super(
+                new ArrayList<String[]>() {{
+                    add(new String[] { "permission", "perm" } );
+                    add(new String[] { "list", "l" } );
+                }},
+                new String[] { "help.permission.list" },
+                "permission.list"
+        );
     }
 
     @Override
@@ -34,20 +38,60 @@ public class PermissionListCommand extends SubCommand {
         PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
         if (permissionService != null) {
 
-            ChatColor sec = getCommandManager().getPlugin().getSecondaryColor();
-            sender.sendMessage(getCommandManager().getPlugin().getMessagePrefix() + " All Permissions");
+            MessageHelper.send(
+                    getCommandManager().getPlugin(),
+                    sender,
+                    getCommandManager().getPlugin().getMessagePrefix() + " " +
+                            new Translation(
+                                    BedrockPlugin.getInstance(),
+                                    "permission.list.header"
+                            ).getTranslation()
+            );
 
             HashMap<String, ArrayList<String>> permissionDump = permissionService.getPermissionRoleDump();
             for (Map.Entry entry : permissionDump.entrySet()) {
-                String role = sec + entry.getKey().toString() + ChatColor.WHITE;
-                for (String perm :  (ArrayList<String>) entry.getValue()) {
-                    role += "\n" + ChatColor.WHITE + " - " + perm;
-                }
-                sender.sendMessage(role);
-            }
+
+                // send role
+                MessageHelper.send(
+                        getCommandManager().getPlugin(),
+                        sender,
+                        getCommandManager().getPlugin().getMessagePrefix() + " " +
+                                new Translation(
+                                        BedrockPlugin.getInstance(),
+                                        "permission.list.role",
+                                        new String[] { "role", entry.getKey().toString() }
+                                ).getTranslation()
+                );
+
+                for (String perm : (ArrayList<String>) entry.getValue()) {
+                    MessageHelper.send(
+                            getCommandManager().getPlugin(),
+                            sender,
+                            getCommandManager().getPlugin().getMessagePrefix() + " " +
+                                    new Translation(
+                                            BedrockPlugin.getInstance(),
+                                            "permission.list.permission",
+                                            new String[] { "permission", perm }
+                                    ).getTranslation()
+                    );
+
+                } // for (permission)
+
+            } // for (permissionDump)
+
+        // no permissions
         } else {
-            sender.sendMessage(getCommandManager().getPlugin().getMessagePrefix() + " No Permissions available.");
-        }
+            MessageHelper.send(
+                    getCommandManager().getPlugin(),
+                    sender,
+                    getCommandManager().getPlugin().getMessagePrefix() + " " +
+                            new Translation(
+                                    BedrockPlugin.getInstance(),
+                                    "permission.no_permissions"
+                            ).getTranslation()
+            );
+
+        } // if
     }
 
     @Override

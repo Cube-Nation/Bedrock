@@ -1,11 +1,11 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.helper.MessageHelper;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,20 +30,12 @@ public class HelpCommand extends SubCommand {
 
     @Override
     public void execute(CommandSender sender, String label, String[] subCommands, String[] args) throws CommandException {
-
-        if (!(sender instanceof Player)) {
-            return;
-        }
-
-        Player player = (Player) sender;
-
         if (args.length == 0) {
             // Display help for all commands
 
             ChatColor primary = commandManager.getPlugin().getPrimaryColor();
             ChatColor secondary = commandManager.getPlugin().getSecondaryColor();
             ChatColor flag = commandManager.getPlugin().getFlagColor();
-
 
 
             // =========================
@@ -57,6 +49,7 @@ public class HelpCommand extends SubCommand {
             ComponentBuilder header = new ComponentBuilder("==== ").color(flag)
                     .append(commandHeaderName + " Help").color(primary)
                     .append(" ====").color(flag);
+
 
             // =========================
             // create help for each subcommand
@@ -73,21 +66,24 @@ public class HelpCommand extends SubCommand {
             }
 
             for (TextComponent textComponent : commandsList) {
-                player.spigot().sendMessage(textComponent);
+                MessageHelper.send(commandManager.getPlugin(), sender, textComponent, null, null);
             }
 
         } else if (isNumeric(args[0])) {
-            player.sendMessage("Zeige (irgendwann) Seite: " +  args[0] + " der Hilfe.");
+            String message = "Zeige (irgendwann) Seite: " +  args[0] + " der Hilfe.";
+            MessageHelper.send(commandManager.getPlugin(), sender, message);
+
         } else {
             for (SubCommand subCommand : commandManager.getSubCommands()) {
                 if (Arrays.asList(subCommand.getCommands().get(0)).contains(args[0])) {
-                    player.spigot().sendMessage(commandManager.getHelpForSubCommand(subCommand, player, label));
+                    MessageHelper.send(
+                            commandManager.getPlugin(),
+                            sender,
+                            commandManager.getHelpForSubCommand(subCommand, sender, label)
+                    );
                 }
-            }
+            } // for
         }
-
-
-
 
     }
 

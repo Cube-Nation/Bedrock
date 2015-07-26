@@ -1,8 +1,11 @@
 package de.cubenation.bedrock.command;
 
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.helper.MessageHelper;
+import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 import java.util.LinkedHashMap;
@@ -12,7 +15,7 @@ public class ReloadCommand extends SubCommand {
     public ReloadCommand() {
         super(
                 new String[] { "reload" , "r"},
-                new String[] { "Reload the plugin" },
+                new String[] { "help.reload" },
                 "reload"
         );
     }
@@ -24,9 +27,25 @@ public class ReloadCommand extends SubCommand {
             this.plugin.getCustomConfigurationFileService().reload();
             this.plugin.getLocalizationService().reload();
 
-            sender.sendMessage(this.plugin.getMessagePrefix() + " Reload complete");
+            MessageHelper.send(
+                    getCommandManager().getPlugin(),
+                    sender,
+                    new Translation(
+                            BedrockPlugin.getInstance(),
+                            "reload.complete"
+                    ).getTranslation()
+            );
         } catch (ServiceReloadException e) {
-            sender.sendMessage(this.plugin.getMessagePrefix() + " Reload failed");
+
+            MessageHelper.send(
+                    getCommandManager().getPlugin(),
+                    sender,
+                    new Translation(
+                            BedrockPlugin.getInstance(),
+                            "reload.failed"
+                    ).getTranslation()
+            );
+            e.printStackTrace();
         }
     }
 
