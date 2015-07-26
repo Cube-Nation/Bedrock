@@ -53,21 +53,23 @@ public class MessageHelper {
             return;
 
         // apply colors from color scheme to message
-        TextComponent message_component = plugin.getColorScheme().applyColorScheme(message);
+        message = plugin.getColorScheme().applyColorScheme(message);
 
         if (sender instanceof Player) {
             if (hover_event != null)
-                message_component.setHoverEvent(plugin.getColorScheme().applyColorScheme(hover_event));
+                message.setHoverEvent(plugin.getColorScheme().applyColorScheme(hover_event));
             if (click_event != null)
-                message_component.setClickEvent(plugin.getColorScheme().applyColorScheme(click_event));
+                message.setClickEvent(plugin.getColorScheme().applyColorScheme(click_event));
 
-            ((Player) sender).spigot().sendMessage(message_component);
+            ((Player) sender).spigot().sendMessage(message);
 
         } else {
             String hover_message = "";
             //String click_message = "";
 
             if (hover_event != null) {
+                hover_event = plugin.getColorScheme().applyColorScheme(hover_event);
+
                 for (int i = 0; i < hover_event.getValue().length; i++) {
                     hover_message += ChatColor.translateAlternateColorCodes('&', hover_event.getValue()[i].toLegacyText());
                 }
