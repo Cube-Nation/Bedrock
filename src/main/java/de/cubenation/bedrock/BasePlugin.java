@@ -49,7 +49,11 @@ public abstract class BasePlugin extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        this.setupConfig();
+        try {
+            this.setupConfig();
+        } catch (IOException e) {
+            this.disable(e);
+        }
 
         try {
             this.onPreEnable();
@@ -108,11 +112,12 @@ public abstract class BasePlugin extends JavaPlugin {
     /*
      * Setup Plugin Configuration
      */
-    private void setupConfig() {
+    private void setupConfig() throws IOException {
         try {
-            if (!getDataFolder().exists()) {
-                getDataFolder().mkdirs();
-            }
+            // check if plugin data folder exists and create if not
+            if (!getDataFolder().exists() && !getDataFolder().mkdirs())
+                throw new IOException("Could not create folder " + getDataFolder().getName());
+
             File file = new File(getDataFolder(), "config.yml");
             if (!file.exists()) {
                 log(Level.INFO, "config.yml not found, creating!");
@@ -304,16 +309,21 @@ public abstract class BasePlugin extends JavaPlugin {
      * Plugin Colors
      */
     public ChatColor getPrimaryColor() {
-        return ChatColor.AQUA;
+        return ChatColor.valueOf(
+                this.getConfig().getString("color.primary", String.valueOf(ChatColor.AQUA).toUpperCase())
+        );
     }
 
     public ChatColor getSecondaryColor() {
-        return ChatColor.BLUE;
+        return ChatColor.valueOf(
+                this.getConfig().getString("color.secondary", String.valueOf(ChatColor.BLUE).toUpperCase())
+        );
     }
 
     public ChatColor getFlagColor() {
-        return ChatColor.GRAY;
+        return ChatColor.valueOf(
+                this.getConfig().getString("color.flag", String.valueOf(ChatColor.GRAY).toUpperCase())
+        );
     }
-
 
 }
