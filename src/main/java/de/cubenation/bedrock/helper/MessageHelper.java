@@ -8,17 +8,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public abstract class MessageHelper {
+public class MessageHelper {
 
-    protected static BasePlugin plugin;
-
-    protected static ChatColor primary                = plugin.getPrimaryColor();
-
-    protected static ChatColor secondary              = plugin.getSecondaryColor();
-
-    protected static ChatColor flag                   = plugin.getFlagColor();
-
-    protected static void send(CommandSender sender, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
+    protected static void send(BasePlugin plugin, CommandSender sender, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
         if (sender instanceof Player) {
             if (hover_event != null)
                 message.setHoverEvent(hover_event);
