@@ -166,6 +166,7 @@ public class LocalizationService implements ServiceInterface {
         return s;
     }
 
+    @Deprecated
     private String applyColors(String s) {
         String regex =
                 "(&" +
