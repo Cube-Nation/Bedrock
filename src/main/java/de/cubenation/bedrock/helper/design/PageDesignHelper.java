@@ -19,6 +19,9 @@ import java.util.logging.Level;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.helper
  */
+
+// TODO: remove colors and use a locale template instead
+
 @SuppressWarnings("unused")
 public class PageDesignHelper {
 
