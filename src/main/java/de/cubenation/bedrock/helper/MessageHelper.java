@@ -88,6 +88,7 @@ public class MessageHelper {
 
                 } else {
                     hover_message =
+                            " " +
                             plugin.getFlagColor() + "(" +
                             hover_message +
                             plugin.getFlagColor() + ")";
