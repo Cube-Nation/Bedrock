@@ -22,6 +22,10 @@ public class MessageHelper {
     }
 
     public static void send(BasePlugin plugin, CommandSender sender, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
+        // check for NullPointerException
+        if (message == null)
+            return;
+
         if (sender instanceof Player) {
             if (hover_event != null)
                 message.setHoverEvent(hover_event);
