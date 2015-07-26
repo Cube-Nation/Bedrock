@@ -42,7 +42,7 @@ public class Translation {
 
     public String getTranslation() {
         try {
-            return this.service.getTranslation(this.getLocale_ident(), this.getLocale_args());
+            return this.service.getTranslation(this.getLocale_ident(), this.getLocale_args()).trim();
         } catch (LocalizationNotFoundException e) {
             // we do not return null to aboid NullPointerExceptions.
             // If you see an empty string somewhere
