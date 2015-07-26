@@ -25,6 +25,7 @@ public class ReloadCommand extends SubCommand {
         try {
             this.plugin.reloadConfig();
             
+            this.plugin.getColorSchemeService().reload();
             this.plugin.getPermissionService().reload();
             this.plugin.getCustomConfigurationFileService().reload();
             this.plugin.getLocalizationService().reload();

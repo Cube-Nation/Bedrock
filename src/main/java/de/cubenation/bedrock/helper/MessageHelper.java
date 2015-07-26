@@ -52,21 +52,16 @@ public class MessageHelper {
         if (message == null)
             return;
 
-
         // apply colors from color scheme to message
         TextComponent message_component = plugin.getColorScheme().applyColorScheme(message);
 
-        hover_event.getValue();
-
-
-
         if (sender instanceof Player) {
             if (hover_event != null)
-                message.setHoverEvent(hover_event);
+                message_component.setHoverEvent(plugin.getColorScheme().applyColorScheme(hover_event));
             if (click_event != null)
-                message.setClickEvent(click_event);
+                message_component.setClickEvent(plugin.getColorScheme().applyColorScheme(click_event));
 
-            ((Player) sender).spigot().sendMessage(message);
+            ((Player) sender).spigot().sendMessage(message_component);
 
         } else {
             String hover_message = "";
@@ -85,12 +80,12 @@ public class MessageHelper {
 
                     int max_len = longestLength(lines);
 
-                    lines.add(0, "  " + new String(new char[max_len + 4]).replace('\0', '-'));
+                    lines.add(0, plugin.getColorScheme().getFlag() + "  " + new String(new char[max_len + 4]).replace('\0', '-'));
                     for (int i = 1; i < lines.size(); i++) {
                         int pad_length = max_len - ChatColor.stripColor(lines.get(i)).length();
-                        lines.set(i, "  | " + lines.get(i) + new String(new char[pad_length]).replace('\0', ' ') + " |");
+                        lines.set(i, plugin.getColorScheme().getFlag() + "  | " + lines.get(i) + new String(new char[pad_length]).replace('\0', ' ') + plugin.getColorScheme().getFlag() + " |");
                     }
-                    lines.add("  " + new String(new char[max_len + 4]).replace('\0', '-'));
+                    lines.add("  " + plugin.getColorScheme().getFlag() + new String(new char[max_len + 4]).replace('\0', '-'));
 
                     hover_message = "\n" + StringUtils.join(lines, System.lineSeparator());
 
@@ -106,10 +101,6 @@ public class MessageHelper {
             // finally send message
             sender.sendMessage(message.toLegacyText() + hover_message);
         }
-    }
-
-    public static void sendPlayer(BasePlugin plugin, Player player, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
-
     }
 
     private static int longestLength(ArrayList<String> list){
@@ -142,18 +133,23 @@ public class MessageHelper {
         while (matcher.find()) {
             if (matcher.group(2).equals("PRIMARY")) {
                 matcher.appendReplacement(sb, "" + plugin.getColorScheme().getPrimary());
+
             } else if (matcher.group(2).equals("SECONDARY")) {
                 matcher.appendReplacement(sb, "" + plugin.getColorScheme().getSecondary());
+
             } else if (matcher.group(2).equals("FLAG")) {
                 matcher.appendReplacement(sb, "" + plugin.getColorScheme().getFlag());
+
             } else if (matcher.group(2).equals("TEXT")) {
                 matcher.appendReplacement(sb, "" + plugin.getColorScheme().getText());
+
             } else {
                 matcher.appendReplacement(sb, ChatColor.valueOf(matcher.group(2)).toString());
+
             }
         }
 
         matcher.appendTail(sb);
-        return sb.toString();
+        return ChatColor.translateAlternateColorCodes('&', sb.toString());
     }
 }
