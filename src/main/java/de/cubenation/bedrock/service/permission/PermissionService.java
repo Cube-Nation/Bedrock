@@ -21,9 +21,9 @@ import java.util.logging.Level;
  */
 public class PermissionService implements ServiceInterface {
 
-    private final BasePlugin plugin;
+    private BasePlugin plugin;
 
-    private final File permissionsFile;
+    private File permissionsFile                            = null;
 
     private Boolean activePermissionService                 = true;
 
@@ -35,8 +35,21 @@ public class PermissionService implements ServiceInterface {
 
 
     public PermissionService(BasePlugin plugin) {
+        this.setPlugin(plugin);
+
+        if (plugin.usePermissionService())
+            permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), Const.PERMISSIONS_FILE_NAME);
+    }
+
+    /*
+   * Plugin Getter/Setter
+   */
+    public BasePlugin getPlugin() {
+        return plugin;
+    }
+
+    public void setPlugin(BasePlugin plugin) {
         this.plugin = plugin;
-        permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), Const.PERMISSIONS_FILE_NAME);
     }
 
     @Override
@@ -52,6 +65,9 @@ public class PermissionService implements ServiceInterface {
 
     @Override
     public void reload() throws ServiceReloadException {
+        if (!this.getPlugin().usePermissionService())
+            return;
+
         if (plugin.getConfig().get(Const.PERMISSION_ROLE_KEY) == null) {
             plugin.getConfig().set(Const.PERMISSION_ROLE_KEY, activePermissionService);
             plugin.saveConfig();
@@ -146,7 +162,6 @@ public class PermissionService implements ServiceInterface {
 
 
     public String getPermissionWithRole(String permission) {
-
         if (activePermissionService == null || !activePermissionService) {
             return plugin.getExplicitPermissionPrefix() + "." + permission;
         } else {

@@ -7,6 +7,7 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.IOException;
 import java.util.List;
 
 public class CustomConfigurationFileService implements ServiceInterface {
@@ -15,9 +16,8 @@ public class CustomConfigurationFileService implements ServiceInterface {
 
     private List<CustomConfigurationFile> ccf_list;
 
-    public CustomConfigurationFileService(BasePlugin plugin, List<CustomConfigurationFile> list) {
+    public CustomConfigurationFileService(BasePlugin plugin) {
         this.setPlugin(plugin);
-        this.ccf_list = list;
     }
 
     @Override
@@ -25,8 +25,12 @@ public class CustomConfigurationFileService implements ServiceInterface {
         if (this.ccf_list == null)
             return;
 
-        for (CustomConfigurationFile file : this.ccf_list) {
-            this.register(file);
+        try {
+            for (CustomConfigurationFile file : this.getPlugin().getCustomConfigurationFiles()) {
+                this.register(file);
+            }
+        } catch (IOException e) {
+            throw new ServiceInitException(e.getMessage());
         }
     }
 

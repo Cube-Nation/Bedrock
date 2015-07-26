@@ -79,25 +79,16 @@ public abstract class BasePlugin extends JavaPlugin {
 
         try {
             // register permission service
-            if (this.usePermissionService()) {
-                this.serviceManager.registerService(
-                        "permission",
-                        new PermissionService(this)
-                );
-            }
+            this.serviceManager.registerService(
+                    "permission",
+                    new PermissionService(this)
+            );
 
 
             // register custom configuration file service
-            List<CustomConfigurationFile> ccfiles = null;
-            try {
-                ccfiles = this.getCustomConfigurationFiles();
-            } catch (IOException e) {
-                this.disable(e);
-            }
-
             this.serviceManager.registerService(
                     "customconfigurationfile",
-                    new CustomConfigurationFileService(this, ccfiles)
+                    new CustomConfigurationFileService(this)
             );
 
 
@@ -106,7 +97,7 @@ public abstract class BasePlugin extends JavaPlugin {
             // because a locale file is a custom configuration file
             this.serviceManager.registerService(
                     "localization",
-                    new LocalizationService(this, this.getConfig().getString("service.localization.locale"))
+                    new LocalizationService(this)
             );
         } catch (ServiceInitException e) {
             this.disable(e);

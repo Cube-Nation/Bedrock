@@ -23,9 +23,12 @@ public class LocalizationService implements ServiceInterface {
 
     private YamlConfiguration data;
 
-    public LocalizationService(BasePlugin plugin, String locale) {
+    public LocalizationService(BasePlugin plugin) {
         this.setPlugin(plugin);
-        this.setLocale(locale);
+        this.setLocale(
+                plugin.getConfig().getString("service.localization.locale",
+                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")))
+        ;
     }
 
     @Override
