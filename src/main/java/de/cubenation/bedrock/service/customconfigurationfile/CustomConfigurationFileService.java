@@ -8,13 +8,11 @@ import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.logging.Level;
 
 public class CustomConfigurationFileService implements ServiceInterface {
 
     private BasePlugin plugin;
-
-    private List<CustomConfigurationFile> ccf_list;
 
     public CustomConfigurationFileService(BasePlugin plugin) {
         this.setPlugin(plugin);
@@ -22,15 +20,20 @@ public class CustomConfigurationFileService implements ServiceInterface {
 
     @Override
     public void init() throws ServiceInitException {
-        if (this.ccf_list == null)
-            return;
-
         try {
+            // avoid NullPointerException
+            if (this.getPlugin().getCustomConfigurationFiles() == null)
+                return;
+
             for (CustomConfigurationFile file : this.getPlugin().getCustomConfigurationFiles()) {
+                this.getPlugin().log(Level.INFO, "Regiistering file: " + file.getFilename());
                 this.register(file);
             }
+
         } catch (IOException e) {
+            e.printStackTrace();
             throw new ServiceInitException(e.getMessage());
+
         }
     }
 
@@ -56,7 +59,6 @@ public class CustomConfigurationFileService implements ServiceInterface {
         return null;
     }
 
-    // FIXME: more tdb (Reload)
 
     /*
      * Plugin Getter/Setter
