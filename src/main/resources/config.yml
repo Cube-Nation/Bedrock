@@ -42,7 +42,7 @@ metrics:
 scheme:
   # The name of the scheme to be used.
   # Currently there are these schemes available:
-  #   DEFAULT, RED, GREEN, BLUE, CUSTOM
+  #   DEFAULT, RED, GREEN, BLUE, YELLOW and CUSTOM
   name: "DEFAULT"
   # If you want to use a custom color scheme, you can specify colors like so:
   #
@@ -52,5 +52,5 @@ scheme:
   #  flag: "DARK_GRAY"
   #  text: "WHITE"
 
-# Configuration version - do not touch
-version: "0.8.9~spigot187+1-SNAPSHOT"
+# Configuration version - do not touch (for later usage in PluginConfigurationService)
+version: "0.8.9~spigot187+1"
