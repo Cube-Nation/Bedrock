@@ -49,11 +49,7 @@ public abstract class BasePlugin extends JavaPlugin {
 
     @Override
     public final void onEnable() {
-        try {
-            this.setupConfig();
-        } catch (IOException e) {
-            this.disable(e);
-        }
+        this.setupConfig();
 
         try {
             this.onPreEnable();
@@ -112,7 +108,7 @@ public abstract class BasePlugin extends JavaPlugin {
     /*
      * Setup Plugin Configuration
      */
-    private void setupConfig() throws IOException {
+    private void setupConfig() {
         try {
             // check if plugin data folder exists and create if not
             if (!getDataFolder().exists() && !getDataFolder().mkdirs())
@@ -122,9 +118,8 @@ public abstract class BasePlugin extends JavaPlugin {
             if (!file.exists()) {
                 log(Level.INFO, "config.yml not found, creating!");
                 saveDefaultConfig();
-            } else {
-                //getLogger().info("config.yml found, loading!");
             }
+
         } catch (Exception e) {
             this.disable(e);
         }
