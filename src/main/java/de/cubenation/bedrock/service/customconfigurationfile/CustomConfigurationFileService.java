@@ -7,26 +7,33 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class CustomConfigurationFileService implements ServiceInterface {
 
     private BasePlugin plugin;
 
-    private List<CustomConfigurationFile> ccf_list;
-
-    public CustomConfigurationFileService(BasePlugin plugin, List<CustomConfigurationFile> list) {
+    public CustomConfigurationFileService(BasePlugin plugin) {
         this.setPlugin(plugin);
-        this.ccf_list = list;
     }
 
     @Override
     public void init() throws ServiceInitException {
-        if (this.ccf_list == null)
-            return;
+        try {
+            // avoid NullPointerException
+            if (this.getPlugin().getCustomConfigurationFiles() == null)
+                return;
 
-        for (CustomConfigurationFile file : this.ccf_list) {
-            this.register(file);
+            for (CustomConfigurationFile file : this.getPlugin().getCustomConfigurationFiles()) {
+                this.getPlugin().log(Level.INFO, "Regiistering file: " + file.getFilename());
+                this.register(file);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ServiceInitException(e.getMessage());
+
         }
     }
 
@@ -52,7 +59,6 @@ public class CustomConfigurationFileService implements ServiceInterface {
         return null;
     }
 
-    // FIXME: more tdb (Reload)
 
     /*
      * Plugin Getter/Setter

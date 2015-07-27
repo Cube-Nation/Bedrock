@@ -11,7 +11,7 @@ public class en_US extends CustomConfigurationFile {
     public en_US(BasePlugin plugin) throws IOException {
         super(
                 plugin,
-                "locale" + System.getProperty("file.separator") + "de_DE.yml",
+                "locale" + System.getProperty("file.separator") + "en_US.yml",
                 en_US.data()
         );
     }

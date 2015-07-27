@@ -3,6 +3,9 @@ package de.cubenation.bedrock.style;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.style.scheme.DefaultColorScheme;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.lang.reflect.Constructor;
@@ -23,9 +26,8 @@ public class ColorScheme {
     private ChatColor text;
 
     public enum ColorSchemeName {
-        DEFAULT, RED, GREEN, BLUE, CUSTOM
+        DEFAULT, RED, GREEN, BLUE, YELLOW, CUSTOM
     }
-
 
 
     public ColorScheme(ColorSchemeName name, ChatColor primary, ChatColor secondary, ChatColor flag, ChatColor text) {
@@ -37,6 +39,13 @@ public class ColorScheme {
                 .setText(text);
     }
 
+    public static ColorScheme getColorScheme(BasePlugin plugin, String name) {
+        if (name.isEmpty() || ColorSchemeName.valueOf(name.toUpperCase()) == null)
+            return new DefaultColorScheme(plugin);
+
+        return getColorScheme(plugin, ColorSchemeName.valueOf(name.toUpperCase()));
+    }
+
     @SuppressWarnings("unchecked")
     public static ColorScheme getColorScheme(BasePlugin plugin, ColorSchemeName name) {
         if (ColorSchemeName.valueOf(name.toString()) == null)
@@ -44,8 +53,9 @@ public class ColorScheme {
 
         try {
             Class cls = Class.forName(
-                    "de.cubenation.bedrock.style." +
-                    name.toString().substring(0, 1).toUpperCase() + name.toString().substring(1).toLowerCase()
+                    "de.cubenation.bedrock.style.scheme." +
+                    name.toString().substring(0, 1).toUpperCase() + name.toString().substring(1).toLowerCase() +
+                    "ColorScheme"
             );
 
             Constructor<?> constructor = cls.getConstructor(BasePlugin.class);
@@ -102,6 +112,21 @@ public class ColorScheme {
         return this;
     }
 
+    public HoverEvent applyColorScheme(HoverEvent event) {
+        String text_components = "";
+        BaseComponent[] value = event.getValue();
+
+        for (BaseComponent v : value) {
+            text_components += this.applyColorScheme(v.toLegacyText());
+        }
+
+        return new HoverEvent(event.getAction(), TextComponent.fromLegacyText(text_components));
+    }
+
+    public ClickEvent applyColorScheme(ClickEvent event) {
+        return new ClickEvent(event.getAction(), ChatColor.stripColor(event.getValue()));
+    }
+
     public TextComponent applyColorScheme(TextComponent component) {
         return new TextComponent(applyColorScheme(component.toLegacyText()));
     }
@@ -137,7 +162,9 @@ public class ColorScheme {
         }
 
         matcher.appendTail(sb);
-        return sb.toString();
+
+        // in case there are some old-school color codes left in the string, transform them and return
+        return ChatColor.translateAlternateColorCodes('&', sb.toString());
     }
 
 }

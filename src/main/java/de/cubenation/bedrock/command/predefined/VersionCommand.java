@@ -4,6 +4,7 @@ import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.SubCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
@@ -28,7 +29,7 @@ public class VersionCommand extends SubCommand {
                         new String[]{ "version", this.plugin.getDescription().getVersion() }
                 ).getTranslation();
 
-        sender.sendMessage(t);
+        MessageHelper.send(this.plugin, sender, t);
     }
 
     @Override

@@ -24,6 +24,9 @@ public class ReloadCommand extends SubCommand {
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
+            this.plugin.reloadConfig();
+            
+            this.plugin.getColorSchemeService().reload();
             this.plugin.getPermissionService().reload();
             this.plugin.getCustomConfigurationFileService().reload();
             this.plugin.getLocalizationService().reload();

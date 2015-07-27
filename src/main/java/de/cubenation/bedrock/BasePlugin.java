@@ -7,6 +7,7 @@ import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
+import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
@@ -55,41 +56,83 @@ public abstract class BasePlugin extends JavaPlugin {
     public final void onEnable() {
         this.setupConfig();
 
-        // set default color scheme
-        this.setColorScheme(ColorScheme.ColorSchemeName.DEFAULT);
+        // initialize service manager
+        this.serviceManager = new ServiceManager(this);
 
+        // register color scheme service
+        try {
+            this.serviceManager.registerService(
+                    "colorscheme",
+                    new ColorSchemeService(this)
+            );
+        } catch (ServiceInitException e) {
+            this.disable(e);
+        }
+
+        // call onPreEnable after registering the color scheme service
         try {
             this.onPreEnable();
         } catch (Exception e) {
             this.disable(e);
         }
 
-        // start metrics
-        this.enableMetrics();
 
-        // initialize services
         try {
-            this.initServiceManager();
+            // register permission service
+            this.serviceManager.registerService(
+                    "permission",
+                    new PermissionService(this)
+            );
+
+
+            // register custom configuration file service
+            this.serviceManager.registerService(
+                    "customconfigurationfile",
+                    new CustomConfigurationFileService(this)
+            );
+
+
+            // register localization service
+            // this needs to be instanciated _after_ the custom configuration file service
+            // because a locale file is a custom configuration file
+            this.serviceManager.registerService(
+                    "localization",
+                    new LocalizationService(this)
+            );
         } catch (ServiceInitException e) {
             this.disable(e);
         }
 
+
         // initialize commands
-        this.initCommands();
+        if (getCommandManager() != null) {
+            for (CommandManager manager : getCommandManager()) {
+                manager.getPluginCommand().setExecutor(manager);
+                manager.getPluginCommand().setTabCompleter(manager);
+            }
+        }
+
 
         // after commands have been initialized, permissions need to be reloaded
-        if (this.usePermissionService())
+        if (this.usePermissionService()) {
             try {
                 this.getPermissionService().reload();
             } catch (ServiceReloadException e) {
                 this.disable(e);
             }
+        }
 
+
+        // call onPostEnable after we've set everything up
         try {
             this.onPostEnable();
         } catch (Exception e) {
             this.disable(e);
         }
+
+
+        // start metrics
+        this.enableMetrics();
     }
 
     protected void onPostEnable() throws Exception { }
@@ -139,16 +182,10 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     public abstract ArrayList<CommandManager> getCommandManager();
 
-    private void initCommands() {
-        if (getCommandManager() != null) {
-            for (CommandManager manager : getCommandManager()) {
-                manager.getPluginCommand().setExecutor(manager);
-                manager.getPluginCommand().setTabCompleter(manager);
-            }
-        }
-    }
 
-
+    /*
+     * get a foreign plugin object
+     */
     @SuppressWarnings("unused")
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
@@ -168,9 +205,9 @@ public abstract class BasePlugin extends JavaPlugin {
 
     public String getMessagePrefix(String plugin) {
         return
-                this.scheme.getFlag() + "[" +
-                this.scheme.getPrimary() + plugin +
-                this.scheme.getFlag() + "]" +
+                this.getColorScheme().getFlag() + "[" +
+                this.getColorScheme().getPrimary() + plugin +
+                this.getColorScheme().getFlag() + "]" +
                 ChatColor.RESET;
     }
 
@@ -201,46 +238,24 @@ public abstract class BasePlugin extends JavaPlugin {
 
 
     /*
-     * Services
+     * Service access
      */
-    public void initServiceManager() throws ServiceInitException {
-        this.serviceManager = new ServiceManager(this);
-
-        // register permission service
-        if (this.usePermissionService()) {
-           this.serviceManager.registerService(
-                   "permission",
-                   new PermissionService(this)
-           );
-        }
-
-
-        // register custom configuration file service
-        List<CustomConfigurationFile> ccfiles = null;
-        try {
-            ccfiles = this.getCustomConfigurationFiles();
-        } catch (IOException e) {
-            this.disable(e);
-        }
-
-        this.serviceManager.registerService(
-                "customconfigurationfile",
-                new CustomConfigurationFileService(this, ccfiles)
-        );
-
-
-        // register localization service
-        // this needs to be instanciated _after_ the custom configuration file service
-        // because a locale file is a custom configuration file
-        this.serviceManager.registerService(
-                "localization",
-                new LocalizationService(this, this.getConfig().getString("service.localization.locale"))
-        );
-    }
-
     @SuppressWarnings("unused")
     public ServiceInterface getService(String name) throws UnknownServiceException {
         return this.serviceManager.getService(name);
+    }
+
+
+    /*
+     * Color Scheme Service
+     */
+    public ColorSchemeService getColorSchemeService() {
+        try {
+            return (ColorSchemeService) this.getService("colorscheme");
+        } catch (UnknownServiceException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
@@ -307,9 +322,9 @@ public abstract class BasePlugin extends JavaPlugin {
     public abstract List<CustomConfigurationFile> getCustomConfigurationFiles() throws IOException;
 
 
-
     /*
-     * Color Scheme
+     * Color Scheme accessories
+     * TODO: move to ColorSchemeService
      */
     public ColorScheme getColorScheme() {
         // avoid NullPointerException
@@ -317,7 +332,9 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     public void setColorScheme(ColorScheme.ColorSchemeName name) {
-        this.scheme = ColorScheme.getColorScheme(this, name);
+        this.scheme = (name != null)
+                ? ColorScheme.getColorScheme(this, name)
+                : ColorScheme.getColorScheme(this, this.getConfig().getString("scheme.name"));
     }
 
 }

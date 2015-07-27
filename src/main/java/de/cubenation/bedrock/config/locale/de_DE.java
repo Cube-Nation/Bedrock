@@ -35,18 +35,20 @@ public class de_DE extends CustomConfigurationFile {
         data.put("permission.reload.complete",  "Berechtigungen neu geladen");
         data.put("permission.reload.failed",    "Berechtigungen konnten nicht neu geladen werden");
 
-        data.put("permission.insufficient",     "&RED&Für diesen Befehl hast Du keine Berechtigung");
+        data.put("permission.insufficient",     "&RED&FÃ¼r diesen Befehl hast Du keine Berechtigung");
 
-        data.put("command.invalid",             "&RED&Ungültiger Befehl");
+        data.put("command.invalid",             "&RED&UngÃ¼ltiger Befehl");
 
         /*
          * Help messages
          */
         data.put("help.header",                 "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
+        data.put("help.command",                "");
+        data.put("help.hover",                  "");
         data.put("help.plugin",                 "Hilfe zu allen Plugin Befehlen");
         data.put("help.version",                "Zeigt die Version des Plugins an");
-        data.put("help.reload",                 "Lädt das Plugin neu");
-        data.put("help.permission.reload",      "Lädt die Berechtigungen neu");
+        data.put("help.reload",                 "LÃ¤dt das Plugin neu");
+        data.put("help.permission.reload",      "LÃ¤dt die Berechtigungen neu");
         data.put("help.permission.list",        "Zeigt alle Plugin-Berechtigungen an");
 
         return data;

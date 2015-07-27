@@ -54,29 +54,27 @@ public class MessageHelper {
         if (message == null)
             return;
 
-
         // apply colors from color scheme to message
-        TextComponent message_component = plugin.getColorScheme().applyColorScheme(message);
-
-        hover_event.getValue();
-
-
+        message = plugin.getColorScheme().applyColorScheme(message);
 
         if (sender instanceof Player) {
             if (hover_event != null)
-                message.setHoverEvent(hover_event);
+                message.setHoverEvent(plugin.getColorScheme().applyColorScheme(hover_event));
             if (click_event != null)
-                message.setClickEvent(click_event);
+                message.setClickEvent(plugin.getColorScheme().applyColorScheme(click_event));
 
             ((Player) sender).spigot().sendMessage(message);
 
         } else {
             String hover_message = "";
+            // ClickEvents are not supported here
             //String click_message = "";
 
             if (hover_event != null) {
+                hover_event = plugin.getColorScheme().applyColorScheme(hover_event);
+
                 for (int i = 0; i < hover_event.getValue().length; i++) {
-                    hover_message += ChatColor.translateAlternateColorCodes('&', hover_event.getValue()[i].toLegacyText());
+                    hover_message += hover_event.getValue()[i].toLegacyText();
                 }
 
                 // check for multiline string
@@ -87,31 +85,39 @@ public class MessageHelper {
 
                     int max_len = longestLength(lines);
 
-                    lines.add(0, "  " + new String(new char[max_len + 4]).replace('\0', '-'));
+                    // generate header and footer line
+                    String hf_line =
+                            ChatColor.DARK_GRAY + " " +
+                            new String(new char[max_len + 4]).replace('\0', '-') +
+                            ChatColor.RESET;
+                    ;
+                    lines.add(0, hf_line);
+
                     for (int i = 1; i < lines.size(); i++) {
                         int pad_length = max_len - ChatColor.stripColor(lines.get(i)).length();
-                        lines.set(i, "  | " + lines.get(i) + new String(new char[pad_length]).replace('\0', ' ') + " |");
+                        lines.set(i,
+                                ChatColor.DARK_GRAY + "  | " + ChatColor.RESET +
+                                lines.get(i) +
+                                new String(new char[pad_length]).replace('\0', ' ') +
+                                ChatColor.DARK_GRAY + " |" + ChatColor.RESET
+                        );
                     }
-                    lines.add("  " + new String(new char[max_len + 4]).replace('\0', '-'));
 
+                    lines.add(hf_line);
                     hover_message = "\n" + StringUtils.join(lines, System.lineSeparator());
 
                 } else {
                     hover_message =
-                            " " +
-                            plugin.getColorScheme().getFlag() + "(" +
+                            " " +   // make explicit string
+                            ChatColor.DARK_GRAY + "(" + ChatColor.RESET +
                             hover_message +
-                            plugin.getColorScheme().getFlag() + ")";
+                            ChatColor.DARK_GRAY + ")" + ChatColor.RESET;
                 }
             }
 
             // finally send message
             sender.sendMessage(message.toLegacyText() + hover_message);
         }
-    }
-
-    public static void sendPlayer(BasePlugin plugin, Player player, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
-
     }
 
     private static int longestLength(ArrayList<String> list){
@@ -166,7 +172,7 @@ public class MessageHelper {
      *
      * @param com the SubCommand
 //     * @param sender     the command sender
-     * @param label      the label of the command
+//     * @param label      the label of the command
      * @return the TextComponent with the help.
      */
     public static TextComponent getHelpForSubCommand(BasePlugin plugin, AbstractCommand com) {

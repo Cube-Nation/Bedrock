@@ -33,7 +33,16 @@ public class BedrockPlugin extends BasePlugin {
 
     @Override
     public ArrayList<CommandManager> getCommandManager() {
-        return null;
+        final CommandManager commandManager = new CommandManager(
+                this,
+                getCommand("bedrock"),
+                this.getDescription().getName(),
+                null
+        );
+
+        return new ArrayList<CommandManager>() {{
+            add(commandManager);
+        }};
     }
 
     @Override
