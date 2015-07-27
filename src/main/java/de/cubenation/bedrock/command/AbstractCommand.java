@@ -127,6 +127,13 @@ public abstract class AbstractCommand {
             throw new RuntimeException("BasePlugin instance isn't availabe!");
         }
 
+        if (getCommandManager() == null) {
+            throw new RuntimeException("BasePlugin instance isn't availabe!");
+        }
+
+        setLabel(getCommandManager().getPluginCommand().getLabel());
+
+
         setPermission(new Permission(getPermissionString(), getPlugin()));
 
         // assign help strings
@@ -155,6 +162,8 @@ public abstract class AbstractCommand {
 
     public abstract String[] getHelp();
 
+    public abstract String getLabel();
+
     public abstract Permission getPermission();
 
     public abstract CommandManager getCommandManager();
@@ -167,6 +176,8 @@ public abstract class AbstractCommand {
     public abstract void setCommands(ArrayList<String[]> commands);
 
     public abstract void setHelp(String[] help);
+
+    public abstract void setLabel(String label);
 
     public abstract void setPermission(Permission permission);
 
