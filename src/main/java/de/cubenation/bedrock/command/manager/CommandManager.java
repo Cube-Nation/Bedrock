@@ -104,7 +104,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             e.printStackTrace();
         } catch (IllegalCommandArgumentException e) {
             MessageHelper.invalidCommand(this.plugin, commandSender);
-            MessageHelper.send(this.plugin, commandSender, commandToExecute.getBeautifulHelp());
+            MessageHelper.send(this.plugin, commandSender, commandToExecute.getBeautifulHelp(commandSender));
         }
 
         //TODO Check & reimplement
