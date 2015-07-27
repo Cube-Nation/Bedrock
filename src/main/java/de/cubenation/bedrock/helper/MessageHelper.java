@@ -3,7 +3,6 @@ package de.cubenation.bedrock.helper;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
-import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -170,15 +169,14 @@ public class MessageHelper {
     /**
      * Get a TextComponent with the help for a SubCommand
      *
-     * @param com the SubCommand
+//     * @param com the SubCommand
 //     * @param sender     the command sender
 //     * @param label      the label of the command
      * @return the TextComponent with the help.
      */
-    public static TextComponent getHelpForSubCommand(BasePlugin plugin, AbstractCommand com) {
+    public static TextComponent getHelpForSubCommand(BasePlugin plugin, AbstractCommand command) {
 
         //Different Help for each Arguments
-        Command command = (Command) com;
 
 //FIXME D1rty
 //        if (!command.hasPermission(sender)) {
@@ -227,6 +225,6 @@ public class MessageHelper {
 //        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(useCommand)));
 //        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(help)));
 
-        return new TextComponent(com.getCommands().get(0)[0] + " : Fix Me");
+        return new TextComponent(command.getCommands().get(0)[0] + " : Fix Me\n");
     }
 }

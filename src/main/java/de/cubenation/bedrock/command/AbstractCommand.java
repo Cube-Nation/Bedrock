@@ -10,8 +10,7 @@ import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -38,9 +37,43 @@ public abstract class AbstractCommand {
      * Gets tab completion for argument.
      *
      * @param args the args of the asking command
-     * @return the tab completion list for argument
+     * @return the tab completion for argument
      */
-    public abstract String getTabCompletionListForArgument(String[] args);
+    public abstract ArrayList<String> getTabCompletion(String[] args);
+
+    public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
+        if (getCommands().size() >= args.length) {
+            for (int i = 0; i < args.length; i++) {
+
+                boolean validCommand = false;
+                for (String com : getCommands().get(i)) {
+                    if (com.startsWith(args[i])) {
+                        validCommand = true;
+                    }
+                }
+                if (!validCommand) {
+                    return null;
+                }
+            }
+
+            final ArrayList<String> list = new ArrayList<>(Arrays.asList(getCommands().get(args.length - 1)));
+
+            Collections.sort(list, new Comparator<String>() {
+                @Override
+                public int compare(String s1, String s2) {
+                    return s2.compareToIgnoreCase(s1);
+                }
+            });
+
+            // Just return the "largets" command for completion to help the user to choose the right.
+            final String completionCommand = list.get(0);
+
+            return new ArrayList<String>(){{add(completionCommand);}};
+        } else {
+            System.out.println(" NOT (getCommands().size() >= args.length)  --> Returning NULL");
+            return null;
+        }
+    }
 
     /**
      * Returns if the subcommand is a valid trigger for the asking command.

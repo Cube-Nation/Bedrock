@@ -81,39 +81,44 @@ public abstract class Command extends AbstractCommand {
 
 
     @Override
-    public final String getTabCompletionListForArgument(String[] args) {
-        if (commands.size() >= args.length) {
-            for (int i = 0; i < args.length; i++) {
-                boolean result;
-                if (!args[i].equals("")) {
-                    result = false;
-                    for (String com : commands.get(i)) {
-                        if (com.startsWith(args[i])) {
-                            result = true;
-                        }
-                    }
-                } else {
-                    result = true;
-                }
-
-                if (!result) {
-                    return null;
-                }
-            }
-
-            ArrayList<String> list = new ArrayList<>(Arrays.asList(commands.get(args.length - 1)));
-
-            Collections.sort(list, new Comparator<String>() {
-                @Override
-                public int compare(String s1, String s2) {
-                    return s2.compareToIgnoreCase(s1);
-                }
-            });
-
-            // Just return the "largets" command for completion to help the user to choose the right.
-            return list.get(0);
-        }
-        return null;
+    public final ArrayList<String> getTabCompletion(String[] args) {
+        return getTabCompletionFromCommands(args);
+//        if (commands.size() >= args.length) {
+//            for (int i = 0; i < args.length; i++) {
+//                boolean result;
+//                if (!args[i].equals("")) {
+//                    result = false;
+//                    for (String com : commands.get(i)) {
+//                        if (com.startsWith(args[i])) {
+//                            result = true;
+//                        }
+//                    }
+//                } else {
+//                    result = true;
+//                }
+//
+//                if (!result) {
+//                    return null;
+//                }
+//            }
+//
+//            ArrayList<String> list = new ArrayList<>(Arrays.asList(commands.get(args.length - 1)));
+//
+//            Collections.sort(list, new Comparator<String>() {
+//                @Override
+//                public int compare(String s1, String s2) {
+//                    return s2.compareToIgnoreCase(s1);
+//                }
+//            });
+//
+//            // Just return the "largets" command for completion to help the user to choose the right.
+//
+//            //TODO Better implementation available
+//            ArrayList<String> cmd = new ArrayList<>();
+//            cmd.add(list.get(0));
+//            return cmd;
+//        }
+//        return null;
     }
 
     /**
