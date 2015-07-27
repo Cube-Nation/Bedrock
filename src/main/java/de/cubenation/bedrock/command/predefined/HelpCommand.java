@@ -38,6 +38,10 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String label, String[] subCommands, String[] args) throws CommandException {
+
+        System.out.println("Received exec...");
+
+
         if (args.length == 0) {
             // Display help for all commands
 

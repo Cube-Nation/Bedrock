@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BedrockPlugin;
-import de.cubenation.bedrock.command.SubCommand;
+import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -19,7 +19,7 @@ import java.util.Map;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command.permission
  */
-public class PermissionListCommand extends SubCommand {
+public class PermissionListCommand extends Command {
 
     public PermissionListCommand() {
         super(

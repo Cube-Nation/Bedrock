@@ -2,9 +2,7 @@ package de.cubenation.bedrock.command.manager;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
-import de.cubenation.bedrock.command.Command;
-import de.cubenation.bedrock.command.SubCommand;
-import de.cubenation.bedrock.command.predefined.*;
+import de.cubenation.bedrock.command.predefined.HelpCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -29,8 +27,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private PluginCommand pluginCommand;
 
-    private List<SubCommand> subCommands = new ArrayList<>();
-
     private List<AbstractCommand> commands = new ArrayList<>();
 
     private String helpPrefix;
@@ -38,37 +34,21 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
 
 
-//    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, SubCommand... subCommands) {
-//        this.plugin = plugin;
-//        this.pluginCommand = pluginCommand;
-//        this.helpPrefix = helpPrefix;
-//
-//        Collections.addAll(this.subCommands, subCommands);
-//
-//        this.subCommands.add(helpCommand);
-//        helpCommand.setHelpPrefix(helpPrefix);
-//
-//        if (plugin.usePermissionService()) {
-//            this.subCommands.add(new PermissionReloadCommand());
-//        }
-//
-//        // add default commands that all plugins are capable of
-//        this.subCommands.add(new PermissionListCommand());
-//        this.subCommands.add(new ReloadCommand());
-//        this.subCommands.add(new VersionCommand());
-//
-//        this.setCommandManager();
-//    }
 
-    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, Command... commands) {
+    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, AbstractCommand... commands) {
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
         this.helpPrefix = helpPrefix;
 
-        Collections.addAll(this.commands, commands);
+        if (commands != null) {
+            Collections.addAll(this.commands, commands);
+        }
+
 
         this.commands.add(helpCommand);
         helpCommand.setHelpPrefix(helpPrefix);
+
+        System.out.println("Commands: " + this.commands);
 
         //FIXME Later
 //        if (plugin.usePermissionService()) {
@@ -79,23 +59,22 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 //        this.subCommands.add(new PermissionListCommand());
 //        this.subCommands.add(new ReloadCommand());
 //        this.subCommands.add(new VersionCommand());
-
-        for (AbstractCommand command : this.commands) {
-            command.addCommandManager(this);
+        if (this.commands != null) {
+            for (AbstractCommand command : this.commands) {
+                command.addCommandManager(this);
+            }
         }
     }
 
-    private void setCommandManager() {
-        for (SubCommand subCommand : subCommands) {
-            subCommand.setCommandManager(this);
-        }
-    }
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
         AbstractCommand commandToExecute = helpCommand;
         try {
-            if (args.length > 0) {
+            if (args.length <= 0) {
+                commandToExecute.execute(commandSender, label, null, args);
+                return true;
+            } else {
                 for (AbstractCommand cmd : commands) {
                     if (cmd.isValidTrigger(args)) {
                         commandToExecute = cmd;
@@ -103,13 +82,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
             }
 
-
             if (!commandToExecute.hasPermission(commandSender)) {
                 MessageHelper.insufficientPermission(plugin, commandSender);
                 return true;
             }
-
-
 
             commandToExecute.execute(
                     commandSender,
@@ -117,8 +93,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     Arrays.copyOfRange(args, 0, commandToExecute.getCommands().size()),
                     Arrays.copyOfRange(args, commandToExecute.getCommands().size(), args.length));
             return true;
-
-
 
 
         } catch (CommandException e) {
@@ -188,10 +162,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     public PluginCommand getPluginCommand() {
         return pluginCommand;
-    }
-
-    public List<SubCommand> getSubCommands() {
-        return subCommands;
     }
 
     public List<AbstractCommand> getCommands() {

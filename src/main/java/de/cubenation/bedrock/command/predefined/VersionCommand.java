@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BedrockPlugin;
-import de.cubenation.bedrock.command.SubCommand;
+import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.LinkedHashMap;
 
-public class VersionCommand extends SubCommand {
+public class VersionCommand extends Command {
 
     public VersionCommand() {
         super(

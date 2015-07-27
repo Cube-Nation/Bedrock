@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BedrockPlugin;
-import de.cubenation.bedrock.command.SubCommand;
+import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.LinkedHashMap;
 
-public class ReloadCommand extends SubCommand {
+public class ReloadCommand extends Command {
 
     public ReloadCommand() {
         super(

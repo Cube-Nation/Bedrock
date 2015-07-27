@@ -227,6 +227,6 @@ public class MessageHelper {
 //        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(useCommand)));
 //        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(help)));
 
-        return new TextComponent("Fix Me");
+        return new TextComponent(com.getCommands().get(0)[0] + " : Fix Me");
     }
 }
