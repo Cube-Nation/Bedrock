@@ -5,8 +5,12 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -18,7 +22,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
     private ArrayList<String[]> commands;
     private ArrayList<Argument> arguments = new ArrayList<>();
     private String label;
-    private String[] help = new String[]{};
+    private String description;
     private Permission permission;
     private CommandManager commandManager;
     private String permissionString;
@@ -30,14 +34,14 @@ public abstract class KeyValueCommand extends AbstractCommand {
      * Like '/city help'
      *
      * @param command    the command
-     * @param help       the help
+     * @param description   the description
      * @param permission the permission
      */
     @SuppressWarnings(value = "unused")
-    public KeyValueCommand(final String command, String[] help, String permission, Argument... arguments) {
+    public KeyValueCommand(final String command, String description, String permission, Argument... arguments) {
         init(new ArrayList<String[]>() {{
             add(new String[]{command});
-        }}, help, permission, arguments);
+        }}, description, permission, arguments);
 
     }
 
@@ -47,15 +51,15 @@ public abstract class KeyValueCommand extends AbstractCommand {
      * Like '/city teleport' and '/city tp'
      *
      * @param commands   the commands
-     * @param help       the help
+     * @param description       the description
      * @param permission the permission
      */
     @SuppressWarnings(value = "unused")
-    public KeyValueCommand(final String[] commands, String[] help, String permission, Argument... arguments) {
+    public KeyValueCommand(final String[] commands, String description, String permission, Argument... arguments) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
-        init(list, help, permission, arguments);
+        init(list, description, permission, arguments);
     }
 
     /**
@@ -66,22 +70,21 @@ public abstract class KeyValueCommand extends AbstractCommand {
      * Like '/city set bonus', '/city s bonus', /
      *
      * @param commands   the commands
-     * @param help       the help
+     * @param description       the description
      * @param permission the permission
      */
     @SuppressWarnings(value = "unused")
-    public KeyValueCommand(ArrayList<String[]> commands, String[] help, String permission, Argument... arguments) {
-        init(commands, help, permission, arguments);
+    public KeyValueCommand(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
+        init(commands, description, permission, arguments);
     }
 
 
-    private void init(ArrayList<String[]> commands, String[] help, String permission, Argument... arguments) {
-        this.commands = commands;
-        this.permissionString = permission;
-        this.help = help;
-        for (Argument argument : arguments) {
-            this.arguments.add(argument);
-        }
+    private void init(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
+        this.commands           = commands;
+        this.permissionString   = permission;
+        this.description        = description;
+
+        Collections.addAll(this.arguments, arguments);
     }
 
 
@@ -246,8 +249,8 @@ Wenn libtest Black TAB
         return false;
     }
 
-    public TextComponent getBeautifulHelp() {
-        return MessageHelper.getHelpForSubCommand(plugin, this);
+    public TextComponent getBeautifulHelp(CommandSender sender) {
+        return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
     /**
@@ -277,8 +280,8 @@ Wenn libtest Black TAB
     }
 
     @Override
-    public String[] getHelp() {
-        return help;
+    public String getDescription() {
+        return description;
     }
 
     @Override
@@ -313,8 +316,8 @@ Wenn libtest Black TAB
     }
 
     @Override
-    public void setHelp(String[] help) {
-        this.help = help;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

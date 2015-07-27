@@ -25,7 +25,7 @@ public class PermissionReloadCommand extends Command {
                     add(new String[] { "permission", "perm" } );
                     add(new String[] { "reload", "r" } );
                 }},
-                new String[] { "help.permission.reload" },
+                "help.permission.reload",
                 "permission.reload"
         );
     }

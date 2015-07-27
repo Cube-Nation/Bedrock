@@ -15,7 +15,7 @@ public class VersionCommand extends Command {
     public VersionCommand() {
         super(
                 "version",
-                new String[]{ "help.version" },
+                "help.version",
                 "version"
         );
     }

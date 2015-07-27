@@ -1,12 +1,10 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
-import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
@@ -75,6 +73,7 @@ public abstract class AbstractCommand {
         }
     }
 
+
     /**
      * Returns if the subcommand is a valid trigger for the asking command.
      *
@@ -82,14 +81,6 @@ public abstract class AbstractCommand {
      * @return true if it is a valid trigger, else false
      */
     public abstract boolean isValidTrigger(String[] args);
-
-    /**
-     * Gets arguments help.
-     *
-     * @return the arguments help
-     */
-    public abstract ArrayList<String> getArgumentsHelp();
-
 
     public abstract TextComponent getBeautifulHelp(CommandSender sender);
 
@@ -132,34 +123,15 @@ public abstract class AbstractCommand {
 
         setLabel(getCommandManager().getPluginCommand().getLabel());
 
-
         setPermission(new Permission(getPermissionString(), getPlugin()));
-
-        // assign help strings
-        List<String> help_strings = new ArrayList<>();
-        for (String h : getHelp()) {
-
-            // FIXME: D1rty move this to Translation class
-
-            // a help message *should* come from the plugin that uses it, so we try to take it from there
-            String foreign_plugin_help = new Translation(getPlugin(), h).getTranslation();
-            if (!foreign_plugin_help.equals("")) {
-                help_strings.add(foreign_plugin_help);
-                continue;
-            }
-
-            // should be a Bedrock built-in command, take it from Bedrocks' locale file
-            help_strings.add(new Translation(BedrockPlugin.getInstance(), h).getTranslation());
-        }
-
-        setHelp(help_strings.toArray(new String[help_strings.size()]));
-
     }
+
+    public abstract LinkedHashMap<String, String> getArguments();
 
 
     public abstract ArrayList<String[]> getCommands();
 
-    public abstract String[] getHelp();
+    public abstract String getDescription();
 
     public abstract String getLabel();
 
@@ -174,7 +146,7 @@ public abstract class AbstractCommand {
 
     public abstract void setCommands(ArrayList<String[]> commands);
 
-    public abstract void setHelp(String[] help);
+    public abstract void setDescription(String description);
 
     public abstract void setLabel(String label);
 

@@ -16,7 +16,7 @@ public class ReloadCommand extends Command {
     public ReloadCommand() {
         super(
                 new String[] { "reload" , "r"},
-                new String[] { "help.reload" },
+                "help.reload",
                 "reload"
         );
     }

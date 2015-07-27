@@ -17,7 +17,7 @@ import java.util.*;
 public abstract class Command extends AbstractCommand {
 
     private ArrayList<String[]> commands;
-    private String[] help = new String[]{};
+    private String description;
     private String label;
     private Permission permission;
     private CommandManager commandManager;
@@ -29,16 +29,15 @@ public abstract class Command extends AbstractCommand {
      * Instantiates a new Command with just one command
      * Like '/city help'
      *
-     * @param command    the command
-     * @param help       the help
-     * @param permission the permission
+     * @param command       the command
+     * @param description   the description
+     * @param permission    the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(final String command, String[] help, String permission) {
+    public Command(final String command, String description, String permission) {
         init(new ArrayList<String[]>() {{
             add(new String[]{command});
-        }}, help, permission);
-
+        }}, description, permission);
     }
 
     /**
@@ -46,16 +45,16 @@ public abstract class Command extends AbstractCommand {
      * Each element in commands symbolizes an alias for a command
      * Like '/city teleport' and '/city tp'
      *
-     * @param commands   the commands
-     * @param help       the help
-     * @param permission the permission
+     * @param commands      the commands
+     * @param description   the description
+     * @param permission    the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(final String[] commands, String[] help, String permission) {
+    public Command(final String[] commands, String description, String permission) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
-        init(list, help, permission);
+        init(list, description, permission);
     }
 
     /**
@@ -65,19 +64,19 @@ public abstract class Command extends AbstractCommand {
      * The String[] contains a single command or aliases
      * Like '/city set bonus', '/city s bonus', /
      *
-     * @param commands   the commands
-     * @param help       the help
-     * @param permission the permission
+     * @param commands      the commands
+     * @param description   the description
+     * @param permission    the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(ArrayList<String[]> commands, String[] help, String permission) {
-        init(commands, help, permission);
+    public Command(ArrayList<String[]> commands, String description, String permission) {
+        init(commands, description, permission);
     }
 
-    private void init(ArrayList<String[]> commands, String[] help, String permission) {
-        this.commands = commands;
-        this.permissionString = permission;
-        this.help = help;
+    private void init(ArrayList<String[]> commands, String description, String permission) {
+        this.commands           = commands;
+        this.permissionString   = permission;
+        this.description        = description;
     }
 
 
@@ -157,39 +156,14 @@ public abstract class Command extends AbstractCommand {
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
-    /**
-     * Gets arguments help.
-     * The Key describes the Argument. For example {value}.
-     * {} - means required.
-     * [] - means optional.
-     * <p/>
-     * The Value is the help for the Argument.
-     *
-     * @return the arguments help
-     */
-    public abstract LinkedHashMap<String, String> getArguments();
-
-
-    public final ArrayList<String> getArgumentsHelp() {
-        if (getArguments() != null) {
-            ArrayList<String> list = new ArrayList<>();
-            for (Map.Entry<String, String> entry : getArguments().entrySet()) {
-                list.add(entry.getKey());
-            }
-            return list;
-        }
-        return null;
-    }
-
-
     @Override
     public ArrayList<String[]> getCommands() {
         return commands;
     }
 
     @Override
-    public String[] getHelp() {
-        return help;
+    public String getDescription() {
+        return description;
     }
 
     @Override
@@ -224,8 +198,8 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public void setHelp(String[] help) {
-        this.help = help;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

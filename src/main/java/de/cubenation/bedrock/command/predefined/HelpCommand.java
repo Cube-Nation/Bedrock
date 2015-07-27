@@ -28,7 +28,7 @@ public class HelpCommand extends Command {
     public HelpCommand(CommandManager commandManager, String helpPrefix) {
         super(
                 "help",
-                new String[] { "help.plugin" },
+                "help.plugin",
                 null
         );
 
@@ -38,10 +38,6 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String label, String[] subCommands, String[] args) throws CommandException {
-
-        System.out.println("Received exec...");
-
-
         if (args.length == 0) {
             // Display help for all commands
 
@@ -62,16 +58,15 @@ public class HelpCommand extends Command {
             );
             MessageHelper.send(commandManager.getPlugin(), sender, header, null, null);
 
+
             // =========================
             // create help for each subcommand
             // =========================
-
-
             for (AbstractCommand command : commandManager.getCommands()) {
                 MessageHelper.send(
-                        BedrockPlugin.getInstance(),
+                        this.getPlugin(),
                         sender,
-                        command.getBeautifulHelp()
+                        command.getBeautifulHelp(sender)
                 );
             }
 

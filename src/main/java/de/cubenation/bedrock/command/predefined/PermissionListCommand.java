@@ -27,7 +27,7 @@ public class PermissionListCommand extends Command {
                     add(new String[] { "permission", "perm" } );
                     add(new String[] { "list", "l" } );
                 }},
-                new String[] { "help.permission.list" },
+                "help.permission.list",
                 "permission.list"
         );
     }

@@ -124,7 +124,7 @@ public class ColorScheme {
     }
 
     public ClickEvent applyColorScheme(ClickEvent event) {
-        return new ClickEvent(event.getAction(), ChatColor.stripColor(event.getValue()));
+        return new ClickEvent(event.getAction(), ChatColor.stripColor(applyColorScheme(event.getValue())));
     }
 
     public TextComponent applyColorScheme(TextComponent component) {

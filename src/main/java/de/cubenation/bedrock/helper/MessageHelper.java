@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,10 +87,10 @@ public class MessageHelper {
 
                     // generate header and footer line
                     String hf_line =
-                            ChatColor.DARK_GRAY + " " +
-                            new String(new char[max_len + 4]).replace('\0', '-') +
+                            ChatColor.DARK_GRAY + "   " +
+                            new String(new char[max_len + 3]).replace('\0', '-') +
                             ChatColor.RESET;
-                    ;
+
                     lines.add(0, hf_line);
 
                     for (int i = 1; i < lines.size(); i++) {
@@ -98,7 +99,7 @@ public class MessageHelper {
                                 ChatColor.DARK_GRAY + "  | " + ChatColor.RESET +
                                 lines.get(i) +
                                 new String(new char[pad_length]).replace('\0', ' ') +
-                                ChatColor.DARK_GRAY + " |" + ChatColor.RESET
+                                ChatColor.DARK_GRAY + "  |" + ChatColor.RESET
                         );
                     }
 
@@ -108,9 +109,9 @@ public class MessageHelper {
                 } else {
                     hover_message =
                             " " +   // make explicit string
-                            ChatColor.DARK_GRAY + "(" + ChatColor.RESET +
+                            ChatColor.DARK_GRAY + "[ " + ChatColor.RESET +
                             hover_message +
-                            ChatColor.DARK_GRAY + ")" + ChatColor.RESET;
+                            ChatColor.DARK_GRAY + " ]" + ChatColor.RESET;
                 }
             }
 
@@ -174,59 +175,84 @@ public class MessageHelper {
 //     * @param label      the label of the command
      * @return the TextComponent with the help.
      */
-    public static TextComponent getHelpForSubCommand(BasePlugin plugin, AbstractCommand command) {
+    public static TextComponent getHelpForSubCommand(BasePlugin plugin, CommandSender sender, AbstractCommand command) {
+
+        // check for permission
+        if (!command.hasPermission(sender))
+            return null;
+
+        // clickable string
+        String click_string = "/" + command.getLabel();
+
+        // command divider string
+        String command_divider = new Translation(
+                BedrockPlugin.getInstance(),
+                "help.command.divider"
+        ).getTranslation();
+
+        // command string
+        String command_string = "";
+        if (command.getCommands() != null) {
+            for (String[] commands : command.getCommands()) {
+                Arrays.sort(commands, new LengthComparator());
+                command_string += " " + StringUtils.join(commands, command_divider);
+
+                click_string += " " + ((commands.length > 1) ? commands[1] : commands[0]);
+            }
+        }
 
 
+        // command args string (
+        String args_string      = "";
+        String long_args_string = "";
 
-        //Different Help for each Arguments
+        if (command.getArguments() != null) {
+            for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
 
-//FIXME D1rty
-//        if (!command.hasPermission(sender)) {
-//            return null;
-//        }
-//
-//        ChatColor primary = plugin.getColorScheme().getPrimary();
-//        ChatColor secondary = plugin.getColorScheme().getSecondary();
-//
-//        String cmd = primary + "/" + label + "" +
-//                secondary;
-//        String useCommand = cmd;
-//        if (command.getCommands() != null) {
-//            for (String[] commands : command.getCommands()) {
-//                Arrays.sort(commands, new LengthComparator());
-//                cmd += " " + StringUtils.join(commands, primary + "|" + secondary);
-//                useCommand += " " + commands[0];
-//            }
-//        }
-//
-//        String cmdWithArgument = cmd;
-//
-//        String toolTipHelp = "";
-//        for (String helpString : command.getHelp()) {
-//            toolTipHelp += System.lineSeparator() + ChatColor.WHITE + helpString;
-//        }
-//
-//        if (command.getArguments() != null) {
-//            for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
-//                cmdWithArgument += " " + entry.getKey();
-//                toolTipHelp += System.lineSeparator() +
-//                        ChatColor.GRAY + ChatColor.ITALIC + entry.getKey() +
-//                        ChatColor.RESET;
-//
-//                if (entry.getValue() != null)
-//                    toolTipHelp += " - " + entry.getValue();
-//                // FIXME: somehow the reset does not work -> looks ugly in Console
-//                //toolTipHelp += ChatColor.ITALIC + " - " + entry.getValue() + ChatColor.RESET;
-//
-//            }
-//        }
-//
-//        String help = secondary + "" + cmdWithArgument + toolTipHelp;
-//
-//        TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText(cmdWithArgument));
-//        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(useCommand)));
-//        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(help)));
+                args_string += " " + new Translation(
+                        BedrockPlugin.getInstance(),
+                        "help.command.args",
+                        new String[] { "argument", entry.getKey() }
+                ).getTranslation();
 
-        return new TextComponent(command.getCommands().get(0)[0] + " : Fix Me\n");
+                long_args_string += " " + new Translation(
+                        BedrockPlugin.getInstance(),
+                        "help.command.long_args",
+                        new String[] { "argument", entry.getKey(), "description", entry.getValue() }
+                ).getTranslation();
+            }
+        }
+
+        // assign description
+        String description_string = "";
+
+        if (command.getDescription() != null && !command.getDescription().isEmpty()) {
+            description_string = new Translation(plugin, command.getDescription()).getTranslation();
+            if (description_string.isEmpty())
+                description_string = new Translation(BedrockPlugin.getInstance(), command.getDescription()).getTranslation();
+        }
+
+
+        // finally
+        String help_string = new Translation(
+                BedrockPlugin.getInstance(),
+                "help.command.command",
+                new String[]{
+                        "label",    command.getLabel(),
+                        "commands", command_string,
+                        "args",     args_string
+                }
+        ).getTranslation();
+
+        String hover_string = description_string;
+        if (!long_args_string.isEmpty())
+            hover_string += System.lineSeparator() + long_args_string;
+
+        TextComponent component = new TextComponent(TextComponent.fromLegacyText(help_string));
+        component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, click_string));
+        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hover_string)));
+
+        return component;
     }
+
 }

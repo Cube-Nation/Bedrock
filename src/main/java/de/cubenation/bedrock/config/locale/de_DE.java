@@ -43,8 +43,13 @@ public class de_DE extends CustomConfigurationFile {
          * Help messages
          */
         data.put("help.header",                 "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
-        data.put("help.command",                "");
-        data.put("help.hover",                  "");
+
+        data.put("help.command.command",        "&PRIMARY&/%label%&SECONDARY&%commands%&GRAY&&ITALIC&%args%&RESET&");
+        data.put("help.command.divider",        "&PRIMARY&|&SECONDARY&");
+        data.put("help.command.description",    "&TEXT&&%description%&RESET&");
+        data.put("help.command.args",           "%argument%");
+        data.put("help.command.long_args",      "&GRAY&&ITALIC&%argument% - %description%&RESET&");
+
         data.put("help.plugin",                 "&TEXT&Hilfe zu allen Plugin Befehlen");
         data.put("help.version",                "&TEXT&Zeigt die Version des Plugins an");
         data.put("help.reload",                 "&TEXT&Lädt das Plugin neu");
