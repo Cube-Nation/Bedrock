@@ -1,6 +1,6 @@
 package de.cubenation.bedrock;
 
-import de.cubenation.bedrock.command.CommandManager;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;

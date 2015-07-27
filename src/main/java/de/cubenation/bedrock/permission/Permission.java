@@ -11,9 +11,9 @@ import org.bukkit.command.CommandSender;
  */
 public class Permission {
 
+    //region Properties
     private final PermissionService permissionService;
     private final BasePlugin plugin;
-    //region Properties
     private String name;
     //endregion
 

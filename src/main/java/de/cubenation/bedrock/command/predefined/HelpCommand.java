@@ -1,6 +1,9 @@
-package de.cubenation.bedrock.command;
+package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.command.AbstractCommand;
+import de.cubenation.bedrock.command.Command;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.translation.Translation;
@@ -8,7 +11,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 
@@ -17,7 +19,7 @@ import java.util.LinkedHashMap;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
-public class HelpCommand extends SubCommand {
+public class HelpCommand extends Command {
 
     private final CommandManager commandManager;
 
@@ -60,12 +62,21 @@ public class HelpCommand extends SubCommand {
             // create help for each subcommand
             // =========================
 
-            for (SubCommand subCommand : commandManager.getSubCommands()) {
-                TextComponent subCommandHelp = commandManager.getHelpForSubCommand(subCommand, sender, label);
 
-                if (subCommandHelp != null)
-                    MessageHelper.send(commandManager.getPlugin(), sender, subCommandHelp);
+            for (AbstractCommand command : commandManager.getCommands()) {
+                MessageHelper.send(
+                        BedrockPlugin.getInstance(),
+                        sender,
+                        command.getBeautifulHelp()
+                );
             }
+
+//            for (SubCommand subCommand : commandManager.getSubCommands()) {
+//                TextComponent subCommandHelp = commandManager.getHelpForSubCommand(subCommand, sender, label);
+//
+//                if (subCommandHelp != null)
+//                    MessageHelper.send(commandManager.getPlugin(), sender, subCommandHelp);
+//            }
 
         } else if (StringUtils.isNumeric(args[0])) {
             // FIXME: use PageableListService
@@ -73,18 +84,21 @@ public class HelpCommand extends SubCommand {
             MessageHelper.send(BedrockPlugin.getInstance(), sender, message);
 
         } else {
-            for (SubCommand subCommand : commandManager.getSubCommands()) {
-                if (Arrays.asList(subCommand.getCommands().get(0)).contains(args[0])) {
-                    MessageHelper.send(
-                            BedrockPlugin.getInstance(),
-                            sender,
-                            commandManager.getHelpForSubCommand(subCommand, sender, label)
-                    );
-                }
-            } // for
+
+            //TODO Für was war das?
+//            for (SubCommand subCommand : commandManager.getSubCommands()) {
+//                if (Arrays.asList(subCommand.getCommands().get(0)).contains(args[0])) {
+//                    MessageHelper.send(
+//                            BedrockPlugin.getInstance(),
+//                            sender,
+//                            commandManager.getHelpForSubCommand(subCommand, sender)
+//                    );
+//                }
+//            } // for
         }
 
     }
+
 
     @Override
     public LinkedHashMap<String, String> getArguments() {

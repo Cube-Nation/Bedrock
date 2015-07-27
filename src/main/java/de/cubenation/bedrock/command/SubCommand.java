@@ -2,6 +2,7 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.permission.Permission;
@@ -15,6 +16,7 @@ import java.util.*;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
+@Deprecated
 public abstract class SubCommand {
 
     //region Properties

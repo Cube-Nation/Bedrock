@@ -1,4 +1,4 @@
-package de.cubenation.bedrock.command.permission;
+package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.SubCommand;

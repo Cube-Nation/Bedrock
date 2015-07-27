@@ -1,6 +1,6 @@
 package de.cubenation.bedrock;
 
-import de.cubenation.bedrock.command.CommandManager;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;

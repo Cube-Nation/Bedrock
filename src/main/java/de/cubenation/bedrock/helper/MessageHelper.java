@@ -2,6 +2,8 @@ package de.cubenation.bedrock.helper;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.command.AbstractCommand;
+import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -155,5 +157,70 @@ public class MessageHelper {
 
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+
+    //TODO Update Javadoc
+    /**
+     * Get a TextComponent with the help for a SubCommand
+     *
+     * @param com the SubCommand
+//     * @param sender     the command sender
+     * @param label      the label of the command
+     * @return the TextComponent with the help.
+     */
+    public static TextComponent getHelpForSubCommand(BasePlugin plugin, AbstractCommand com) {
+
+        //Different Help for each Arguments
+        Command command = (Command) com;
+
+//FIXME D1rty
+//        if (!command.hasPermission(sender)) {
+//            return null;
+//        }
+//
+//        ChatColor primary = plugin.getColorScheme().getPrimary();
+//        ChatColor secondary = plugin.getColorScheme().getSecondary();
+//
+//        String cmd = primary + "/" + label + "" +
+//                secondary;
+//        String useCommand = cmd;
+//        if (command.getCommands() != null) {
+//            for (String[] commands : command.getCommands()) {
+//                Arrays.sort(commands, new LengthComparator());
+//                cmd += " " + StringUtils.join(commands, primary + "|" + secondary);
+//                useCommand += " " + commands[0];
+//            }
+//        }
+//
+//        String cmdWithArgument = cmd;
+//
+//        String toolTipHelp = "";
+//        for (String helpString : command.getHelp()) {
+//            toolTipHelp += System.lineSeparator() + ChatColor.WHITE + helpString;
+//        }
+//
+//        if (command.getArguments() != null) {
+//            for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
+//                cmdWithArgument += " " + entry.getKey();
+//                toolTipHelp += System.lineSeparator() +
+//                        ChatColor.GRAY + ChatColor.ITALIC + entry.getKey() +
+//                        ChatColor.RESET;
+//
+//                if (entry.getValue() != null)
+//                    toolTipHelp += " - " + entry.getValue();
+//                // FIXME: somehow the reset does not work -> looks ugly in Console
+//                //toolTipHelp += ChatColor.ITALIC + " - " + entry.getValue() + ChatColor.RESET;
+//
+//            }
+//        }
+//
+//        String help = secondary + "" + cmdWithArgument + toolTipHelp;
+//
+//        TextComponent textComponent = new TextComponent(TextComponent.fromLegacyText(cmdWithArgument));
+//        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(useCommand)));
+//        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(help)));
+
+        return new TextComponent("Fix Me");
     }
 }
