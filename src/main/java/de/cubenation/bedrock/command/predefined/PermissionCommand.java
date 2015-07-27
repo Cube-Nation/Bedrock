@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -19,14 +18,11 @@ import java.util.Map;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command.permission
  */
-public class PermissionListCommand extends Command {
+public class PermissionCommand extends Command {
 
-    public PermissionListCommand() {
+    public PermissionCommand() {
         super(
-                new ArrayList<String[]>() {{
-                    add(new String[] { "permission", "perm" } );
-                    add(new String[] { "list", "l" } );
-                }},
+                new String[]{"permission", "perm"},
                 "help.permission.list",
                 "permission.list"
         );
@@ -58,7 +54,7 @@ public class PermissionListCommand extends Command {
                         new Translation(
                                 BedrockPlugin.getInstance(),
                                 "permission.list.role",
-                                new String[] { "role", entry.getKey().toString() }
+                                new String[]{"role", entry.getKey().toString()}
                         ).getTranslation()
                 );
 
@@ -69,7 +65,7 @@ public class PermissionListCommand extends Command {
                             new Translation(
                                     BedrockPlugin.getInstance(),
                                     "permission.list.permission",
-                                    new String[] { "permission", perm }
+                                    new String[]{"permission", perm}
                             ).getTranslation()
                     );
 
@@ -77,7 +73,7 @@ public class PermissionListCommand extends Command {
 
             } // for (permissionDump)
 
-        // no permissions
+            // no permissions
         } else {
             MessageHelper.send(
                     getCommandManager().getPlugin(),
@@ -91,8 +87,4 @@ public class PermissionListCommand extends Command {
         } // if
     }
 
-    @Override
-    public LinkedHashMap<String, String> getArguments() {
-        return null;
-    }
 }
