@@ -5,6 +5,7 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.CommandSender;
 
 import java.util.*;
 
@@ -151,8 +152,8 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public TextComponent getBeautifulHelp() {
-        return MessageHelper.getHelpForSubCommand(plugin, this);
+    public TextComponent getBeautifulHelp(CommandSender sender) {
+        return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
     /**

@@ -22,7 +22,7 @@ public class de_DE extends CustomConfigurationFile {
         /*
          * Generic Messages
          */
-        data.put("version",                     "Version &PRIMARY&%version%");
+        data.put("version",                     "&TEXT&Version &PRIMARY&%version%");
 
         data.put("reload.complete",             "Plugin neu geladen");
         data.put("reload.failed",               "Plugin konnte nicht neu geladen werden");
@@ -45,11 +45,11 @@ public class de_DE extends CustomConfigurationFile {
         data.put("help.header",                 "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
         data.put("help.command",                "");
         data.put("help.hover",                  "");
-        data.put("help.plugin",                 "Hilfe zu allen Plugin Befehlen");
-        data.put("help.version",                "Zeigt die Version des Plugins an");
-        data.put("help.reload",                 "Lädt das Plugin neu");
-        data.put("help.permission.reload",      "Lädt die Berechtigungen neu");
-        data.put("help.permission.list",        "Zeigt alle Plugin-Berechtigungen an");
+        data.put("help.plugin",                 "&TEXT&Hilfe zu allen Plugin Befehlen");
+        data.put("help.version",                "&TEXT&Zeigt die Version des Plugins an");
+        data.put("help.reload",                 "&TEXT&Lädt das Plugin neu");
+        data.put("help.permission.reload",      "&TEXT&Lädt die Berechtigungen neu");
+        data.put("help.permission.list",        "&TEXT&Zeigt alle Plugin-Berechtigungen an");
 
         return data;
     }

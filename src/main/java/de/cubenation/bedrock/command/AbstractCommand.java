@@ -91,8 +91,7 @@ public abstract class AbstractCommand {
     public abstract ArrayList<String> getArgumentsHelp();
 
 
-    //TODO: D1rty - Should return some TextComponenent Msg?
-    public abstract TextComponent getBeautifulHelp();
+    public abstract TextComponent getBeautifulHelp(CommandSender sender);
 
 
     /**
