@@ -331,6 +331,28 @@ public abstract class BasePlugin extends JavaPlugin {
         return (this.scheme == null) ? new DefaultColorScheme(this) : this.scheme;
     }
 
+    //FIXME D1rty Nullpointer...
+    /*
+
+    Bei neuem Plugin ohne Config fliegt der Fehler.
+
+    java.lang.NullPointerException
+	at de.cubenation.bedrock.style.ColorScheme.getColorScheme(ColorScheme.java:43) ~[?:?]
+	at de.cubenation.bedrock.BasePlugin.setColorScheme(BasePlugin.java:337) ~[?:?]
+	at de.cubenation.bedrock.service.colorscheme.ColorSchemeService.init(ColorSchemeService.java:26) ~[?:?]
+	at de.cubenation.bedrock.service.ServiceManager.registerService(ServiceManager.java:26) ~[?:?]
+	at de.cubenation.bedrock.BasePlugin.onEnable(BasePlugin.java:64) ~[?:?]
+	at org.bukkit.plugin.java.JavaPlugin.setEnabled(JavaPlugin.java:321) ~[spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at org.bukkit.plugin.java.JavaPluginLoader.enablePlugin(JavaPluginLoader.java:340) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at org.bukkit.plugin.SimplePluginManager.enablePlugin(SimplePluginManager.java:405) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at org.bukkit.craftbukkit.v1_8_R3.CraftServer.loadPlugin(CraftServer.java:356) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at org.bukkit.craftbukkit.v1_8_R3.CraftServer.enablePlugins(CraftServer.java:316) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at net.minecraft.server.v1_8_R3.MinecraftServer.s(MinecraftServer.java:414) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at net.minecraft.server.v1_8_R3.MinecraftServer.k(MinecraftServer.java:378) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at net.minecraft.server.v1_8_R3.MinecraftServer.a(MinecraftServer.java:333) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at net.minecraft.server.v1_8_R3.DedicatedServer.init(DedicatedServer.java:263) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+	at net.minecraft.server.v1_8_R3.MinecraftServer.run(MinecraftServer.java:524) [spigot.jar:git-Spigot-6d16e64-3e9b5c9]
+     */
     public void setColorScheme(ColorScheme.ColorSchemeName name) {
         this.scheme = (name != null)
                 ? ColorScheme.getColorScheme(this, name)
