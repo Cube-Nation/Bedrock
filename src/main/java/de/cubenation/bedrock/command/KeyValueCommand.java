@@ -262,19 +262,9 @@ Wenn libtest Black TAB
      */
     public abstract LinkedHashMap<String, String> getArguments();
 
-    //TODO Check if needed?
-//    @Override
-//    public final ArrayList<String> getArgumentsHelp() {
-//        if (getArguments() != null) {
-//            ArrayList<String> list = new ArrayList<>();
-//            for (Map.Entry<String, String> entry : getArguments().entrySet()) {
-//                list.add(entry.getKey());
-//            }
-//            return list;
-//        }
-//        return null;
-//    }
-
+    public ArrayList<String> getArgumentsHelp() {
+        return null;
+    }
 
     @Override
     public ArrayList<String[]> getCommands() {

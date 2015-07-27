@@ -73,11 +73,10 @@ public abstract class Command extends AbstractCommand {
     }
 
     private void init(ArrayList<String[]> commands, String[] help, String permission) {
-        this.commands           = commands;
-        this.permissionString   = permission;
-        this.help               = help;
+        this.commands = commands;
+        this.permissionString = permission;
+        this.help = help;
     }
-
 
 
     @Override
@@ -168,21 +167,17 @@ public abstract class Command extends AbstractCommand {
      */
     public abstract LinkedHashMap<String, String> getArguments();
 
-    //TODO Check if needed?
-//    @Override
-//    public final ArrayList<String> getArgumentsHelp() {
-//        if (getArguments() != null) {
-//            ArrayList<String> list = new ArrayList<>();
-//            for (Map.Entry<String, String> entry : getArguments().entrySet()) {
-//                list.add(entry.getKey());
-//            }
-//            return list;
-//        }
-//        return null;
-//    }
 
-
-
+    public final ArrayList<String> getArgumentsHelp() {
+        if (getArguments() != null) {
+            ArrayList<String> list = new ArrayList<>();
+            for (Map.Entry<String, String> entry : getArguments().entrySet()) {
+                list.add(entry.getKey());
+            }
+            return list;
+        }
+        return null;
+    }
 
 
     @Override
@@ -214,7 +209,6 @@ public abstract class Command extends AbstractCommand {
     public BasePlugin getPlugin() {
         return plugin;
     }
-
 
 
     @Override

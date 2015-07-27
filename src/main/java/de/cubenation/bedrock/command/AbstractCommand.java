@@ -83,13 +83,12 @@ public abstract class AbstractCommand {
      */
     public abstract boolean isValidTrigger(String[] args);
 
-    //TODO: Check if needed.
-//    /**
-//     * Gets arguments help.
-//     *
-//     * @return the arguments help
-//     */
-//    public abstract ArrayList<String> getArgumentsHelp();
+    /**
+     * Gets arguments help.
+     *
+     * @return the arguments help
+     */
+    public abstract ArrayList<String> getArgumentsHelp();
 
 
     //TODO: D1rty - Should return some TextComponenent Msg?
