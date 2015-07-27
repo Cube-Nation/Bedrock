@@ -9,13 +9,11 @@ import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
-import java.util.LinkedHashMap;
-
 public class ReloadCommand extends Command {
 
     public ReloadCommand() {
         super(
-                new String[] { "reload" , "r"},
+                new String[]{"reload", "r"},
                 "help.reload",
                 "reload"
         );
@@ -25,7 +23,7 @@ public class ReloadCommand extends Command {
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
             this.plugin.reloadConfig();
-            
+
             this.plugin.getColorSchemeService().reload();
             this.plugin.getPermissionService().reload();
             this.plugin.getCustomConfigurationFileService().reload();
@@ -51,10 +49,5 @@ public class ReloadCommand extends Command {
             );
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public LinkedHashMap<String, String> getArguments() {
-        return null;
     }
 }

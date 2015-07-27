@@ -8,8 +8,6 @@ import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
-import java.util.LinkedHashMap;
-
 public class VersionCommand extends Command {
 
     public VersionCommand() {
@@ -26,15 +24,10 @@ public class VersionCommand extends Command {
                 new Translation(
                         BedrockPlugin.getInstance(),
                         "version",
-                        new String[]{ "version", this.plugin.getDescription().getVersion() }
+                        new String[]{"version", this.plugin.getDescription().getVersion()}
                 ).getTranslation();
 
         MessageHelper.send(this.plugin, sender, t);
-    }
-
-    @Override
-    public LinkedHashMap<String, String> getArguments() {
-        return null;
     }
 
 }

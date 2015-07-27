@@ -11,8 +11,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
-import java.util.LinkedHashMap;
-
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -33,7 +31,7 @@ public class HelpCommand extends Command {
         );
 
         this.commandManager = commandManager;
-        this.helpPrefix     = helpPrefix;
+        this.helpPrefix = helpPrefix;
     }
 
     @Override
@@ -53,7 +51,7 @@ public class HelpCommand extends Command {
                     new Translation(
                             BedrockPlugin.getInstance(),
                             "help.header",
-                            new String[] { "plugin", commandHeaderName}
+                            new String[]{"plugin", commandHeaderName}
                     ).getTranslation()
             );
             MessageHelper.send(commandManager.getPlugin(), sender, header, null, null);
@@ -96,12 +94,6 @@ public class HelpCommand extends Command {
 //            } // for
         }
 
-    }
-
-
-    @Override
-    public LinkedHashMap<String, String> getArguments() {
-        return null;
     }
 
     public void setHelpPrefix(String helpPrefix) {
