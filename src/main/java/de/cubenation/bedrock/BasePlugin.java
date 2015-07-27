@@ -167,7 +167,11 @@ public abstract class BasePlugin extends JavaPlugin {
             File file = new File(getDataFolder(), "config.yml");
             if (!file.exists()) {
                 log(Level.INFO, "config.yml not found, creating!");
-                saveDefaultConfig();
+                try {
+                    saveDefaultConfig();
+                } catch (Exception e) {
+                    log(Level.WARNING, "This plugin does not contain a configuration file. All settings are taken from the Bedrock plugin");
+                }
             }
 
         } catch (Exception e) {
