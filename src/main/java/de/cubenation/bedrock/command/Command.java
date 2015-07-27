@@ -18,6 +18,7 @@ public abstract class Command extends AbstractCommand {
 
     private ArrayList<String[]> commands;
     private String[] help = new String[]{};
+    private String label;
     private Permission permission;
     private CommandManager commandManager;
     private String permissionString;
@@ -192,6 +193,11 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
+    public String getLabel() {
+        return label;
+    }
+
+    @Override
     public Permission getPermission() {
         return permission;
     }
@@ -220,6 +226,11 @@ public abstract class Command extends AbstractCommand {
     @Override
     public void setHelp(String[] help) {
         this.help = help;
+    }
+
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     @Override

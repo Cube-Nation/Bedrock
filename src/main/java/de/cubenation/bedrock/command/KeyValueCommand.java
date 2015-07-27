@@ -17,6 +17,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
     private ArrayList<String[]> commands;
     private ArrayList<Argument> arguments = new ArrayList<>();
+    private String label;
     private String[] help = new String[]{};
     private Permission permission;
     private CommandManager commandManager;
@@ -245,7 +246,6 @@ Wenn libtest Black TAB
         return false;
     }
 
-    @Override
     public TextComponent getBeautifulHelp() {
         return MessageHelper.getHelpForSubCommand(plugin, this);
     }
@@ -271,6 +271,10 @@ Wenn libtest Black TAB
         return commands;
     }
 
+    @Override
+    public String getLabel() {
+        return label;
+    }
 
     @Override
     public String[] getHelp() {
@@ -301,6 +305,11 @@ Wenn libtest Black TAB
     @Override
     public void setCommands(ArrayList<String[]> commands) {
         this.commands = commands;
+    }
+
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     @Override
