@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -206,22 +205,46 @@ public class MessageHelper {
         String args_string      = "";
         String long_args_string = "";
 
-        if (command.getArguments() != null) {
-            for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
+        //<Old>
+//        if (command.getArguments() != null) {
+//            for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
+//
+//                args_string += " " + new Translation(
+//                        BedrockPlugin.getInstance(),
+//                        "help.command.args",
+//                        new String[] { "argument", entry.getKey() }
+//                ).getTranslation();
+//
+//                long_args_string += " " + new Translation(
+//                        BedrockPlugin.getInstance(),
+//                        "help.command.long_args",
+//                        new String[] { "argument", entry.getKey(), "description", entry.getValue() }
+//                ).getTranslation();
+//            }
+//        }
+        //</Old>
 
-                args_string += " " + new Translation(
-                        BedrockPlugin.getInstance(),
-                        "help.command.args",
-                        new String[] { "argument", entry.getKey() }
-                ).getTranslation();
+        // FIXME Didn't work with new Argument System
+        // TODO Add '{' and '}' for Argument Placeholder
+        // TODO Add Argument Key if Argument instanceof UnsortedArgument
 
-                long_args_string += " " + new Translation(
-                        BedrockPlugin.getInstance(),
-                        "help.command.long_args",
-                        new String[] { "argument", entry.getKey(), "description", entry.getValue() }
-                ).getTranslation();
-            }
-        }
+//        if (command.getCommandArguments() != null) {
+//            for (Argument argument : command.getCommandArguments()) {
+//                for (String placeholder : argument.getPlaceholder()) {
+//                    args_string += " " + new Translation(
+//                            BedrockPlugin.getInstance(),
+//                            "help.command.args",
+//                            new String[] { "argument", placeholder }
+//                    ).getTranslation();
+//
+//                    long_args_string += " " + new Translation(
+//                            BedrockPlugin.getInstance(),
+//                            "help.command.long_args",
+//                            new String[] { "argument", placeholder, "description", argument.getDescription() }
+//                    ).getTranslation();
+//                }
+//            }
+//        }
 
         // assign description
         String description_string = "";
