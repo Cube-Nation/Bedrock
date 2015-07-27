@@ -1,13 +1,16 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.argument.CommandArguments;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -17,8 +20,9 @@ import java.util.*;
 public abstract class Command extends AbstractCommand {
 
     private ArrayList<String[]> commands;
-    private String description;
     private String label;
+    private String description;
+    private CommandArguments commandArguments = new CommandArguments();
     private Permission permission;
     private CommandManager commandManager;
     private String permissionString;
@@ -29,15 +33,19 @@ public abstract class Command extends AbstractCommand {
      * Instantiates a new Command with just one command
      * Like '/city help'
      *
-     * @param command       the command
-     * @param description   the description
-     * @param permission    the permission
+     * @param command     the command
+     * @param description the description
+     * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(final String command, String description, String permission) {
-        init(new ArrayList<String[]>() {{
-            add(new String[]{command});
-        }}, description, permission);
+    public Command(final String command, String description, String permission, Argument... arguments) {
+        init(
+                new ArrayList<String[]>() {{
+                    add(new String[]{command});
+                }},
+                description,
+                permission,
+                arguments);
     }
 
     /**
@@ -45,16 +53,16 @@ public abstract class Command extends AbstractCommand {
      * Each element in commands symbolizes an alias for a command
      * Like '/city teleport' and '/city tp'
      *
-     * @param commands      the commands
-     * @param description   the description
-     * @param permission    the permission
+     * @param commands    the commands
+     * @param description the description
+     * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(final String[] commands, String description, String permission) {
+    public Command(final String[] commands, String description, String permission, Argument... arguments) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
-        init(list, description, permission);
+        init(list, description, permission, arguments);
     }
 
     /**
@@ -64,61 +72,26 @@ public abstract class Command extends AbstractCommand {
      * The String[] contains a single command or aliases
      * Like '/city set bonus', '/city s bonus', /
      *
-     * @param commands      the commands
-     * @param description   the description
-     * @param permission    the permission
+     * @param commands    the commands
+     * @param description the description
+     * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(ArrayList<String[]> commands, String description, String permission) {
-        init(commands, description, permission);
+    public Command(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
+        init(commands, description, permission, arguments);
     }
 
-    private void init(ArrayList<String[]> commands, String description, String permission) {
-        this.commands           = commands;
-        this.permissionString   = permission;
-        this.description        = description;
+    private void init(ArrayList<String[]> commands, String description, String permission, Argument[] arguments) {
+        this.commands = commands;
+        this.permissionString = permission;
+        this.description = description;
+        Collections.addAll(commandArguments, arguments);
     }
 
 
     @Override
     public final ArrayList<String> getTabCompletion(String[] args) {
         return getTabCompletionFromCommands(args);
-//        if (commands.size() >= args.length) {
-//            for (int i = 0; i < args.length; i++) {
-//                boolean result;
-//                if (!args[i].equals("")) {
-//                    result = false;
-//                    for (String com : commands.get(i)) {
-//                        if (com.startsWith(args[i])) {
-//                            result = true;
-//                        }
-//                    }
-//                } else {
-//                    result = true;
-//                }
-//
-//                if (!result) {
-//                    return null;
-//                }
-//            }
-//
-//            ArrayList<String> list = new ArrayList<>(Arrays.asList(commands.get(args.length - 1)));
-//
-//            Collections.sort(list, new Comparator<String>() {
-//                @Override
-//                public int compare(String s1, String s2) {
-//                    return s2.compareToIgnoreCase(s1);
-//                }
-//            });
-//
-//            // Just return the "largets" command for completion to help the user to choose the right.
-//
-//            //TODO Better implementation available
-//            ArrayList<String> cmd = new ArrayList<>();
-//            cmd.add(list.get(0));
-//            return cmd;
-//        }
-//        return null;
     }
 
     /**
@@ -154,6 +127,11 @@ public abstract class Command extends AbstractCommand {
     @Override
     public TextComponent getBeautifulHelp(CommandSender sender) {
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
+    }
+
+    @Override
+    public CommandArguments getCommandArguments() {
+        return commandArguments;
     }
 
     @Override

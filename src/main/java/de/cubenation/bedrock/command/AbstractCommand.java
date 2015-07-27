@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.argument.CommandArguments;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
@@ -126,7 +127,9 @@ public abstract class AbstractCommand {
         setPermission(new Permission(getPermissionString(), getPlugin()));
     }
 
-    public abstract LinkedHashMap<String, String> getArguments();
+    //public abstract LinkedHashMap<String, String> getArguments();
+
+    public abstract CommandArguments getCommandArguments();
 
 
     public abstract ArrayList<String[]> getCommands();

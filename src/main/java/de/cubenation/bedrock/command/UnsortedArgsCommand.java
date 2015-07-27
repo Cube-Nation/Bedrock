@@ -1,6 +1,8 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.argument.CommandArguments;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
@@ -10,17 +12,16 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 
 /**
  * Created by BenediktHr on 27.07.15.
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
-public abstract class KeyValueCommand extends AbstractCommand {
+public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     private ArrayList<String[]> commands;
-    private ArrayList<Argument> arguments = new ArrayList<>();
+    private CommandArguments commandArguments = new CommandArguments();
     private String label;
     private String description;
     private Permission permission;
@@ -38,7 +39,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
      * @param permission the permission
      */
     @SuppressWarnings(value = "unused")
-    public KeyValueCommand(final String command, String description, String permission, Argument... arguments) {
+    public UnsortedArgsCommand(final String command, String description, String permission, Argument... arguments) {
         init(new ArrayList<String[]>() {{
             add(new String[]{command});
         }}, description, permission, arguments);
@@ -55,7 +56,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
      * @param permission the permission
      */
     @SuppressWarnings(value = "unused")
-    public KeyValueCommand(final String[] commands, String description, String permission, Argument... arguments) {
+    public UnsortedArgsCommand(final String[] commands, String description, String permission, Argument... arguments) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
@@ -74,7 +75,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
      * @param permission the permission
      */
     @SuppressWarnings(value = "unused")
-    public KeyValueCommand(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
+    public UnsortedArgsCommand(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
         init(commands, description, permission, arguments);
     }
 
@@ -84,7 +85,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
         this.permissionString   = permission;
         this.description        = description;
 
-        Collections.addAll(this.arguments, arguments);
+        Collections.addAll(this.commandArguments, arguments);
     }
 
 
@@ -93,7 +94,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
         System.out.println("args; " + "size: " + args.length + " objects: " + Arrays.toString(args));
         System.out.println("commands; " + "size: " + commands.size() + " objects: " + commands);
-        System.out.println("cmd arguments; " + "size: " + arguments.size() + " objects: " + arguments);
+        System.out.println("cmd arguments; " + "size: " + commandArguments.size() + " objects: " + commandArguments);
 
 
         /*
@@ -193,32 +194,6 @@ Wenn libtest Black TAB
         return null;
     }
 
-    private void getTabArgumentList() {
-        ArrayList<ArrayList<String>> arguments = new ArrayList<>();
-
-        // All Commands like {0={s,set},1={home}}
-        for (int i = 0; i < getCommands().size(); i++) {
-            if (arguments.get(i) == null) {
-                arguments.set(i, new ArrayList<String>());
-            }
-            ArrayList<String> listAtIndex = arguments.get(i);
-            Collections.addAll(listAtIndex, getCommands().get(i));
-        }
-
-        // All Arguments like {2={area,point}, 3={}, 4={point}, 6={area}}
-
-        for (int i = getCommands().size(); i < arguments.size() + getCommands().size(); i++) {
-            if (arguments.get(i) == null) {
-                arguments.set(i, new ArrayList<String>());
-            }
-            ArrayList<String> listAtIndex = arguments.get(i);
-
-
-            Collections.addAll(listAtIndex, getCommands().get(i));
-        }
-
-    }
-
     /**
      * Returns if the subcommand is a valid trigger.
      *
@@ -253,21 +228,7 @@ Wenn libtest Black TAB
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
-    /**
-     * Gets arguments help.
-     * The Key describes the Argument. For example {value}.
-     * {} - means required.
-     * [] - means optional.
-     * <p/>
-     * The Value is the help for the Argument.
-     *
-     * @return the arguments help
-     */
-    public abstract LinkedHashMap<String, String> getArguments();
 
-    public ArrayList<String> getArgumentsHelp() {
-        return null;
-    }
 
     @Override
     public ArrayList<String[]> getCommands() {
@@ -277,6 +238,11 @@ Wenn libtest Black TAB
     @Override
     public String getLabel() {
         return label;
+    }
+
+    @Override
+    public CommandArguments getCommandArguments() {
+        return commandArguments;
     }
 
     @Override
