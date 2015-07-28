@@ -37,7 +37,7 @@ public class de_DE extends CustomConfigurationFile {
         data.put("command.invalid",                 "&RED&Ungültiger Befehl");
 
         /*
-         * Help messages
+         * Help messages 
          */
         data.put("help.header",                     "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
 
