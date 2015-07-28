@@ -14,10 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -35,7 +32,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private String helpPrefix;
 
     private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
-
 
 
     public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, AbstractCommand... commands) {
@@ -127,50 +123,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
-
         ArrayList<String> list = new ArrayList<>();
-
         for (AbstractCommand cmd : getCommands()) {
-
-
-                ArrayList tabs = cmd.getTabCompletion(args);
-                if (tabs != null) {
-                    list.addAll(tabs);
-                }
+            ArrayList tabCom = cmd.getTabCompletion(args);
+            if (tabCom != null) {
+                list.addAll(tabCom);
+            }
         }
-
-        System.out.println("##########################");
-        System.out.println(list);
-        System.out.println("##########################");
-
-        //TODO Check & reimplement!
-        return null;
-
-
-//        ArrayList<String> completionList = new ArrayList<>();
-//
-//        for (SubCommand subCommand : subCommands) {
-//
-//            if (!subCommand.hasPermission(sender)) {
-//                continue;
-//            }
-//
-//            String completionCommand = subCommand.getTabCompletionListForArgument(args);
-//            if (completionCommand != null) {
-//                if (!completionList.contains(completionCommand)) {
-//                    if (!args[args.length - 1].equals("")) {
-//                        if (completionCommand.startsWith(args[args.length - 1])) {
-//                            completionList.add(completionCommand);
-//                        }
-//                    } else {
-//                        completionList.add(completionCommand);
-//                    }
-//                }
-//            }
-//
-//        }
-//
-//        return (completionList.isEmpty()) ? null : completionList;
+        // Remove duplicates.
+        Set<String> set = new HashSet<>(list);
+        return new ArrayList<>(set);
     }
 
 
