@@ -1,8 +1,8 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.CommandArguments;
+import de.cubenation.bedrock.command.argument.UnsortedArgument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
@@ -34,12 +34,12 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
      * Instantiates a new Command with just one command
      * Like '/city help'
      *
-     * @param command    the command
-     * @param description   the description
-     * @param permission the permission
+     * @param command     the command
+     * @param description the description
+     * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(final String command, String description, String permission, Argument... arguments) {
+    public UnsortedArgsCommand(final String command, String description, String permission, UnsortedArgument... arguments) {
         init(new ArrayList<String[]>() {{
             add(new String[]{command});
         }}, description, permission, arguments);
@@ -51,12 +51,12 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
      * Each element in commands symbolizes an alias for a command
      * Like '/city teleport' and '/city tp'
      *
-     * @param commands   the commands
-     * @param description       the description
-     * @param permission the permission
+     * @param commands    the commands
+     * @param description the description
+     * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(final String[] commands, String description, String permission, Argument... arguments) {
+    public UnsortedArgsCommand(final String[] commands, String description, String permission, UnsortedArgument... arguments) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
@@ -70,20 +70,20 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
      * The String[] contains a single command or aliases
      * Like '/city set bonus', '/city s bonus', /
      *
-     * @param commands   the commands
-     * @param description       the description
-     * @param permission the permission
+     * @param commands    the commands
+     * @param description the description
+     * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
+    public UnsortedArgsCommand(ArrayList<String[]> commands, String description, String permission, UnsortedArgument... arguments) {
         init(commands, description, permission, arguments);
     }
 
 
-    private void init(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
-        this.commands           = commands;
-        this.permissionString   = permission;
-        this.description        = description;
+    private void init(ArrayList<String[]> commands, String description, String permission, UnsortedArgument... arguments) {
+        this.commands = commands;
+        this.permissionString = permission;
+        this.description = description;
 
         Collections.addAll(this.commandArguments, arguments);
     }
