@@ -26,7 +26,7 @@ public class CustomConfigurationFileService implements ServiceInterface {
                 return;
 
             for (CustomConfigurationFile file : this.getPlugin().getCustomConfigurationFiles()) {
-                this.getPlugin().log(Level.INFO, "Regiistering file: " + file.getFilename());
+                this.getPlugin().log(Level.INFO, "Registering file: " + file.getFilename());
                 this.register(file);
             }
 
