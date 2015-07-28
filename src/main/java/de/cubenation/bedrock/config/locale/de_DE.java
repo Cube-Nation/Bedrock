@@ -44,9 +44,10 @@ public class de_DE extends CustomConfigurationFile {
         data.put("help.command.command",            "&PRIMARY&/%label%&RESET& &SECONDARY&%commands%&RESET& %args%&RESET&");
         data.put("help.command.divider",            "&PRIMARY&|&SECONDARY&");
         data.put("help.command.description",        "&TEXT&%description%&RESET&");
+        data.put("help.command.args.key",           "&SECONDARY&%key%&RESET&");
         data.put("help.command.args.needed",        "&GRAY&&ITALIC&%argument%&RESET&");
         data.put("help.command.args.optional",      "&GRAY&&ITALIC&[%argument%]&RESET&");
-        data.put("help.command.args.description",   "&TEXT& - &GRAY&%description%&RESET&");
+        data.put("help.command.args.description",   "&TEXT& - %description%&RESET&");
 
 
         data.put("help.plugin",                     "&TEXT&Hilfe zu allen Plugin Befehlen");
