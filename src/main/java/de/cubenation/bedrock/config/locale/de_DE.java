@@ -22,19 +22,19 @@ public class de_DE extends CustomConfigurationFile {
         /*
          * Generic Messages
          */
-        data.put("version",                         "&TEXT&Version &PRIMARY&%version%");
+        data.put("version",                         "%plugin_prefix%&RESET& &TEXT&Version &PRIMARY&%version%");
 
-        data.put("reload.complete",                 "Plugin neu geladen");
-        data.put("reload.failed",                   "Plugin konnte nicht neu geladen werden");
+        data.put("reload.complete",                 "%plugin_prefix%&RESET& Plugin neu geladen");
+        data.put("reload.failed",                   "%plugin_prefix%&RESET& Plugin konnte nicht neu geladen werden");
 
-        data.put("permission.list.header",          "&SECONDARY&Alle Berechtigungen:");
+        data.put("permission.list.header",          "%plugin_prefix%&RESET& &SECONDARY&Alle Berechtigungen:");
         data.put("permission.list.role",            "&PRIMARY&%role%&WHITE&:");
         data.put("permission.list.permission",      " - &FLAG&%permission%");
-        data.put("permission.no_permissions",       "&RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen");
+        data.put("permission.no_permissions",       "%plugin_prefix%&RESET& &RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen");
 
-        data.put("permission.insufficient",         "&RED&Für diesen Befehl hast Du keine Berechtigung");
+        data.put("permission.insufficient",         "%plugin_prefix%&RESET& &RED&Für diesen Befehl hast Du keine Berechtigung");
 
-        data.put("command.invalid",                 "&RED&Ungültiger Befehl");
+        data.put("command.invalid",                 "%plugin_prefix%&RESET& &RED&Ungültiger Befehl");
 
         /*
          * Help messages

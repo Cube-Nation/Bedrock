@@ -22,19 +22,19 @@ public class en_US extends CustomConfigurationFile {
         /*
          * Generic Messages
          */
-        data.put("version",                         "&TEXT&Version &PRIMARY&%version%");
+        data.put("version",                         "%plugin_prefix%&RESET& &TEXT&Version &PRIMARY&%version%");
 
-        data.put("reload.complete",                 "Plugin reloaded");
-        data.put("reload.failed",                   "Could not reload plugin");
+        data.put("reload.complete",                 "%plugin_prefix%&RESET& Plugin reloaded");
+        data.put("reload.failed",                   "%plugin_prefix%&RESET& Could not reload plugin");
 
-        data.put("permission.list.header",          "&SECONDARY&All Permissions:");
+        data.put("permission.list.header",          "%plugin_prefix%&RESET& &SECONDARY&All Permissions:");
         data.put("permission.list.role",            "&PRIMARY&%role%&WHITE&:");
         data.put("permission.list.permission",      " - &FLAG&%permission%");
-        data.put("permission.no_permissions",       "&RED&Warning: &SECONDARY&This plugin does use any permissions");
+        data.put("permission.no_permissions",       "%plugin_prefix%&RESET& &RED&Warning: &SECONDARY&This plugin does use any permissions");
 
-        data.put("permission.insufficient",         "&RED&You do not have enough permissions");
+        data.put("permission.insufficient",         "%plugin_prefix%&RESET& &RED&You do not have enough permissions");
 
-        data.put("command.invalid",                 "&RED&Invalid command");
+        data.put("command.invalid",                 "%plugin_prefix%&RESET& &RED&Invalid command");
 
         /*
          * Help messages

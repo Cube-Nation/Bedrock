@@ -37,8 +37,7 @@ public class MessageHelper {
         MessageHelper.send(
                 plugin,
                 sender,
-                plugin.getMessagePrefix() + " " +
-                        new Translation(BedrockPlugin.getInstance(), "command.invalid").getTranslation()
+                new Translation(BedrockPlugin.getInstance(), "command.invalid").getTranslation()
         );
     }
 
