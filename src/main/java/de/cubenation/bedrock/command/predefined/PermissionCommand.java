@@ -1,6 +1,5 @@
 package de.cubenation.bedrock.command.predefined;
 
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
@@ -51,7 +50,7 @@ public class PermissionCommand extends Command {
                         this.getCommandManager().getPlugin(),
                         sender,
                         new Translation(
-                                this.getPlugin(),
+                                this.getCommandManager().getPlugin(),
                                 "permission.list.role",
                                 new String[]{"role", entry.getKey().toString()}
                         ).getTranslation()
@@ -62,7 +61,7 @@ public class PermissionCommand extends Command {
                             this.getCommandManager().getPlugin(),
                             sender,
                             new Translation(
-                                    BedrockPlugin.getInstance(),
+                                    this.getCommandManager().getPlugin(),
                                     "permission.list.permission",
                                     new String[]{"permission", perm}
                             ).getTranslation()
@@ -78,7 +77,7 @@ public class PermissionCommand extends Command {
                     this.getCommandManager().getPlugin(),
                     sender,
                     new Translation(
-                            BedrockPlugin.getInstance(),
+                            this.getCommandManager().getPlugin(),
                             "permission.no_permissions"
                     ).getTranslation()
             );

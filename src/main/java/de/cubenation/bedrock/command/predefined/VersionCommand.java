@@ -22,7 +22,7 @@ public class VersionCommand extends Command {
         MessageHelper.send(this.plugin, sender, new Translation(
                 this.getCommandManager().getPlugin(),
                 "version",
-                new String[]{"version", this.plugin.getDescription().getVersion()}
+                new String[] { "version", this.getCommandManager().getPlugin().getDescription().getVersion() }
         ).getTranslation());
     }
 

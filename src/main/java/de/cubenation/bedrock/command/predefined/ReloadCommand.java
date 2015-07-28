@@ -1,6 +1,5 @@
 package de.cubenation.bedrock.command.predefined;
 
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
@@ -33,7 +32,7 @@ public class ReloadCommand extends Command {
                     this.getCommandManager().getPlugin(),
                     sender,
                     new Translation(
-                            BedrockPlugin.getInstance(),
+                            this.getCommandManager().getPlugin(),
                             "reload.complete"
                     ).getTranslation()
             );
@@ -43,7 +42,7 @@ public class ReloadCommand extends Command {
                     this.getCommandManager().getPlugin(),
                     sender,
                     new Translation(
-                            BedrockPlugin.getInstance(),
+                            this.getCommandManager().getPlugin(),
                             "reload.failed"
                     ).getTranslation()
             );
