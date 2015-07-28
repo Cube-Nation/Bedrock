@@ -6,7 +6,7 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.8.11~spigot187+3</version>
+    <version>0.8.12~spigot187+1</version>
     <name>Bedrock</name>
 
     <repositories>
