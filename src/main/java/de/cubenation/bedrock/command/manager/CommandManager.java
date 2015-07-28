@@ -132,7 +132,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
         // Remove duplicates.
         Set<String> set = new HashSet<>(list);
-        return new ArrayList<>(set);
+        if (set.isEmpty()) {
+            return null;
+        } else {
+            return new ArrayList<>(set);
+        }
     }
 
 
