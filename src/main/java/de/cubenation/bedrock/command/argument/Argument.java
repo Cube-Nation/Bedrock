@@ -27,4 +27,12 @@ public class Argument {
     public ArrayList<String> getPlaceholder() {
         return placeholder;
     }
+
+    @Override
+    public String toString() {
+        return "Argument{" +
+                "description='" + description + '\'' +
+                ", placeholder=" + placeholder +
+                '}';
+    }
 }

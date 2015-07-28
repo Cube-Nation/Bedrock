@@ -34,4 +34,13 @@ public class UnsortedArgument extends Argument {
         return optional;
     }
 
+    @Override
+    public String toString() {
+        return "UnsortedArgument{" +
+                "key='" + key + '\'' +
+                ", description='" + getDescription() + '\'' +
+                ", placeholder=" + getPlaceholder() +
+                ", optional=" + optional +
+                '}';
+    }
 }
