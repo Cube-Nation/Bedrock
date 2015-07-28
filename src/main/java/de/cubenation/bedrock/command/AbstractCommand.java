@@ -69,7 +69,6 @@ public abstract class AbstractCommand {
 
             return new ArrayList<String>(){{add(completionCommand);}};
         } else {
-            System.out.println(" NOT (getCommands().size() >= args.length)  --> Returning NULL");
             return null;
         }
     }
