@@ -223,11 +223,10 @@ public class MessageHelper {
              * In case the argument is an instanceof the UnsortedArgument class (which is kind of a
              * key-value command) we need to prepend the key
              */
-            String key_string = null;
             if (argument instanceof UnsortedArgument) {
                 UnsortedArgument unsorted_argument = (UnsortedArgument) argument;
 
-                key_string = new Translation(
+                String key_string = new Translation(
                         plugin,
                         "help.command.args.key",
                         new String[ ] {"key", unsorted_argument.getKey() }
