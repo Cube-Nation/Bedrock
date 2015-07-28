@@ -8,7 +8,7 @@ import net.md_5.bungee.api.ChatColor;
 public class BlueColorScheme extends ColorScheme {
 
     public BlueColorScheme(BasePlugin plugin) {
-        super(ColorSchemeName.BLUE, ChatColor.BLUE, ChatColor.DARK_BLUE, ChatColor.GRAY, ChatColor.WHITE);
+        super(ColorSchemeName.BLUE, ChatColor.AQUA, ChatColor.BLUE, ChatColor.GRAY, ChatColor.WHITE);
     }
 
 }
