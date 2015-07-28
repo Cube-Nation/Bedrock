@@ -22,7 +22,7 @@ public class PermissionCommand extends Command {
 
     public PermissionCommand() {
         super(
-                new String[]{"permission", "perm"},
+                new String[]{"permissions", "perms"},
                 "help.permission.list",
                 "permission.list"
         );
@@ -37,11 +37,10 @@ public class PermissionCommand extends Command {
             MessageHelper.send(
                     getCommandManager().getPlugin(),
                     sender,
-                    getCommandManager().getPlugin().getMessagePrefix() + " " +
-                            new Translation(
-                                    BedrockPlugin.getInstance(),
-                                    "permission.list.header"
-                            ).getTranslation()
+                    new Translation(
+                            BedrockPlugin.getInstance(),
+                            "permission.list.header"
+                    ).getTranslation()
             );
 
             HashMap<String, ArrayList<String>> permissionDump = permissionService.getPermissionRoleDump();

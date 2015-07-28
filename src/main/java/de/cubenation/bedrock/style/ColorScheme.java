@@ -40,7 +40,7 @@ public class ColorScheme {
     }
 
     public static ColorScheme getColorScheme(BasePlugin plugin, String name) {
-        if (name.isEmpty() || ColorSchemeName.valueOf(name.toUpperCase()) == null)
+        if (name == null || name.isEmpty() || ColorSchemeName.valueOf(name.toUpperCase()) == null)
             return new DefaultColorScheme(plugin);
 
         return getColorScheme(plugin, ColorSchemeName.valueOf(name.toUpperCase()));

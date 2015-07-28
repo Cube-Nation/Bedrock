@@ -22,39 +22,37 @@ public class de_DE extends CustomConfigurationFile {
         /*
          * Generic Messages
          */
-        data.put("version",                     "&TEXT&Version &PRIMARY&%version%");
+        data.put("version",                         "%plugin_prefix%&RESET& &TEXT&Version &PRIMARY&%version%");
 
-        data.put("reload.complete",             "Plugin neu geladen");
-        data.put("reload.failed",               "Plugin konnte nicht neu geladen werden");
+        data.put("reload.complete",                 "%plugin_prefix%&RESET& Plugin neu geladen");
+        data.put("reload.failed",                   "%plugin_prefix%&RESET& Plugin konnte nicht neu geladen werden");
 
-        data.put("permission.list.header",      "&SECONDARY&Alle Berechtigungen:");
-        data.put("permission.list.role",        "&PRIMARY&%role%&WHITE&:");
-        data.put("permission.list.permission",  " - &FLAG&%permission%");
-        data.put("permission.no_permissions",   "&RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen");
+        data.put("permission.list.header",          "%plugin_prefix%&RESET& &SECONDARY&Alle Berechtigungen:");
+        data.put("permission.list.role",            "&PRIMARY&%role%&WHITE&:");
+        data.put("permission.list.permission",      " - &FLAG&%permission%");
+        data.put("permission.no_permissions",       "%plugin_prefix%&RESET& &RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen");
 
-        data.put("permission.reload.complete",  "Berechtigungen neu geladen");
-        data.put("permission.reload.failed",    "Berechtigungen konnten nicht neu geladen werden");
+        data.put("permission.insufficient",         "%plugin_prefix%&RESET& &RED&Für diesen Befehl hast Du keine Berechtigung");
 
-        data.put("permission.insufficient",     "&RED&Für diesen Befehl hast Du keine Berechtigung");
-
-        data.put("command.invalid",             "&RED&Ungültiger Befehl");
+        data.put("command.invalid",                 "%plugin_prefix%&RESET& &RED&Ungültiger Befehl");
 
         /*
          * Help messages
          */
-        data.put("help.header",                 "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
+        data.put("help.header",                     "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====");
 
-        data.put("help.command.command",        "&PRIMARY&/%label%&SECONDARY&%commands%&GRAY&&ITALIC&%args%&RESET&");
-        data.put("help.command.divider",        "&PRIMARY&|&SECONDARY&");
-        data.put("help.command.description",    "&TEXT&&%description%&RESET&");
-        data.put("help.command.args",           "%argument%");
-        data.put("help.command.long_args",      "&GRAY&&ITALIC&%argument% - %description%&RESET&");
+        data.put("help.command.command",            "&PRIMARY&/%label%&RESET& &SECONDARY&%commands%&RESET& %args%&RESET&");
+        data.put("help.command.divider",            "&PRIMARY&|&SECONDARY&");
+        data.put("help.command.description",        "&TEXT&%description%&RESET&");
+        data.put("help.command.args.needed",        "&GRAY&&ITALIC&%argument%&RESET&");
+        data.put("help.command.args.optional",      "&GRAY&&ITALIC&[%argument%]&RESET&");
+        data.put("help.command.args.description",   "&TEXT& - &GRAY&%description%&RESET&");
 
-        data.put("help.plugin",                 "&TEXT&Hilfe zu allen Plugin Befehlen");
-        data.put("help.version",                "&TEXT&Zeigt die Version des Plugins an");
-        data.put("help.reload",                 "&TEXT&Lädt das Plugin neu");
-        data.put("help.permission.reload",      "&TEXT&Lädt die Berechtigungen neu");
-        data.put("help.permission.list",        "&TEXT&Zeigt alle Plugin-Berechtigungen an");
+
+        data.put("help.plugin",                     "&TEXT&Hilfe zu allen Plugin Befehlen");
+        data.put("help.version",                    "&TEXT&Zeigt die Version des Plugins an");
+        data.put("help.reload",                     "&TEXT&Lädt das Plugin neu");
+        data.put("help.permission.list",            "&TEXT&Zeigt alle Plugin-Berechtigungen an");
 
         return data;
     }
