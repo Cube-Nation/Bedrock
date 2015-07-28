@@ -22,7 +22,7 @@ public class PermissionCommand extends Command {
 
     public PermissionCommand() {
         super(
-                new String[]{"permission", "perm"},
+                new String[]{"permissions", "perms"},
                 "help.permission.list",
                 "permission.list"
         );

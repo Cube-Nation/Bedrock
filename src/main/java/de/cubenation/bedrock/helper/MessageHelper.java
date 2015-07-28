@@ -3,6 +3,8 @@ package de.cubenation.bedrock.helper;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
+import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.argument.CommandArguments;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -165,13 +167,12 @@ public class MessageHelper {
     }
 
 
-    //TODO Update Javadoc
     /**
      * Get a TextComponent with the help for a SubCommand
      *
-//     * @param com the SubCommand
-//     * @param sender     the command sender
-//     * @param label      the label of the command
+     * @param plugin      a reference to the plugin
+     * @param sender      the command sender
+     * @param command     a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
     public static TextComponent getHelpForSubCommand(BasePlugin plugin, CommandSender sender, AbstractCommand command) {
@@ -181,7 +182,8 @@ public class MessageHelper {
             return null;
 
         // clickable string
-        String click_string = "/" + command.getLabel();
+        ArrayList<String> click_string = new ArrayList<>();
+        click_string.add("/" + command.getLabel());
 
         // command divider string
         String command_divider = new Translation(
@@ -190,63 +192,17 @@ public class MessageHelper {
         ).getTranslation();
 
         // command string
-        String command_string = "";
+        ArrayList<String> command_strings = new ArrayList<>();
         if (command.getCommands() != null) {
             for (String[] commands : command.getCommands()) {
                 Arrays.sort(commands, new LengthComparator());
-                command_string += " " + StringUtils.join(commands, command_divider);
+                command_strings.add(StringUtils.join(commands, command_divider));
 
-                click_string += " " + ((commands.length > 1) ? commands[1] : commands[0]);
+                click_string.add((commands.length > 1) ? commands[1] : commands[0]);
             }
         }
 
-
-        // command args string (
-        String args_string      = "";
-        String long_args_string = "";
-
-        //<Old>
-//        if (command.getArguments() != null) {
-//            for (Map.Entry<String, String> entry : command.getArguments().entrySet()) {
-//
-//                args_string += " " + new Translation(
-//                        BedrockPlugin.getInstance(),
-//                        "help.command.args",
-//                        new String[] { "argument", entry.getKey() }
-//                ).getTranslation();
-//
-//                long_args_string += " " + new Translation(
-//                        BedrockPlugin.getInstance(),
-//                        "help.command.long_args",
-//                        new String[] { "argument", entry.getKey(), "description", entry.getValue() }
-//                ).getTranslation();
-//            }
-//        }
-        //</Old>
-
-        // FIXME Didn't work with new Argument System
-        // TODO Add '{' and '}' for Argument Placeholder
-        // TODO Add Argument Key if Argument instanceof UnsortedArgument
-
-//        if (command.getCommandArguments() != null) {
-//            for (Argument argument : command.getCommandArguments()) {
-//                for (String placeholder : argument.getPlaceholder()) {
-//                    args_string += " " + new Translation(
-//                            BedrockPlugin.getInstance(),
-//                            "help.command.args",
-//                            new String[] { "argument", placeholder }
-//                    ).getTranslation();
-//
-//                    long_args_string += " " + new Translation(
-//                            BedrockPlugin.getInstance(),
-//                            "help.command.long_args",
-//                            new String[] { "argument", placeholder, "description", argument.getDescription() }
-//                    ).getTranslation();
-//                }
-//            }
-//        }
-
-        // assign description
+        // description for command
         String description_string = "";
 
         if (command.getDescription() != null && !command.getDescription().isEmpty()) {
@@ -256,24 +212,79 @@ public class MessageHelper {
         }
 
 
+
+        // command args string (
+        ArrayList<String> args_string = new ArrayList<>();
+        ArrayList<String> long_args_string = new ArrayList<>();
+
+        CommandArguments command_arguments = command.getCommandArguments();
+        // process arguments
+        for (int i = 0; i < command_arguments.size(); i++) {
+            Argument argument = command_arguments.get(i);
+
+            // placeholders
+            String placeholder;
+            if (argument.isOptional()) {
+                placeholder = new Translation(
+                        BedrockPlugin.getInstance(),
+                        "help.command.args.optional",
+                        new String[] { "argument", StringUtils.join(argument.getPlaceholder(), "/") }
+                ).getTranslation();
+
+            } else {
+                placeholder = new Translation(
+                        BedrockPlugin.getInstance(),
+                        "help.command.args.needed",
+                        new String[] { "argument", StringUtils.join(argument.getPlaceholder(), "/") }
+                ).getTranslation();
+
+            }
+
+            // description for argument from BedrockPlugin
+            String description = new Translation(
+                    BedrockPlugin.getInstance(),
+                    "help.command.args.description",
+                    new String[] { "description", argument.getDescription() }
+            ).getTranslation();
+
+            // description for argument from our plugin in if was empty
+            if (description.isEmpty())
+                description = new Translation(
+                        plugin,
+                        "help.command.args.description",
+                        new String[] { "description", argument.getDescription() }
+                ).getTranslation();
+
+            args_string.add(placeholder);
+            long_args_string.add(placeholder + " " + description);
+        }
+
         // finally
         String help_string = new Translation(
                 BedrockPlugin.getInstance(),
                 "help.command.command",
                 new String[]{
                         "label",    command.getLabel(),
-                        "commands", command_string,
-                        "args",     args_string
+                        "commands", StringUtils.join(command_strings, " "),
+                        "args",     StringUtils.join(args_string, " ")
                 }
         ).getTranslation();
 
         String hover_string = description_string;
         if (!long_args_string.isEmpty())
-            hover_string += System.lineSeparator() + long_args_string;
+            hover_string += System.lineSeparator() + StringUtils.join(long_args_string, System.lineSeparator());
 
-        TextComponent component = new TextComponent(TextComponent.fromLegacyText(help_string));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, click_string));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(hover_string)));
+        TextComponent component = new TextComponent(
+                TextComponent.fromLegacyText(help_string)
+        );
+        component.setClickEvent(new ClickEvent(
+                ClickEvent.Action.SUGGEST_COMMAND,
+                StringUtils.join(click_string, " ")
+        ));
+        component.setHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                TextComponent.fromLegacyText(hover_string)
+        ));
 
         return component;
     }
