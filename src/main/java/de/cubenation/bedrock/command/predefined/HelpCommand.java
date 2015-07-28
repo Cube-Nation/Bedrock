@@ -49,7 +49,7 @@ public class HelpCommand extends Command {
 
             TextComponent header = new TextComponent(
                     new Translation(
-                            BedrockPlugin.getInstance(),
+                            this.getCommandManager().getPlugin(),
                             "help.header",
                             new String[]{"plugin", commandHeaderName}
                     ).getTranslation()

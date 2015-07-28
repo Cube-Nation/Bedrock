@@ -1,6 +1,5 @@
 package de.cubenation.bedrock.command.predefined;
 
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
@@ -21,7 +20,7 @@ public class VersionCommand extends Command {
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         MessageHelper.send(this.plugin, sender, new Translation(
-                BedrockPlugin.getInstance(),
+                this.getCommandManager().getPlugin(),
                 "version",
                 new String[]{"version", this.plugin.getDescription().getVersion()}
         ).getTranslation());

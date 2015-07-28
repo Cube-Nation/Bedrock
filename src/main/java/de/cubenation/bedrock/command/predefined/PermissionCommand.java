@@ -38,7 +38,7 @@ public class PermissionCommand extends Command {
                     getCommandManager().getPlugin(),
                     sender,
                     new Translation(
-                            BedrockPlugin.getInstance(),
+                            this.getCommandManager().getPlugin(),
                             "permission.list.header"
                     ).getTranslation()
             );
@@ -48,10 +48,10 @@ public class PermissionCommand extends Command {
 
                 // send role
                 MessageHelper.send(
-                        getCommandManager().getPlugin(),
+                        this.getCommandManager().getPlugin(),
                         sender,
                         new Translation(
-                                BedrockPlugin.getInstance(),
+                                this.getPlugin(),
                                 "permission.list.role",
                                 new String[]{"role", entry.getKey().toString()}
                         ).getTranslation()
@@ -59,7 +59,7 @@ public class PermissionCommand extends Command {
 
                 for (String perm : (ArrayList<String>) entry.getValue()) {
                     MessageHelper.send(
-                            getCommandManager().getPlugin(),
+                            this.getCommandManager().getPlugin(),
                             sender,
                             new Translation(
                                     BedrockPlugin.getInstance(),
@@ -75,7 +75,7 @@ public class PermissionCommand extends Command {
             // no permissions
         } else {
             MessageHelper.send(
-                    getCommandManager().getPlugin(),
+                    this.getCommandManager().getPlugin(),
                     sender,
                     new Translation(
                             BedrockPlugin.getInstance(),

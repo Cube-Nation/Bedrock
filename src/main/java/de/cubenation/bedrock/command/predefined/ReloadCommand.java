@@ -30,7 +30,7 @@ public class ReloadCommand extends Command {
             this.plugin.getLocalizationService().reload();
 
             MessageHelper.send(
-                    getCommandManager().getPlugin(),
+                    this.getCommandManager().getPlugin(),
                     sender,
                     new Translation(
                             BedrockPlugin.getInstance(),
@@ -40,7 +40,7 @@ public class ReloadCommand extends Command {
         } catch (ServiceReloadException e) {
 
             MessageHelper.send(
-                    getCommandManager().getPlugin(),
+                    this.getCommandManager().getPlugin(),
                     sender,
                     new Translation(
                             BedrockPlugin.getInstance(),
