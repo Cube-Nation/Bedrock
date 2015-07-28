@@ -260,8 +260,6 @@ public class MessageHelper {
                 ).getTranslation();
             }
 
-            System.out.println("placeholder: <"+placeholder+">");
-
             // add the placeholder to suggest_string and argument_hover_string
             suggest_string.add(placeholder);
             argument_hover_string.add(placeholder);
