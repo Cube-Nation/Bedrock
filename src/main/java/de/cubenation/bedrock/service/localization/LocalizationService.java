@@ -85,7 +85,7 @@ public class LocalizationService implements ServiceInterface {
                 BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")
         };
 
-        YamlConfiguration yc = null;
+        YamlConfiguration yc;
         for (String file : language_files) {
             try {
                 this.getPlugin().log(Level.INFO, "Trying locale file " + file);
@@ -130,7 +130,7 @@ public class LocalizationService implements ServiceInterface {
         // bloat args
         if (args.length % 2 == 0) {
             List<String> more_args = new ArrayList<String>() {{
-                add("%plugin_prefix");
+                add("plugin_prefix");
                 add(plugin.getMessagePrefix());
             }};
             Collections.addAll(more_args, args);
