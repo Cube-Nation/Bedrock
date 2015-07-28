@@ -1,16 +1,22 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.CommandArguments;
 import de.cubenation.bedrock.command.argument.UnsortedArgument;
 import de.cubenation.bedrock.command.manager.CommandManager;
+import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.helper.IgnoreCaseArrayList;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -87,6 +93,48 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         Collections.addAll(this.commandArguments, arguments);
     }
 
+    @Override
+    public final void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+        // Parse Arguments
+
+        IgnoreCaseArrayList arrayList = new IgnoreCaseArrayList(Arrays.asList(args));
+
+        HashMap<String, ArrayList<String>> parsedArguments = new HashMap<>();
+
+        for (Argument argument : getCommandArguments()) {
+            if (argument instanceof UnsortedArgument) {
+                UnsortedArgument unsortedArgument = (UnsortedArgument) argument;
+
+                if (arrayList.contains(unsortedArgument.getKey())) {
+
+                    int index = arrayList.indexOf(unsortedArgument.getKey());
+                    // Add new Key to HasMap
+                    ArrayList<String> filledPlaceholder = new ArrayList<>();
+                    parsedArguments.put(unsortedArgument.getKey(), filledPlaceholder);
+
+                    for (int j = index + 1; j < (index + 1 + unsortedArgument.getPlaceholder().size()); j++) {
+                        try {
+                            filledPlaceholder.add(args[j]);
+                        } catch (Exception e) {
+                            // Out of Range, Missing an Argument.
+                            throw new IllegalCommandArgumentException();
+                        }
+                    }
+
+                } else {
+                    if (!unsortedArgument.isOptional()) {
+                        // Missing required Argument
+                        throw new IllegalCommandArgumentException();
+                    }
+                }
+            }
+        }
+
+        execute(sender, label, subcommands, parsedArguments);
+
+    }
+
+    public abstract void execute(CommandSender sender, String label, String[] subcommands, HashMap<String, ArrayList<String>> arguments) throws CommandException, IllegalCommandArgumentException;
 
     @Override
     public final ArrayList<String> getTabCompletion(String[] args) {
