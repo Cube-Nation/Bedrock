@@ -5,6 +5,8 @@ import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 public class Translation {
@@ -59,7 +61,14 @@ public class Translation {
     }
 
     private void setLocale_args(String[] locale_args) {
-        this.locale_args = locale_args;
+        // create a modifiable list and add plugin_prefix
+        List<String> args = new ArrayList<String>();
+        args.add("plugin_prefix");
+        args.add(this.getPlugin().getMessagePrefix());
+
+        // cast back to String[]
+        String[] string_args = new String[args.size()];
+        this.locale_args = args.toArray(string_args);
     }
 
 

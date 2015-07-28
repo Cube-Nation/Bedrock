@@ -11,9 +11,6 @@ import de.cubenation.bedrock.service.customconfigurationfile.CustomConfiguration
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.logging.Level;
 
 public class LocalizationService implements ServiceInterface {
@@ -28,7 +25,8 @@ public class LocalizationService implements ServiceInterface {
         this.setPlugin(plugin);
         this.setLocale(
                 plugin.getConfig().getString("service.localization.locale",
-                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")))
+                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale",
+                        "locale"))) //just in case someone fucked up the Bedrock config.yml
         ;
     }
 
@@ -127,16 +125,8 @@ public class LocalizationService implements ServiceInterface {
             throw new LocalizationNotFoundException(ident);
         }
 
-        // bloat args
-        if (args.length % 2 == 0) {
-            List<String> more_args = new ArrayList<String>() {{
-                add("plugin_prefix");
-                add(plugin.getMessagePrefix());
-            }};
-            Collections.addAll(more_args, args);
-
-            s = this.applyArgs(s, (ArrayList<String>) more_args);
-        }
+        if (args.length % 2 == 0)
+            s = this.applyArgs(s, args);
 
         return s;
     }
@@ -172,9 +162,9 @@ public class LocalizationService implements ServiceInterface {
     */
 
     
-    private String applyArgs(String s, ArrayList<String> args) {
-        for (int i = 0; i < args.size(); i++) {
-            s = s.replaceAll("%" + args.get(i) + "%", args.get(i + 1));
+    private String applyArgs(String s, String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            s = s.replaceAll("%" + args[i] + "%", args[i + 1]);
             i++;
         }
         return s;
