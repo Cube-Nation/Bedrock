@@ -25,6 +25,18 @@ public class ColorScheme {
 
     private ChatColor text;
 
+    private final Pattern pattern = Pattern.compile(
+            "(&" +
+                    "(" +
+                    "BLACK|DARK_BLUE|DARK_GREEN|DARK_AQUA|DARK_RED|DARK_PURPLE|GOLD|GRAY|DARK_GRAY|BLUE|GREEN|AQUA|RED|LIGHT_PURPLE|YELLOW|WHITE" +
+                    "|" +
+                    "STRIKETHROUGH|UNDERLINE|BOLD|MAGIC|ITALIC|RESET" +
+                    "|" +
+                    "PRIMARY|SECONDARY|FLAG|TEXT" +
+                    ")" +
+            "&)"
+    );
+
     public enum ColorSchemeName {
         DEFAULT, RED, GREEN, BLUE, YELLOW, CUSTOM
     }
@@ -132,19 +144,7 @@ public class ColorScheme {
     }
 
     public String applyColorScheme(String string) {
-        String regex =
-                "(&" +
-                        "(" +
-                        "BLACK|DARK_BLUE|DARK_GREEN|DARK_AQUA|DARK_RED|DARK_PURPLE|GOLD|GRAY|DARK_GRAY|BLUE|GREEN|AQUA|RED|LIGHT_PURPLE|YELLOW|WHITE" +
-                        "|" +
-                        "STRIKETHROUGH|UNDERLINE|BOLD|MAGIC|ITALIC|RESET" +
-                        "|" +
-                        "PRIMARY|SECONDARY|FLAG|TEXT" +
-                        ")" +
-                        "&)";
-
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(string);
+        Matcher matcher = this.pattern.matcher(string);
         StringBuffer sb = new StringBuffer();
 
         while (matcher.find()) {
