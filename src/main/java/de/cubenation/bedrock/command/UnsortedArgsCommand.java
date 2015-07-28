@@ -10,7 +10,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -91,107 +90,88 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     @Override
     public final ArrayList<String> getTabCompletion(String[] args) {
-
-        System.out.println("args; " + "size: " + args.length + " objects: " + Arrays.toString(args));
-        System.out.println("commands; " + "size: " + commands.size() + " objects: " + commands);
-        System.out.println("cmd arguments; " + "size: " + commandArguments.size() + " objects: " + commandArguments);
-
-
-        /*
-Wenn /libtest TAB
-
-[16:19:28 INFO]: args; size: 1 objects: []
-[16:19:28 INFO]: commands; size: 2 objects: [{set, s}, {home}]
-[16:19:28 INFO]: cmd arguments; size: 2 objects: [Argument{key='area', help='Home Punkt', arguments={z=true, y=true, x=true}}, Argument{key='size', help='Reichweite um dich.', arguments={size=true}}]
-
---> Sollte 'set' voschlagen (s ist kürzer & wird daher nicht zurück gegeben)
-
-
-[16:31:06 INFO]: args; size: 1 objects: [se]
-[16:31:06 INFO]: commands; size: 2 objects: [[Ljava.lang.String;@8df2b24, [Ljava.lang.String;@73894d08]
-[16:31:06 INFO]: cmd arguments; size: 2 objects: [Argument{key='area', help='Home Punkt', arguments={z=true, y=true, x=true}}, Argument{key='size', help='Reichweite um dich.', arguments={size=true}}]
-
---> Sollte 'set' vorschlagen
-
-
-Wenn libtest Black TAB
-[16:22:05 INFO]: args; size: 2 objects: [Blacksheep92, ]
-[16:22:05 INFO]: commands; size: 2 objects: [{set, s}, {home}]
-[16:22:05 INFO]: cmd arguments; size: 2 objects: [Argument{key='area', help='Home Punkt', arguments={z=true, y=true, x=true}}, Argument{key='size', help='Reichweite um dich.', arguments={size=true}}]
-
---> Sollte 'home' voschlagen
-         */
-
-
-        // TODO fast return
-        // if () return null
-
-
         if (commands.size() >= args.length) {
-            //Simple, just check each command
             return getTabCompletionFromCommands(args);
+        } else if (args.length > commands.size()) {
+            return getTabCompletionFromArguments(args);
+        }
+        return null;
+    }
+
+    private ArrayList<String> getTabCompletionFromArguments(String[] args) {
+        if (!checkCommands(args)) {
+            return null;
         }
 
+        // TODO
+        // Unschön, etwas besseres überlegen
+        ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
+        for (int i = 0; i < getCommandArguments().size(); i++) {
+            if (getCommandArguments().get(i) instanceof UnsortedArgument) {
+                cmdArgs.add((UnsortedArgument) getCommandArguments().get(i));
+            }
+        }
 
-        for (int i = 0; i < args.length; i++) {
+        ArrayList<UnsortedArgument> recursive = getPossibleArguments(cmdArgs, args, commands.size());
 
-
-            //Wenn args[i] == "" return alle Validen Args an dieser Stelle
-            // else substring
-
-            //Wenn alle eines commands/args nicht passen direkt return
-
-            boolean valid = false;
-
-            if (i < commands.size()) {
-                // First check all subcommands
-                for (String com : commands.get(i)) {
-                    if (com.startsWith(args[i])) {
-                        valid = true;
-                    }
+        ArrayList<String> arrayList = new ArrayList<>();
+        if (recursive != null) {
+            for (UnsortedArgument argument : recursive) {
+                if (argument.getKey().startsWith(args[args.length - 1])) {
+                    arrayList.add(argument.getKey());
                 }
             }
-            // else commandsize+argslength krams
-
-
         }
 
+        return arrayList;
+    }
 
-        // Then, check all arguments
 
+    private ArrayList<UnsortedArgument> getPossibleArguments(ArrayList<UnsortedArgument> list, String[] args, int position) {
+        if (position >= args.length) {
+            return null;
+        } else if (position == args.length - 1) {
+            return list;
+        }
 
-//        if (commands.size() >= args.length) {
-//            for (int i = 0; i < args.length; i++) {
-//                boolean result;
-//                if (!args[i].equals("")) {
-//                    result = false;
-//                    for (String com : commands.get(i)) {
-//                        if (com.startsWith(args[i])) {
-//                            result = true;
-//                        }
-//                    }
-//                } else {
-//                    result = true;
-//                }
-//
-//                if (!result) {
-//                    return null;
-//                }
-//            }
-//
-//            ArrayList<String> list = new ArrayList<>(Arrays.asList(commands.get(args.length - 1)));
-//
-//            Collections.sort(list, new Comparator<String>() {
-//                @Override
-//                public int compare(String s1, String s2) {
-//                    return s2.compareToIgnoreCase(s1);
-//                }
-//            });
-//
-//            // Just return the "largets" command for completion to help the user to choose the right.
-//            return list.get(0);
-//        }
+        UnsortedArgument argument = containsKey(list, args[position]);
+        if (argument != null) {
+            list.remove(argument);
+            // Add this argument
+            position++;
+            // Add Placeholder size to ignore them
+            position += argument.getPlaceholder().size();
+            return getPossibleArguments(list, args, position);
+        }
         return null;
+    }
+
+    private UnsortedArgument containsKey(ArrayList<UnsortedArgument> list, String key) {
+        for (UnsortedArgument argument : list) {
+            if (argument.getKey().startsWith(key)) {
+                return argument;
+            }
+        }
+        return null;
+    }
+
+
+    private boolean checkCommands(String[] args) {
+
+        for (int i = 0; i < commands.size(); i++) {
+
+            boolean validCommand = false;
+            for (String com : getCommands().get(i)) {
+                if (com.startsWith(args[i])) {
+                    validCommand = true;
+                }
+            }
+            if (!validCommand) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -227,7 +207,6 @@ Wenn libtest Black TAB
     public TextComponent getBeautifulHelp(CommandSender sender) {
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
-
 
 
     @Override
