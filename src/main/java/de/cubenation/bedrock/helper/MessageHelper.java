@@ -233,8 +233,7 @@ public class MessageHelper {
                         new String[ ] {"key", unsorted_argument.getKey() }
                 ).getTranslation();
 
-                // add this to the suggest and argument hover string
-                suggest_string.add(key_string);
+                // add this to argument_hover_string
                 argument_hover_string.add(key_string);
             }
 
@@ -260,8 +259,7 @@ public class MessageHelper {
                 ).getTranslation();
             }
 
-            // add the placeholder to suggest_string and argument_hover_string
-            suggest_string.add(placeholder);
+            // add the placeholder to argument_hover_string
             argument_hover_string.add(placeholder);
 
 
