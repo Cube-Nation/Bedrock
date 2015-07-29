@@ -53,9 +53,7 @@ public class HelpCommand extends Command {
 
             for (AbstractCommand command : commandManager.getCommands()) {
                 TextComponent component_help = command.getBeautifulHelp(sender);
-                if (component_help == null)
-                    MessageHelper.insufficientPermission(this.plugin, sender);
-                else
+                if (component_help != null)
                     MessageHelper.send(this.plugin, sender, component_help);
             }
 

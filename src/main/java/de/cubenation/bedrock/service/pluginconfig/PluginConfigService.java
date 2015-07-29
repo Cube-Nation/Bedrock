@@ -44,6 +44,9 @@ public class PluginConfigService implements ServiceInterface {
         } catch (ServiceInitException e) {
             throw new ServiceReloadException(e.getMessage());
         }
+
+        if (this.has_config)
+            this.getPlugin().reloadConfig();
     }
 
     private void check() throws IOException {

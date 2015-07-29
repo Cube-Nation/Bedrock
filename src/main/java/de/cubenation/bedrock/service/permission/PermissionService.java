@@ -7,7 +7,6 @@ import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
 import org.bukkit.command.CommandSender;
@@ -110,10 +109,10 @@ public class PermissionService implements ServiceInterface {
                 this.plugin.log(Level.SEVERE, "Unable to save permissions");
                 this.plugin.disable(e);
             }
-            return;
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void fixMissingPermissions() {
         YamlConfiguration permissions;
         try {
@@ -165,8 +164,6 @@ public class PermissionService implements ServiceInterface {
     private void saveRolePermissions(YamlConfiguration file, String role, ArrayList<String> permissions) throws IOException {
         if (permissions == null || permissions.size() == 0)
             return;
-
-        CustomConfigurationFile f = CustomConfigurationRegistry.get(this.getPlugin(), this.permissions_filename, null);
 
         file.set(role, permissions);
         file.save(CustomConfigurationRegistry.get(this.getPlugin(), this.permissions_filename, null).getFile());

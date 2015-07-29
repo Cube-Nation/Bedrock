@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public abstract class AbstractPageableListService implements ServiceInterface, Registerable {
 
     public static int FIRSTPAGE = 1;
@@ -16,8 +17,9 @@ public abstract class AbstractPageableListService implements ServiceInterface, R
 
     private List<PageableListStorable> storage;
 
-    @SuppressWarnings("unused")
     public AbstractPageableListService() {
+        // TODO: reload nicht "schnell" genug
+        // TODO: BedrockPlugin? das nix gut.
         this(BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.pageablelist.next_amount"));
     }
 
@@ -40,24 +42,20 @@ public abstract class AbstractPageableListService implements ServiceInterface, R
         this.storage.add(cs);
     }
 
-    @SuppressWarnings("unused")
     public void store(Set<PageableListStorable> list) {
         for (PageableListStorable<?> pls : list) {
             this.store(pls);
         }
     }
 
-    @SuppressWarnings("unused")
     public int size() {
         return this.storage.size();
     }
 
-    @SuppressWarnings("unused")
     public List<PageableListStorable> getPage(int page) {
         return this.getPage(this.next, page);
     }
 
-    @SuppressWarnings("unused")
     public int getPages() {
         return (int) Math.round(this.storage.size() / this.next + 0.5);
     }
