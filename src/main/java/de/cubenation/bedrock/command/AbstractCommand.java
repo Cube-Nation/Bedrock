@@ -19,11 +19,10 @@ import java.util.*;
 public abstract class AbstractCommand {
 
     /**
-     *
-     * @param sender the sender of the command
-     * @param label the label of the command
+     * @param sender      the sender of the command
+     * @param label       the label of the command
      * @param subcommands the list of subcommands
-     * @param args the list of arguments
+     * @param args        the list of arguments
      * @throws CommandException
      * @throws IllegalCommandArgumentException
      */
@@ -41,36 +40,48 @@ public abstract class AbstractCommand {
     public abstract ArrayList<String> getTabCompletion(String[] args, CommandSender sender);
 
     public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
-        if (getCommands().size() >= args.length) {
-            for (int i = 0; i < args.length; i++) {
+        if (getCommands().size() < args.length) {
+            return null;
+        }
 
-                boolean validCommand = false;
-                for (String com : getCommands().get(i)) {
+        for (int i = 0; i < args.length; i++) {
+
+            boolean validCommand = false;
+            for (String com : getCommands().get(i)) {
+                // Last Argument can start with
+                // Other MUST be equal
+                if (i < args.length - 1) {
+                    if (com.equalsIgnoreCase(args[i])) {
+                        validCommand = true;
+                    }
+                } else {
                     if (com.startsWith(args[i])) {
                         validCommand = true;
                     }
                 }
-                if (!validCommand) {
-                    return null;
-                }
+
             }
-
-            final ArrayList<String> list = new ArrayList<>(Arrays.asList(getCommands().get(args.length - 1)));
-
-            Collections.sort(list, new Comparator<String>() {
-                @Override
-                public int compare(String s1, String s2) {
-                    return s2.compareToIgnoreCase(s1);
-                }
-            });
-
-            // Just return the "largets" command for completion to help the user to choose the right.
-            final String completionCommand = list.get(0);
-
-            return new ArrayList<String>(){{add(completionCommand);}};
-        } else {
-            return null;
+            if (!validCommand) {
+                return null;
+            }
         }
+
+        final ArrayList<String> list = new ArrayList<>(Arrays.asList(getCommands().get(args.length - 1)));
+
+        Collections.sort(list, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return s2.compareToIgnoreCase(s1);
+            }
+        });
+
+        // Just return the "largets" command for completion to help the user to choose the right.
+        final String completionCommand = list.get(0);
+
+        return new ArrayList<String>() {{
+            add(completionCommand);
+        }};
+
     }
 
 
@@ -97,6 +108,7 @@ public abstract class AbstractCommand {
 
     /**
      * Add CommandManager, set BasePlugin instance and call setup()
+     *
      * @param commandManager the CommandManager of this command
      */
     public final void addCommandManager(CommandManager commandManager) {

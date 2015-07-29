@@ -151,6 +151,15 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
             return null;
         }
 
+        //Check if last command is equal, not startswith
+        int index = commands.size() - 1;
+        for (String com : getCommands().get(index)) {
+            if (!com.equalsIgnoreCase(args[index])) {
+                return null;
+
+            }
+        }
+
         // TODO
         // Unschön, etwas besseres überlegen
         ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
@@ -214,8 +223,14 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
             boolean validCommand = false;
             for (String com : getCommands().get(i)) {
-                if (com.startsWith(args[i])) {
-                    validCommand = true;
+                if (i < commands.size() - 1) {
+                    if (com.equalsIgnoreCase(args[i])) {
+                        validCommand = true;
+                    }
+                } else {
+                    if (com.startsWith(args[i])) {
+                        validCommand = true;
+                    }
                 }
             }
             if (!validCommand) {
@@ -276,7 +291,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         System.out.println("All Args");
         System.out.println(cmdArgs);
 
-        for (int i = commands.size(); i< args.length; i++) {
+        for (int i = commands.size(); i < args.length; i++) {
             UnsortedArgument argument = containsKey(cmdArgs, args[i]);
             if (argument != null) {
                 cmdArgs.remove(argument);

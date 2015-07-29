@@ -78,6 +78,7 @@ public class HelpCommand extends Command {
                 }
             }
 
+            sendHeader(sender, label);
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
                 for (AbstractCommand command : commandManager.getCommands()) {
@@ -88,7 +89,6 @@ public class HelpCommand extends Command {
                     );
                 }
             } else {
-                sendHeader(sender, label);
                 for (AbstractCommand command : helpList) {
                     MessageHelper.send(
                             this.getPlugin(),
