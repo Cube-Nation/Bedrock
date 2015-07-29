@@ -2,6 +2,19 @@
 
 # Section for service configuration
 service:
+  # Color Scheme Service
+  colorscheme:
+    # The name of the scheme to be used.
+    # Currently there are these schemes available:
+    #   DEFAULT, RED, GREEN, BLUE, YELLOW and CUSTOM
+    name: "DEFAULT"
+    # If you want to use a custom color scheme, you can specify colors like so:
+    #
+    #  name: "CUSTOM"
+    #  primary: "GOLD"
+    #  secondary: "YELLOW"
+    #  flag: "DARK_GRAY"
+    #  text: "WHITE"
 
   # Confirm Service
   confirm:
@@ -24,33 +37,17 @@ service:
 
   # Permission service
   permission:
-    # Whether to use the Permission service
-    use: true
     # File where all permissions are stored and read from
     file_name: "permissions.yml"
-    # Default role name
-    no_role: "no_role"
-    # tdb
-    role_key: "permission_roles_enabled"
+    # Does Operators have all permissions? Valid values are true or false
+    grant_all_permissions_to_op: true
+    # custom permission prefix. If left empty or undefined the lowercased plugin name will be taken as prefix
+    prefix: "bedrock"
 
 # mcstats.org metrics
 metrics:
   # Use plugin metrics on mcstats.org, defaults to false
   use: false
-
-# Color Scheme
-scheme:
-  # The name of the scheme to be used.
-  # Currently there are these schemes available:
-  #   DEFAULT, RED, GREEN, BLUE, YELLOW and CUSTOM
-  name: "DEFAULT"
-  # If you want to use a custom color scheme, you can specify colors like so:
-  #
-  #  name: "CUSTOM"
-  #  primary: "GOLD"
-  #  secondary: "YELLOW"
-  #  flag: "DARK_GRAY"
-  #  text: "WHITE"
 
 # Configuration version - do not touch (for later usage in PluginConfigurationService)
 version: "0.8.9~spigot187+1"

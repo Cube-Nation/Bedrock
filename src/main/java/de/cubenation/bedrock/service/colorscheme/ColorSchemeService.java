@@ -4,26 +4,29 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
+import de.cubenation.bedrock.style.ColorScheme;
 
 public class ColorSchemeService implements ServiceInterface {
 
     private BasePlugin plugin;
 
+    private ColorScheme scheme;
+
     public ColorSchemeService(BasePlugin plugin) {
         this.setPlugin(plugin);
     }
 
-    public BasePlugin getPlugin() {
+    private BasePlugin getPlugin() {
         return plugin;
     }
 
-    public void setPlugin(BasePlugin plugin) {
+    private void setPlugin(BasePlugin plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public void init() throws ServiceInitException {
-        this.getPlugin().setColorScheme(null);
+        this.setColorScheme(null);
     }
 
     @Override
@@ -33,6 +36,16 @@ public class ColorSchemeService implements ServiceInterface {
         } catch (ServiceInitException e) {
             throw new ServiceReloadException(e.getMessage());
         }
+    }
+
+    public void setColorScheme(ColorScheme.ColorSchemeName name) {
+        this.scheme = (name != null)
+                ? ColorScheme.getColorScheme(this.getPlugin(), name)
+                : ColorScheme.getColorScheme(this.getPlugin(), this.getPlugin().getPluginConfigService().getConfig().getString("service.colorscheme.name"));
+    }
+
+    public ColorScheme getColorScheme() {
+        return this.scheme;
     }
 
 }

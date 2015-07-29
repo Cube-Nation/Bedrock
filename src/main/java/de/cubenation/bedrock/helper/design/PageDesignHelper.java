@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.helper.design;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.service.pageablelist.PageableListService;
+import de.cubenation.bedrock.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.service.pageablelist.PageableListStorable;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -27,7 +27,7 @@ public class PageDesignHelper {
 
     private static final int NAVIGATIONSIZE = 7;
 
-    public static void pagination(BasePlugin plugin, PageableListService service, int page, String pageExecutionCmd, Player player) {
+    public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, Player player) {
         // Can't show pages, cause its empty
         if (service.isEmpty()) {
             plugin.log(Level.INFO, "Empty PageableListService. Can't display pages.");
@@ -49,9 +49,9 @@ public class PageDesignHelper {
 
         List<PageableListStorable> list = service.getPage(page);
 
-        ChatColor primary =     plugin.getColorScheme().getPrimary();
-        //ChatColor secondary =   plugin.getColorScheme().getSecondary();
-        ChatColor flag =        plugin.getColorScheme().getFlag();
+        ChatColor primary =     plugin.getColorSchemeService().getColorScheme().getPrimary();
+        //ChatColor secondary =   plugin.getColorSchemeService().getColorScheme().getSecondary();
+        ChatColor flag =        plugin.getColorSchemeService().getColorScheme().getFlag();
 
 
         ComponentBuilder header = new ComponentBuilder("======= ").color(flag)
@@ -83,9 +83,9 @@ public class PageDesignHelper {
             return null;
         }
 
-        //ChatColor primary =     plugin.getColorScheme().getPrimary();
-        ChatColor secondary =   plugin.getColorScheme().getSecondary();
-        ChatColor flag =        plugin.getColorScheme().getFlag();
+        //ChatColor primary =     plugin.getColorSchemeService().getColorScheme().getPrimary();
+        ChatColor secondary =   plugin.getColorSchemeService().getColorScheme().getSecondary();
+        ChatColor flag =        plugin.getColorSchemeService().getColorScheme().getFlag();
 
         ComponentBuilder pagination = new ComponentBuilder("");
         if (page > 1) {

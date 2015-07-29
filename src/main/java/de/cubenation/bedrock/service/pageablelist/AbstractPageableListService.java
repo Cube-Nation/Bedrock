@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class PageableListService implements ServiceInterface, Registerable {
+public abstract class AbstractPageableListService implements ServiceInterface, Registerable {
 
     public static int FIRSTPAGE = 1;
 
@@ -17,11 +17,11 @@ public abstract class PageableListService implements ServiceInterface, Registera
     private List<PageableListStorable> storage;
 
     @SuppressWarnings("unused")
-    public PageableListService() {
-        this(BedrockPlugin.getInstance().getConfig().getInt("service.pageablelist.next_amount"));
+    public AbstractPageableListService() {
+        this(BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.pageablelist.next_amount"));
     }
 
-    public PageableListService(int next) {
+    public AbstractPageableListService(int next) {
         this.next = next;
         this.init();
     }
