@@ -38,7 +38,7 @@ public abstract class AbstractCommand {
      * @param args the args of the asking command
      * @return the tab completion for argument
      */
-    public abstract ArrayList<String> getTabCompletion(String[] args);
+    public abstract ArrayList<String> getTabCompletion(String[] args, CommandSender sender);
 
     public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
         if (getCommands().size() >= args.length) {
