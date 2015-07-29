@@ -103,19 +103,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             MessageHelper.send(this.plugin, commandSender, commandToExecute.getBeautifulHelp(commandSender));
         }
 
-        //TODO Check & reimplement
-//        // was genau wird hier gemacht? optimierungsbedarf?
-//        boolean canHelp = false;
-//        for (SubCommand subCommand : subCommands) {
-//            if (subCommand.isValidHelpTrigger(args)) {
-//                MessageHelper.send(this.plugin, commandSender, getHelpForSubCommand(subCommand, commandSender, label));
-//                canHelp = true;
-//            }
-//        }
-//        if (canHelp) {
-//            return true;
-//        }
-
         // unknown command
         MessageHelper.invalidCommand(this.plugin, commandSender);
         return true;
