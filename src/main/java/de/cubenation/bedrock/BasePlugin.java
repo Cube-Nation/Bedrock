@@ -53,7 +53,9 @@ public abstract class BasePlugin extends JavaPlugin {
         // initialize service manager
         this.serviceManager = new ServiceManager(this);
 
+        // DO NOT MODIFY THIS ORDER!
         try {
+            // register plugin config service
             this.serviceManager.registerService("pluginconfig", new PluginConfigService(this));
 
             // register color scheme service
@@ -78,15 +80,15 @@ public abstract class BasePlugin extends JavaPlugin {
             // register command service
             this.serviceManager.registerService("command", new CommandService(this));
 
+            // register localization service
+            this.serviceManager.registerService("localization", new LocalizationService(this));
+
             // register permission service
             this.serviceManager.registerService("permission", new PermissionService(this));
 
-            // register localization service
-            this.serviceManager.registerService("localization", new LocalizationService(this));
         } catch (ServiceInitException e) {
             this.disable(e);
         }
-
 
         // initialize commands
         // TODO: move to command service
@@ -97,6 +99,7 @@ public abstract class BasePlugin extends JavaPlugin {
             }
         }
 
+        // TODO this can be removed once the command service works
         this.getPermissionService().saveUnregisteredPermissions();
 
 
