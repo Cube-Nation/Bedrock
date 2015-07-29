@@ -206,6 +206,10 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     private boolean checkCommands(String[] args) {
 
+        if (args.length < commands.size()) {
+            return false;
+        }
+
         for (int i = 0; i < commands.size(); i++) {
 
             boolean validCommand = false;
