@@ -137,7 +137,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     public abstract void execute(CommandSender sender, String label, String[] subcommands, HashMap<String, ArrayList<String>> arguments) throws CommandException, IllegalCommandArgumentException;
 
     @Override
-    public final ArrayList<String> getTabCompletion(String[] args) {
+    public final ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
         if (commands.size() >= args.length) {
             return getTabCompletionFromCommands(args);
         } else if (args.length > commands.size()) {
