@@ -137,7 +137,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     public abstract void execute(CommandSender sender, String label, String[] subcommands, HashMap<String, ArrayList<String>> arguments) throws CommandException, IllegalCommandArgumentException;
 
     @Override
-    public final ArrayList<String> getTabCompletion(String[] args) {
+    public final ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
         if (commands.size() >= args.length) {
             return getTabCompletionFromCommands(args);
         } else if (args.length > commands.size()) {
@@ -206,6 +206,10 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     private boolean checkCommands(String[] args) {
 
+        if (args.length < commands.size()) {
+            return false;
+        }
+
         for (int i = 0; i < commands.size(); i++) {
 
             boolean validCommand = false;
@@ -231,25 +235,65 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     @Override
     public final boolean isValidTrigger(String[] args) {
 
-        if (args.length >= commands.size()) {
-            // Check previous Arguments
-            boolean prevResult = true;
-            for (int i = 0; i < commands.size(); i++) {
-                boolean res = false;
-                for (String com : commands.get(i)) {
-                    if (args[i].equalsIgnoreCase(com)) {
-                        res = true;
-                    }
-                }
-                if (!res) {
-                    prevResult = false;
-                }
-            }
-            return prevResult;
+        if (!checkCommands(args)) {
+            System.out.println("!checkCommands");
+            return false;
         }
-        // Not enough arguments
-        // TODO: Should display if not enough arguments available!
-        return false;
+
+        if (!checkArguments(args)) {
+            System.out.println("!checkArguments");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkArguments(String[] args) {
+
+        int commandArgumentSize = 0;
+        for (Argument argument : getCommandArguments()) {
+            // Ignore Optional Commands, this can handle the parse method
+            if (!argument.isOptional()) {
+                // Add 1 for the key
+                commandArgumentSize++;
+                // Add placeholder Size
+                commandArgumentSize += argument.getPlaceholder().size();
+            }
+        }
+
+        if (args.length < (commands.size() + commandArgumentSize)) {
+            return false;
+        }
+
+        // Unschön, etwas besseres überlegen
+        ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
+        for (int i = 0; i < getCommandArguments().size(); i++) {
+            if (getCommandArguments().get(i) instanceof UnsortedArgument) {
+                cmdArgs.add((UnsortedArgument) getCommandArguments().get(i));
+            }
+        }
+
+        System.out.println("All Args");
+        System.out.println(cmdArgs);
+
+        for (int i = commands.size(); i< args.length; i++) {
+            UnsortedArgument argument = containsKey(cmdArgs, args[i]);
+            if (argument != null) {
+                cmdArgs.remove(argument);
+            }
+        }
+
+        // cmdArgs should contains none or optional commands
+        // else return false
+        System.out.println("Should contain only optional");
+        System.out.println(cmdArgs);
+        for (UnsortedArgument argument : cmdArgs) {
+            if (!argument.isOptional()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public TextComponent getBeautifulHelp(CommandSender sender) {
