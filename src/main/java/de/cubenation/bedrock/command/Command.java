@@ -90,7 +90,7 @@ public abstract class Command extends AbstractCommand {
 
 
     @Override
-    public final ArrayList<String> getTabCompletion(String[] args) {
+    public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
         return getTabCompletionFromCommands(args);
     }
 
@@ -101,7 +101,7 @@ public abstract class Command extends AbstractCommand {
      * @return true if it is a valid trigger, else false
      */
     @Override
-    public final boolean isValidTrigger(String[] args) {
+    public boolean isValidTrigger(String[] args) {
 
         if (args.length >= commands.size()) {
             // Check previous Arguments
