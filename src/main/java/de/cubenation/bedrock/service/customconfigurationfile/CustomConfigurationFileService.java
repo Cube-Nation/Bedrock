@@ -25,15 +25,12 @@ public class CustomConfigurationFileService implements ServiceInterface {
             if (this.getPlugin().getCustomConfigurationFiles() == null)
                 return;
 
-            for (CustomConfigurationFile file : this.getPlugin().getCustomConfigurationFiles()) {
-                this.getPlugin().log(Level.INFO, "Registering file: " + file.getFilename());
+            for (CustomConfigurationFile file : this.getPlugin().getCustomConfigurationFiles())
                 this.register(file);
-            }
 
         } catch (IOException e) {
             e.printStackTrace();
             throw new ServiceInitException(e.getMessage());
-
         }
     }
 
@@ -47,6 +44,7 @@ public class CustomConfigurationFileService implements ServiceInterface {
     }
 
     public void register(CustomConfigurationFile file) {
+        this.getPlugin().log(Level.INFO, "Registering file: " + file.getFilename());
         CustomConfigurationRegistry.register(this.getPlugin(), file.getFilename(), null, file);
     }
 

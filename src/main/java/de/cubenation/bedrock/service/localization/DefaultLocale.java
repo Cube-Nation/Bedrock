@@ -14,7 +14,7 @@ public class DefaultLocale extends CustomConfigurationFile {
                 plugin,
                     "locale" +
                     java.lang.System.getProperty("file.separator") +
-                    BedrockPlugin.getInstance().getConfig().getString("service.localization.locale") +
+                    BedrockPlugin.getInstance().getPluginConfigService().getConfig().getString("service.localization.locale") +
                     ".yml",
                 DefaultLocale.data()
         );

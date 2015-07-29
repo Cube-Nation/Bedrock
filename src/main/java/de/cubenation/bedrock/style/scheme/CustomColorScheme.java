@@ -12,20 +12,20 @@ public class CustomColorScheme extends ColorScheme {
         super(
                 ColorSchemeName.CUSTOM,
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("scheme.primary",
-                        BedrockPlugin.getInstance().getColorScheme().getPrimary().toString())
+                        plugin.getConfig().getString("service.colorscheme.primary",
+                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getPrimary().toString())
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("scheme.secondary",
-                        BedrockPlugin.getInstance().getColorScheme().getSecondary().toString())
+                        plugin.getConfig().getString("service.colorscheme.secondary",
+                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getSecondary().toString())
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("scheme.flag",
-                        BedrockPlugin.getInstance().getColorScheme().getFlag().toString())
+                        plugin.getConfig().getString("service.colorscheme.flag",
+                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getFlag().toString())
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("scheme.text",
-                        BedrockPlugin.getInstance().getColorScheme().getText().toString())
+                        plugin.getConfig().getString("service.colorscheme.text",
+                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getText().toString())
                 )
         );
     }

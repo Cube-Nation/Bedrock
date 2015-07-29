@@ -1,17 +1,20 @@
 package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.config.Permissions;
+import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
-import de.cubenation.bedrock.helper.Const;
 import de.cubenation.bedrock.service.ServiceInterface;
+import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
+import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -21,160 +24,212 @@ import java.util.logging.Level;
  */
 public class PermissionService implements ServiceInterface {
 
-    public static final String NO_ROLE = "no_role";
-    public static final String PERMISSIONS_FILE_NAME= "permissions.yml";
+    private BasePlugin plugin;
 
+    private CustomConfigurationFileService ccf_service;
 
-    private final BasePlugin plugin;
+    private String permissions_filename;
 
-    private final File permissionsFile;
+    private final String no_role                            = "no_role";
 
-    private Boolean activePermissionService                 = true;
+    private ArrayList<String> unregistered_permissions      = new ArrayList<>();
 
-    ArrayList<String> plainOldPermissions                   = new ArrayList<>();
+    private String permission_prefix;
 
-    HashMap<String, String> roledPermissions                = new HashMap<>();
-
-    HashMap<String, ArrayList<String>> permissionRoleDump   = new HashMap<>();
+    private YamlConfiguration permissions;
 
 
     public PermissionService(BasePlugin plugin) {
+        this.setPlugin(plugin);
+        this.ccf_service = plugin.getCustomConfigurationFileService();
+    }
+
+    private void setPlugin(BasePlugin plugin) {
         this.plugin = plugin;
-        permissionsFile = new File(plugin.getDataFolder().getAbsolutePath(), PERMISSIONS_FILE_NAME);
+    }
+
+    private BasePlugin getPlugin() {
+        return this.plugin;
+    }
+
+    private void setPermissionsFilename(String permissions_filename) {
+        this.permissions_filename = permissions_filename;
+    }
+
+    public String getPermissionsFilename() {
+        return this.permissions_filename;
     }
 
     @Override
     public void init() throws ServiceInitException {
-        // check if file is writeable
-        /*
-        if (!permissionsFile.canWrite()) {
-            throw new ServiceInitException("Cannot write to file " + permissionsFile.getName());
+        Permissions permissions;
+        try {
+            permissions = new Permissions(this.getPlugin());
+            this.setPermissionsFilename(permissions.getFilename());
+        } catch (IOException e) {
+            throw new ServiceInitException(e.getMessage());
         }
-        */
-    }
 
+        this.ccf_service.register(permissions);
+        this.saveUnregisteredPermissions();
+        this.loadPermissions();
+    }
 
     @Override
     public void reload() throws ServiceReloadException {
-        if (plugin.getConfig().get(Const.PERMISSION_ROLE_KEY) == null) {
-            plugin.getConfig().set(Const.PERMISSION_ROLE_KEY, activePermissionService);
-            plugin.saveConfig();
-        }
-        plugin.reloadConfig();
-        activePermissionService = plugin.getConfig().getBoolean(Const.PERMISSION_ROLE_KEY);
-
-
-        if (activePermissionService) {
-            writePermission();
-            loadPermission();
-        }
-    }
-
-    /*
-     * Write permissions to file
-     */
-    @SuppressWarnings("unchecked")
-    private void writePermission() {
-        plugin.log(Level.INFO, "Write default Permissions!");
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
-
-        ArrayList<String> defaultPermission = (ArrayList<String>) configuration.get(NO_ROLE);
-        if (defaultPermission == null) {
-            defaultPermission = new ArrayList<>();
-        }
-
-        for (String permission : plainOldPermissions) {
-            Boolean contains = false;
-            for (String key : configuration.getKeys(false)) {
-                ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
-                if (configList.contains(permission)) {
-                    contains = true;
-                }
-            }
-            if (!contains) {
-                defaultPermission.add(permission);
-            }
-        }
-
-        try {
-            if (!defaultPermission.isEmpty()) {
-                configuration.set(NO_ROLE, defaultPermission);
-                configuration.save(permissionsFile);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @SuppressWarnings("unchecked")
-    private void loadPermission() {
-        plugin.log(Level.INFO, "Load Permissions!");
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(permissionsFile);
-
-        HashMap<String, String> loadedPermission = new HashMap<>();
-        HashMap<String, ArrayList<String>> roleDump = new HashMap<>();
-
-        for (String key : configuration.getKeys(false)) {
-            ArrayList<String> configList = (ArrayList<String>) configuration.get(key);
-            roleDump.put(key, new ArrayList<String>());
-
-            String replacementKey = plugin.getExplicitPermissionPrefix() + ".";
-            if (!key.equalsIgnoreCase(NO_ROLE)) {
-                replacementKey += key + ".";
-            }
-
-            for (String permission : configList) {
-
-                String rolePermission = replacementKey + permission;
-
-                roleDump.get(key).add(rolePermission);
-
-                // If list contains permission -> replace to prevent Issues!
-                if (loadedPermission.containsKey(permission)) {
-                    loadedPermission.replace(permission, rolePermission);
-                } else {
-                    loadedPermission.put(permission, rolePermission);
-                }
-            }
-        }
-
-        roledPermissions = loadedPermission;
-        permissionRoleDump = roleDump;
-
-        for (Map.Entry<String, String> entry : loadedPermission.entrySet()) {
-            plugin.log(Level.INFO, "Perm: " + entry.getKey() + "    ->  " + entry.getValue());
-        }
-
-    }
-
-
-    public String getPermissionWithRole(String permission) {
-
-        if (activePermissionService == null || !activePermissionService) {
-            return plugin.getExplicitPermissionPrefix() + "." + permission;
-        } else {
-            return roledPermissions.get(permission);
-        }
-
+        this.fixMissingPermissions();
+        this.loadPermissions();
     }
 
     public void registerPermission(String permission) {
-        if (permission != null) {
-            if (!plainOldPermissions.contains(permission)) {
-                plainOldPermissions.add(permission);
+        if (permission != null && !permission.isEmpty() && !this.unregistered_permissions.contains(permission)) {
+            this.plugin.log(Level.INFO, "Registering permission " + permission);
+            this.unregistered_permissions.add(permission);
+        }
+    }
+
+    public void saveUnregisteredPermissions() {
+        YamlConfiguration permissions;
+        try {
+            permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
+        } catch (NoSuchRegisterableException e) {
+            this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
+            this.plugin.disable(e);
+            return;
+        }
+
+        // this is where the plugin starts the first time (or someone deleted/emptied the permissions file)
+        boolean initial_state = (permissions.getKeys(false) == null || permissions.getKeys(false).size() == 0);
+
+        if (initial_state) {
+            this.plugin.log(Level.INFO, "Creating permissions from scratch");
+            try {
+                this.saveRolePermissions(permissions, this.no_role, this.unregistered_permissions);
+            } catch (IOException e) {
+                this.plugin.log(Level.SEVERE, "Unable to save permissions");
+                this.plugin.disable(e);
             }
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public void fixMissingPermissions() {
+        YamlConfiguration permissions;
+        try {
+            permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
+        } catch (NoSuchRegisterableException e) {
+            this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
+            this.plugin.disable(e);
+            return;
+        }
+        
+        ArrayList<String> missing_permissions = new ArrayList<>();
 
-    @SuppressWarnings("unused")
-    public Boolean getActivePermissionService() {
-        return activePermissionService;
+        // TODO get all permissions from commandManager
+
+        for (String permission : this.unregistered_permissions) {
+            boolean permission_exists = false;
+
+            for (String role : permissions.getKeys(false)) {
+                if (permissions.getList(role) == null || permissions.getList(role).size() == 0) {
+                    this.plugin.log(Level.WARNING, "Empty permission role " + role);
+                    continue;
+                }
+
+                if (permissions.getString(role).contains(permission))
+                    permission_exists = true;
+            }
+
+            if (!permission_exists)
+                missing_permissions.add(permission);
+        }
+
+        if (missing_permissions.size() > 0) {
+            this.plugin.log(Level.WARNING, String.format("Assigning %d permission to role %s",
+                    missing_permissions.size(),
+                    this.no_role
+            ));
+            try {
+                // add other permissions from the default role to missing commands
+                missing_permissions.addAll((ArrayList<String>) permissions.getList(this.no_role));
+                // and save this section again
+                saveRolePermissions(permissions, this.no_role, missing_permissions);
+            } catch (IOException e) {
+                this.plugin.log(Level.SEVERE, "Unable to save permissions");
+                this.plugin.disable(e);
+            }
+        }
     }
 
+    private void saveRolePermissions(YamlConfiguration file, String role, ArrayList<String> permissions) throws IOException {
+        if (permissions == null || permissions.size() == 0)
+            return;
+
+        file.set(role, permissions);
+        file.save(CustomConfigurationRegistry.get(this.getPlugin(), this.permissions_filename, null).getFile());
+    }
+
+    private void loadPermissions() {
+        // set permission prefix
+        this.permission_prefix = this.getPlugin().getPluginConfigService().getConfig().getString("service.permission.prefix");
+        if (permission_prefix == null || permission_prefix.isEmpty())
+            permission_prefix = this.getPlugin().getDescription().getName().toLowerCase();
+
+        // load permissions configuration file
+        YamlConfiguration  permissions;
+        try {
+            permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
+        } catch (NoSuchRegisterableException e) {
+            this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
+            this.plugin.disable(e);
+            return;
+        }
+
+        this.permissions = permissions;
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean hasPermission(CommandSender sender, String permission) {
+        boolean op_has_permission = this.getPlugin().getPluginConfigService().getConfig().getBoolean(
+                "service.permission.grant_all_permissions_to_op",
+                BedrockPlugin.getInstance().getPluginConfigService().getConfig().getBoolean(
+                        "service.permission.grant_all_permissions_to_op",
+                        true
+                )
+        );
+
+        if (sender.isOp() && op_has_permission)
+            return true;
+
+
+        for (String role : this.permissions.getKeys(false)) {
+            for (String role_permission : (ArrayList<String>) this.permissions.getList(role)) {
+
+                if (!role_permission.equalsIgnoreCase(permission))
+                    continue;
+
+                if (role.equalsIgnoreCase(this.no_role)) {
+                    if (sender.hasPermission(this.permission_prefix + "." + role_permission))
+                        return true;
+                } else {
+                    if (sender.hasPermission(this.permission_prefix + "." + role + "." + role_permission))
+                        return true;
+                }
+            } // for
+        } // for
+        return false;
+
+    }
+
+    @SuppressWarnings("unchecked")
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
-        return permissionRoleDump;
+        HashMap<String, ArrayList<String>> dump = new HashMap<>();
+
+        for (String role : this.permissions.getKeys(false)) {
+            dump.put(role, (ArrayList<String>) this.permissions.getList(role));
+        }
+
+        return dump;
     }
 
 }

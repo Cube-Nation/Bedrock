@@ -24,7 +24,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
      * private constructor
      */
     private PageableListRegistry() {
-        this.timeout = BedrockPlugin.getInstance().getConfig().getInt("service.pageablelist.timeout");
+        timeout = BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.pageablelist.timeout");
     }
 
     /*
@@ -35,7 +35,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
     }
 
 
-    public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, PageableListService object) {
+    public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, AbstractPageableListService object) {
         getInstance()._register(plugin, ident, sender, object);
 
         Bukkit.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
@@ -50,8 +50,8 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
         return getInstance()._exists(plugin, ident, sender);
     }
 
-    public PageableListService get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
-        return (PageableListService) getInstance()._get(plugin, ident, sender);
+    public AbstractPageableListService get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
+        return (AbstractPageableListService) getInstance()._get(plugin, ident, sender);
     }
 
     public void remove(BasePlugin plugin, String ident, CommandSender sender) {

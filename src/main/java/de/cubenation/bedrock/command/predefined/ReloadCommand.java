@@ -21,12 +21,14 @@ public class ReloadCommand extends Command {
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
-            this.plugin.reloadConfig();
 
+            // DO NOT MODIFY THIS ORDER!
+            this.plugin.getPluginConfigService().reload();
             this.plugin.getColorSchemeService().reload();
-            this.plugin.getPermissionService().reload();
             this.plugin.getCustomConfigurationFileService().reload();
+            this.plugin.getCommandService().reload();
             this.plugin.getLocalizationService().reload();
+            this.plugin.getPermissionService().reload();
 
             MessageHelper.send(
                     this.getCommandManager().getPlugin(),

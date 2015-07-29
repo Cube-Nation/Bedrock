@@ -9,6 +9,7 @@ import de.cubenation.bedrock.command.predefined.VersionCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -100,7 +101,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             e.printStackTrace();
         } catch (IllegalCommandArgumentException e) {
             MessageHelper.invalidCommand(this.plugin, commandSender);
-            MessageHelper.send(this.plugin, commandSender, commandToExecute.getBeautifulHelp(commandSender));
+
+            TextComponent component_help = commandToExecute.getBeautifulHelp(commandSender);
+            if (component_help == null)
+                MessageHelper.insufficientPermission(this.plugin, commandSender);
+            else
+                MessageHelper.send(this.plugin, commandSender, component_help);
         }
 
         // unknown command

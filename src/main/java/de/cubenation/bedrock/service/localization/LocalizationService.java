@@ -23,15 +23,28 @@ public class LocalizationService implements ServiceInterface {
 
     public LocalizationService(BasePlugin plugin) {
         this.setPlugin(plugin);
-        this.setLocale(
-                plugin.getConfig().getString("service.localization.locale",
-                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale",
-                        "locale"))) //just in case someone fucked up the Bedrock config.yml
-        ;
     }
+
+    /*
+    * Plugin Getter/Setter
+    */
+    private BasePlugin getPlugin() {
+        return plugin;
+    }
+
+    private void setPlugin(BasePlugin plugin) {
+        this.plugin = plugin;
+    }
+
 
     @Override
     public void init() throws ServiceInitException {
+        this.setLocale(
+                plugin.getPluginConfigService().getConfig().getString("service.localization.locale",
+                        BedrockPlugin.getInstance().getPluginConfigService().getConfig().getString("service.localization.locale",
+                                "en_US"))) //just in case someone fucked up the Bedrock config.yml
+        ;
+
         // determine locale file and check if it exists
         try {
             this.loadLocaleFiles();
@@ -49,19 +62,6 @@ public class LocalizationService implements ServiceInterface {
         }
     }
 
-
-    /*
-     * Plugin Getter/Setter
-     */
-    public BasePlugin getPlugin() {
-        return plugin;
-    }
-
-    public void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
-    }
-
-
     /*
      * Locale Getter/Setter
      */
@@ -77,10 +77,13 @@ public class LocalizationService implements ServiceInterface {
     private void loadLocaleFiles() throws IOException {
         // check if there are any locale files
 
-        // TODO: optimize stuff (duplicate check on BedrockPlugin)
+        /*
+         * TODO: die built-in commands schauen bei der default locale des Bedrock Plugins nach locale strings
+         * -> griff ins klo! muss ich neu machen (slippery when wet)
+         */
         String[] language_files = {
                 this.getLocale(),
-                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale")
+                BedrockPlugin.getInstance().getPluginConfigService().getConfig().getString("service.localization.locale")
         };
 
         YamlConfiguration yc;
@@ -106,7 +109,7 @@ public class LocalizationService implements ServiceInterface {
 
     private YamlConfiguration loadLocaleFile(String file) throws NoSuchRegisterableException {
         String locale_file =
-                BedrockPlugin.getInstance().getConfig().getString("service.localization.locale_dir") +
+                BedrockPlugin.getInstance().getPluginConfigService().getConfig().getString("service.localization.locale_dir") +
                         java.lang.System.getProperty("file.separator") +
                         file + ".yml";
 

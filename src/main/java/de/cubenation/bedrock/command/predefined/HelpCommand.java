@@ -50,12 +50,11 @@ public class HelpCommand extends Command {
             // =========================
             // create help for each subcommand
             // =========================
+
             for (AbstractCommand command : commandManager.getCommands()) {
-                MessageHelper.send(
-                        this.getPlugin(),
-                        sender,
-                        command.getBeautifulHelp(sender)
-                );
+                TextComponent component_help = command.getBeautifulHelp(sender);
+                if (component_help != null)
+                    MessageHelper.send(this.plugin, sender, component_help);
             }
 
         } else if (StringUtils.isNumeric(args[0])) {

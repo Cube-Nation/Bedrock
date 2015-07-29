@@ -28,11 +28,11 @@ public abstract class CustomConfigurationFile implements Registerable {
 		this.setPlugin(plugin);
 		this.setFilename(filename);
 		
-		this.file = new File(
+		this.setFile(new File(
 			plugin.getDataFolder().getAbsolutePath() +
 			java.lang.System.getProperty("file.separator") + 
 			filename
-		);
+		));
 		
 		if (!this.file.exists())
 			this.save(data);
@@ -57,6 +57,15 @@ public abstract class CustomConfigurationFile implements Registerable {
 		return filename;
 	}
 
+
+	private void setFile(File file) {
+		this.file = file;
+	}
+
+	public File getFile() {
+		return this.file;
+	}
+
 	
 	@SuppressWarnings("rawtypes")
 	public void save(HashMap<String,Object> data) throws IOException {
@@ -67,7 +76,7 @@ public abstract class CustomConfigurationFile implements Registerable {
 		));
 		
 		this.yaml = new YamlConfiguration();
-		
+
 		Iterator it = data.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();

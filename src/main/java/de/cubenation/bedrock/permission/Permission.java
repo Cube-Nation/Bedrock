@@ -31,41 +31,11 @@ public class Permission {
     //endregion
 
     private void setupPermission() {
-        if (permissionService != null) {
-            permissionService.registerPermission(getName());
-        }
+        permissionService.registerPermission(getName());
     }
 
     public boolean userHasPermission(CommandSender sender) {
-        if (sender.isOp()) {
-            return true;
-        }
-
-        if (getName() == null) {
-            return true;
-        }
-
-        if (getName().equalsIgnoreCase("")) {
-            return true;
-        }
-
-        if (permissionService != null) {
-            if (sender.hasPermission(getServicePermission())) {
-                return true;
-            }
-        } else {
-            if (plugin.usePermissionService()) {
-                if (sender.hasPermission(getDefaultPermission())) {
-                    return true;
-                }
-            } else {
-                if (sender.hasPermission(getName())) {
-                    return true;
-                }
-            }
-
-        }
-        return false;
+        return this.permissionService.hasPermission(sender, this.getName());
     }
 
     //region Getter
@@ -78,15 +48,5 @@ public class Permission {
     public String getName() {
         return name;
     }
-
-    private String getServicePermission() {
-        return permissionService.getPermissionWithRole(getName());
-    }
-
-    public String getDefaultPermission() {
-        return plugin.getExplicitPermissionPrefix() + "." + getName();
-    }
-    //endregion
-
 
 }

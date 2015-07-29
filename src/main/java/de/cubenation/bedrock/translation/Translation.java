@@ -27,7 +27,7 @@ public class Translation {
     public Translation(BasePlugin plugin, String locale_ident, String[] locale_args) {
         if (plugin instanceof BedrockPlugin) {
             plugin.log(Level.WARNING, "========================================================================================================");
-            plugin.log(Level.WARNING, "By passing the BedrockPlugin isntance to the constructor of the Translation class");
+            plugin.log(Level.WARNING, "By passing the BedrockPlugin instance to the constructor of the Translation class");
             plugin.log(Level.WARNING, "locale strings from your plugin cannot be resolved and will only be taken from the Bedrocks' locale file");
             plugin.log(Level.WARNING, "========================================================================================================");
         }

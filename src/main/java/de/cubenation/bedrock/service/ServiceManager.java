@@ -6,7 +6,6 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 
 import java.net.UnknownServiceException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 
 public class ServiceManager {
@@ -35,13 +34,6 @@ public class ServiceManager {
 
     public boolean exists(String name) {
         return this.services.containsKey(name);
-    }
-
-    public void reloadAll() throws ServiceReloadException {
-        for (Map.Entry entry : this.services.entrySet()) {
-            ServiceInterface service = (ServiceInterface) entry.getValue();
-            service.reload();
-        }
     }
 
     public void reload(String name) throws ServiceReloadException {

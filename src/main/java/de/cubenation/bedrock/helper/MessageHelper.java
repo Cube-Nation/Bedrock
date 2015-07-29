@@ -5,6 +5,7 @@ import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.UnsortedArgument;
+import de.cubenation.bedrock.style.ColorScheme;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -52,14 +53,17 @@ public class MessageHelper {
         if (message == null)
             return;
 
+        // color scheme service
+        ColorScheme color_scheme = plugin.getColorSchemeService().getColorScheme();
+
         // apply colors from color scheme to message
-        message = plugin.getColorScheme().applyColorScheme(message);
+        message = color_scheme.applyColorScheme(message);
 
         if (sender instanceof Player) {
             if (hover_event != null)
-                message.setHoverEvent(plugin.getColorScheme().applyColorScheme(hover_event));
+                message.setHoverEvent(color_scheme.applyColorScheme(hover_event));
             if (click_event != null)
-                message.setClickEvent(plugin.getColorScheme().applyColorScheme(click_event));
+                message.setClickEvent(color_scheme.applyColorScheme(click_event));
 
             ((Player) sender).spigot().sendMessage(message);
 
@@ -69,7 +73,7 @@ public class MessageHelper {
             //String click_message = "";
 
             if (hover_event != null) {
-                hover_event = plugin.getColorScheme().applyColorScheme(hover_event);
+                hover_event = color_scheme.applyColorScheme(hover_event);
 
                 for (int i = 0; i < hover_event.getValue().length; i++) {
                     hover_message += hover_event.getValue()[i].toLegacyText();

@@ -4,7 +4,6 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
-import de.cubenation.bedrock.style.ColorScheme;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +27,6 @@ public class BedrockPlugin extends BasePlugin {
 
     public void onPreEnable() {
         setInstance(this);
-        setColorScheme(ColorScheme.ColorSchemeName.DEFAULT);
     }
 
     @Override
@@ -44,8 +42,4 @@ public class BedrockPlugin extends BasePlugin {
         }};
     }
 
-    @Override
-    public Boolean usePermissionService() {
-        return false;
-    }
 }

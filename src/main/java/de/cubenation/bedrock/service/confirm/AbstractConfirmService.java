@@ -9,7 +9,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.Date;
 import java.util.HashMap;
 
-public abstract class ConfirmServiceInterface implements ServiceInterface, ConfirmInterface {
+@SuppressWarnings("unused")
+public abstract class AbstractConfirmService implements ServiceInterface, ConfirmInterface {
 
     private int timeout;
 
@@ -23,14 +24,17 @@ public abstract class ConfirmServiceInterface implements ServiceInterface, Confi
     /*
      * constructors
      */
-    public ConfirmServiceInterface() {
-        this(BedrockPlugin.getInstance().getConfig().getInt("service.confirm.timeout"));
+
+    public AbstractConfirmService() {
+        // TODO: reload nicht "schnell" genug
+        // TODO: BedrockPlugin? das nix gut.
+        this(BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.confirm.timeout"));
     }
 
-    public ConfirmServiceInterface(int timeout) {
+    public AbstractConfirmService(int timeout) {
         this.setTimeout(timeout);
 
-        final ConfirmServiceInterface csi = this;
+        final AbstractConfirmService csi = this;
         // create task with timeout
         // this task needs to be canceled when call() is executed via task.cancel();
         task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), new Runnable() {
