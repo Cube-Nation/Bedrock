@@ -30,13 +30,17 @@ public class PermissionService implements ServiceInterface {
 
     private String permissions_filename;
 
-    private final String no_role                            = "no_role";
+    private final String no_role = "no_role";
 
-    private ArrayList<String> unregistered_permissions      = new ArrayList<>();
+    private ArrayList<String> unregistered_permissions = new ArrayList<>();
 
     private String permission_prefix;
 
     private YamlConfiguration permissions;
+
+    private HashMap<String, String> loadedPermissions = new HashMap<>();
+
+    private HashMap<String, ArrayList<String>> dump = new HashMap<>();
 
 
     public PermissionService(BasePlugin plugin) {
@@ -122,13 +126,14 @@ public class PermissionService implements ServiceInterface {
             this.plugin.disable(e);
             return;
         }
-        
+
         ArrayList<String> missing_permissions = new ArrayList<>();
 
         // TODO get all permissions from commandManager
 
         for (String permission : this.unregistered_permissions) {
             boolean permission_exists = false;
+
 
             for (String role : permissions.getKeys(false)) {
                 if (permissions.getList(role) == null || permissions.getList(role).size() == 0) {
@@ -176,7 +181,7 @@ public class PermissionService implements ServiceInterface {
             permission_prefix = this.getPlugin().getDescription().getName().toLowerCase();
 
         // load permissions configuration file
-        YamlConfiguration  permissions;
+        YamlConfiguration permissions;
         try {
             permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
         } catch (NoSuchRegisterableException e) {
@@ -186,6 +191,31 @@ public class PermissionService implements ServiceInterface {
         }
 
         this.permissions = permissions;
+
+        // Load formatted permissions
+        // & create dump
+
+        loadedPermissions = new HashMap<>();
+        dump = new HashMap<>();
+
+        for (String role : this.permissions.getKeys(false)) {
+            ArrayList<String> perm = (ArrayList<String>) this.permissions.getList(role);
+            ArrayList<String> formatted = new ArrayList<>();
+
+            for (String p : perm) {
+                if (role.equalsIgnoreCase(no_role)) {
+                    String formattedPermission = String.format("%s.%s", permission_prefix, p);
+                    loadedPermissions.put(p, formattedPermission);
+                    formatted.add(formattedPermission);
+                } else {
+                    String formattedPermission = String.format("%s.%s.%s", permission_prefix, role, p);
+                    loadedPermissions.put(p, formattedPermission);
+                    formatted.add(formattedPermission);
+                }
+            }
+
+            dump.put(role, formatted);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -198,37 +228,28 @@ public class PermissionService implements ServiceInterface {
                 )
         );
 
-        if (sender.isOp() && op_has_permission)
+        if (sender.isOp() && op_has_permission) {
             return true;
+        }
 
+        //TODO D1rty Ja/Nein?
+        // If Permission is empty or not available, user has?
+        // I think empty should be "no permission required"
+        // but == null can be an error and should return no permission?
+        if (permission == null || permission.isEmpty()) {
+            return true;
+        }
 
-        for (String role : this.permissions.getKeys(false)) {
-            for (String role_permission : (ArrayList<String>) this.permissions.getList(role)) {
+        if (loadedPermissions.containsKey(permission)) {
+            return sender.hasPermission(loadedPermissions.get(permission));
+        }
 
-                if (!role_permission.equalsIgnoreCase(permission))
-                    continue;
-
-                if (role.equalsIgnoreCase(this.no_role)) {
-                    if (sender.hasPermission(this.permission_prefix + "." + role_permission))
-                        return true;
-                } else {
-                    if (sender.hasPermission(this.permission_prefix + "." + role + "." + role_permission))
-                        return true;
-                }
-            } // for
-        } // for
         return false;
 
     }
 
     @SuppressWarnings("unchecked")
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
-        HashMap<String, ArrayList<String>> dump = new HashMap<>();
-
-        for (String role : this.permissions.getKeys(false)) {
-            dump.put(role, (ArrayList<String>) this.permissions.getList(role));
-        }
-
         return dump;
     }
 
