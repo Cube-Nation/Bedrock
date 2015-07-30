@@ -1,12 +1,14 @@
 package de.cubenation.bedrock.helper.design;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.helper.TextHolder;
 import de.cubenation.bedrock.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.service.pageablelist.PageableListStorable;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -27,44 +29,37 @@ public class PageDesignHelper {
 
     private static final int NAVIGATIONSIZE = 7;
 
-    public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, Player player) {
+    public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, CommandSender sender) {
         // Can't show pages, cause its empty
         if (service.isEmpty()) {
             plugin.log(Level.INFO, "Empty PageableListService. Can't display pages.");
             return;
         }
 
-        // Can only display TextComponents
+        // Can only display TextHolder
         for (int i = 0; i < service.size(); i++) {
-            if (!(service.getStorableAtIndex(i).get() instanceof TextComponent)) {
+            if (!(service.getStorableAtIndex(i).get() instanceof TextHolder)) {
                 plugin.log(Level.INFO, "Empty PageableListService. Can't display pages.");
                 return;
             }
         }
 
         if (!pageExecutionCmd.contains("%page%")) {
-            plugin.log(Level.INFO, "No Placeholder for PageableListService");
+            plugin.log(Level.INFO, "No Placeholder for RunCommand Index");
             return;
         }
 
         List<PageableListStorable> list = service.getPage(page);
 
-        ChatColor primary =     plugin.getColorSchemeService().getColorScheme().getPrimary();
-        //ChatColor secondary =   plugin.getColorSchemeService().getColorScheme().getSecondary();
-        ChatColor flag =        plugin.getColorSchemeService().getColorScheme().getFlag();
-
-
-        ComponentBuilder header = new ComponentBuilder("======= ").color(flag)
-                .append(page + "/" + service.getPages()).color(primary)
-                .append(" =======").color(flag);
-        player.spigot().sendMessage(header.create());
+        TextComponent header = PageDesignMessages.getHeader(plugin, page, service.getPages());
+        PageDesignMessages.send(plugin, sender, header);
 
 
         // Send entries of page
         for (PageableListStorable storable : list) {
-            TextComponent component = (TextComponent) storable.get();
-            if (component != null) {
-                player.spigot().sendMessage(component);
+            TextHolder holder = (TextHolder) storable.get();
+            if (holder != null) {
+                PageDesignMessages.send(plugin, sender, holder.getTextComponent(), holder.getHoverEvent(), holder.getClickEvent());
             }
         }
 
@@ -72,7 +67,10 @@ public class PageDesignHelper {
 
         ComponentBuilder pagination = getPagination(plugin, page, service.getPages(), pageExecutionCmd);
         if (pagination != null) {
-            player.spigot().sendMessage(pagination.create());
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                player.spigot().sendMessage(pagination.create());
+            }
         }
     }
 

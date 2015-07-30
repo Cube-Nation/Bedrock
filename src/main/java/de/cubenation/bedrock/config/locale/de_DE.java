@@ -55,6 +55,12 @@ public class de_DE extends CustomConfigurationFile {
         data.put("help.reload",                     "&TEXT&Lädt das Plugin neu");
         data.put("help.permission.list",            "&TEXT&Zeigt alle Plugin-Berechtigungen an");
 
+        /*
+         * PageDesignHelper
+         */
+
+        data.put("page.design.header", "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======");
+
         return data;
     }
 
