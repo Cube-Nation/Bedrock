@@ -1,9 +1,8 @@
 package de.cubenation.bedrock;
 
-import de.cubenation.bedrock.command.manager.CommandManager;
+import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.ServiceInitException;
-import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
@@ -11,17 +10,18 @@ import de.cubenation.bedrock.service.command.CommandService;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
+import de.cubenation.bedrock.service.metrics.MetricsService;
 import de.cubenation.bedrock.service.permission.PermissionService;
 import de.cubenation.bedrock.service.pluginconfig.PluginConfigService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
 
 import java.io.IOException;
 import java.net.UnknownServiceException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,7 +50,13 @@ public abstract class BasePlugin extends JavaPlugin {
     @Override
     public final void onEnable() {
 
-        getLogger().setLevel(Level.FINEST);
+        // call onPreEnable after registering the plugin config service
+        try {
+            this.onPreEnable();
+        } catch (Exception e) {
+            this.disable(e);
+            return;
+        }
 
         // initialize service manager
         this.serviceManager = new ServiceManager(this);
@@ -60,58 +66,28 @@ public abstract class BasePlugin extends JavaPlugin {
             // register plugin config service
             this.serviceManager.registerService("pluginconfig", new PluginConfigService(this));
 
-            // register color scheme service
-            this.serviceManager.registerService("colorscheme", new ColorSchemeService(this));
-
-        } catch (ServiceInitException e) {
-            this.disable(e);
-        }
-
-        // call onPreEnable after registering the plugin config service
-        try {
-            this.onPreEnable();
-        } catch (Exception e) {
-            this.disable(e);
-        }
-
-
-        try {
             // register custom configuration file service
             this.serviceManager.registerService("customconfigurationfile", new CustomConfigurationFileService(this));
 
-            // register command service
-            this.serviceManager.registerService("command", new CommandService(this));
+            // register color scheme service
+            this.serviceManager.registerService("colorscheme", new ColorSchemeService(this));
 
             // register localization service
             this.serviceManager.registerService("localization", new LocalizationService(this));
 
+            // register command service
+            this.serviceManager.registerService("command", new CommandService(this));
+
             // register permission service
             this.serviceManager.registerService("permission", new PermissionService(this));
 
+            // register metrics service
+            this.serviceManager.registerService("metrics", new MetricsService(this));
+
         } catch (ServiceInitException e) {
             this.disable(e);
+            return;
         }
-
-        // initialize commands
-        // TODO: move to command service
-        if (getCommandManager() != null) {
-            for (CommandManager manager : getCommandManager()) {
-                manager.getPluginCommand().setExecutor(manager);
-                manager.getPluginCommand().setTabCompleter(manager);
-            }
-        }
-
-        // TODO this can be removed once the command service works
-        this.getPermissionService().saveUnregisteredPermissions();
-
-
-        // after commands have been initialized, permissions need to be reloaded
-        try {
-            this.getPermissionService().reload();
-        } catch (ServiceReloadException e) {
-            this.disable(e);
-        }
-
 
         // call onPostEnable after we've set everything up
         try {
@@ -119,39 +95,9 @@ public abstract class BasePlugin extends JavaPlugin {
         } catch (Exception e) {
             this.disable(e);
         }
-
-
-        // start metrics
-        this.enableMetrics();
     }
 
     protected void onPostEnable() throws Exception { }
-
-
-    /*
-     * Metric
-     */
-    protected void enableMetrics() {
-        if (!this.getConfig().getBoolean("metrics.use")) {
-            this.log(Level.WARNING, "Disabling metrics");
-            return;
-        }
-
-        try {
-            Metrics metrics = new Metrics(this);
-            metrics.start();
-        } catch (IOException e) {
-            this.log(Level.WARNING, "Failed to submit metrics");
-        }
-    }
-
-
-
-    /*
-     * Commands
-     */
-    public abstract ArrayList<CommandManager> getCommandManager();
-
 
     /*
      * get a foreign plugin object
@@ -248,6 +194,8 @@ public abstract class BasePlugin extends JavaPlugin {
         return (CommandService) this.getService("command");
     }
 
+    public abstract HashMap<String,ArrayList<AbstractCommand>> getCommands();
+
     /*
      * Permission Service
      */
@@ -261,7 +209,6 @@ public abstract class BasePlugin extends JavaPlugin {
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getService("localization");
     }
-
 
     /*
      * Custom Configuration File Service

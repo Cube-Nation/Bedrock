@@ -8,6 +8,13 @@ import net.md_5.bungee.api.ChatColor;
 @SuppressWarnings("unused")
 public class CustomColorScheme extends ColorScheme {
 
+    public CustomColorScheme(BasePlugin plugin, ChatColor primary, ChatColor secondary, ChatColor flag, ChatColor text) {
+        super(
+                ColorSchemeName.CUSTOM,
+                primary, secondary, flag, text
+        );
+    }
+
     public CustomColorScheme(BasePlugin plugin) {
         super(
                 ColorSchemeName.CUSTOM,

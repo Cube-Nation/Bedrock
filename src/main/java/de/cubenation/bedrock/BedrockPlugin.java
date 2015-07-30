@@ -1,12 +1,13 @@
 package de.cubenation.bedrock;
 
-import de.cubenation.bedrock.command.manager.CommandManager;
+import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by B1acksheep on 25.04.15.
@@ -30,7 +31,7 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public ArrayList<CommandManager> getCommandManager() {
+    public HashMap<String, ArrayList<AbstractCommand>> getCommands() {
         return null;
     }
 

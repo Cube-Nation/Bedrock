@@ -44,10 +44,7 @@ service:
     # custom permission prefix. If left empty or undefined the lowercased plugin name will be taken as prefix
     prefix: "bedrock"
 
-# mcstats.org metrics
-metrics:
-  # Use plugin metrics on mcstats.org, defaults to false
-  use: false
-
-# Configuration version - do not touch (for later usage in PluginConfigurationService)
-version: "0.8.9~spigot187+1"
+  # mcstats.org Metrics service
+  metrics:
+    # Use plugin metrics on mcstats.org, defaults to false
+    use: false

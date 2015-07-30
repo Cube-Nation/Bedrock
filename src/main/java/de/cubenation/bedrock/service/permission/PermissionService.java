@@ -1,6 +1,8 @@
 package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.AbstractCommand;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.config.Permissions;
 import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;
@@ -61,20 +63,29 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
 
         this.ccf_service.register(permissions);
+
+        this.initializeCommandPermissions();
         this.saveUnregisteredPermissions();
         this.loadPermissions();
     }
 
     @Override
     public void reload() throws ServiceReloadException {
+        this.saveUnregisteredPermissions();
         this.fixMissingPermissions();
         this.loadPermissions();
     }
 
-    public void registerPermission(String permission) {
-        if (permission != null && !permission.isEmpty() && !this.unregistered_permissions.contains(permission)) {
-            this.plugin.log(Level.INFO, "Registering permission " + permission);
-            this.unregistered_permissions.add(permission);
+    public void initializeCommandPermissions() {
+        for (CommandManager manager : this.getPlugin().getCommandService().getCommandMamagers()) {
+            for (AbstractCommand command : manager.getCommands()) {
+                String permission = command.getPermission().getName();
+                if (permission == null)
+                    continue;
+
+                this.plugin.log(Level.INFO, "Registering permission " + permission);
+                this.unregistered_permissions.add(permission);
+            }
         }
     }
 
@@ -114,8 +125,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
 
         ArrayList<String> missing_permissions = new ArrayList<>();
-
-        // TODO get all permissions from commandManager
 
         for (String permission : this.unregistered_permissions) {
             boolean permission_exists = false;

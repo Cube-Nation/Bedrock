@@ -33,15 +33,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private HelpCommand helpCommand;
 
 
-    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, AbstractCommand... commands) {
-
-        System.out.println("instanciating command manager with plugin " + plugin.getDescription().getName());
+    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, ArrayList<AbstractCommand> commands) {
 
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
 
-        if (commands != null) {
-            Collections.addAll(this.commands, commands);
+        for (AbstractCommand command : commands) {
+            this.commands.add(command);
         }
 
         this.helpCommand = new HelpCommand(this, helpPrefix);

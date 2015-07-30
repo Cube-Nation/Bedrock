@@ -1,7 +1,6 @@
 package de.cubenation.bedrock.permission;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -12,7 +11,6 @@ import org.bukkit.command.CommandSender;
 public class Permission {
 
     //region Properties
-    private final PermissionService permissionService;
     private final BasePlugin plugin;
     private String name;
     //endregion
@@ -23,19 +21,10 @@ public class Permission {
     public Permission(String name, BasePlugin plugin) {
         this.name = name;
         this.plugin = plugin;
-        this.permissionService = plugin.getPermissionService();
-
-        setupPermission();
-    }
-
-    //endregion
-
-    private void setupPermission() {
-        permissionService.registerPermission(getName());
     }
 
     public boolean userHasPermission(CommandSender sender) {
-        return this.permissionService.hasPermission(sender, this.getName());
+        return plugin.getPermissionService().hasPermission(sender, this.getName());
     }
 
     //region Getter
