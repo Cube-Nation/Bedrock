@@ -26,9 +26,14 @@ public class Translation {
 
     public Translation(BasePlugin plugin, String locale_ident, String[] locale_args) {
         if (plugin instanceof BedrockPlugin) {
+            StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
             plugin.log(Level.WARNING, "========================================================================================================");
             plugin.log(Level.WARNING, "By passing the BedrockPlugin instance to the constructor of the Translation class");
             plugin.log(Level.WARNING, "locale strings from your plugin cannot be resolved and will only be taken from the Bedrocks' locale file");
+            plugin.log(Level.WARNING, "Your call came from:");
+            for (int i = 0; i < stackTraces.length; i++) {
+                plugin.log(Level.WARNING, stackTraces[i].getFileName() + ": " + stackTraces[i].getClassName() + ":" + stackTraces[i].getMethodName() + " line " + stackTraces[i].getLineNumber());
+            }
             plugin.log(Level.WARNING, "========================================================================================================");
         }
 
@@ -61,7 +66,6 @@ public class Translation {
     }
 
     private void setLocale_args(String[] my_locale_args) {
-
         ArrayList<String> args = new ArrayList<String>(Arrays.asList(my_locale_args));
         args.add("plugin_prefix");
         args.add(this.getPlugin().getMessagePrefix());

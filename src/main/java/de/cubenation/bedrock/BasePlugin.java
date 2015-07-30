@@ -50,6 +50,8 @@ public abstract class BasePlugin extends JavaPlugin {
     @Override
     public final void onEnable() {
 
+        getLogger().setLevel(Level.FINEST);
+
         // initialize service manager
         this.serviceManager = new ServiceManager(this);
 

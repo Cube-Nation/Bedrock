@@ -3,25 +3,16 @@ package de.cubenation.bedrock.service.colorscheme;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.style.ColorScheme;
 
-public class ColorSchemeService implements ServiceInterface {
-
-    private BasePlugin plugin;
+public class ColorSchemeService extends AbstractService implements ServiceInterface {
 
     private ColorScheme scheme;
 
     public ColorSchemeService(BasePlugin plugin) {
-        this.setPlugin(plugin);
-    }
-
-    private BasePlugin getPlugin() {
-        return plugin;
-    }
-
-    private void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override

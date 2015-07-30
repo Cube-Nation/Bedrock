@@ -3,6 +3,7 @@ package de.cubenation.bedrock.service.pluginconfig;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -10,22 +11,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class PluginConfigService implements ServiceInterface {
-
-    private BasePlugin plugin;
+public class PluginConfigService extends AbstractService implements ServiceInterface {
 
     private boolean has_config  = true;
 
     public PluginConfigService(BasePlugin plugin) {
-        this.setPlugin(plugin);
-    }
-
-    private BasePlugin getPlugin() {
-        return plugin;
-    }
-
-    private void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Override
@@ -67,13 +58,12 @@ public class PluginConfigService implements ServiceInterface {
             this.has_config = false;
             this.plugin.log(Level.WARNING, "This plugin does not contain a configuration file. All settings are taken from the Bedrock plugin");
         }
+
+        this.has_config = true;
     }
 
     public FileConfiguration getConfig() {
-        if (!this.has_config)
-            return null;
-
-        return this.plugin.getConfig();
+        return (!this.has_config) ? null : this.plugin.getConfig();
     }
 
 }

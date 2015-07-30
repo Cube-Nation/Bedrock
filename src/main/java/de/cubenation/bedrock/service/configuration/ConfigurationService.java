@@ -1,4 +1,4 @@
-package de.cubenation.bedrock.service.command;
+package de.cubenation.bedrock.service.configuration;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
@@ -6,9 +6,9 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 
-public class CommandService extends AbstractService implements ServiceInterface {
+public class ConfigurationService extends AbstractService implements ServiceInterface {
 
-    public CommandService(BasePlugin plugin) {
+    public ConfigurationService(BasePlugin plugin) {
         super(plugin);
     }
 
@@ -21,6 +21,4 @@ public class CommandService extends AbstractService implements ServiceInterface 
     public void reload() throws ServiceReloadException {
 
     }
-
-
 }

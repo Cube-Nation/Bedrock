@@ -45,27 +45,30 @@ public class MessageHelper {
     }
 
     public static void send(BasePlugin plugin, CommandSender sender, TextComponent component) {
+        // check for NullPointerException
+        if (component == null)
+            return;
         send(plugin, sender, component, component.getHoverEvent(), component.getClickEvent());
     }
 
-    public static void send(BasePlugin plugin, CommandSender sender, TextComponent message, HoverEvent hover_event, ClickEvent click_event) {
+    public static void send(BasePlugin plugin, CommandSender sender, TextComponent component, HoverEvent hover_event, ClickEvent click_event) {
         // check for NullPointerException
-        if (message == null)
+        if (component == null)
             return;
 
         // color scheme service
         ColorScheme color_scheme = plugin.getColorSchemeService().getColorScheme();
 
         // apply colors from color scheme to message
-        message = color_scheme.applyColorScheme(message);
+        component = color_scheme.applyColorScheme(component);
 
         if (sender instanceof Player) {
             if (hover_event != null)
-                message.setHoverEvent(color_scheme.applyColorScheme(hover_event));
+                component.setHoverEvent(color_scheme.applyColorScheme(hover_event));
             if (click_event != null)
-                message.setClickEvent(color_scheme.applyColorScheme(click_event));
+                component.setClickEvent(color_scheme.applyColorScheme(click_event));
 
-            ((Player) sender).spigot().sendMessage(message);
+            ((Player) sender).spigot().sendMessage(component);
 
         } else {
             String hover_message = "";
@@ -118,7 +121,7 @@ public class MessageHelper {
             }
 
             // finally send message
-            sender.sendMessage(message.toLegacyText() + hover_message);
+            sender.sendMessage(component.toLegacyText() + hover_message);
         }
     }
 

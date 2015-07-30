@@ -4,18 +4,17 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class CustomConfigurationFileService implements ServiceInterface {
-
-    private BasePlugin plugin;
+public class CustomConfigurationFileService extends AbstractService implements ServiceInterface {
 
     public CustomConfigurationFileService(BasePlugin plugin) {
-        this.setPlugin(plugin);
+        super(plugin);
     }
 
     @Override
@@ -57,15 +56,4 @@ public class CustomConfigurationFileService implements ServiceInterface {
         return null;
     }
 
-
-    /*
-     * Plugin Getter/Setter
-     */
-    public BasePlugin getPlugin() {
-        return plugin;
-    }
-
-    public void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
-    }
 }

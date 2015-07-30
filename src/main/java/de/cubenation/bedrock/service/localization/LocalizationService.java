@@ -6,6 +6,7 @@ import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,39 +14,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.IOException;
 import java.util.logging.Level;
 
-public class LocalizationService implements ServiceInterface {
-
-    private BasePlugin plugin;
+public class LocalizationService extends AbstractService implements ServiceInterface {
 
     private String locale;
 
     private YamlConfiguration data;
 
     public LocalizationService(BasePlugin plugin) {
-        this.setPlugin(plugin);
+        super(plugin);
     }
-
-    /*
-    * Plugin Getter/Setter
-    */
-    private BasePlugin getPlugin() {
-        return plugin;
-    }
-
-    private void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
-    }
-
 
     @Override
     public void init() throws ServiceInitException {
-        this.setLocale(
-                plugin.getPluginConfigService().getConfig().getString("service.localization.locale",
-                        BedrockPlugin.getInstance().getPluginConfigService().getConfig().getString("service.localization.locale",
-                                "en_US"))) //just in case someone fucked up the Bedrock config.yml
-        ;
-
-        // determine locale file and check if it exists
+        this.setLocale((String) this.getConfigurationValue("service.localization.locale", "en_US"));
         try {
             this.loadLocaleFiles();
         } catch (IOException e) {
@@ -72,7 +53,6 @@ public class LocalizationService implements ServiceInterface {
     public void setLocale(String locale) {
         this.locale = locale;
     }
-
 
     private void loadLocaleFiles() throws IOException {
         // check if there are any locale files

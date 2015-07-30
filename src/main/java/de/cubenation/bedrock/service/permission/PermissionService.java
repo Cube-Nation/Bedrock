@@ -1,11 +1,11 @@
 package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.config.Permissions;
 import de.cubenation.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
 import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
@@ -22,9 +22,7 @@ import java.util.logging.Level;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.service.permission
  */
-public class PermissionService implements ServiceInterface {
-
-    private BasePlugin plugin;
+public class PermissionService extends AbstractService implements ServiceInterface {
 
     private CustomConfigurationFileService ccf_service;
 
@@ -34,26 +32,14 @@ public class PermissionService implements ServiceInterface {
 
     private ArrayList<String> unregistered_permissions = new ArrayList<>();
 
-    private String permission_prefix;
+    private HashMap<String, String> active_permissions = new HashMap<>();
 
-    private YamlConfiguration permissions;
-
-    private HashMap<String, String> loadedPermissions = new HashMap<>();
-
-    private HashMap<String, ArrayList<String>> dump = new HashMap<>();
+    private HashMap<String, ArrayList<String>> permission_dump = new HashMap<>();
 
 
     public PermissionService(BasePlugin plugin) {
-        this.setPlugin(plugin);
+        super(plugin);
         this.ccf_service = plugin.getCustomConfigurationFileService();
-    }
-
-    private void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    private BasePlugin getPlugin() {
-        return this.plugin;
     }
 
     private void setPermissionsFilename(String permissions_filename) {
@@ -134,7 +120,6 @@ public class PermissionService implements ServiceInterface {
         for (String permission : this.unregistered_permissions) {
             boolean permission_exists = false;
 
-
             for (String role : permissions.getKeys(false)) {
                 if (permissions.getList(role) == null || permissions.getList(role).size() == 0) {
                     this.plugin.log(Level.WARNING, "Empty permission role " + role);
@@ -174,9 +159,10 @@ public class PermissionService implements ServiceInterface {
         file.save(CustomConfigurationRegistry.get(this.getPlugin(), this.permissions_filename, null).getFile());
     }
 
+    @SuppressWarnings("unchecked")
     private void loadPermissions() {
         // set permission prefix
-        this.permission_prefix = this.getPlugin().getPluginConfigService().getConfig().getString("service.permission.prefix");
+        String permission_prefix = this.getPlugin().getPluginConfigService().getConfig().getString("service.permission.prefix");
         if (permission_prefix == null || permission_prefix.isEmpty())
             permission_prefix = this.getPlugin().getDescription().getName().toLowerCase();
 
@@ -190,67 +176,44 @@ public class PermissionService implements ServiceInterface {
             return;
         }
 
-        this.permissions = permissions;
-
         // Load formatted permissions
-        // & create dump
+        // & create permission_dump
+        this.active_permissions = new HashMap<>();
+        this.permission_dump = new HashMap<>();
 
-        loadedPermissions = new HashMap<>();
-        dump = new HashMap<>();
-
-        for (String role : this.permissions.getKeys(false)) {
-            ArrayList<String> perm = (ArrayList<String>) this.permissions.getList(role);
+        for (String role : permissions.getKeys(false)) {
+            ArrayList<String> perm = (ArrayList<String>) permissions.getList(role);
             ArrayList<String> formatted = new ArrayList<>();
 
             for (String p : perm) {
                 if (role.equalsIgnoreCase(no_role)) {
                     String formattedPermission = String.format("%s.%s", permission_prefix, p);
-                    loadedPermissions.put(p, formattedPermission);
+                    active_permissions.put(p, formattedPermission);
                     formatted.add(formattedPermission);
                 } else {
                     String formattedPermission = String.format("%s.%s.%s", permission_prefix, role, p);
-                    loadedPermissions.put(p, formattedPermission);
+                    active_permissions.put(p, formattedPermission);
                     formatted.add(formattedPermission);
                 }
             }
 
-            dump.put(role, formatted);
+            this.permission_dump.put(role, formatted);
         }
     }
 
     @SuppressWarnings("unchecked")
     public boolean hasPermission(CommandSender sender, String permission) {
-        boolean op_has_permission = this.getPlugin().getPluginConfigService().getConfig().getBoolean(
-                "service.permission.grant_all_permissions_to_op",
-                BedrockPlugin.getInstance().getPluginConfigService().getConfig().getBoolean(
-                        "service.permission.grant_all_permissions_to_op",
-                        true
-                )
-        );
+        Boolean op_has_permission = (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true);
 
-        if (sender.isOp() && op_has_permission) {
-            return true;
-        }
-
-        //TODO D1rty Ja/Nein?
-        // If Permission is empty or not available, user has?
-        // I think empty should be "no permission required"
-        // but == null can be an error and should return no permission?
-        if (permission == null || permission.isEmpty()) {
-            return true;
-        }
-
-        if (loadedPermissions.containsKey(permission)) {
-            return sender.hasPermission(loadedPermissions.get(permission));
-        }
-
-        return false;
-
+        return  sender.isOp() && op_has_permission ||
+                permission == null ||
+                permission.isEmpty() ||
+                this.active_permissions.containsKey(permission) && sender.hasPermission(this.active_permissions.get(permission));
     }
 
     @SuppressWarnings("unchecked")
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
-        return dump;
+        return this.permission_dump;
     }
 
 }

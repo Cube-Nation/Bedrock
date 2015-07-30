@@ -30,32 +30,28 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     private List<AbstractCommand> commands = new ArrayList<>();
 
-    private String helpPrefix;
-
-    private HelpCommand helpCommand = new HelpCommand(this, helpPrefix);
+    private HelpCommand helpCommand;
 
 
     public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, AbstractCommand... commands) {
+
+        System.out.println("instanciating command manager with plugin " + plugin.getDescription().getName());
+
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
-        this.helpPrefix = helpPrefix;
 
         if (commands != null) {
             Collections.addAll(this.commands, commands);
         }
 
+        this.helpCommand = new HelpCommand(this, helpPrefix);
 
         this.commands.add(helpCommand);
         helpCommand.setHelpPrefix(helpPrefix);
 
         System.out.println("Commands: " + this.commands);
 
-        //FIXME Later
-//        if (plugin.usePermissionService()) {
-//            this.subCommands.add(new PermissionReloadCommand());
-//        }
-//
-//        // add default commands that all plugins are capable of
+        // add default commands that all plugins are capable of
         this.commands.add(new PermissionCommand());
         this.commands.add(new ReloadCommand());
         this.commands.add(new VersionCommand());
@@ -115,6 +111,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
         ArrayList<String> list = new ArrayList<>();
         for (AbstractCommand cmd : getCommands()) {
