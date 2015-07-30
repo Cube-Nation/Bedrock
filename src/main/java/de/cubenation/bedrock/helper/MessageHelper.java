@@ -1,7 +1,6 @@
 package de.cubenation.bedrock.helper;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.UnsortedArgument;
@@ -28,7 +27,7 @@ public class MessageHelper {
         MessageHelper.send(
                 plugin,
                 sender,
-                new Translation(BedrockPlugin.getInstance(), "permission.insufficient").getTranslation()
+                new Translation(plugin, "permission.insufficient").getTranslation()
         );
     }
 
@@ -36,7 +35,7 @@ public class MessageHelper {
         MessageHelper.send(
                 plugin,
                 sender,
-                new Translation(BedrockPlugin.getInstance(), "command.invalid").getTranslation()
+                new Translation(plugin, "command.invalid").getTranslation()
         );
     }
 
