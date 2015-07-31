@@ -50,12 +50,16 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
         return getInstance()._exists(plugin, ident, sender);
     }
 
-    public AbstractPageableListService get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
+    public static AbstractPageableListService get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
         return (AbstractPageableListService) getInstance()._get(plugin, ident, sender);
     }
 
-    public void remove(BasePlugin plugin, String ident, CommandSender sender) {
+    public static void remove(BasePlugin plugin, String ident, CommandSender sender) {
         getInstance()._remove(plugin, ident, sender);
+    }
+
+    public static int getTimeout() {
+        return timeout;
     }
 
 }

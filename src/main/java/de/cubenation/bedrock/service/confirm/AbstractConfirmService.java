@@ -38,6 +38,8 @@ public abstract class AbstractConfirmService extends AbstractService implements 
         this.storage = new HashMap<>();
         this.setTimeout(timeout);
 
+        this.getPlugin().log(Level.INFO, "  confirm service: New confirm service registered " + this.toString());
+
         final AbstractConfirmService csi = this;
         // create task with timeout
         // this task needs to be canceled when call() is executed via task.cancel();
@@ -59,7 +61,7 @@ public abstract class AbstractConfirmService extends AbstractService implements 
 
     @Override
     public void reload() {
-        this.getPlugin().log(Level.WARNING, "Reloading of service confirm not supported");
+        this.getPlugin().log(Level.WARNING, "  confirm service: Reloading of service confirm not supported");
     }
 
     /*
@@ -89,6 +91,11 @@ public abstract class AbstractConfirmService extends AbstractService implements 
             this.abort();
             throw new TimeoutException();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(timeout: " + this.getTimeout() + ")";
     }
 
 }

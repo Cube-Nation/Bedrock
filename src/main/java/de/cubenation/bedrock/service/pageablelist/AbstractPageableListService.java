@@ -96,4 +96,10 @@ public abstract class AbstractPageableListService extends AbstractService implem
     public boolean isEmpty() {
         return storage == null || storage.isEmpty();
     }
+
+    @Override
+    public String toString() {
+        return String.format("(timeout: %d seconds - next_amount: %d)", PageableListRegistry.getTimeout(), this.next);
+    }
+
 }

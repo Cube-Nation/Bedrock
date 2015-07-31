@@ -9,6 +9,7 @@ import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 
 import java.util.*;
+import java.util.logging.Level;
 
 public class CommandService extends AbstractService implements ServiceInterface {
 
@@ -31,6 +32,13 @@ public class CommandService extends AbstractService implements ServiceInterface 
 
             String command = (String) pair.getKey();
             ArrayList<AbstractCommand> value = (ArrayList<AbstractCommand>) pair.getValue();
+
+            if (value.size() == 0) {
+                this.getPlugin().log(Level.WARNING, "  command service: Not registering command " + command + " (no CommandManagers assigned)");
+                continue;
+            }
+
+            this.getPlugin().log(Level.INFO, "  command service: Registering command " + command + " with " + value.size() + " CommandManager(s)");
 
             CommandManager manager = new CommandManager(
                     this.getPlugin(),

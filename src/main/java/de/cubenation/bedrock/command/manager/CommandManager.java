@@ -47,8 +47,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.commands.add(helpCommand);
         helpCommand.setHelpPrefix(helpPrefix);
 
-        System.out.println("Commands: " + this.commands);
-
         // add default commands that all plugins are capable of
         this.commands.add(new PermissionCommand());
         this.commands.add(new ReloadCommand());

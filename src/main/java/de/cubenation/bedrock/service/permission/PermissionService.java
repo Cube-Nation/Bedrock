@@ -9,11 +9,10 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.config.ConfigService;
-import de.cubenation.bedrock.service.config.CustomConfigurationFile;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -49,6 +48,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public void init() throws ServiceInitException {
+        this.getPlugin().log(Level.INFO, "  permission service: setting up " + this.toString());
+
         try {
             this.config_service.registerFile(
                     this.getPermissionFilename(),
@@ -65,8 +66,19 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public void reload() throws ServiceReloadException {
+        this.getPlugin().log(Level.INFO, "  permission service: reloading " + this.toString());
+
+        try {
+            this.config_service.registerFile(
+                    this.getPermissionFilename(),
+                    new Permissions(this.getPlugin(), this.getPermissionFilename())
+            );
+        } catch (Exception e) {
+            throw new ServiceReloadException(e.getMessage());
+        }
+
+        this.initializeCommandPermissions();
         this.saveUnregisteredPermissions();
-        this.fixMissingPermissions();
         this.loadPermissions();
     }
 
@@ -77,45 +89,57 @@ public class PermissionService extends AbstractService implements ServiceInterfa
                 if (permission == null)
                     continue;
 
-                this.plugin.log(Level.INFO, "Registering permission " + permission);
+                this.plugin.log(Level.INFO, "  permission service: Registering permission " + permission);
                 this.unregistered_permissions.add(permission);
             }
         }
     }
 
     public void saveUnregisteredPermissions() {
-        YamlConfiguration permissions;
-        try {
-            permissions = this.config_service.getConfig(this.getPermissionFilename());
-        } catch (NullPointerException e) {
-            this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
-            this.plugin.disable(e);
-            return;
+        YamlConfiguration permissions = this.config_service.getConfig(this.getPermissionFilename());
+
+        if (permissions == null) {
+            try {
+                this.config_service.saveConfig(this.getPermissionFilename());
+            } catch (InvalidConfigurationException e) {
+                this.plugin.disable(
+                        new InvalidConfigurationException("  permission service: Could not save empty permission file from config service")
+                );
+            }
         }
 
         // this is where the plugin starts the first time (or someone deleted/emptied the permissions file)
-        boolean initial_state = (permissions.getKeys(false) == null || permissions.getKeys(false).size() == 0);
+        boolean initial_state = false;
+        try {
+            initial_state = (
+                    permissions.getConfigurationSection("permissions").getKeys(false) == null ||
+                    permissions.getConfigurationSection("permissions").getKeys(false).size() == 0
+            );
+        } catch (NullPointerException e) {
+            initial_state = true;
+        }
 
         if (!initial_state)
             return;
 
-        this.plugin.log(Level.INFO, "Creating permissions from scratch");
+        this.plugin.log(Level.INFO, "  permission service: Creating permissions from scratch");
         try {
             this.saveRolePermissions(permissions, this.getPermissionPrefix(), this.unregistered_permissions);
-        } catch (IOException e) {
-            this.plugin.log(Level.SEVERE, "Unable to save permissions");
+
+        } catch (InvalidConfigurationException e) {
+            this.plugin.log(Level.SEVERE, "  permission service: Unable to save permissions");
             this.plugin.disable(e);
         }
     }
 
     @SuppressWarnings("unchecked")
     public void fixMissingPermissions() {
-        YamlConfiguration permissions;
-        try {
-            permissions = this.config_service.getConfig(this.getPermissionFilename());
-        } catch (NullPointerException e) {
-            this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
-            this.plugin.disable(e);
+        YamlConfiguration permissions = this.config_service.getConfig(this.getPermissionFilename());
+
+        if (permissions == null) {
+            this.plugin.disable(
+                    new InvalidConfigurationException("Could not read permission file from config service")
+            );
             return;
         }
 
@@ -124,13 +148,16 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         for (String permission : this.unregistered_permissions) {
             boolean permission_exists = false;
 
-            for (String role : permissions.getKeys(false)) {
-                if (permissions.getList(role) == null || permissions.getList(role).size() == 0) {
-                    this.plugin.log(Level.WARNING, "Empty permission role " + role);
+            for (String role : permissions.getConfigurationSection("permissions").getKeys(false)) {
+                if (
+                        permissions.getConfigurationSection("permissions").getList(role) == null ||
+                        permissions.getConfigurationSection("permission").getList(role).size() == 0
+                        ) {
+                    this.plugin.log(Level.WARNING, "  permission service: Empty permission role " + role + ". Ignoring role");
                     continue;
                 }
 
-                if (permissions.getString(role).contains(permission))
+                if (permissions.getConfigurationSection("permissions").getString(role).contains(permission))
                     permission_exists = true;
             }
 
@@ -139,32 +166,27 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
 
         if (missing_permissions.size() > 0) {
-            this.plugin.log(Level.WARNING, String.format("Assigning %d permission to role %s",
+            this.plugin.log(Level.WARNING, String.format("  permission service: Assigning %d permission to role %s",
                     missing_permissions.size(),
                     this.getPermissionPrefix()
             ));
+
             try {
-                // add other permissions from the default role to missing commands
-                missing_permissions.addAll((ArrayList<String>) permissions.getList(this.getPermissionPrefix()));
-                // and save this section again
+                // save this section (role)
                 saveRolePermissions(permissions, this.getPermissionPrefix(), missing_permissions);
-            } catch (IOException e) {
-                this.plugin.log(Level.SEVERE, "Unable to save permissions");
+            } catch (InvalidConfigurationException e) {
+                this.plugin.log(Level.SEVERE, "  permission service: Could not save permissions");
                 this.plugin.disable(e);
             }
         }
     }
 
-    private void saveRolePermissions(YamlConfiguration file, String role, ArrayList<String> permissions) throws IOException {
+    private void saveRolePermissions(YamlConfiguration file, String role, ArrayList<String> permissions) throws InvalidConfigurationException {
         if (permissions == null || permissions.size() == 0)
             return;
 
-        file.set(role, permissions);
-
-        System.out.println(file.saveToString());
-
-        // TODO: geht garantiert nicht so ..
-        this.config_service.saveConfig();
+        file.set("permissions." + role, permissions);
+        this.config_service.saveConfig(this.getPermissionFilename());
     }
 
     @SuppressWarnings("unchecked")
@@ -175,16 +197,10 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             permission_prefix = this.getPlugin().getDescription().getName().toLowerCase();
 
         // load permissions configuration file
-        YamlConfiguration permissions;
-        try {
-            permissions = this.config_service.getConfig(this.getPermissionFilename());
-            System.out.println("permissions is " + permissions.getClass());
+        YamlConfiguration permissions = this.config_service.getConfig(this.getPermissionFilename());
 
-            if (permissions == null)
-                return;
-        } catch (NullPointerException e) {
-            this.plugin.log(Level.SEVERE, "Could not read permission file from config service");
-            this.plugin.disable(e);
+        if (permissions == null) {
+            this.plugin.disable(new InvalidConfigurationException("Could not read permissions file from config service"));
             return;
         }
 
@@ -193,13 +209,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         this.active_permissions = new HashMap<>();
         this.permission_dump = new HashMap<>();
 
-        for (String role : permissions.getKeys(false)) {
-
-            System.out.println("role: " + role);
-
+        for (String role : permissions.getConfigurationSection("permissions").getKeys(false)) {
             ArrayList<String> perm = (ArrayList<String>) permissions.getList(role);
-
-
 
             ArrayList<String> formatted = new ArrayList<>();
 
@@ -232,6 +243,11 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @SuppressWarnings("unchecked")
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
         return this.permission_dump;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(filename: %s - prefix: %s)", this.getPermissionFilename(), this.getPermissionPrefix());
     }
 
 }

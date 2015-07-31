@@ -19,15 +19,16 @@ public class MetricsService extends AbstractService implements ServiceInterface{
     @Override
     public void init() throws ServiceInitException {
         if (!this.getPlugin().getConfigService().getConfig().getBoolean("service.metrics.use")) {
-            this.getPlugin().log(Level.WARNING, "Disabling metrics");
+            this.getPlugin().log(Level.WARNING, "  metrics service: Disabling metrics");
             return;
         }
 
         try {
+            this.getPlugin().log(Level.INFO, "  metrics service: Starting metrics");
             Metrics metrics = new Metrics(this.getPlugin());
             metrics.start();
         } catch (IOException e) {
-            this.getPlugin().log(Level.WARNING, "Failed to submit metrics");
+            this.getPlugin().log(Level.WARNING, "  metrics service: Failed to submit metrics");
         }
     }
 
@@ -35,7 +36,7 @@ public class MetricsService extends AbstractService implements ServiceInterface{
     public void reload() throws ServiceReloadException {
 
         this.getPlugin().log(Level.WARNING,
-                "Reloading the metrics service is not supported. Please restart the server if you modified the metrics service"
+                "  metrics service: Reloading the metrics service is not supported. Please restart the server if you modified the metrics service"
         );
     }
 }

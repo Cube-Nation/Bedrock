@@ -8,6 +8,8 @@ import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
+import java.util.logging.Level;
+
 public class ReloadCommand extends Command {
 
     public ReloadCommand() {
@@ -21,6 +23,8 @@ public class ReloadCommand extends Command {
     @Override
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
+
+            this.getPlugin().log(Level.INFO, "Reloading plugin services");
 
             // DO NOT MODIFY THIS ORDER!
             this.plugin.getConfigService().reload();

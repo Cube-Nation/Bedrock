@@ -2,7 +2,6 @@ package de.cubenation.bedrock.service.config;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.config.BedrockDefaults;
-import de.cubenation.bedrock.config.Permissions;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
@@ -75,16 +74,22 @@ public class ConfigService extends AbstractService implements ServiceInterface {
 
     @Override
     public void reload() throws ServiceReloadException {
-        Iterator it = this.configuration_files.entrySet().iterator();
-
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
+        for (Object o : this.configuration_files.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
             String name = (String) pair.getKey();
             try {
-                this.getPlugin().log(Level.INFO, "Reloading file " + name);
+                this.getPlugin().log(Level.INFO, "  config service: Reloading file " + name);
                 ((CustomConfigurationFile) pair.getValue()).reload();
             } catch (InvalidConfigurationException e) {
-                this.getPlugin().log(Level.SEVERE, "Could not reload file", e);
+                this.getPlugin().log(Level.SEVERE, "  config service: Could not reload file " + name + ": " + e.getMessage());
+
+                // try re-creating file
+                try {
+                    this.getPlugin().log(Level.INFO, "  config service: Recreating missing file " + name);
+                    ((CustomConfigurationFile) pair.getValue()).init();
+                } catch (InvalidConfigurationException e1) {
+                    this.getPlugin().log(Level.SEVERE, "  config service: Could not recreate missing file " + name, e);
+                }
             }
         }
     }
@@ -131,17 +136,17 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         if (file == null)
             return;
 
+        this.getPlugin().log(Level.INFO, "  config service: Registering configuration file " + name);
+
         try {
             file.init();
         } catch (InvalidConfigurationException e) {
-            this.getPlugin().log(Level.SEVERE, "Could not register file " + name, e);
+            this.getPlugin().log(Level.SEVERE, "  config service: Could not register file " + name, e);
             return;
         }
 
-        this.getPlugin().log(Level.INFO, "Registering configuration file " + name);
         this.configuration_files.put(name, file);
     }
-
 
 
     public YamlConfiguration getConfig() {
@@ -149,12 +154,28 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     }
 
     public YamlConfiguration getConfig(String name) {
+/*
+        if (!this.configuration_files.containsKey(name))
+            return null;
+
+        CustomConfigurationFile file = this.configuration_files.get(name);
+        try {
+            file.reload();
+        } catch (InvalidConfigurationException e) {
+            return null;
+        }
+
+        net.cubespace.Yamler.Config.
+ */
+
+
         File file = new File(this.getPlugin().getDataFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
-        return YamlConfiguration.loadConfiguration(file);
+        return (file.exists()) ? YamlConfiguration.loadConfiguration(file) : null;
     }
 
 
-    public void saveConfig(String name) {
+    public void saveConfig(String name) throws InvalidConfigurationException {
+        System.out.println("calling save " + name);
         if (name == null || name.isEmpty())
             return;
 
@@ -162,15 +183,12 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         if (file == null)
             return;
 
-        try {
-            System.out.println("saving file " + name);
-            file.save();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
+        this.getPlugin().log(Level.INFO, "  config service: Saving configuration file " + name);
+        file.save();
+        file.reload();
     }
 
-    public void saveConfig() {
+    public void saveConfig() throws InvalidConfigurationException {
         if (this.configuration_files == null)
             return;
 

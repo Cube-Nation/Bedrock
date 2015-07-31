@@ -35,6 +35,8 @@ public class LocalizationService extends AbstractService implements ServiceInter
         this.setLocale();
         this.setRelativeLocaleFile("locale" + System.getProperty("file.separator") + this.getLocale() + ".yml");
 
+        this.getPlugin().log(Level.INFO, "  localization service: setting up " + this.toString());
+
         this.loadPluginLocaleFile();
         this.loadBedrockLocaleFile();
     }
@@ -65,31 +67,24 @@ public class LocalizationService extends AbstractService implements ServiceInter
     }
 
     private void loadPluginLocaleFile() {
-        try {
-            this.plugin_data = this.getPlugin().getConfigService().getConfig(this.getRelativeLocaleFile());
+        this.plugin_data = this.getPlugin().getConfigService().getConfig(this.getRelativeLocaleFile());
 
-            System.out.println(this.plugin_data.getName());
-            System.out.println(this.plugin_data.get("version"));
-
-        } catch (NullPointerException e) {
+        if (this.plugin_data == null)
             this.getPlugin().log(Level.SEVERE, String.format(
-                    "Could not find locale file %s in plugin %s",
+                    "  localization service: Could not find locale file %s in plugin %s",
                     this.getRelativeLocaleFile(),
                     this.getPlugin().getDescription().getName()
             ));
-            this.plugin_data = null;
-        }
     }
 
     private void loadBedrockLocaleFile() throws ServiceInitException {
-        try {
-            this.bedrock_data = BedrockPlugin.getInstance().getConfigService().getConfig(this.getRelativeLocaleFile());
-        } catch (NullPointerException e) {
+        this.bedrock_data = BedrockPlugin.getInstance().getConfigService().getConfig(this.getRelativeLocaleFile());
+
+        if (this.bedrock_data == null)
             throw new ServiceInitException(String.format(
                     "Could not find locale file %s in plugin BedrockPlugin. Please restart server and use a supported locale",
                     this.getRelativeLocaleFile()
             ));
-        }
     }
 
     public String getTranslation(String path, String[] args) throws LocalizationNotFoundException {
@@ -164,6 +159,11 @@ public class LocalizationService extends AbstractService implements ServiceInter
             i++;
         }
         return s;
+    }
+
+    @Override
+    public String toString() {
+        return "(locale: " + this.getLocale() + " - locale_file: " + this.getRelativeLocaleFile() + ")";
     }
 
 }
