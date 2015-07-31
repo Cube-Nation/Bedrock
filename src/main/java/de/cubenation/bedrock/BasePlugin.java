@@ -185,7 +185,7 @@ public abstract class BasePlugin extends JavaPlugin {
         return (ConfigService) this.getService("config");
     }
 
-    public abstract ArrayList<CustomConfigurationFile> getCustomConfigurationFiles();
+    public abstract HashMap<String, String> getCustomConfigurationFiles();
 
     /*
      * Color Scheme Service

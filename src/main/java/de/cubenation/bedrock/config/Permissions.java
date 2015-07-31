@@ -9,20 +9,8 @@ import java.io.IOException;
 
 public class Permissions extends CustomConfigurationFile {
 
-    public Permissions(BasePlugin plugin) throws IOException {
-        this.setFilename(plugin);
-        CONFIG_FILE = new File(plugin.getDataFolder(), this.getFilename());
-    }
-
-    @Override
-    public void setFilename(BasePlugin plugin) {
-        this.filename = plugin.getConfigService().getConfig().getString(
-                "service.permission.file_name",
-                BedrockPlugin.getInstance().getConfigService().getConfig().getString(
-                        "service.permission.file_name",
-                        "permissions.yml"
-                )
-        );
+    public Permissions(BasePlugin plugin, String name) throws IOException {
+        CONFIG_FILE = new File(plugin.getDataFolder(), name);
     }
 
 }

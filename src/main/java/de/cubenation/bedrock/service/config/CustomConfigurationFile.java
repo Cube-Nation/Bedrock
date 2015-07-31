@@ -6,13 +6,12 @@ import net.cubespace.Yamler.Config.Config;
 
 public abstract class CustomConfigurationFile extends Config {
 
-    @Comment("The filename")
-    public String filename  = null;
+    public CustomConfigurationFile() {
 
-    public abstract void setFilename(BasePlugin plugin);
+    }
 
-    public final String getFilename() {
-        return this.filename;
+    public CustomConfigurationFile(BasePlugin plugin, String name) {
+
     }
 
 }

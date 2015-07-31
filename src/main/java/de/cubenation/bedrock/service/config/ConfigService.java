@@ -2,6 +2,7 @@ package de.cubenation.bedrock.service.config;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.config.BedrockDefaults;
+import de.cubenation.bedrock.config.Permissions;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
@@ -10,12 +11,15 @@ import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class ConfigService extends AbstractService implements ServiceInterface {
 
-    private ArrayList<CustomConfigurationFile> configuration_files = null;
+    private HashMap<String, CustomConfigurationFile> configuration_files = new HashMap<>();
 
     public ConfigService(BasePlugin plugin) {
         super(plugin);
@@ -26,8 +30,32 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         // first create the plugin data folder
         this.createDataFolder();
 
-        this.configuration_files = this.getPlugin().getCustomConfigurationFiles();
-        this.registerFiles();
+        // try to create the plugin config.yml
+        CustomConfigurationFile config;
+        try {
+            this.registerFile("config.yml", this.createPluginConfig(
+                    this.getPlugin(),
+                    String.format("%s.config.BedrockDefaults",
+                            this.getPlugin().getClass().getPackage().getName()
+                    ),
+                    "config.yml"
+            ));
+        } catch (InstantiationException ignored) {
+
+            // try to create the config.yml from Bedrock (yes, for this plugin)
+            try {
+                this.registerFile("config.yml", this.createPluginConfig(
+                        this.getPlugin(),
+                        BedrockDefaults.class.getName(),
+                        "config.yml"
+                ));
+            } catch (InstantiationException e) {
+                throw new ServiceInitException(e.getMessage());
+            }
+        }
+
+        // next, add all custom files
+        this.registerFiles(this.getPlugin().getCustomConfigurationFiles());
 
         /*
          * now try reading the service.config.do_not_delete_me value. If it does not exist, is empty or has been changed
@@ -45,17 +73,22 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         */
     }
 
-
     @Override
     public void reload() throws ServiceReloadException {
-        for (CustomConfigurationFile file : this.configuration_files)
+        Iterator it = this.configuration_files.entrySet().iterator();
+
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            String name = (String) pair.getKey();
             try {
-                this.getPlugin().log(Level.INFO, "Reloading file " + file.getFilename());
-                file.reload();
+                this.getPlugin().log(Level.INFO, "Reloading file " + name);
+                ((CustomConfigurationFile) pair.getValue()).reload();
             } catch (InvalidConfigurationException e) {
                 this.getPlugin().log(Level.SEVERE, "Could not reload file", e);
             }
+        }
     }
+
 
     private void createDataFolder() throws ServiceInitException {
         // check if plugin data folder exists and create if not
@@ -63,35 +96,53 @@ public class ConfigService extends AbstractService implements ServiceInterface {
             throw new ServiceInitException("Could not create folder " + this.getPlugin().getDataFolder().getName());
     }
 
-    private void registerFiles() {
-        // avoid NullPointerException
-        if (this.configuration_files == null)
-            this.configuration_files = new ArrayList<>();
 
-        boolean has_default = false;
-
-        for (CustomConfigurationFile file : this.configuration_files)
-            has_default = this.registerFile(file);
-
-        if (!has_default)
-            this.registerFile(new BedrockDefaults(this.getPlugin()));
+    private CustomConfigurationFile createPluginConfig(BasePlugin plugin, String class_name, String name) throws InstantiationException {
+        try {
+            Class<?> clazz = (Class<?>) Class.forName(class_name);
+            Constructor<?> constructor = clazz.getConstructor(BasePlugin.class, String.class);
+            return (CustomConfigurationFile) constructor.newInstance(plugin, name);
+        } catch (Exception e) {
+            throw new InstantiationException("Could not instantiate class " + class_name);
+        }
     }
 
-    public boolean registerFile(CustomConfigurationFile file) {
-        boolean was_default = false;
+    private void registerFiles(HashMap<String, String> custom_configuration_files) {
+        if (custom_configuration_files == null || custom_configuration_files.size() == 0)
+            return;
+
+        Iterator it = custom_configuration_files.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+
+            try {
+                this.registerFile((String) pair.getKey(), this.createPluginConfig(
+                        this.getPlugin(),
+                        (String) pair.getValue(),
+                        (String) pair.getKey()
+                ));
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
+        } // while
+    }
+
+    public void registerFile(String name, CustomConfigurationFile file) {
+        if (file == null)
+            return;
+
         try {
-            this.getPlugin().log(Level.INFO, "Registering configuration file " + file.getFilename());
             file.init();
-
-            if (file.getFilename().equalsIgnoreCase("config.yml"))
-                was_default = true;
-
         } catch (InvalidConfigurationException e) {
-            this.getPlugin().log(Level.SEVERE, "Could not initialize configuration file", e);
+            this.getPlugin().log(Level.SEVERE, "Could not register file " + name, e);
+            return;
         }
 
-        return was_default;
+        this.getPlugin().log(Level.INFO, "Registering configuration file " + name);
+        this.configuration_files.put(name, file);
     }
+
+
 
     public YamlConfiguration getConfig() {
         return getConfig("config.yml");
@@ -102,16 +153,31 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         return YamlConfiguration.loadConfiguration(file);
     }
 
+
+    public void saveConfig(String name) {
+        if (name == null || name.isEmpty())
+            return;
+
+        CustomConfigurationFile file = this.configuration_files.get(name);
+        if (file == null)
+            return;
+
+        try {
+            System.out.println("saving file " + name);
+            file.save();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void saveConfig() {
         if (this.configuration_files == null)
             return;
 
-        for (CustomConfigurationFile file : this.configuration_files) {
-            try {
-                file.save();
-            } catch (InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
+        Iterator it = this.configuration_files.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            this.saveConfig((String) pair.getKey());
         }
     }
 

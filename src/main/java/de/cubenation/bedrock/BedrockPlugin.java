@@ -7,8 +7,10 @@ import de.cubenation.bedrock.config.locale.en_US;
 import de.cubenation.bedrock.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Created by B1acksheep on 25.04.15.
@@ -33,11 +35,11 @@ public class BedrockPlugin extends BasePlugin {
 
     public void onPostEnable() {
         try {
-            BedrockDefaults bd = new BedrockDefaults(this);
+            BedrockDefaults bd = new BedrockDefaults(this, null);
             bd.init();
-        } catch(InvalidConfigurationException ex) {
-            System.out.println("Your Config YML was wrong");
-            ex.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            this.log(Level.SEVERE, "Error creating config.yml", e);
+            this.disable(e);
         }
     }
 
@@ -47,10 +49,10 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public ArrayList<CustomConfigurationFile> getCustomConfigurationFiles() {
-        return new ArrayList<CustomConfigurationFile>() {{
-            add(new en_US(BedrockPlugin.getInstance()));
-            add(new de_DE(BedrockPlugin.getInstance()));
+    public HashMap<String, String> getCustomConfigurationFiles() {
+        return new HashMap<String, String>() {{
+            put("locale" + System.getProperty("file.separator") + "en_US.yml", en_US.class.getName());
+            put("locale" + System.getProperty("file.separator") + "de_DE.yml", de_DE.class.getName());
         }};
     }
 

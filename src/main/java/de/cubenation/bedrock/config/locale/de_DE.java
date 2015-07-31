@@ -10,14 +10,8 @@ import java.io.File;
 @SuppressWarnings("unused")
 public class de_DE extends CustomConfigurationFile {
 
-    public de_DE(BasePlugin plugin) {
-        this.setFilename(plugin);
-        CONFIG_FILE = new File(plugin.getDataFolder(), this.getFilename());
-    }
-
-    @Override
-    public void setFilename(BasePlugin plugin) {
-        this.filename = "locale" + System.getProperty("file.separator") + "de_DE.yml";
+    public de_DE(BasePlugin plugin, String name) {
+        CONFIG_FILE = new File(plugin.getDataFolder(), name);
     }
 
 

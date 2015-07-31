@@ -9,12 +9,15 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 
+@SuppressWarnings("unused")
 public class BedrockDefaults extends CustomConfigurationFile {
 
+    public BedrockDefaults() {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        this.setFilename(plugin);
-        CONFIG_FILE = new File(plugin.getDataFolder(), this.getFilename());
+    }
+
+    public BedrockDefaults(BasePlugin plugin, String name) {
+        CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
 
         CONFIG_HEADER = new String[]{
                 "",
@@ -53,16 +56,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
         };
     }
 
-    @Override
-    public void setFilename(BasePlugin plugin) {
-        this.filename = "config.yml";
-    }
-
 
     /**
      * Scheme Color Service
      */
-    @Path("service.schemecolor.name")
+    @Path("service.colorscheme.name")
     @Comments({
             "The name of the scheme to be used.",
             "Currently there are these schemes available:",
@@ -76,59 +74,59 @@ public class BedrockDefaults extends CustomConfigurationFile {
             "  flag: DARK_GRAY",
             "  text: WHITE"
     })
-    private String schemecolor_name         = "DEFAULT";
+    private String colorscheme_name         = "DEFAULT";
 
-    @Path("service.schemecolor.primary")
+    @Path("service.colorscheme.primary")
     @Comment("The primary color")
-    private String schemecolor_primary      = null;
+    private String colorscheme_primary      = null;
 
-    @Path("service.schemecolor.secondary")
+    @Path("service.colorscheme.secondary")
     @Comment("The secondary color")
-    private String schemecolor_secondary    = null;
+    private String colorscheme_secondary    = null;
 
-    @Path("service.schemecolor.flag")
+    @Path("service.colorscheme.flag")
     @Comment("The flag color")
-    private String schemecolor_flag         = null;
+    private String colorscheme_flag         = null;
 
-    @Path("service.schemecolor.text")
+    @Path("service.colorscheme.text")
     @Comment("The text color")
-    private String schemecolor_text         = null;
+    private String colorscheme_text         = null;
 
 
-    public void setSchemecolorName(String name) {
-        this.schemecolor_name = name;
+    public void setColorSchemeName(String name) {
+        this.colorscheme_name = name;
     }
 
-    public void setSchemecolorPrimary(String name) {
-        this.schemecolor_primary = name.toUpperCase();
+    public void setColorSchemePrimary(String name) {
+        this.colorscheme_primary = name.toUpperCase();
     }
 
-    public void setSchemecolorPrimary(ChatColor color) {
-        this.setSchemecolorPrimary(color.getName());
+    public void setColorSchemePrimary(ChatColor color) {
+        this.setColorSchemePrimary(color.getName());
     }
 
-    public void setSchemecolorSecondary(String name) {
-        this.schemecolor_secondary = name.toUpperCase();
+    public void setColorSchemeSecondary(String name) {
+        this.colorscheme_secondary = name.toUpperCase();
     }
 
-    public void setSchemecolorSecondary(ChatColor color) {
-        this.setSchemecolorSecondary(color.getName());
+    public void setColorSchemeSecondary(ChatColor color) {
+        this.setColorSchemeSecondary(color.getName());
     }
 
-    public void setSchemecolorFlag(String name) {
-        this.schemecolor_flag = name.toUpperCase();
+    public void setColorSchemeFlag(String name) {
+        this.colorscheme_flag = name.toUpperCase();
     }
 
-    public void setSchemecolorFlag(ChatColor color) {
-        this.setSchemecolorFlag(color.getName());
+    public void setColorSchemeFlag(ChatColor color) {
+        this.setColorSchemeFlag(color.getName());
     }
 
-    public void setSchemecolorText(String name) {
-        this.schemecolor_text = name.toUpperCase();
+    public void setColorSchemeText(String name) {
+        this.colorscheme_text = name.toUpperCase();
     }
 
-    public void setSchemecolorText(ChatColor color) {
-        this.setSchemecolorText(color.getName());
+    public void setColorSchemeText(ChatColor color) {
+        this.setColorSchemeText(color.getName());
     }
 
 
@@ -173,17 +171,9 @@ public class BedrockDefaults extends CustomConfigurationFile {
      * Localization Service
      */
 
-    @Path("service.localization.locale_dir")
-    @Comment("path to directory where locales reside.")
-    private String localization_locale_dir  = "locale";
-
     @Path("service.localization.locale")
     @Comment("the default locale that is being represented by a file, e.g. de_DE represents locale/de_DE.yml.")
     private String localization_locale      = "en_US";
-
-    public void setLocalizationLocaleDir(String locale_dir) {
-        this.localization_locale_dir = locale_dir;
-    }
 
     public void setLocalizationLocale(String locale) {
         this.localization_locale = locale;

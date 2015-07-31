@@ -18,8 +18,6 @@ import java.util.logging.Level;
  */
 public class LocalizationService extends AbstractService implements ServiceInterface {
 
-    private String locale_path;
-
     private String locale;
 
     private String relative_locale_file;
@@ -34,9 +32,8 @@ public class LocalizationService extends AbstractService implements ServiceInter
 
     @Override
     public void init() throws ServiceInitException {
-        this.setLocalePath();
         this.setLocale();
-        this.setRelativeLocaleFile(this.getLocalePath() + System.getProperty("file.separator") + this.getLocale() + ".yml");
+        this.setRelativeLocaleFile("locale" + System.getProperty("file.separator") + this.getLocale() + ".yml");
 
         this.loadPluginLocaleFile();
         this.loadBedrockLocaleFile();
@@ -49,14 +46,6 @@ public class LocalizationService extends AbstractService implements ServiceInter
         } catch (ServiceInitException e) {
             throw new ServiceReloadException(e.getMessage());
         }
-    }
-
-    private void setLocalePath() {
-        this.locale_path = (String) this.getConfigurationValue("service.localization.locale_dir", "locale");
-    }
-
-    public String getLocalePath() {
-        return this.locale_path;
     }
 
     public void setLocale() {
@@ -78,6 +67,10 @@ public class LocalizationService extends AbstractService implements ServiceInter
     private void loadPluginLocaleFile() {
         try {
             this.plugin_data = this.getPlugin().getConfigService().getConfig(this.getRelativeLocaleFile());
+
+            System.out.println(this.plugin_data.getName());
+            System.out.println(this.plugin_data.get("version"));
+
         } catch (NullPointerException e) {
             this.getPlugin().log(Level.SEVERE, String.format(
                     "Could not find locale file %s in plugin %s",
