@@ -12,14 +12,8 @@ import java.io.File;
 @SuppressWarnings("unused")
 public class BedrockDefaults extends CustomConfigurationFile {
 
-    public BedrockDefaults() {
-
-    }
-
-    public BedrockDefaults(BasePlugin plugin, String name) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
-
-        CONFIG_HEADER = new String[]{
+    public String[] getHeader() {
+        return new String[]{
                 "",
                 "This file has been automatically created by the Bedrock Plugin.",
                 "Here you may find all settings from the Bedrock Plugin that are applicable to this certain Plugin,",
@@ -54,6 +48,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
                 "   http://cube-nation.de:8082/secure/CreateIssueDetails!init.jspa?pid=10202&issuetype=1",
                 ""
         };
+    }
+
+    public BedrockDefaults(BasePlugin plugin, String name) {
+        CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
+        CONFIG_HEADER = getHeader();
     }
 
 
