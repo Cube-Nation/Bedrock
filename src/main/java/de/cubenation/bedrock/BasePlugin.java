@@ -223,18 +223,18 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     @Override
     public final FileConfiguration getConfig() {
-        this.log(Level.SEVERE, "Access to Bukkit getConfig() is prohibited");
+        this.log(Level.SEVERE, "Access to Bukkit getConfig() is prohibited. GTFO!");
         return null;
     }
 
     @Override
     public final void saveConfig() {
-        this.log(Level.SEVERE, "Access to Bukkit saveConfig() is prohibited");
+        this.log(Level.SEVERE, "Access to Bukkit saveConfig() is prohibited. GTFO!");
     }
 
     @Override
     public final void reloadConfig() {
-        this.log(Level.SEVERE, "Access to Bukkit reloadConfig() is prohibited");
+        this.log(Level.SEVERE, "Access to Bukkit reloadConfig() is prohibited. GTFO!");
     }
 
 }
