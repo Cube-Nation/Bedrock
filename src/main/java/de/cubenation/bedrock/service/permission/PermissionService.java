@@ -9,8 +9,7 @@ import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationRegistry;
+import de.cubenation.bedrock.service.config.ConfigService;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -26,7 +25,7 @@ import java.util.logging.Level;
  */
 public class PermissionService extends AbstractService implements ServiceInterface {
 
-    private CustomConfigurationFileService ccf_service;
+    private ConfigService config_service;
 
     private String permissions_filename;
 
@@ -41,7 +40,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     public PermissionService(BasePlugin plugin) {
         super(plugin);
-        this.ccf_service = plugin.getCustomConfigurationFileService();
+        this.config_service = plugin.getConfigService();
     }
 
     private void setPermissionsFilename(String permissions_filename) {
@@ -62,7 +61,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             throw new ServiceInitException(e.getMessage());
         }
 
-        this.ccf_service.register(permissions);
+        this.config_service.registerFile(permissions);
 
         this.initializeCommandPermissions();
         this.saveUnregisteredPermissions();
@@ -102,14 +101,15 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         // this is where the plugin starts the first time (or someone deleted/emptied the permissions file)
         boolean initial_state = (permissions.getKeys(false) == null || permissions.getKeys(false).size() == 0);
 
-        if (initial_state) {
-            this.plugin.log(Level.INFO, "Creating permissions from scratch");
-            try {
-                this.saveRolePermissions(permissions, this.no_role, this.unregistered_permissions);
-            } catch (IOException e) {
-                this.plugin.log(Level.SEVERE, "Unable to save permissions");
-                this.plugin.disable(e);
-            }
+        if (!initial_state)
+            return;
+
+        this.plugin.log(Level.INFO, "Creating permissions from scratch");
+        try {
+            this.saveRolePermissions(permissions, this.no_role, this.unregistered_permissions);
+        } catch (IOException e) {
+            this.plugin.log(Level.SEVERE, "Unable to save permissions");
+            this.plugin.disable(e);
         }
     }
 
@@ -171,7 +171,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @SuppressWarnings("unchecked")
     private void loadPermissions() {
         // set permission prefix
-        String permission_prefix = this.getPlugin().getPluginConfigService().getConfig().getString("service.permission.prefix");
+        String permission_prefix = (String) this.getConfigurationValue("service.permission.prefix", null);
         if (permission_prefix == null || permission_prefix.isEmpty())
             permission_prefix = this.getPlugin().getDescription().getName().toLowerCase();
 

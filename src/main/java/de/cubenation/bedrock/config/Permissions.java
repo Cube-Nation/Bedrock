@@ -2,29 +2,27 @@ package de.cubenation.bedrock.config;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
+import de.cubenation.bedrock.service.config.CustomConfigurationFile;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class Permissions extends CustomConfigurationFile {
 
     public Permissions(BasePlugin plugin) throws IOException {
-        super(
-                plugin,
-                plugin.getPluginConfigService().getConfig().getString(
-                        "service.permission.file_name",
-                        BedrockPlugin.getInstance().getPluginConfigService().getConfig().getString(
-                                "service.permission.file_name",
-                                "permissions.yml"
-                        )
-                ),
-                Permissions.data()
-        );
+        this.setFilename(plugin);
+        CONFIG_FILE = new File(plugin.getDataFolder(), this.getFilename());
     }
 
-    private static HashMap<String,Object> data() {
-        return new HashMap<>();
+    @Override
+    public void setFilename(BasePlugin plugin) {
+        this.filename = plugin.getConfigService().getConfig().getString(
+                "service.permission.file_name",
+                BedrockPlugin.getInstance().getConfigService().getConfig().getString(
+                        "service.permission.file_name",
+                        "permissions.yml"
+                )
+        );
     }
 
 }

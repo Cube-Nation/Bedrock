@@ -18,7 +18,7 @@ public class MetricsService extends AbstractService implements ServiceInterface{
 
     @Override
     public void init() throws ServiceInitException {
-        if (!this.getPlugin().getPluginConfigService().getConfig().getBoolean("service.metrics.use")) {
+        if (!this.getPlugin().getConfigService().getConfig().getBoolean("service.metrics.use")) {
             this.getPlugin().log(Level.WARNING, "Disabling metrics");
             return;
         }
@@ -33,6 +33,7 @@ public class MetricsService extends AbstractService implements ServiceInterface{
 
     @Override
     public void reload() throws ServiceReloadException {
+
         this.getPlugin().log(Level.WARNING,
                 "Reloading the metrics service is not supported. Please restart the server if you modified the metrics service"
         );

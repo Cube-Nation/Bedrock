@@ -4,7 +4,7 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.UnsortedArgument;
-import de.cubenation.bedrock.style.ColorScheme;
+import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;

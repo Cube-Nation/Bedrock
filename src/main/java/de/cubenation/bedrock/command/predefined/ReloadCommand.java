@@ -23,11 +23,10 @@ public class ReloadCommand extends Command {
         try {
 
             // DO NOT MODIFY THIS ORDER!
-            this.plugin.getPluginConfigService().reload();
+            this.plugin.getConfigService().reload();
             this.plugin.getColorSchemeService().reload();
-            this.plugin.getCustomConfigurationFileService().reload();
-            this.plugin.getCommandService().reload();
             this.plugin.getLocalizationService().reload();
+            this.plugin.getCommandService().reload();
             this.plugin.getPermissionService().reload();
 
             MessageHelper.send(

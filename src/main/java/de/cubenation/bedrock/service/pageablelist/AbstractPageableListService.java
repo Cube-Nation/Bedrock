@@ -1,15 +1,17 @@
 package de.cubenation.bedrock.service.pageablelist;
 
-import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.registry.Registerable;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractPageableListService implements ServiceInterface, Registerable {
+public abstract class AbstractPageableListService extends AbstractService implements ServiceInterface, Registerable {
 
     public static int FIRSTPAGE = 1;
 
@@ -17,25 +19,29 @@ public abstract class AbstractPageableListService implements ServiceInterface, R
 
     private List<PageableListStorable> storage;
 
-    public AbstractPageableListService() {
-        // TODO: reload nicht "schnell" genug
-        // TODO: BedrockPlugin? das nix gut.
-        this(BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.pageablelist.next_amount"));
+    public AbstractPageableListService(BasePlugin plugin) {
+        super(plugin);
+        this.init();
     }
 
-    public AbstractPageableListService(int next) {
+    public AbstractPageableListService(BasePlugin plugin, int next) {
+        super(plugin);
+        this.init(next);
+    }
+
+    private void init(int next) {
+        this.storage = new ArrayList<>();
         this.next = next;
-        this.init();
     }
 
     @Override
     public void init() {
-        this.storage = new ArrayList<>();
+        this.init((Integer) this.getConfigurationValue("service.pageablelist.next_amount", 10));
     }
 
     @Override
     public void reload() {
-        this.init();
+        this.getPlugin().log(Level.WARNING, "Reloading of service pageablelist not supported");
     }
 
     public void store(PageableListStorable<?> cs) {

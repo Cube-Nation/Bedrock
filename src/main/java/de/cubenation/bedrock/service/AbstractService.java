@@ -27,7 +27,7 @@ public class AbstractService {
         this.plugin.log(Level.FINER, "Retrieving configuration path " + path + " from plugin configuration");
 
         try {
-            value = this.plugin.getPluginConfigService().getConfig().get(path);
+            value = this.plugin.getConfigService().getConfig().get(path);
             if (value == null || value.toString().isEmpty())
                 throw new NullPointerException();
 
@@ -37,7 +37,7 @@ public class AbstractService {
         }
 
         try {
-            value = BedrockPlugin.getInstance().getPluginConfigService().getConfig().get(path);
+            value = BedrockPlugin.getInstance().getConfigService().getConfig().get(path);
             if (value == null || value.toString().isEmpty())
                 throw new NullPointerException();
 

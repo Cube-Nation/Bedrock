@@ -3,26 +3,23 @@ package de.cubenation.bedrock;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.ServiceInitException;
+import de.cubenation.bedrock.exception.UnknownServiceException;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.service.command.CommandService;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFile;
-import de.cubenation.bedrock.service.customconfigurationfile.CustomConfigurationFileService;
+import de.cubenation.bedrock.service.config.ConfigService;
+import de.cubenation.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.metrics.MetricsService;
 import de.cubenation.bedrock.service.permission.PermissionService;
-import de.cubenation.bedrock.service.pluginconfig.PluginConfigService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.IOException;
-import java.net.UnknownServiceException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,7 +36,6 @@ public abstract class BasePlugin extends JavaPlugin {
         super();
     }
 
-
     /*
      * Plugin enabling
      *
@@ -50,7 +46,6 @@ public abstract class BasePlugin extends JavaPlugin {
     @Override
     public final void onEnable() {
 
-        // call onPreEnable after registering the plugin config service
         try {
             this.onPreEnable();
         } catch (Exception e) {
@@ -63,11 +58,8 @@ public abstract class BasePlugin extends JavaPlugin {
 
         // DO NOT MODIFY THIS ORDER!
         try {
-            // register plugin config service
-            this.serviceManager.registerService("pluginconfig", new PluginConfigService(this));
-
-            // register custom configuration file service
-            this.serviceManager.registerService("customconfigurationfile", new CustomConfigurationFileService(this));
+            // register config service
+            this.serviceManager.registerService("config", new ConfigService(this));
 
             // register color scheme service
             this.serviceManager.registerService("colorscheme", new ColorSchemeService(this));
@@ -148,7 +140,12 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     public void disable(Exception e) {
-        log(Level.SEVERE, "Unrecoverable error: " + e.getMessage());
+        log(Level.SEVERE, String.format("Unrecoverable error: %s",
+                (e.getMessage() == null)
+                        ? "No message specified. Please specify a noticeable message when throwing this exception"
+                        : e.getMessage()
+        ));
+        e.printStackTrace();
         log(Level.SEVERE, "Disabling plugin");
         this.getPluginLoader().disablePlugin(this);
     }
@@ -167,18 +164,21 @@ public abstract class BasePlugin extends JavaPlugin {
         try {
             return this.serviceManager.getService(name);
         } catch (UnknownServiceException e) {
-            //
+            this.getLogger().log(Level.SEVERE, "[" + this.getDescription().getName() + "] Could not retrieve service: " + name);
         }
         return null;
     }
 
 
+
     /*
      * Plugin Config Service
      */
-    public PluginConfigService getPluginConfigService() {
-        return (PluginConfigService) this.getService("pluginconfig");
+    public ConfigService getConfigService() {
+        return (ConfigService) this.getService("config");
     }
+
+    public abstract ArrayList<CustomConfigurationFile> getCustomConfigurationFiles();
 
     /*
      * Color Scheme Service
@@ -209,14 +209,5 @@ public abstract class BasePlugin extends JavaPlugin {
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getService("localization");
     }
-
-    /*
-     * Custom Configuration File Service
-     */
-    public CustomConfigurationFileService getCustomConfigurationFileService() {
-        return (CustomConfigurationFileService) this.getService("customconfigurationfile");
-    }
-
-    public abstract List<CustomConfigurationFile> getCustomConfigurationFiles() throws IOException;
 
 }

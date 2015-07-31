@@ -6,7 +6,7 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.9~spigot187+3</version>
+    <version>0.9~spigot187+4</version>
     <name>Bedrock</name>
 
     <repositories>
@@ -35,6 +35,11 @@
         <repository>
             <id>gravity-repo</id>
             <url>http://repo.gravitydevelopment.net</url>
+        </repository>
+
+        <repository>
+            <id>md_5-releaseso</id>
+            <url>http://repo.md-5.net/content/repositories/public/</url>
         </repository>
 
     </repositories>
@@ -89,18 +94,28 @@
 
     <dependencies>
 
+        <!-- the Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.7-R0.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- mcstats.org metrics -->
         <dependency>
             <groupId>org.mcstats.bukkit</groupId>
             <artifactId>metrics</artifactId>
             <version>R6</version>
         </dependency>
 
+        <!-- Yamler API -->
+        <dependency>
+            <groupId>net.cubespace</groupId>
+            <artifactId>Yamler-Core</artifactId>
+            <version>2.3.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Plugin updater -->
         <dependency>
             <groupId>net.gravitydevelopment.updater</groupId>
             <artifactId>updater</artifactId>

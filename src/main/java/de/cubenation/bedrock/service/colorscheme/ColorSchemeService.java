@@ -5,7 +5,6 @@ import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
-import de.cubenation.bedrock.style.ColorScheme;
 
 public class ColorSchemeService extends AbstractService implements ServiceInterface {
 
@@ -32,7 +31,7 @@ public class ColorSchemeService extends AbstractService implements ServiceInterf
     public void setColorScheme(ColorScheme.ColorSchemeName name) {
         this.scheme = (name != null)
                 ? ColorScheme.getColorScheme(this.getPlugin(), name)
-                : ColorScheme.getColorScheme(this.getPlugin(), this.getPlugin().getPluginConfigService().getConfig().getString("service.colorscheme.name"));
+                : ColorScheme.getColorScheme(this.getPlugin(), this.getPlugin().getConfigService().getConfig().getString("service.colorscheme.name"));
     }
 
     public ColorScheme getColorScheme() {

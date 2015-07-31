@@ -3,8 +3,8 @@ package de.cubenation.bedrock.service;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.exception.UnknownServiceException;
 
-import java.net.UnknownServiceException;
 import java.util.HashMap;
 import java.util.logging.Level;
 

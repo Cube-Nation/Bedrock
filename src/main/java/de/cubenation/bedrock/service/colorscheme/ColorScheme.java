@@ -1,7 +1,7 @@
-package de.cubenation.bedrock.style;
+package de.cubenation.bedrock.service.colorscheme;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.style.scheme.DefaultColorScheme;
+import de.cubenation.bedrock.service.colorscheme.scheme.DefaultColorScheme;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -65,7 +65,7 @@ public class ColorScheme {
 
         try {
             Class cls = Class.forName(
-                    "de.cubenation.bedrock.style.scheme." +
+                    "de.cubenation.bedrock.service.colorscheme.scheme." +
                     name.toString().substring(0, 1).toUpperCase() + name.toString().substring(1).toLowerCase() +
                     "ColorScheme"
             );

@@ -1,16 +1,19 @@
 package de.cubenation.bedrock.service.confirm;
 
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.TimeoutException;
+import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractConfirmService implements ServiceInterface, ConfirmInterface {
+public abstract class AbstractConfirmService extends AbstractService implements ServiceInterface, ConfirmInterface {
 
     private int timeout;
 
@@ -21,17 +24,18 @@ public abstract class AbstractConfirmService implements ServiceInterface, Confir
     @SuppressWarnings("rawtypes")
     private HashMap<String, ConfirmStorable> storage;
 
-    /*
-     * constructors
-     */
-
-    public AbstractConfirmService() {
-        // TODO: reload nicht "schnell" genug
-        // TODO: BedrockPlugin? das nix gut.
-        this(BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.confirm.timeout"));
+    public AbstractConfirmService(BasePlugin plugin) {
+        super(plugin);
+        this.init((Integer) this.getConfigurationValue("service.confirm.timeout", 30));
     }
 
-    public AbstractConfirmService(int timeout) {
+    public AbstractConfirmService(BasePlugin plugin, int timeout) {
+        super(plugin);
+        this.init(timeout);
+    }
+
+    private void init(int timeout) {
+        this.storage = new HashMap<>();
         this.setTimeout(timeout);
 
         final AbstractConfirmService csi = this;
@@ -45,17 +49,17 @@ public abstract class AbstractConfirmService implements ServiceInterface, Confir
             }
 
         }, (long) this.getTimeout() * 20L);
-    }
 
+    }
 
     @Override
     public void init() {
-        this.storage = new HashMap<>();
+        this.init((Integer) this.getConfigurationValue("service.confirm.timeout", 30));
     }
 
     @Override
     public void reload() {
-        this.init();
+        this.getPlugin().log(Level.WARNING, "Reloading of service confirm not supported");
     }
 
     /*

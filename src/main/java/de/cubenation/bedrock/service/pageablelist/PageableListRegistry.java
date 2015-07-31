@@ -24,7 +24,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
      * private constructor
      */
     private PageableListRegistry() {
-        timeout = BedrockPlugin.getInstance().getPluginConfigService().getConfig().getInt("service.pageablelist.timeout");
+        timeout = BedrockPlugin.getInstance().getConfigService().getConfig().getInt("service.pageablelist.timeout");
     }
 
     /*

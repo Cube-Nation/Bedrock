@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public abstract class AbstractRegistry {
 
@@ -50,4 +51,20 @@ public abstract class AbstractRegistry {
     public void _remove(BasePlugin plugin, String ident, CommandSender sender) {
         registry.remove(getRegistryIdentifier(plugin, ident, sender));
     }
+
+    @SuppressWarnings("unused")
+    public static int size() {
+        return registry.size();
+    }
+
+    @SuppressWarnings("unused")
+    public static boolean containsKey(BasePlugin plugin, String ident, CommandSender sender) {
+        return registry.containsKey(getRegistryIdentifier(plugin, ident, sender));
+    }
+
+    @SuppressWarnings("unused")
+    public static Set<String> keySet() {
+        return registry.keySet();
+    }
+
 }
