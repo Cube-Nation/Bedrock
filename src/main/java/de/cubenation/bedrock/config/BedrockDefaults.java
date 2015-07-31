@@ -50,6 +50,10 @@ public class BedrockDefaults extends CustomConfigurationFile {
         };
     }
 
+    public BedrockDefaults() {
+
+    }
+
     public BedrockDefaults(BasePlugin plugin, String name) {
         CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
         CONFIG_HEADER = getHeader();
