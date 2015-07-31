@@ -5,6 +5,7 @@ import de.cubenation.bedrock.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
 import net.cubespace.Yamler.Config.Path;
+import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 
@@ -77,11 +78,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
     })
     private String schemecolor_name         = "DEFAULT";
 
-    @Path("service.schemecolor.primarz")
+    @Path("service.schemecolor.primary")
     @Comment("The primary color")
     private String schemecolor_primary      = null;
 
-    @Path("service.schemecolor.secondazr")
+    @Path("service.schemecolor.secondary")
     @Comment("The secondary color")
     private String schemecolor_secondary    = null;
 
@@ -94,6 +95,44 @@ public class BedrockDefaults extends CustomConfigurationFile {
     private String schemecolor_text         = null;
 
 
+    public void setSchemecolorName(String name) {
+        this.schemecolor_name = name;
+    }
+
+    public void setSchemecolorPrimary(String name) {
+        this.schemecolor_primary = name.toUpperCase();
+    }
+
+    public void setSchemecolorPrimary(ChatColor color) {
+        this.setSchemecolorPrimary(color.getName());
+    }
+
+    public void setSchemecolorSecondary(String name) {
+        this.schemecolor_secondary = name.toUpperCase();
+    }
+
+    public void setSchemecolorSecondary(ChatColor color) {
+        this.setSchemecolorSecondary(color.getName());
+    }
+
+    public void setSchemecolorFlag(String name) {
+        this.schemecolor_flag = name.toUpperCase();
+    }
+
+    public void setSchemecolorFlag(ChatColor color) {
+        this.setSchemecolorFlag(color.getName());
+    }
+
+    public void setSchemecolorText(String name) {
+        this.schemecolor_text = name.toUpperCase();
+    }
+
+    public void setSchemecolorText(ChatColor color) {
+        this.setSchemecolorText(color.getName());
+    }
+
+
+
     /**
      * Confirm Service
      */
@@ -101,6 +140,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Path("service.confirm.timeout")
     @Comment("The timeout value. After this time a confirm command is being invalidated")
     private int confirm_timeout             = 30;
+
+    public void setConfirmTimeout(int timeout) {
+        this.confirm_timeout = timeout;
+    }
+
 
 
     /**
@@ -115,6 +159,15 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Comment("mount of entries per page.")
     private int getPageablelist_next_amount = 10;
 
+    public void setPageablelistTimeout(int timeout) {
+        this.pageablelist_timeout = timeout;
+    }
+
+    public void setGetPageablelistAextAmount(int next_amount) {
+        this.getPageablelist_next_amount = next_amount;
+    }
+
+
 
     /**
      * Localization Service
@@ -127,6 +180,15 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Path("service.localization.locale")
     @Comment("the default locale that is being represented by a file, e.g. de_DE represents locale/de_DE.yml.")
     private String localization_locale      = "en_US";
+
+    public void setLocalizationLocaleDir(String locale_dir) {
+        this.localization_locale_dir = locale_dir;
+    }
+
+    public void setLocalizationLocale(String locale) {
+        this.localization_locale = locale;
+    }
+
 
 
     /**
@@ -145,6 +207,19 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Comment("custom permission prefix. If left empty or undefined the lowercased plugin name will be taken as prefix.")
     private String permission_prefix        = "";
 
+    public void setPermissionFileName(String filename) {
+        this.permission_file_name = filename;
+    }
+
+    public void setPermission_grant_op(boolean grant_op) {
+        this.permission_grant_op = grant_op;
+    }
+
+    public void setPermissionPrefix(String prefix) {
+        this.permission_prefix = prefix;
+    }
+
+
 
     /**
      * Metrics service
@@ -154,6 +229,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Comment("Submit plugin metrics to mcstats.org. Defaults to true.")
     private boolean metrics_use             = false;
     //TODO: set to true for all plugins once the Bukkit/mcstats.org sites are set up
+
+    public void setMetricsUse(boolean metrics_use) {
+        this.metrics_use = metrics_use;
+    }
+
 
 
     /**

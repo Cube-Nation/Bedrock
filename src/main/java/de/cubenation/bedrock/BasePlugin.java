@@ -16,6 +16,8 @@ import de.cubenation.bedrock.service.permission.PermissionService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ import java.util.logging.Logger;
  * Package: de.cubenation.bedrock
  */
 public abstract class BasePlugin extends JavaPlugin {
+
+    private boolean intentionally_ready = false;
 
     private ServiceManager serviceManager;
 
@@ -63,6 +67,8 @@ public abstract class BasePlugin extends JavaPlugin {
 
             // register color scheme service
             this.serviceManager.registerService("colorscheme", new ColorSchemeService(this));
+
+            this.intentionally_ready = true;
 
             // register localization service
             this.serviceManager.registerService("localization", new LocalizationService(this));
@@ -164,7 +170,8 @@ public abstract class BasePlugin extends JavaPlugin {
         try {
             return this.serviceManager.getService(name);
         } catch (UnknownServiceException e) {
-            this.getLogger().log(Level.SEVERE, "[" + this.getDescription().getName() + "] Could not retrieve service: " + name);
+            if (this.intentionally_ready)
+                this.getLogger().log(Level.SEVERE, "[" + this.getDescription().getName() + "] Could not retrieve service: " + name);
         }
         return null;
     }
@@ -208,6 +215,26 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getService("localization");
+    }
+
+
+    /**
+     * Disabled Bukkit Commands
+     */
+    @Override
+    public final FileConfiguration getConfig() {
+        this.log(Level.SEVERE, "Access to Bukkit getConfig() is prohibited");
+        return null;
+    }
+
+    @Override
+    public final void saveConfig() {
+        this.log(Level.SEVERE, "Access to Bukkit saveConfig() is prohibited");
+    }
+
+    @Override
+    public final void reloadConfig() {
+        this.log(Level.SEVERE, "Access to Bukkit reloadConfig() is prohibited");
     }
 
 }

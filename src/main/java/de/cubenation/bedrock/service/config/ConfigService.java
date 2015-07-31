@@ -77,7 +77,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
             this.registerFile(new BedrockDefaults(this.getPlugin()));
     }
 
-    private boolean registerFile(CustomConfigurationFile file) {
+    public boolean registerFile(CustomConfigurationFile file) {
         boolean was_default = false;
         try {
             this.getPlugin().log(Level.INFO, "Registering configuration file " + file.getFilename());
@@ -100,6 +100,19 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     public YamlConfiguration getConfig(String name) {
         File file = new File(this.getPlugin().getDataFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
         return YamlConfiguration.loadConfiguration(file);
+    }
+
+    public void saveConfig() {
+        if (this.configuration_files == null)
+            return;
+
+        for (CustomConfigurationFile file : this.configuration_files) {
+            try {
+                file.save();
+            } catch (InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /*

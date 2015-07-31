@@ -10,6 +10,7 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.config.ConfigService;
+import de.cubenation.bedrock.service.config.CustomConfigurationFile;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -53,7 +54,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public void init() throws ServiceInitException {
-        Permissions permissions;
+        CustomConfigurationFile permissions;
         try {
             permissions = new Permissions(this.getPlugin());
             this.setPermissionsFilename(permissions.getFilename());
@@ -91,8 +92,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public void saveUnregisteredPermissions() {
         YamlConfiguration permissions;
         try {
-            permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
-        } catch (NoSuchRegisterableException e) {
+            permissions = this.config_service.getConfig(this.getPermissionsFilename());
+        } catch (NullPointerException e) {
             this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
             this.plugin.disable(e);
             return;
@@ -117,8 +118,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public void fixMissingPermissions() {
         YamlConfiguration permissions;
         try {
-            permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
-        } catch (NoSuchRegisterableException e) {
+            permissions = this.config_service.getConfig(this.getPermissionsFilename());
+        } catch (NullPointerException e) {
             this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
             this.plugin.disable(e);
             return;
@@ -165,7 +166,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             return;
 
         file.set(role, permissions);
-        file.save(CustomConfigurationRegistry.get(this.getPlugin(), this.permissions_filename, null).getFile());
+        // TODO: geht garantiert nicht so ..
+        this.config_service.saveConfig();
     }
 
     @SuppressWarnings("unchecked")
@@ -178,8 +180,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         // load permissions configuration file
         YamlConfiguration permissions;
         try {
-            permissions = CustomConfigurationRegistry.get(this.getPlugin(), this.getPermissionsFilename(), null).load();
-        } catch (NoSuchRegisterableException e) {
+            permissions = this.config_service.getConfig(this.getPermissionsFilename());
+        } catch (NullPointerException e) {
             this.plugin.log(Level.SEVERE, "Could not read permission file from Custom Configuration File Registry");
             this.plugin.disable(e);
             return;

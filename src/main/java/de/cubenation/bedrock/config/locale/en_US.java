@@ -17,7 +17,7 @@ public class en_US extends CustomConfigurationFile {
 
     @Override
     public void setFilename(BasePlugin plugin) {
-        this.filename = "locale" + System.getProperty("file.separator") + "en_USyml";
+        this.filename = "locale" + System.getProperty("file.separator") + "en_US.yml";
     }
 
 
