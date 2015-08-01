@@ -156,10 +156,12 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         return this.configuration_files.get(name);
     }
 
+    @Deprecated
     public YamlConfiguration getReadOnlyConfig() {
         return getReadOnlyConfig("config.yml");
     }
 
+    @Deprecated
     public YamlConfiguration getReadOnlyConfig(String name) {
         File file = new File(this.getPlugin().getDataFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
         return (file.exists()) ? YamlConfiguration.loadConfiguration(file) : null;

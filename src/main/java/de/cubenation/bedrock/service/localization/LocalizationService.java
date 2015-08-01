@@ -16,7 +16,7 @@ import java.util.logging.Level;
  *
  * @author Cube-Nation
  */
-public class LocalizationService extends AbstractService implements ServiceInterface {
+public final class LocalizationService extends AbstractService implements ServiceInterface {
 
     private String locale;
 
@@ -66,6 +66,16 @@ public class LocalizationService extends AbstractService implements ServiceInter
         this.relative_locale_file = relative_locale_file;
     }
 
+    @SuppressWarnings("deprecation")
+    /**
+     * We suppress deprecation warnings in here, because handling the access to locale strings
+     * is easier when we can use the built-in YAMLConfiguration methods.
+     *
+     * If we would use the Yamler features, the localization service could not easily access
+     * localized messages.
+     *
+     * In the future there will be an abstract LocalizationConfig class that can manage this stuff
+     */
     private void loadPluginLocaleFile() {
         this.plugin_data = this.getPlugin().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
 
@@ -77,6 +87,16 @@ public class LocalizationService extends AbstractService implements ServiceInter
             ));
     }
 
+    @SuppressWarnings("deprecation")
+    /**
+     * We suppress deprecation warnings in here, because handling the access to locale strings
+     * is easier when we can use the built-in YAMLConfiguration methods.
+     *
+     * If we would use the Yamler features, the localization service could not easily access
+     * localized messages.
+     *
+     * In the future there will be an abstract LocalizationConfig class that can manage this stuff
+     */
     private void loadBedrockLocaleFile() throws ServiceInitException {
         this.bedrock_data = BedrockPlugin.getInstance().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
 
