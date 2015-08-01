@@ -61,8 +61,6 @@ public class Permissions extends CustomConfigurationFile {
      * permissions (role based)
      */
 
-
-
     public void addPermission(String role, String permission) {
         if (permission == null)
             return;

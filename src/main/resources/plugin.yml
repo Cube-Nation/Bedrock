@@ -3,3 +3,5 @@ description: Cube-Nation Plugin Base
 main: de.cubenation.bedrock.BedrockPlugin
 name: Bedrock
 version: "${project.version}"
+depend:
+  - Yamler
