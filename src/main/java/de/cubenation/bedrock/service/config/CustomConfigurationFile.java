@@ -9,4 +9,8 @@ public abstract class CustomConfigurationFile extends Config {
 
     public CustomConfigurationFile(BasePlugin plugin, String name) { }
 
+    public CustomConfigurationFile get() {
+        return this;
+    }
+
 }

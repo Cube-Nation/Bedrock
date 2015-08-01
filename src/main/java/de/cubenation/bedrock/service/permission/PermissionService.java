@@ -11,10 +11,10 @@ import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.config.ConfigService;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -32,6 +32,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private HashMap<String, ArrayList<String>> permission_dump = new HashMap<>();
 
+    private final String no_role    = "no_role";
+
 
     public PermissionService(BasePlugin plugin) {
         super(plugin);
@@ -43,7 +45,10 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     }
 
     protected String getPermissionPrefix() {
-        return (String) this.getConfigurationValue("service.permission.prefix", "no_role");
+        return (String) this.getConfigurationValue(
+                "service.permission.prefix",
+                this.getPlugin().getDescription().getName().toLowerCase()
+        );
     }
 
     @Override
@@ -60,7 +65,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
 
         this.initializeCommandPermissions();
-        this.saveUnregisteredPermissions();
         this.loadPermissions();
     }
 
@@ -68,21 +72,13 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public void reload() throws ServiceReloadException {
         this.getPlugin().log(Level.INFO, "  permission service: reloading " + this.toString());
 
-        try {
-            this.config_service.registerFile(
-                    this.getPermissionFilename(),
-                    new Permissions(this.getPlugin(), this.getPermissionFilename())
-            );
-        } catch (Exception e) {
-            throw new ServiceReloadException(e.getMessage());
-        }
-
         this.initializeCommandPermissions();
-        this.saveUnregisteredPermissions();
         this.loadPermissions();
     }
 
-    public void initializeCommandPermissions() {
+    private void initializeCommandPermissions() {
+        this.unregistered_permissions = new ArrayList<>();
+
         for (CommandManager manager : this.getPlugin().getCommandService().getCommandMamagers()) {
             for (AbstractCommand command : manager.getCommands()) {
                 String permission = command.getPermission().getName();
@@ -93,141 +89,85 @@ public class PermissionService extends AbstractService implements ServiceInterfa
                 this.unregistered_permissions.add(permission);
             }
         }
+
+        this.fixPermissions();
     }
 
-    public void saveUnregisteredPermissions() {
-        YamlConfiguration permissions = this.config_service.getConfig(this.getPermissionFilename());
+    private void fixPermissions() {
+        // in case the plugin does not have any command permissions, we do not need to save them -> return
+        // TODO (future task): there will be plugins that require permissions on events. They have to be collected
+        // and registered in here, too
 
-        if (permissions == null) {
-            try {
-                this.config_service.saveConfig(this.getPermissionFilename());
-            } catch (InvalidConfigurationException e) {
-                this.plugin.disable(
-                        new InvalidConfigurationException("  permission service: Could not save empty permission file from config service")
-                );
-            }
-        }
+        Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
 
-        // this is where the plugin starts the first time (or someone deleted/emptied the permissions file)
-        boolean initial_state = false;
-        try {
-            initial_state = (
-                    permissions.getConfigurationSection("permissions").getKeys(false) == null ||
-                    permissions.getConfigurationSection("permissions").getKeys(false).size() == 0
-            );
-        } catch (NullPointerException e) {
-            initial_state = true;
-        }
+        // clean up default role
+        permissions.removeRole(this.no_role);
 
-        if (!initial_state)
-            return;
-
-        this.plugin.log(Level.INFO, "  permission service: Creating permissions from scratch");
-        try {
-            this.saveRolePermissions(permissions, this.getPermissionPrefix(), this.unregistered_permissions);
-
-        } catch (InvalidConfigurationException e) {
-            this.plugin.log(Level.SEVERE, "  permission service: Unable to save permissions");
-            this.plugin.disable(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void fixMissingPermissions() {
-        YamlConfiguration permissions = this.config_service.getConfig(this.getPermissionFilename());
-
-        if (permissions == null) {
-            this.plugin.disable(
-                    new InvalidConfigurationException("Could not read permission file from config service")
-            );
-            return;
-        }
-
-        ArrayList<String> missing_permissions = new ArrayList<>();
-
-        for (String permission : this.unregistered_permissions) {
-            boolean permission_exists = false;
-
-            for (String role : permissions.getConfigurationSection("permissions").getKeys(false)) {
-                if (
-                        permissions.getConfigurationSection("permissions").getList(role) == null ||
-                        permissions.getConfigurationSection("permission").getList(role).size() == 0
-                        ) {
-                    this.plugin.log(Level.WARNING, "  permission service: Empty permission role " + role + ". Ignoring role");
-                    continue;
-                }
-
-                if (permissions.getConfigurationSection("permissions").getString(role).contains(permission))
-                    permission_exists = true;
-            }
-
-            if (!permission_exists)
-                missing_permissions.add(permission);
-        }
-
-        if (missing_permissions.size() > 0) {
-            this.plugin.log(Level.WARNING, String.format("  permission service: Assigning %d permission to role %s",
-                    missing_permissions.size(),
-                    this.getPermissionPrefix()
+        // create all permissions from scratch in default role if
+        //   - the current permission file has no roles       (AND)
+        //   - plugin commands use permissions
+        if (permissions.getRoles().size() == 0 && this.unregistered_permissions.size() != 0) {
+            // no roles -> create all permissions in the default role
+            this.getPlugin().log(Level.INFO, String.format("Saving %d permissions in default role (%s)",
+                    this.unregistered_permissions.size(),
+                    this.no_role
             ));
+            permissions.addPermissions(this.no_role, this.unregistered_permissions);
+        }
 
-            try {
-                // save this section (role)
-                saveRolePermissions(permissions, this.getPermissionPrefix(), missing_permissions);
-            } catch (InvalidConfigurationException e) {
-                this.plugin.log(Level.SEVERE, "  permission service: Could not save permissions");
-                this.plugin.disable(e);
+
+        // there is at least one role in the file available.
+        // check if all permissions are assigned to a role and add missing roles to the default role
+        if (permissions.getRoles().size() > 0) {
+            for (String permission : this.unregistered_permissions) {
+                if (permissions.getRoleForPermission(permission) == null) {
+                    permissions.addPermission(this.no_role, permission);
+                }
             }
         }
-    }
 
-    private void saveRolePermissions(YamlConfiguration file, String role, ArrayList<String> permissions) throws InvalidConfigurationException {
-        if (permissions == null || permissions.size() == 0)
-            return;
 
-        file.set("permissions." + role, permissions);
-        this.config_service.saveConfig(this.getPermissionFilename());
+        // save all changes
+        try {
+            this.getPlugin().log(Level.INFO, "  permission service: saving permissions");
+            permissions.save();
+            permissions.reload();
+        } catch (InvalidConfigurationException e) {
+            this.getPlugin().log(Level.SEVERE, "  permission service: Could not save permission file", e);
+        }
     }
 
     @SuppressWarnings("unchecked")
     private void loadPermissions() {
-        // set permission prefix
-        String permission_prefix = (String) this.getConfigurationValue("service.permission.prefix", null);
-        if (permission_prefix == null || permission_prefix.isEmpty())
-            permission_prefix = this.getPlugin().getDescription().getName().toLowerCase();
 
-        // load permissions configuration file
-        YamlConfiguration permissions = this.config_service.getConfig(this.getPermissionFilename());
+        Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+        HashMap<String, List<String>> roled_permissions = permissions.getAll();
 
-        if (permissions == null) {
-            this.plugin.disable(new InvalidConfigurationException("Could not read permissions file from config service"));
-            return;
-        }
-
-        // Load formatted permissions
-        // & create permission_dump
+        this.permission_dump    = new HashMap<>();
         this.active_permissions = new HashMap<>();
-        this.permission_dump = new HashMap<>();
 
-        for (String role : permissions.getConfigurationSection("permissions").getKeys(false)) {
-            ArrayList<String> perm = (ArrayList<String>) permissions.getList(role);
+        for (final String role : roled_permissions.keySet()) {
 
-            ArrayList<String> formatted = new ArrayList<>();
+            String formaatted_role = (role.equals(this.no_role))
+                    ? role
+                    : String.format("%s.%s", this.getPermissionPrefix(), role);
 
-            for (String p : perm) {
-                if (role.equalsIgnoreCase(this.getPermissionPrefix())) {
-                    String formattedPermission = String.format("%s.%s", permission_prefix, p);
-                    active_permissions.put(p, formattedPermission);
-                    formatted.add(formattedPermission);
-                } else {
-                    String formattedPermission = String.format("%s.%s.%s", permission_prefix, role, p);
-                    active_permissions.put(p, formattedPermission);
-                    formatted.add(formattedPermission);
-                }
-            }
+            for (String permission : permissions.getPermissionsFor(role)) {
 
-            this.permission_dump.put(role, formatted);
-        }
+                String formatted_permission = (role.equals(this.no_role))
+                        ? String.format("%s.%s", this.getPermissionPrefix(), permission)
+                        : String.format("%s.%s.%s", this.getPermissionPrefix(), role, permission);
+
+                this.active_permissions.put(permission, formatted_permission);
+
+
+                if (!this.permission_dump.containsKey(formaatted_role))
+                    this.permission_dump.put(formaatted_role, new ArrayList<String>());
+
+                this.permission_dump.get(formaatted_role).add(formatted_permission);
+            } // for permission
+        } // for role
+
     }
 
     @SuppressWarnings("unchecked")

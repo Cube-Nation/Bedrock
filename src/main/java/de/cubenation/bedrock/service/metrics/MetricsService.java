@@ -18,7 +18,9 @@ public class MetricsService extends AbstractService implements ServiceInterface{
 
     @Override
     public void init() throws ServiceInitException {
-        if (!this.getPlugin().getConfigService().getConfig().getBoolean("service.metrics.use")) {
+
+
+        if (! ((boolean) this.getConfigurationValue("service.metrics.use", true)) ) {
             this.getPlugin().log(Level.WARNING, "  metrics service: Disabling metrics");
             return;
         }

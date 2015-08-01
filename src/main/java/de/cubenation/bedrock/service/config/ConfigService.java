@@ -149,33 +149,24 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     }
 
 
-    public YamlConfiguration getConfig() {
-        return getConfig("config.yml");
+    public CustomConfigurationFile getConfig(String name) {
+        if (name == null || !this.configuration_files.containsKey(name))
+            return null;
+
+        return this.configuration_files.get(name);
     }
 
-    public YamlConfiguration getConfig(String name) {
-/*
-        if (!this.configuration_files.containsKey(name))
-            return null;
+    public YamlConfiguration getReadOnlyConfig() {
+        return getReadOnlyConfig("config.yml");
+    }
 
-        CustomConfigurationFile file = this.configuration_files.get(name);
-        try {
-            file.reload();
-        } catch (InvalidConfigurationException e) {
-            return null;
-        }
-
-        net.cubespace.Yamler.Config.
- */
-
-
+    public YamlConfiguration getReadOnlyConfig(String name) {
         File file = new File(this.getPlugin().getDataFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
         return (file.exists()) ? YamlConfiguration.loadConfiguration(file) : null;
     }
 
 
     public void saveConfig(String name) throws InvalidConfigurationException {
-        System.out.println("calling save " + name);
         if (name == null || name.isEmpty())
             return;
 
@@ -186,17 +177,6 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         this.getPlugin().log(Level.INFO, "  config service: Saving configuration file " + name);
         file.save();
         file.reload();
-    }
-
-    public void saveConfig() throws InvalidConfigurationException {
-        if (this.configuration_files == null)
-            return;
-
-        Iterator it = this.configuration_files.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            this.saveConfig((String) pair.getKey());
-        }
     }
 
     /*

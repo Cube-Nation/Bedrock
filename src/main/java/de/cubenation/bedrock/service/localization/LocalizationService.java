@@ -67,7 +67,7 @@ public class LocalizationService extends AbstractService implements ServiceInter
     }
 
     private void loadPluginLocaleFile() {
-        this.plugin_data = this.getPlugin().getConfigService().getConfig(this.getRelativeLocaleFile());
+        this.plugin_data = this.getPlugin().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
 
         if (this.plugin_data == null)
             this.getPlugin().log(Level.SEVERE, String.format(
@@ -78,7 +78,7 @@ public class LocalizationService extends AbstractService implements ServiceInter
     }
 
     private void loadBedrockLocaleFile() throws ServiceInitException {
-        this.bedrock_data = BedrockPlugin.getInstance().getConfigService().getConfig(this.getRelativeLocaleFile());
+        this.bedrock_data = BedrockPlugin.getInstance().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
 
         if (this.bedrock_data == null)
             throw new ServiceInitException(String.format(

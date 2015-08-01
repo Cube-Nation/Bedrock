@@ -31,7 +31,7 @@ public class ColorSchemeService extends AbstractService implements ServiceInterf
     public void setColorScheme(ColorScheme.ColorSchemeName name) {
         this.scheme = (name != null)
                 ? ColorScheme.getColorScheme(this.getPlugin(), name)
-                : ColorScheme.getColorScheme(this.getPlugin(), this.getPlugin().getConfigService().getConfig().getString("service.colorscheme.name"));
+                : ColorScheme.getColorScheme(this.getPlugin(), this.getPlugin().getConfigService().getReadOnlyConfig().getString("service.colorscheme.name"));
     }
 
     public ColorScheme getColorScheme() {
