@@ -90,20 +90,39 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             }
         }
 
-        this.fixPermissions();
+        this.fixPermissions((Permissions) this.config_service.getConfig(this.getPermissionFilename()));
     }
 
-    private void fixPermissions() {
-        // in case the plugin does not have any command permissions, we do not need to save them -> return
-        // TODO (future task): there will be plugins that require permissions on events. They have to be collected
-        // and registered in here, too
+
+    @SuppressWarnings("unused")
+    public void registerPermission(String permission) {
+        this.registerPermission(this.no_role, permission);
+    }
+
+    public void registerPermission(String role, String permission) {
+        this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
 
         Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+        permissions.addPermission(role, permission);
 
-        // clean up default role
+        this.fixPermissions(permissions);
+
+        try {
+            permissions.save();
+            permissions.reload();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+
+        this.savePermissions(permissions);
+    }
+
+
+    private void fixPermissions(Permissions permissions) {
+        // clean up default role - will be restored in 2) if necessary
         permissions.removeRole(this.no_role);
 
-        // create all permissions from scratch in default role if
+        // 1) create all permissions from scratch in default role if
         //   - the current permission file has no roles       (AND)
         //   - plugin commands use permissions
         if (permissions.getRoles().size() == 0 && this.unregistered_permissions.size() != 0) {
@@ -116,7 +135,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
 
 
-        // there is at least one role in the file available.
+        // 2) there is at least one role in the file available.
         // check if all permissions are assigned to a role and add missing roles to the default role
         if (permissions.getRoles().size() > 0) {
             for (String permission : this.unregistered_permissions) {
@@ -126,7 +145,10 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             }
         }
 
+        this.savePermissions(permissions);
+    }
 
+    private void savePermissions(Permissions permissions) {
         // save all changes
         try {
             this.getPlugin().log(Level.INFO, "  permission service: saving permissions");

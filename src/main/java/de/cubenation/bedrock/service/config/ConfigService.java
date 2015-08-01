@@ -176,7 +176,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         File file = new File(this.getPlugin().getDataFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
         return (file.exists()) ? YamlConfiguration.loadConfiguration(file) : null;
     }
-    
+
     private boolean isValidPluginConfiguration() {
         try {
             return (this.getConfigurationValue("service.config.do_not_delete_me", null).equals(this.do_not_delete_me));
