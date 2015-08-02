@@ -39,6 +39,17 @@ public class MessageHelper {
         );
     }
 
+    public static void mustBePlayer(BasePlugin plugin, CommandSender commandSender) {
+        send(plugin, commandSender, new Translation(plugin, "must_be_player").getTranslation());
+    }
+
+    public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender, String player) {
+        send(plugin, commandSender, new Translation(
+                plugin, "no_such_player",
+                new String[]{"player", player}
+        ).getTranslation());
+    }
+
     public static void send(BasePlugin plugin, CommandSender sender, String message) {
         send(plugin, sender, new TextComponent(message));
     }
