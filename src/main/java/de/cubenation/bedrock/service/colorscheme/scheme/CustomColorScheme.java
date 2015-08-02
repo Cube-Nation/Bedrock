@@ -15,24 +15,29 @@ public class CustomColorScheme extends ColorScheme {
         );
     }
 
+    @SuppressWarnings("deprecation")
     public CustomColorScheme(BasePlugin plugin) {
         super(
                 ColorSchemeName.CUSTOM,
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("service.colorscheme.primary",
-                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getPrimary().toString())
+                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.primary",
+                                BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getPrimary().toString())
+
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("service.colorscheme.secondary",
-                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getSecondary().toString())
+                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.secondary",
+                                BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getSecondary().toString()
+                        )
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("service.colorscheme.flag",
-                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getFlag().toString())
+                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.flag",
+                                BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getFlag().toString()
+                        )
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfig().getString("service.colorscheme.text",
-                        BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getText().toString())
+                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.text",
+                                BedrockPlugin.getInstance().getColorSchemeService().getColorScheme().getText().toString()
+                        )
                 )
         );
     }

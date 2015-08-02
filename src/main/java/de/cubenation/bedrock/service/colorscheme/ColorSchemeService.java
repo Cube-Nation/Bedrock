@@ -28,6 +28,7 @@ public class ColorSchemeService extends AbstractService implements ServiceInterf
         }
     }
 
+    @SuppressWarnings("deprecation")
     public void setColorScheme(ColorScheme.ColorSchemeName name) {
         this.scheme = (name != null)
                 ? ColorScheme.getColorScheme(this.getPlugin(), name)
