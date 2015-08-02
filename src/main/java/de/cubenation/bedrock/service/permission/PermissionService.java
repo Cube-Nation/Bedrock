@@ -28,6 +28,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private ArrayList<String> unregistered_permissions = new ArrayList<>();
 
+    private HashMap<String, String> external_permissions = new HashMap<>();
+
     private HashMap<String, String> active_permissions = new HashMap<>();
 
     private HashMap<String, ArrayList<String>> permission_dump = new HashMap<>();
@@ -65,7 +67,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
 
         this.initializeCommandPermissions();
-        this.loadPermissions();
     }
 
     @Override
@@ -73,7 +74,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         this.getPlugin().log(Level.INFO, "  permission service: reloading " + this.toString());
 
         this.initializeCommandPermissions();
-        this.loadPermissions();
     }
 
     private void initializeCommandPermissions() {
@@ -102,24 +102,16 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public void registerPermission(String role, String permission) {
         this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
 
-        Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
-        permissions.addPermission(role, permission);
+        this.external_permissions.put(role, permission);
 
-        this.fixPermissions(permissions);
-
-        try {
-            permissions.save();
-            permissions.reload();
-        } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
-        }
-
-        this.savePermissions(permissions);
+        this.fixPermissions(null);
     }
 
-
     private void fixPermissions(Permissions permissions) {
-        // clean up default role - will be restored in 2) if necessary
+        if (permissions == null)
+            permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+
+        // clean up default role - will be restored in 3) if necessary
         permissions.removeRole(this.no_role);
 
         // 1) create all permissions from scratch in default role if
@@ -127,15 +119,15 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         //   - plugin commands use permissions
         if (permissions.getRoles().size() == 0 && this.unregistered_permissions.size() != 0) {
             // no roles -> create all permissions in the default role
-            this.getPlugin().log(Level.INFO, String.format("Saving %d permissions in default role (%s)",
-                    this.unregistered_permissions.size(),
-                    this.no_role
-            ));
             permissions.addPermissions(this.no_role, this.unregistered_permissions);
         }
 
+        // add external permissions that have been added via the registerPermission() methods
+        for (String role : this.external_permissions.keySet()) {
+            permissions.addPermission(role, this.external_permissions.get(role));
+        }
 
-        // 2) there is at least one role in the file available.
+        // 3) there is at least one role in the file available.
         // check if all permissions are assigned to a role and add missing roles to the default role
         if (permissions.getRoles().size() > 0) {
             for (String permission : this.unregistered_permissions) {
@@ -157,6 +149,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         } catch (InvalidConfigurationException e) {
             this.getPlugin().log(Level.SEVERE, "  permission service: Could not save permission file", e);
         }
+
+        this.loadPermissions();
     }
 
     @SuppressWarnings("unchecked")
