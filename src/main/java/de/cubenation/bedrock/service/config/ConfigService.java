@@ -118,6 +118,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
             Constructor<?> constructor = clazz.getConstructor(BasePlugin.class, String.class);
             return (CustomConfigurationFile) constructor.newInstance(plugin, name);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new InstantiationException("Could not instantiate class " + class_name);
         }
     }
