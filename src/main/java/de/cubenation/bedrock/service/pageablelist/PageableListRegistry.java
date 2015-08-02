@@ -23,6 +23,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
     /*
      * private constructor
      */
+    @SuppressWarnings("deprecation")
     private PageableListRegistry() {
         timeout = BedrockPlugin.getInstance().getConfigService().getReadOnlyConfig().getInt("service.pageablelist.timeout");
     }
@@ -38,12 +39,15 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
     public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, AbstractPageableListService object) {
         getInstance()._register(plugin, ident, sender, object);
 
-        Bukkit.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-            public void run() {
-                PageableListRegistry registry = PageableListRegistry.getInstance();
-                registry.remove(plugin, ident, sender);
-            }
-        }, 60L, (long) 20 * timeout);
+        // if the timeout is zero, the list is valid until a new list is registered for this CommandSender
+        if (timeout > 0) {
+            Bukkit.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+                public void run() {
+                    PageableListRegistry registry = PageableListRegistry.getInstance();
+                    remove(plugin, ident, sender);
+                }
+            }, 60L, (long) 20 * timeout);
+        }
     }
 
     public static boolean exists(BasePlugin plugin, String ident, CommandSender sender) {
