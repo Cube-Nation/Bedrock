@@ -28,11 +28,11 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private ArrayList<String> unregistered_permissions = new ArrayList<>();
 
-    private HashMap<String, String> external_permissions = new HashMap<>();
-
     private HashMap<String, String> active_permissions = new HashMap<>();
 
     private HashMap<String, ArrayList<String>> permission_dump = new HashMap<>();
+
+    private HashMap<String, ArrayList<String>> external_permissions = new HashMap<>();
 
     private final String no_role    = "no_role";
 
@@ -102,17 +102,35 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public void registerPermission(String role, String permission) {
         this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
 
-        this.external_permissions.put(role, permission);
+        // save for later in fixPermissions()
+        if (!this.external_permissions.containsKey(role))
+            this.external_permissions.put(role, new ArrayList<String>());
 
-        this.fixPermissions(null);
+        if (!this.external_permissions.get(role).contains(permission))
+            this.external_permissions.get(role).add(permission);
+
+        Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+        String saved_role = permissions.getRoleForPermission(permission);
+
+        // permission is not assigned to any role -> save permission in given role
+        if (saved_role == null) {
+            permissions.addPermission(role, permission);
+
+        // permission is already assigned to a role -> leave as is
+        } else {
+            return;
+        }
+
+        this.savePermissions(permissions);
     }
 
     private void fixPermissions(Permissions permissions) {
         if (permissions == null)
             permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
 
-        // clean up default role - will be restored in 3) if necessary
+        // clean up default role - will be restored if necessary
         permissions.removeRole(this.no_role);
+
 
         // 1) create all permissions from scratch in default role if
         //   - the current permission file has no roles       (AND)
@@ -122,9 +140,13 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             permissions.addPermissions(this.no_role, this.unregistered_permissions);
         }
 
-        // add external permissions that have been added via the registerPermission() methods
+        // 2) check external permissions
+        // if they have no role assigned, save them in the desired role
         for (String role : this.external_permissions.keySet()) {
-            permissions.addPermission(role, this.external_permissions.get(role));
+            for (String permission : this.external_permissions.get(role)) {
+                if (permissions.getRoleForPermission(permission) == null)
+                    permissions.addPermission(role, permission);
+            }
         }
 
         // 3) there is at least one role in the file available.
