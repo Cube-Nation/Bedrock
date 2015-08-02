@@ -55,10 +55,10 @@ public class de_DE extends CustomConfigurationFile {
     private String command_invalid                  = "%plugin_prefix%&RESET& &RED&Ungültiger Befehl";
 
     @Path("must_be_player")
-    private String must_be_player                   = "%plugin_prefix&&RESET& &RED&Um diesen Befehl zu verwenden musst Du im Spiel sein";
+    private String must_be_player                   = "%plugin_prefix%&RESET& &RED&Um diesen Befehl zu verwenden musst Du im Spiel sein";
 
     @Path("no_such_player")
-    private String no_such_player                   = "%plugin_prefix&&RESET& &RED&Spieler %player% nicht gefunden";
+    private String no_such_player                   = "%plugin_prefix%&RESET& &RED&Spieler &SECONDARY&%player% &RED&nicht gefunden";
 
     /*
      * Help messages

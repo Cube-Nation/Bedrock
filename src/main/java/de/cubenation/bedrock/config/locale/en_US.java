@@ -55,10 +55,10 @@ public class en_US extends CustomConfigurationFile {
     private String command_invalid                  = "%plugin_prefix%&RESET& &RED&Unknown command";
 
     @Path("must_be_player")
-    private String must_be_player                   = "%plugin_prefix&&RESET& &RED&You must be ingame to use this command";
+    private String must_be_player                   = "%plugin_prefix%&RESET& &RED&You must be ingame to use this command";
 
     @Path("no_such_player")
-    private String no_such_player                   = "%plugin_prefix&&RESET& &RED&Player %player% not found";
+    private String no_such_player                   = "%plugin_prefix%&RESET& &RED&Player &SECONDARY&%player% &RED&not found";
 
     /*
      * Help messages

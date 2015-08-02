@@ -119,7 +119,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
             return (CustomConfigurationFile) constructor.newInstance(plugin, name);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InstantiationException("Could not instantiate class " + class_name);
+            throw new InstantiationException("Could not instantiate class " + class_name + ": " + e.getMessage());
         }
     }
 
