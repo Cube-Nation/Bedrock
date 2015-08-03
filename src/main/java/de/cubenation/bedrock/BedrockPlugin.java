@@ -5,7 +5,8 @@ import de.cubenation.bedrock.config.BedrockDefaults;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
-import de.cubenation.bedrock.listener.PlayerJoinListener;
+import de.cubenation.bedrock.ebean.BedrockWorld;
+import de.cubenation.bedrock.listener.EbeanListener;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import javax.persistence.PersistenceException;
@@ -47,14 +48,17 @@ public class BedrockPlugin extends BasePlugin {
 
         // install database table
         try {
-            getDatabase().find(BedrockPlayer.class).findRowCount();
+            this.getDatabase().find(BedrockPlayer.class).findRowCount();
+            this.getDatabase().find(BedrockWorld.class).findRowCount();
         } catch (PersistenceException e) {
             getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
             installDDL();
         }
 
-        // register player join event for bedrock players management
-        this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        // register events for creation of
+        //  - a BedrockPlayer - fired when a player joins the server
+        //  - a Bedrockorld - fired when a world is loaded
+        this.getServer().getPluginManager().registerEvents(new EbeanListener(), this);
     }
 
     @Override
@@ -79,6 +83,7 @@ public class BedrockPlugin extends BasePlugin {
     public List<Class<?>> getDatabaseClasses() {
         return new ArrayList<Class<?>>() {{
             add(BedrockPlayer.class);
+            add(BedrockWorld.class);
         }};
     }
 

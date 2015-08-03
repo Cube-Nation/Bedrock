@@ -42,9 +42,19 @@ public class BedrockPlayer {
         this.uuid = uuid;
     }
 
+
+    public void setPlayer(UUID uuid) {
+        this.setUuid(uuid.toString());
+    }
+
+    public void setPlayer(Player player) {
+        this.setUuid(player.getUniqueId().toString());
+    }
+
     public Player getPlayer() {
         return Bukkit.getPlayer(UUID.fromString(this.uuid));
     }
+
 
     public void save() {
         BedrockPlugin.getInstance().getDatabase().save(this);
