@@ -4,12 +4,14 @@ import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.config.BedrockDefaults;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
-import de.cubenation.bedrock.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.ebean.BedrockPlayer;
+import de.cubenation.bedrock.listener.PlayerJoinListener;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
-import java.lang.reflect.Constructor;
+import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -34,6 +36,7 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     public void onPostEnable() {
+        // create default configuration
         try {
             BedrockDefaults bd = new BedrockDefaults(this, null);
             bd.init();
@@ -41,6 +44,17 @@ public class BedrockPlugin extends BasePlugin {
             this.log(Level.SEVERE, "Error creating config.yml", e);
             this.disable(e);
         }
+
+        // install database table
+        try {
+            getDatabase().find(BedrockPlayer.class).findRowCount();
+        } catch (PersistenceException e) {
+            getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
+            installDDL();
+        }
+
+        // register player join event for bedrock players management
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
     }
 
     @Override
@@ -53,6 +67,18 @@ public class BedrockPlugin extends BasePlugin {
         return new HashMap<String, String>() {{
             put("locale" + System.getProperty("file.separator") + "en_US.yml", en_US.class.getName());
             put("locale" + System.getProperty("file.separator") + "de_DE.yml", de_DE.class.getName());
+        }};
+    }
+
+    /**
+     * Returns the database class that handles player mapping
+     *
+     * @return List<Class<?>> database classes
+     */
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+        return new ArrayList<Class<?>>() {{
+            add(BedrockPlayer.class);
         }};
     }
 
