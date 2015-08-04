@@ -12,4 +12,8 @@ public class BedrockEbeanEntityNotFoundException extends IOException {
         super(String.format("Could not find bedrock ebean entity %s for UUID %s", clazz.toString(), uuid));
     }
 
+    public BedrockEbeanEntityNotFoundException(Class clazz, int id) {
+        super(String.format("Could not find bedrock ebean entity %s for id %s", clazz.toString(), id));
+    }
+
 }
