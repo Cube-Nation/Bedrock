@@ -17,6 +17,7 @@ public class VersionTokenizer {
         return _suffix;
     }
 
+    @SuppressWarnings("unused")
     public boolean hasValue() {
         return _hasValue;
     }
