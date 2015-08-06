@@ -9,7 +9,6 @@ import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.service.command.CommandService;
 import de.cubenation.bedrock.service.config.ConfigService;
-import de.cubenation.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.metrics.MetricsService;
 import de.cubenation.bedrock.service.permission.PermissionService;
@@ -17,7 +16,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -122,8 +120,12 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     public String getMessagePrefix(String plugin) {
-        if (this.getColorSchemeService() == null)
-            return "["+plugin+"]";
+        try {
+            if (this.getColorSchemeService() == null)
+                return "[" + plugin + "]";
+        } catch (NullPointerException e) {
+            return "[" + plugin + "]";
+        }
 
         return
                 this.getColorSchemeService().getColorScheme().getFlag() + "[" +

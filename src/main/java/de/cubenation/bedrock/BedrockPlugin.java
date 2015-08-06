@@ -6,6 +6,7 @@ import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
 import de.cubenation.bedrock.ebean.BedrockWorld;
+import de.cubenation.bedrock.helper.version.VersionComparator;
 import de.cubenation.bedrock.listener.EbeanListener;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
@@ -32,8 +33,9 @@ public class BedrockPlugin extends BasePlugin {
         return instance;
     }
 
-    public void onPreEnable() {
+    public void onPreEnable() throws Exception {
         setInstance(this);
+        this.checkYamlerVersion();
     }
 
     public void onPostEnable() {
@@ -85,6 +87,22 @@ public class BedrockPlugin extends BasePlugin {
             add(BedrockPlayer.class);
             add(BedrockWorld.class);
         }};
+    }
+
+    private void checkYamlerVersion() throws Exception {
+        String required_yamler_version = "2.3.1";
+
+        VersionComparator cmp = new VersionComparator();
+        String yamler_version = this.getPlugin("Yamler").getDescription().getVersion().toString();
+        if (yamler_version.matches(".+-.+"))
+            yamler_version = yamler_version.split("-")[0];
+
+        int result = cmp.compare(yamler_version, required_yamler_version);
+        if (result < 0)
+            throw new Exception(String.format(
+                    "Bedrock dependency error: You need at least version %s of the Yamler-Bukkit plugin",
+                    required_yamler_version
+            ));
     }
 
 }
