@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 /**
  * Created by Tristan Cebulla <equinox@lichtspiele.org> on 04.08.2015.
@@ -43,7 +44,7 @@ public class BedrockWorld {
     }
 
     public World getWorld() {
-        return Bukkit.getWorld(this.uuid);
+        return Bukkit.getWorld(UUID.fromString(this.uuid));
     }
 
     public String getWorldName() {
