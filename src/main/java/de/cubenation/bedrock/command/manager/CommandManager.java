@@ -95,10 +95,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             MessageHelper.invalidCommand(this.plugin, commandSender);
 
             TextComponent component_help = commandToExecute.getBeautifulHelp(commandSender);
-            if (component_help == null)
+            if (component_help == null) {
                 MessageHelper.insufficientPermission(this.plugin, commandSender);
-            else
+            } else {
                 MessageHelper.send(this.plugin, commandSender, component_help);
+            }
+            return true;
         }
 
         // unknown command
