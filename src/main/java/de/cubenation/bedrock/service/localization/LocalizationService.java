@@ -9,6 +9,8 @@ import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -116,6 +118,15 @@ public final class LocalizationService extends AbstractService implements Servic
         return this.getTranslationFromBedrock(path, args);
     }
 
+    public String[] getTranslationStrings(String path, String[] args) throws LocalizationNotFoundException {
+        try {
+            return this.getTranslationStringsFromPlugin(path, args);
+        } catch (LocalizationNotFoundException ignored) {
+        }
+
+        return this.getTranslationStringsFromBedrock(path, args);
+    }
+
     private String getTranslationFromPlugin(String path, String[] args) throws LocalizationNotFoundException {
         if (this.plugin_data == null)
             return null;
@@ -129,7 +140,7 @@ public final class LocalizationService extends AbstractService implements Servic
     }
 
     private String getTranslationFromBedrock(String path, String[] args) throws LocalizationNotFoundException {
-        if (this.plugin_data == null)
+        if (this.bedrock_data == null)
             return null;
 
         String s = this.bedrock_data.getString(path);
@@ -138,6 +149,46 @@ public final class LocalizationService extends AbstractService implements Servic
         }
 
         return this.applyArgs(s, args);
+    }
+
+    private String[] getTranslationStringsFromPlugin(String path, String[] args) throws LocalizationNotFoundException {
+        if (this.plugin_data == null)
+            return null;
+
+        List<String> list = (List<String>) this.plugin_data.getList(path);
+        if (list == null || list.size() == 0) {
+            throw new LocalizationNotFoundException(path);
+        }
+
+        // create a copy!
+        List<String> out = new ArrayList<>();
+        for (int i = 1; i <= list.size(); i++) {
+            out.add(this.applyArgs(list.get(i - 1), args));
+        }
+
+        String[] s = new String[out.size()];
+        s = out.toArray(s);
+        return s;
+    }
+
+    private String[] getTranslationStringsFromBedrock(String path, String[] args) throws LocalizationNotFoundException {
+        if (this.bedrock_data == null)
+            return null;
+
+        List<String> list = (List<String>) this.bedrock_data.getList(path);
+        if (list == null || list.size() == 0) {
+            throw new LocalizationNotFoundException(path);
+        }
+
+        // create a copy!
+        List<String> out = new ArrayList<>();
+        for (int i = 1; i <= list.size(); i++) {
+            out.add(this.applyArgs(list.get(i - 1), args));
+        }
+
+        String[] s = new String[out.size()];
+        s = out.toArray(s);
+        return s;
     }
 
     /*
