@@ -22,6 +22,8 @@ public class BedrockPlayer {
     @Column(unique=true, nullable=false)
     private String uuid;
 
+    private String username;
+
     public Integer getId() {
         return id;
     }
@@ -31,17 +33,24 @@ public class BedrockPlayer {
     }
 
     public UUID getUUID() {
-        return UUID.fromString(uuid);
+        return UUID.fromString(this.uuid);
     }
 
     public String getUuid() {
-        return uuid;
+        return this.uuid;
     }
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 
+    public String getUsername() {
+        return this.username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public void setPlayer(UUID uuid) {
         this.setUuid(uuid.toString());
@@ -54,7 +63,6 @@ public class BedrockPlayer {
     public Player getPlayer() {
         return Bukkit.getPlayer(UUID.fromString(this.uuid));
     }
-
 
     public void save() {
         BedrockPlugin.getInstance().getDatabase().save(this);

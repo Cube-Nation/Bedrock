@@ -10,8 +10,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.List;
-
 /**
  * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
  */
@@ -20,7 +18,6 @@ public class EbeanListener implements Listener {
 
     @EventHandler(priority= EventPriority.MONITOR)
     public void onPlayerJoinEvent(final PlayerJoinEvent event) {
-
         // run this as async task
         new BukkitRunnable() {
 
@@ -28,19 +25,19 @@ public class EbeanListener implements Listener {
             public void run() {
 
                 String uuid = event.getPlayer().getUniqueId().toString();
-                List<BedrockPlayer> list = BedrockPlugin.getInstance().getDatabase()
+                BedrockPlayer bp = BedrockPlugin.getInstance().getDatabase()
                         .find(BedrockPlayer.class)
                         .where()
                         .eq("uuid", uuid)
-                        .findList();
+                        .findUnique();
 
-                if (list.size() > 0)
-                    return;
+                if (bp == null) {
+                    bp = new BedrockPlayer();
+                    bp.setUuid(uuid);
+                }
 
-                // save player to table
-                BedrockPlayer player = new BedrockPlayer();
-                player.setUuid(uuid);
-                player.save();
+                bp.setUsername(event.getPlayer().getName());
+                bp.save();
             }
 
         }.runTaskAsynchronously(BedrockPlugin.getInstance());
@@ -48,9 +45,6 @@ public class EbeanListener implements Listener {
 
     @EventHandler(priority= EventPriority.MONITOR)
     public void onWorldInit(final WorldInitEvent event) {
-
-        System.out.println("world load event fired");
-
         // run this as async task
         new BukkitRunnable() {
 
@@ -58,19 +52,18 @@ public class EbeanListener implements Listener {
             public void run() {
 
                 String uuid = event.getWorld().getUID().toString();
-                List<BedrockWorld> list = BedrockPlugin.getInstance().getDatabase()
+                BedrockWorld bw = BedrockPlugin.getInstance().getDatabase()
                         .find(BedrockWorld.class)
                         .where()
                         .eq("uuid", uuid)
-                        .findList();
+                        .findUnique();
 
-                if (list.size() > 0)
-                    return;
-
-                // save player to table
-                BedrockWorld player = new BedrockWorld();
-                player.setUuid(uuid);
-                player.save();
+                if (bw == null) {
+                    // save to table
+                    bw = new BedrockWorld();
+                    bw.setUuid(uuid);
+                    bw.save();
+                }
             }
 
         }.runTaskAsynchronously(BedrockPlugin.getInstance());
