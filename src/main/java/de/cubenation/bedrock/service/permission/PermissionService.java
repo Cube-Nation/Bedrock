@@ -215,7 +215,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         return  (sender.isOp() && op_has_permission) ||
                 permission == null ||
                 permission.isEmpty() ||
-                this.active_permissions.containsKey(permission) && sender.hasPermission(this.active_permissions.get(permission));
+                (this.active_permissions.containsKey(permission) && sender.hasPermission(this.active_permissions.get(permission)));
     }
 
     @SuppressWarnings("unchecked")

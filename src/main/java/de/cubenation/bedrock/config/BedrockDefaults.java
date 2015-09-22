@@ -192,7 +192,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Comment("File where all permissions are stored and read from.")
     private String permission_file_name     = "permissions.yml";
 
-    @Path("service.permission.grant_all_permssions_to_op")
+    @Path("service.permission.grant_all_permissions_to_op")
     @Comment("Does Operators have all permissions? Valid values are true or false.")
     private boolean permission_grant_op     = true;
 
