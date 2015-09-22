@@ -212,7 +212,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public boolean hasPermission(CommandSender sender, String permission) {
         Boolean op_has_permission = (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true);
 
-        return  sender.isOp() && op_has_permission ||
+        return  (sender.isOp() && op_has_permission) ||
                 permission == null ||
                 permission.isEmpty() ||
                 this.active_permissions.containsKey(permission) && sender.hasPermission(this.active_permissions.get(permission));
