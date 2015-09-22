@@ -95,6 +95,13 @@ public abstract class AbstractCommand {
 
     public abstract TextComponent getBeautifulHelp(CommandSender sender);
 
+    public boolean displayInHelp() {
+        return true;
+    }
+
+    public boolean displayInCompletion() {
+        return true;
+    }
 
     /**
      * Returns if the Sender has permission.

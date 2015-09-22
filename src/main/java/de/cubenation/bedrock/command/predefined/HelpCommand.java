@@ -51,7 +51,7 @@ public class HelpCommand extends Command {
             // create help for each subcommand
             // =========================
 
-            for (AbstractCommand command : commandManager.getCommands()) {
+            for (AbstractCommand command : commandManager.getHelpCommands()) {
                 TextComponent component_help = command.getBeautifulHelp(sender);
                 if (component_help != null)
                     MessageHelper.send(this.plugin, sender, component_help);
@@ -67,11 +67,10 @@ public class HelpCommand extends Command {
             // Send help for special command
 
             ArrayList<AbstractCommand> helpList = new ArrayList<>();
-            for (AbstractCommand command : getCommandManager().getCommands()) {
+            for (AbstractCommand command : getCommandManager().getHelpCommands()) {
                 if (command instanceof HelpCommand) {
                     continue;
                 }
-
                 if (isValidHelpTrigger(command, args)) {
                     helpList.add(command);
                 }
@@ -80,7 +79,7 @@ public class HelpCommand extends Command {
             sendHeader(sender, label);
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
-                for (AbstractCommand command : commandManager.getCommands()) {
+                for (AbstractCommand command : commandManager.getHelpCommands()) {
                     MessageHelper.send(
                             this.getPlugin(),
                             sender,
@@ -132,7 +131,7 @@ public class HelpCommand extends Command {
     public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
 
         if (args.length > 1) {
-            // Tab COmpletion for each command to display special help
+            // Tab Completion for each command to display special help
             // like
             // /plugin help version
             // /plugin help reload
@@ -153,6 +152,14 @@ public class HelpCommand extends Command {
                     continue;
                 }
 
+                if (!cmd.displayInHelp()) {
+                    continue;
+                }
+
+                if (!cmd.displayInCompletion()) {
+                    continue;
+                }
+
                 ArrayList tabCom = cmd.getTabCompletion(arrayList.toArray(new String[arrayList.size()]), sender);
                 if (tabCom != null) {
                     list.addAll(tabCom);
@@ -161,11 +168,7 @@ public class HelpCommand extends Command {
 
             // Remove duplicates.
             Set<String> set = new HashSet<>(list);
-            if (set.isEmpty()) {
-                return null;
-            } else {
-                return new ArrayList<>(set);
-            }
+            return set.isEmpty() ? null : new ArrayList<>(set);
 
         } else {
             return super.getTabCompletion(args, sender);

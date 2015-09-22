@@ -112,7 +112,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     @SuppressWarnings("unchecked")
     public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
         ArrayList<String> list = new ArrayList<>();
-        for (AbstractCommand cmd : getCommands()) {
+        for (AbstractCommand cmd : getCompletionCommands()) {
             if (!cmd.hasPermission(sender)) {
                 continue;
             }
@@ -131,6 +131,25 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
     }
 
+    public List<AbstractCommand> getHelpCommands() {
+        ArrayList<AbstractCommand> helpCommands = new ArrayList<>();
+        for (AbstractCommand command : getCommands()) {
+            if (command.displayInHelp()) {
+                helpCommands.add(command);
+            }
+        }
+        return helpCommands;
+    }
+
+    public List<AbstractCommand> getCompletionCommands() {
+        ArrayList<AbstractCommand> completionCommands = new ArrayList<>();
+        for (AbstractCommand command : getCommands()) {
+            if (command.displayInCompletion()) {
+                completionCommands.add(command);
+            }
+        }
+        return completionCommands;
+    }
 
     //region Getter
     public BasePlugin getPlugin() {
