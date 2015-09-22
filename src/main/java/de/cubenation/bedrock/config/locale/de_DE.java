@@ -10,9 +10,19 @@ import java.io.File;
 @SuppressWarnings("unused")
 public class de_DE extends CustomConfigurationFile {
 
-    public de_DE(BasePlugin plugin, String name) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), name);
+    public static String getFilename() {
+        return "locale" + File.separator + "de_DE.yml";
     }
+
+    public de_DE(BasePlugin plugin, String filename) {
+        CONFIG_FILE = new File(plugin.getDataFolder(), filename);
+    }
+
+    public de_DE(BasePlugin plugin) {
+        this(plugin, getFilename());
+    }
+
+
 
 
     @Path("version")
@@ -106,5 +116,36 @@ public class de_DE extends CustomConfigurationFile {
     */
     @Path("page.design.header")
     private String page_design_header               = "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======";
+
+
+
+
+    /*
+     * Bedrock Commands
+     */
+
+    // Toggle NameChange
+
+    @Path("command.namechange.toggle.desc")
+    private String command_namechange_toggle_desc = "Schaltet die Namensänderungs-Meldung an oder aus";
+
+    @Path("command.namechange.toggle.args.toggle")
+    private String command_namechange_toggle_args_toggle = "Ein oder Aus";
+
+
+    // Messages
+
+    @Path("namechange.notify.message")
+    private String namechange_notify_message = "%plugin_prefix%&RESET& &PRIMARY&%oldName% &SECONDARY&heißt jetzt &PRIMARY&%newName%";
+
+    @Path("namechange.toggle.message")
+    private String namechange_toggle_message = "%plugin_prefix%&RESET& &TEXT&Nachrichten über Namensänderungen wurden &SECONDARY&%toggle%";
+
+    @Path("namechange.toggle.enabled")
+    private String namechange_toggle_on = "aktiviert";
+
+    @Path("namechange.toggle.disabled")
+    private String namechange_toggle_off = "deaktiviert";
+
 
 }

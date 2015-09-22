@@ -71,8 +71,8 @@ public class BedrockPlugin extends BasePlugin {
     @Override
     public HashMap<String, String> getCustomConfigurationFiles() {
         return new HashMap<String, String>() {{
-            put("locale" + System.getProperty("file.separator") + "en_US.yml", en_US.class.getName());
-            put("locale" + System.getProperty("file.separator") + "de_DE.yml", de_DE.class.getName());
+            put(de_DE.getFilename(), de_DE.class.getName());
+            put(en_US.getFilename(), en_US.class.getName());
         }};
     }
 
