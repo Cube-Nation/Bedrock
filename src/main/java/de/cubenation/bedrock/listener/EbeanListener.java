@@ -3,6 +3,7 @@ package de.cubenation.bedrock.listener;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
 import de.cubenation.bedrock.ebean.BedrockWorld;
+import de.cubenation.bedrock.event.PlayerChangesNameEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -16,7 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 public class EbeanListener implements Listener {
 
-    @EventHandler(priority= EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoinEvent(final PlayerJoinEvent event) {
         // run this as async task
         new BukkitRunnable() {
@@ -36,6 +37,14 @@ public class EbeanListener implements Listener {
                     bp.setUuid(uuid);
                 }
 
+                if (bp.getUsername() != null && !bp.getUsername().equals(event.getPlayer().getName())) {
+                    PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
+                            event.getPlayer(),
+                            bp.getUsername(),
+                            event.getPlayer().getName());
+                    BedrockPlugin.getInstance().getServer().getPluginManager().callEvent(playerChangesNameEvent);
+                }
+
                 bp.setUsername(event.getPlayer().getName());
                 bp.save();
             }
@@ -43,7 +52,7 @@ public class EbeanListener implements Listener {
         }.runTaskAsynchronously(BedrockPlugin.getInstance());
     }
 
-    @EventHandler(priority= EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onWorldInit(final WorldInitEvent event) {
         // run this as async task
         new BukkitRunnable() {
