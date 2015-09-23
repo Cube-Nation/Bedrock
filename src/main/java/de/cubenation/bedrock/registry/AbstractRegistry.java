@@ -28,7 +28,6 @@ public abstract class AbstractRegistry {
         return StringUtils.join(list, "|");
     }
 
-
     /*
      * register object
      */
