@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.ebean;
 
+import com.avaje.ebean.validation.NotNull;
 import de.cubenation.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,6 +23,7 @@ public class BedrockPlayer {
     @Column(unique=true, nullable=false)
     private String uuid;
 
+    @NotNull
     private String username;
 
     public Integer getId() {

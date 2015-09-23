@@ -37,7 +37,8 @@ public class EbeanListener implements Listener {
                     bp.setUuid(uuid);
                 }
 
-                if (bp.getUsername() != null && !bp.getUsername().equals(event.getPlayer().getName())) {
+                // fire name change event
+                if (!bp.getUsername().equals(event.getPlayer().getName())) {
                     PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
                             event.getPlayer(),
                             bp.getUsername(),
