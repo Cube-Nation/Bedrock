@@ -93,7 +93,7 @@ public class BedrockPlugin extends BasePlugin {
         String required_yamler_version = "2.3.1";
 
         VersionComparator cmp = new VersionComparator();
-        String yamler_version = this.getPlugin("Yamler").getDescription().getVersion().toString();
+        String yamler_version = this.getPlugin("Yamler").getDescription().getVersion();
         if (yamler_version.matches(".+-.+"))
             yamler_version = yamler_version.split("-")[0];
 
