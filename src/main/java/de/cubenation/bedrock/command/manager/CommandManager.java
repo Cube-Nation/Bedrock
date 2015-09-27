@@ -2,10 +2,7 @@ package de.cubenation.bedrock.command.manager;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
-import de.cubenation.bedrock.command.predefined.HelpCommand;
-import de.cubenation.bedrock.command.predefined.PermissionCommand;
-import de.cubenation.bedrock.command.predefined.ReloadCommand;
-import de.cubenation.bedrock.command.predefined.VersionCommand;
+import de.cubenation.bedrock.command.predefined.*;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -48,9 +45,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         helpCommand.setHelpPrefix(helpPrefix);
 
         // add default commands that all plugins are capable of
-        this.commands.add(new PermissionCommand());
         this.commands.add(new ReloadCommand());
         this.commands.add(new VersionCommand());
+        this.commands.add(new PermissionListCommand());
+        this.commands.add(new PermissionSelfCommand());
+        this.commands.add(new PermissionOtherCommand());
+
 
         if (this.commands != null) {
             for (AbstractCommand command : this.commands) {

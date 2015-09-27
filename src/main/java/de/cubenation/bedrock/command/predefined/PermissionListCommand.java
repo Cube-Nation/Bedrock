@@ -17,11 +17,11 @@ import java.util.Map;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command.permission
  */
-public class PermissionCommand extends Command {
+public class PermissionListCommand extends Command {
 
-    public PermissionCommand() {
+    public PermissionListCommand() {
         super(
-                new String[]{"permissions", "perms"},
+                new String[]{"permissionlist", "permlist" },
                 "help.permission.list",
                 "permission.list"
         );
@@ -31,6 +31,7 @@ public class PermissionCommand extends Command {
     @SuppressWarnings("unchecked")
     public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
+
         if (permissionService != null) {
 
             MessageHelper.send(

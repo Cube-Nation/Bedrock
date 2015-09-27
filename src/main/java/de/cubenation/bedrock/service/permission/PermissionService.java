@@ -4,6 +4,7 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.config.Permissions;
+import de.cubenation.bedrock.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
@@ -11,10 +12,9 @@ import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.config.ConfigService;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
@@ -221,6 +221,37 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @SuppressWarnings("unchecked")
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
         return this.permission_dump;
+    }
+
+    @SuppressWarnings("unchecked")
+    public HashMap<String, ArrayList<String>> getPermissionRoleDump(Player player) throws PlayerNotFoundException {
+
+        // NOTE: Most permissions plugins using Bukkit Superperm register the permissions when a player joins
+        //       and remove the permissions when they leave.
+        //       So it is technically not possible to require permissions for an offline player without hooking
+        //       into the plugins that handles permissions
+        //       For that reason we only accept not null Player objects and throw a PlayerNotFoundException if null
+        //       is given.
+        if (player == null)
+            throw new PlayerNotFoundException();
+
+        HashMap<String, ArrayList<String>> dump = new HashMap<>();
+
+        for (Object o : this.permission_dump.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
+            String role = (String) pair.getKey();
+
+            for (String permission : (ArrayList<String>) pair.getValue()) {
+                if (!player.hasPermission(permission))
+                    continue;
+
+                if (!dump.containsKey(role))
+                    dump.put(role, new ArrayList<String>());
+
+                dump.get(role).add(permission);
+            }
+        }
+        return dump;
     }
 
     @Override
