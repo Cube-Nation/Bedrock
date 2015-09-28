@@ -38,7 +38,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
                 continue;
             }
 
-            this.getPlugin().log(Level.INFO, "  command service: Registering command " + command + " with " + value.size() + " CommandManager(s)");
+            //this.getPlugin().log(Level.INFO, "  command service: Registering command " + command + " with " + value.size() + " CommandManager(s)");
 
             CommandManager manager = new CommandManager(
                     this.getPlugin(),

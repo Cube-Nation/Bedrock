@@ -38,7 +38,7 @@ public abstract class AbstractConfirmService extends AbstractService implements 
         this.storage = new HashMap<>();
         this.setTimeout(timeout);
 
-        this.getPlugin().log(Level.INFO, "  confirm service: New confirm service registered " + this.toString());
+        //this.getPlugin().log(Level.INFO, "  confirm service: New confirm service registered " + this.toString());
 
         final AbstractConfirmService csi = this;
         // create task with timeout

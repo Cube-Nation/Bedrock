@@ -6,7 +6,6 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.exception.UnknownServiceException;
 
 import java.util.HashMap;
-import java.util.logging.Level;
 
 public class ServiceManager {
 
@@ -19,7 +18,7 @@ public class ServiceManager {
     }
 
     public ServiceInterface registerService(String name, ServiceInterface service) throws ServiceInitException {
-        this.plugin.log(Level.INFO, "Initializing Service " + name);
+        //this.plugin.log(Level.INFO, "Initializing Service " + name);
 
         this.services.put(name, service);
         this.services.get(name).init();

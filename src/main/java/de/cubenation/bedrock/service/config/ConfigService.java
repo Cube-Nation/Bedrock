@@ -19,6 +19,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
 
     private HashMap<String, CustomConfigurationFile> configuration_files = new HashMap<>();
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final String do_not_delete_me = "Seriously. Do not delete this";
 
     public ConfigService(BasePlugin plugin) {
@@ -66,7 +67,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
             Map.Entry pair = (Map.Entry) o;
             String name = (String) pair.getKey();
             try {
-                this.getPlugin().log(Level.INFO, "  config service: Reloading file " + name);
+                //this.getPlugin().log(Level.INFO, "  config service: Reloading file " + name);
                 ((CustomConfigurationFile) pair.getValue()).reload();
             } catch (InvalidConfigurationException e) {
                 this.getPlugin().log(Level.SEVERE, "  config service: Could not reload file " + name + ": " + e.getMessage());
@@ -146,7 +147,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         if (file == null)
             return;
 
-        this.getPlugin().log(Level.INFO, "  config service: Registering configuration file " + name);
+        //this.getPlugin().log(Level.INFO, "  config service: Registering configuration file " + name);
 
         try {
             file.init();

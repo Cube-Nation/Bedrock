@@ -37,7 +37,7 @@ public final class LocalizationService extends AbstractService implements Servic
         this.setLocale();
         this.setRelativeLocaleFile("locale" + System.getProperty("file.separator") + this.getLocale() + ".yml");
 
-        this.getPlugin().log(Level.INFO, "  localization service: setting up " + this.toString());
+        //this.getPlugin().log(Level.INFO, "  localization service: setting up " + this.toString());
 
         this.loadPluginLocaleFile();
         this.loadBedrockLocaleFile();
@@ -151,6 +151,7 @@ public final class LocalizationService extends AbstractService implements Servic
         return this.applyArgs(s, args);
     }
 
+    @SuppressWarnings("unchecked")
     private String[] getTranslationStringsFromPlugin(String path, String[] args) throws LocalizationNotFoundException {
         if (this.plugin_data == null)
             return null;
@@ -171,6 +172,7 @@ public final class LocalizationService extends AbstractService implements Servic
         return s;
     }
 
+    @SuppressWarnings("unchecked")
     private String[] getTranslationStringsFromBedrock(String path, String[] args) throws LocalizationNotFoundException {
         if (this.bedrock_data == null)
             return null;

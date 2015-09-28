@@ -26,7 +26,7 @@ public class MetricsService extends AbstractService implements ServiceInterface{
         }
 
         try {
-            this.getPlugin().log(Level.INFO, "  metrics service: Starting metrics");
+            //this.getPlugin().log(Level.INFO, "  metrics service: Starting metrics");
             Metrics metrics = new Metrics(this.getPlugin());
             metrics.start();
         } catch (IOException e) {
@@ -36,7 +36,6 @@ public class MetricsService extends AbstractService implements ServiceInterface{
 
     @Override
     public void reload() throws ServiceReloadException {
-
         this.getPlugin().log(Level.WARNING,
                 "  metrics service: Reloading the metrics service is not supported. Please restart the server if you modified the metrics service"
         );

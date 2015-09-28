@@ -55,7 +55,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public void init() throws ServiceInitException {
-        this.getPlugin().log(Level.INFO, "  permission service: setting up " + this.toString());
+        //this.getPlugin().log(Level.INFO, "  permission service: setting up " + this.toString());
 
         try {
             this.config_service.registerFile(
@@ -71,8 +71,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public void reload() throws ServiceReloadException {
-        this.getPlugin().log(Level.INFO, "  permission service: reloading " + this.toString());
-
+        //this.getPlugin().log(Level.INFO, "  permission service: reloading " + this.toString());
         this.initializeCommandPermissions();
     }
 
@@ -85,7 +84,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
                 if (permission == null)
                     continue;
 
-                this.plugin.log(Level.INFO, "  permission service: Registering permission " + permission);
+                //this.plugin.log(Level.INFO, "  permission service: Registering permission " + permission);
                 this.unregistered_permissions.add(permission);
             }
         }
@@ -100,7 +99,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     }
 
     public void registerPermission(String role, String permission) {
-        this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
+        //this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
 
         // save for later in fixPermissions()
         if (!this.external_permissions.containsKey(role))
@@ -165,7 +164,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     private void savePermissions(Permissions permissions) {
         // save all changes
         try {
-            this.getPlugin().log(Level.INFO, "  permission service: saving permissions");
+            //this.getPlugin().log(Level.INFO, "  permission service: saving permissions");
             permissions.save();
             permissions.reload();
         } catch (InvalidConfigurationException e) {
