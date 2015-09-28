@@ -241,7 +241,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             String role = (String) pair.getKey();
 
             for (String permission : (ArrayList<String>) pair.getValue()) {
-                if (!player.hasPermission(permission))
+                if (!this.hasPermission(player, permission))
                     continue;
 
                 if (!dump.containsKey(role))
