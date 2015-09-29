@@ -29,7 +29,7 @@ public class HelpCommand extends Command {
         super(
                 "help",
                 "help.plugin",
-                null
+                new ArrayList<String>()
         );
 
         this.commandManager = commandManager;

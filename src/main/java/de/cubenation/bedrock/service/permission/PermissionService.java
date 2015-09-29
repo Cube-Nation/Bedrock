@@ -7,6 +7,7 @@ import de.cubenation.bedrock.config.Permissions;
 import de.cubenation.bedrock.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.config.ConfigService;
@@ -71,7 +72,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public void reload() throws ServiceReloadException {
-        //this.getPlugin().log(Level.INFO, "  permission service: reloading " + this.toString());
         this.initializeCommandPermissions();
     }
 
@@ -80,12 +80,14 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
         for (CommandManager manager : this.getPlugin().getCommandService().getCommandMamagers()) {
             for (AbstractCommand command : manager.getCommands()) {
-                String permission = command.getPermission().getName();
-                if (permission == null)
-                    continue;
 
-                //this.plugin.log(Level.INFO, "  permission service: Registering permission " + permission);
-                this.unregistered_permissions.add(permission);
+                for (Permission permission : command.getPermissions()) {
+                    String stringPermission = permission.getName();
+                    if (stringPermission == null)
+                        continue;
+
+                    this.unregistered_permissions.add(stringPermission);
+                }
             }
         }
 
