@@ -110,7 +110,16 @@ public abstract class AbstractCommand {
      * @return true, if the sender has Permissions, else false.
      */
     public final boolean hasPermission(CommandSender sender) {
-        return getPermission() != null && getPermission().userHasPermission(sender);
+
+        if (getPermissions() != null) {
+            for (Permission permission : getPermissions()) {
+                if (permission.userHasPermission(sender)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -142,13 +151,15 @@ public abstract class AbstractCommand {
 
         setLabel(getCommandManager().getPluginCommand().getLabel());
 
-        setPermission(new Permission(getPermissionString(), getPlugin()));
+        for (String permission : getPermissionStrings()) {
+            addPermission(new Permission(permission, getPlugin()));
+        }
+
     }
 
     //public abstract LinkedHashMap<String, String> getArguments();
 
     public abstract CommandArguments getCommandArguments();
-
 
     public abstract ArrayList<String[]> getCommands();
 
@@ -156,11 +167,11 @@ public abstract class AbstractCommand {
 
     public abstract String getLabel();
 
-    public abstract Permission getPermission();
+    public abstract ArrayList<Permission> getPermissions();
 
     public abstract CommandManager getCommandManager();
 
-    public abstract String getPermissionString();
+    public abstract ArrayList<String> getPermissionStrings();
 
     public abstract BasePlugin getPlugin();
 
@@ -171,11 +182,9 @@ public abstract class AbstractCommand {
 
     public abstract void setLabel(String label);
 
-    public abstract void setPermission(Permission permission);
+    public abstract void addPermission(Permission permission);
 
     public abstract void setCommandManager(CommandManager commandManager);
-
-    public abstract void setPermissionString(String permissionString);
 
     public abstract void setPlugin(BasePlugin plugin);
 }

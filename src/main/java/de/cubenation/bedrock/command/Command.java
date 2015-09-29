@@ -23,9 +23,9 @@ public abstract class Command extends AbstractCommand {
     private String label;
     private String description;
     private CommandArguments commandArguments = new CommandArguments();
-    private Permission permission;
+    private ArrayList<Permission> permissions;
     private CommandManager commandManager;
-    private String permissionString;
+    private ArrayList<String> permissionStrings;
     protected BasePlugin plugin;
 
 
@@ -38,13 +38,34 @@ public abstract class Command extends AbstractCommand {
      * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(final String command, String description, String permission, Argument... arguments) {
+    public Command(final String command, String description, final String permission, Argument... arguments) {
         init(
                 new ArrayList<String[]>() {{
                     add(new String[]{command});
                 }},
                 description,
-                permission,
+                new ArrayList() {{
+                    add(permission);
+                }},
+                arguments);
+    }
+
+    /**
+     * Instantiates a new Command with just one command
+     * Like '/city help'
+     *
+     * @param command     the command
+     * @param description the description
+     * @param permissions the permissions
+     */
+    @SuppressWarnings(value = "unused")
+    public Command(final String command, String description, ArrayList<String> permissions, Argument... arguments) {
+        init(
+                new ArrayList<String[]>() {{
+                    add(new String[]{command});
+                }},
+                description,
+                permissions,
                 arguments);
     }
 
@@ -58,11 +79,30 @@ public abstract class Command extends AbstractCommand {
      * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(final String[] commands, String description, String permission, Argument... arguments) {
+    public Command(final String[] commands, String description, final String permission, Argument... arguments) {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
-        init(list, description, permission, arguments);
+        init(list, description, new ArrayList() {{
+            add(permission);
+        }}, arguments);
+    }
+
+    /**
+     * Instantiates a new Command.
+     * Each element in commands symbolizes an alias for a command
+     * Like '/city teleport' and '/city tp'
+     *
+     * @param commands    the commands
+     * @param description the description
+     * @param permissions the permissions
+     */
+    @SuppressWarnings(value = "unused")
+    public Command(final String[] commands, String description, ArrayList<String> permissions, Argument... arguments) {
+        ArrayList<String[]> list = new ArrayList<>();
+        list.add(commands);
+
+        init(list, description, permissions, arguments);
     }
 
     /**
@@ -77,13 +117,31 @@ public abstract class Command extends AbstractCommand {
      * @param permission  the permission
      */
     @SuppressWarnings(value = "unused")
-    public Command(ArrayList<String[]> commands, String description, String permission, Argument... arguments) {
-        init(commands, description, permission, arguments);
+    public Command(ArrayList<String[]> commands, String description, final String permission, final Argument... arguments) {
+        init(commands, description, new ArrayList() {{
+            add(permission);
+        }}, arguments);
     }
 
-    private void init(ArrayList<String[]> commands, String description, String permission, Argument[] arguments) {
+    /**
+     * Instantiates a new Command.
+     * Each element in <code>commands</code> symbolizes a new command
+     * Like '/city set bonus'
+     * The String[] contains a single command or aliases
+     * Like '/city set bonus', '/city s bonus', /
+     *
+     * @param commands    the commands
+     * @param description the description
+     * @param permissions the permissions
+     */
+    @SuppressWarnings(value = "unused")
+    public Command(ArrayList<String[]> commands, String description, ArrayList<String> permissions, Argument... arguments) {
+        init(commands, description, permissions, arguments);
+    }
+
+    private void init(ArrayList<String[]> commands, String description, ArrayList permissions, Argument[] arguments) {
         this.commands = commands;
-        this.permissionString = permission;
+        this.permissionStrings = permissions;
         this.description = description;
         Collections.addAll(commandArguments, arguments);
     }
@@ -150,8 +208,8 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public Permission getPermission() {
-        return permission;
+    public ArrayList<Permission> getPermissions() {
+        return permissions;
     }
 
     @Override
@@ -160,8 +218,8 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public String getPermissionString() {
-        return permissionString;
+    public ArrayList<String> getPermissionStrings() {
+        return permissionStrings;
     }
 
     @Override
@@ -186,18 +244,17 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public void setPermission(Permission permission) {
-        this.permission = permission;
+    public void addPermission(Permission permission) {
+        if (this.permissions == null) {
+            this.permissions = new ArrayList<>();
+        }
+
+        this.permissions.add(permission);
     }
 
     @Override
     public void setCommandManager(CommandManager commandManager) {
         this.commandManager = commandManager;
-    }
-
-    @Override
-    public void setPermissionString(String permissionString) {
-        this.permissionString = permissionString;
     }
 
     @Override
