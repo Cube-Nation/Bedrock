@@ -23,7 +23,7 @@ public abstract class Command extends AbstractCommand {
     private String label;
     private String description;
     private CommandArguments commandArguments = new CommandArguments();
-    private ArrayList<Permission> permissions;
+    private ArrayList<Permission> permissions = new ArrayList<>();
     private CommandManager commandManager;
     private ArrayList<String> permissionStrings;
     protected BasePlugin plugin;
@@ -44,7 +44,7 @@ public abstract class Command extends AbstractCommand {
                     add(new String[]{command});
                 }},
                 description,
-                new ArrayList() {{
+                new ArrayList<String>() {{
                     add(permission);
                 }},
                 arguments);
@@ -83,7 +83,7 @@ public abstract class Command extends AbstractCommand {
         ArrayList<String[]> list = new ArrayList<>();
         list.add(commands);
 
-        init(list, description, new ArrayList() {{
+        init(list, description, new ArrayList<String>() {{
             add(permission);
         }}, arguments);
     }
@@ -118,7 +118,7 @@ public abstract class Command extends AbstractCommand {
      */
     @SuppressWarnings(value = "unused")
     public Command(ArrayList<String[]> commands, String description, final String permission, final Argument... arguments) {
-        init(commands, description, new ArrayList() {{
+        init(commands, description, new ArrayList<String>() {{
             add(permission);
         }}, arguments);
     }
@@ -139,7 +139,7 @@ public abstract class Command extends AbstractCommand {
         init(commands, description, permissions, arguments);
     }
 
-    private void init(ArrayList<String[]> commands, String description, ArrayList permissions, Argument[] arguments) {
+    private void init(ArrayList<String[]> commands, String description, ArrayList<String> permissions, Argument[] arguments) {
         this.commands = commands;
         this.permissionStrings = permissions;
         this.description = description;

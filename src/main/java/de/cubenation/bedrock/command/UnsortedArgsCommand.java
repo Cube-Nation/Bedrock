@@ -29,7 +29,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     private CommandArguments commandArguments = new CommandArguments();
     private String label;
     private String description;
-    private ArrayList<Permission> permissions;
+    private ArrayList<Permission> permissions = new ArrayList<>();
     private CommandManager commandManager;
     private ArrayList<String> permissionStrings;
     protected BasePlugin plugin;
