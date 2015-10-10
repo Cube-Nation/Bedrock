@@ -14,12 +14,8 @@ public class en_US extends CustomConfigurationFile {
         return "locale" + File.separator + "en_US.yml";
     }
 
-    public en_US(BasePlugin plugin, String filename) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), filename);
-    }
-
     public en_US(BasePlugin plugin) {
-        this(plugin, getFilename());
+        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
 
 

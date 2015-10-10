@@ -40,7 +40,7 @@ public class BedrockPlugin extends BasePlugin {
     public void onPostEnable() {
         // create default configuration
         try {
-            BedrockDefaults bd = new BedrockDefaults(this, null);
+            BedrockDefaults bd = new BedrockDefaults(this);
             bd.init();
         } catch (InvalidConfigurationException e) {
             this.log(Level.SEVERE, "Error creating " + BedrockDefaults.getFilename(), e);
@@ -63,10 +63,10 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public HashMap<String, String> getCustomConfigurationFiles() {
-        return new HashMap<String, String>() {{
-            put(de_DE.getFilename(), de_DE.class.getName());
-            put(en_US.getFilename(), en_US.class.getName());
+    public ArrayList<Class<?>> getCustomConfigurationFiles() {
+        return new ArrayList<Class<?>>() {{
+            add(de_DE.class);
+            add(en_US.class);
         }};
     }
 

@@ -1,6 +1,5 @@
 package de.cubenation.bedrock.service;
 
-import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.exception.UnknownServiceException;
@@ -9,12 +8,9 @@ import java.util.HashMap;
 
 public class ServiceManager {
 
-    private BasePlugin plugin;
-
     private HashMap<String,ServiceInterface> services = new HashMap<>();
 
-    public ServiceManager(BasePlugin plugin) {
-        this.plugin = plugin;
+    public ServiceManager() {
     }
 
     public ServiceInterface registerService(String name, ServiceInterface service) throws ServiceInitException {

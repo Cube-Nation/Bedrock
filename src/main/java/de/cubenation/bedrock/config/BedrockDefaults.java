@@ -55,18 +55,12 @@ public class BedrockDefaults extends CustomConfigurationFile {
     }
 
     public BedrockDefaults() {
-
     }
 
     public BedrockDefaults(BasePlugin plugin) {
-        this(plugin, getFilename());
-    }
-
-    public BedrockDefaults(BasePlugin plugin, String name) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), name);
+        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
         CONFIG_HEADER = getHeader();
     }
-
 
     /**
      * Scheme Color Service
@@ -196,10 +190,6 @@ public class BedrockDefaults extends CustomConfigurationFile {
      * Permission Service
      */
 
-    @Path("service.permission.file_name")
-    @Comment("File where all permissions are stored and read from.")
-    private String permission_file_name     = "permissions.yml";
-
     @Path("service.permission.grant_all_permissions_to_op")
     @Comment("Does Operators have all permissions? Valid values are true or false.")
     private boolean permission_grant_op     = true;
@@ -207,10 +197,6 @@ public class BedrockDefaults extends CustomConfigurationFile {
     @Path("service.permission.prefix")
     @Comment("custom permission prefix. If left empty or undefined the lowercased plugin name will be taken as prefix.")
     private String permission_prefix        = "";
-
-    public void setPermissionFileName(String filename) {
-        this.permission_file_name = filename;
-    }
 
     public void setPermission_grant_op(boolean grant_op) {
         this.permission_grant_op = grant_op;

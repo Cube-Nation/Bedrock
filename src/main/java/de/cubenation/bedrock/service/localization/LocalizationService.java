@@ -236,7 +236,11 @@ public final class LocalizationService extends AbstractService implements Servic
 
     @Override
     public String toString() {
-        return "(locale: " + this.getLocale() + " - locale_file: " + this.getRelativeLocaleFile() + ")";
+        return "LocalizationService{" +
+                "locale='" + locale + '\'' +
+                ", relative_locale_file='" + relative_locale_file + '\'' +
+                ", plugin_data=" + plugin_data +
+                ", bedrock_data=" + bedrock_data +
+                '}';
     }
-
 }

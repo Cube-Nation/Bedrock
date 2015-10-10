@@ -55,7 +55,7 @@ public abstract class BasePlugin extends JavaPlugin {
         }
 
         // initialize service manager
-        this.serviceManager = new ServiceManager(this);
+        this.serviceManager = new ServiceManager();
 
         // DO NOT MODIFY THIS ORDER!
         try {
@@ -186,7 +186,7 @@ public abstract class BasePlugin extends JavaPlugin {
         return (ConfigService) this.getService("config");
     }
 
-    public abstract HashMap<String, String> getCustomConfigurationFiles();
+    public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
 
     /*
      * Color Scheme Service

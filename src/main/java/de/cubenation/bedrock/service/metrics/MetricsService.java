@@ -21,7 +21,7 @@ public class MetricsService extends AbstractService implements ServiceInterface{
 
 
         if (! ((boolean) this.getConfigurationValue("service.metrics.use", true)) ) {
-            this.getPlugin().log(Level.WARNING, "  metrics service: Disabling metrics");
+            //this.getPlugin().log(Level.WARNING, "  metrics service: Disabling metrics");
             return;
         }
 
@@ -40,4 +40,6 @@ public class MetricsService extends AbstractService implements ServiceInterface{
                 "  metrics service: Reloading the metrics service is not supported. Please restart the server if you modified the metrics service"
         );
     }
+
+
 }

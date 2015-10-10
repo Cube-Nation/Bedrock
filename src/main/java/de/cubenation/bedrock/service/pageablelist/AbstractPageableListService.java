@@ -99,7 +99,10 @@ public abstract class AbstractPageableListService extends AbstractService implem
 
     @Override
     public String toString() {
-        return String.format("(timeout: %d seconds - next_amount: %d)", PageableListRegistry.getTimeout(), this.next);
+        return "AbstractPageableListService{" +
+                "next=" + next +
+                ", storage=" + storage +
+                '}';
     }
 
 }

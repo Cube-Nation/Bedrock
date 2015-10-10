@@ -116,4 +116,12 @@ public class CommandService extends AbstractService implements ServiceInterface 
     public ArrayList<CommandManager> getCommandMamagers() {
         return this.command_manager;
     }
+
+    @Override
+    public String toString() {
+        return "CommandService{" +
+                "command_manager=" + command_manager +
+                '}';
+    }
+
 }

@@ -14,13 +14,16 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class Permissions extends CustomConfigurationFile {
 
-    public Permissions(BasePlugin plugin, String name) throws IOException {
-        CONFIG_FILE = new File(plugin.getDataFolder(), name);
+    public static String getFilename() {
+        return "permissions.yaml";
+    }
+
+    public Permissions(BasePlugin plugin) throws IOException {
+        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
 
     @Path("permissions")
     private HashMap<String, List<String>> permissions = new HashMap<String, List<String>>() {{
-
     }};
 
     /**

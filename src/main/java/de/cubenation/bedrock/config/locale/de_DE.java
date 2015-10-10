@@ -14,15 +14,9 @@ public class de_DE extends CustomConfigurationFile {
         return "locale" + File.separator + "de_DE.yml";
     }
 
-    public de_DE(BasePlugin plugin, String filename) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), filename);
-    }
-
     public de_DE(BasePlugin plugin) {
-        this(plugin, getFilename());
+        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
-
-
 
 
     @Path("version")

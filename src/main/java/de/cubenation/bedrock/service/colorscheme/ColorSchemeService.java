@@ -39,4 +39,11 @@ public class ColorSchemeService extends AbstractService implements ServiceInterf
         return this.scheme;
     }
 
+    @Override
+    public String toString() {
+        return "ColorSchemeService{" +
+                "scheme=" + scheme +
+                '}';
+    }
+
 }

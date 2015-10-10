@@ -15,7 +15,10 @@ import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
@@ -43,10 +46,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         this.config_service = plugin.getConfigService();
     }
 
-    protected String getPermissionFilename() {
-        return (String) this.getConfigurationValue("service.permission.file_name", "permissions.yml");
-    }
-
     protected String getPermissionPrefix() {
         return (String) this.getConfigurationValue(
                 "service.permission.prefix",
@@ -60,8 +59,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
         try {
             this.config_service.registerFile(
-                    this.getPermissionFilename(),
-                    new Permissions(this.getPlugin(), this.getPermissionFilename())
+                    Permissions.class,
+                    new Permissions(this.getPlugin())
             );
         } catch (Exception e) {
             throw new ServiceInitException(e.getMessage());
@@ -91,7 +90,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             }
         }
 
-        this.fixPermissions((Permissions) this.config_service.getConfig(this.getPermissionFilename()));
+        this.fixPermissions((Permissions) this.config_service.getConfig(Permissions.class));
     }
 
 
@@ -110,7 +109,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         if (!this.external_permissions.get(role).contains(permission))
             this.external_permissions.get(role).add(permission);
 
-        Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+        Permissions permissions = (Permissions) this.config_service.getConfig(Permissions.class);
         String saved_role = permissions.getRoleForPermission(permission);
 
         // permission is not assigned to any role -> save permission in given role
@@ -127,7 +126,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private void fixPermissions(Permissions permissions) {
         if (permissions == null)
-            permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+            permissions = (Permissions) this.config_service.getConfig(Permissions.class);
 
         // clean up default role - will be restored if necessary
         permissions.removeRole(this.no_role);
@@ -179,7 +178,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @SuppressWarnings("unchecked")
     private void loadPermissions() {
 
-        Permissions permissions = (Permissions) this.config_service.getConfig(this.getPermissionFilename());
+        Permissions permissions = (Permissions) this.config_service.getConfig(Permissions.class);
         HashMap<String, List<String>> roled_permissions = permissions.getAll();
 
         this.permission_dump    = new HashMap<>();
@@ -257,7 +256,14 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @Override
     public String toString() {
-        return String.format("(filename: %s - prefix: %s)", this.getPermissionFilename(), this.getPermissionPrefix());
+        return "PermissionService{" +
+                "config_service=" + config_service +
+                ", unregistered_permissions=" + unregistered_permissions +
+                ", active_permissions=" + active_permissions +
+                ", permission_dump=" + permission_dump +
+                ", external_permissions=" + external_permissions +
+                ", no_role='" + no_role + '\'' +
+                '}';
     }
 
 }
