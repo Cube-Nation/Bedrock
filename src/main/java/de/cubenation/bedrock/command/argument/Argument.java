@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.command.argument;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.translation.Translation;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -11,43 +11,49 @@ import java.util.Collections;
 public class Argument {
 
     private final String description;
-    private final ArrayList<String> placeholder;
+    private final String placeholder;
     private final boolean optional;
 
+    private String runtimeDescription;
+    private String runtimePlaceholder;
+    private BasePlugin plugin;
+
     @SuppressWarnings(value = "unused")
-    public Argument(String description, boolean optional , String... placeholder) {
+    public Argument(String description, String placeholder, boolean optional) {
         this.description = description;
+        this.placeholder = placeholder;
         this.optional = optional;
-        this.placeholder = new ArrayList<>();
-        Collections.addAll(this.placeholder, placeholder);
     }
 
     @SuppressWarnings(value = "unused")
-    public Argument(String description, String... placeholder) {
-        this.description = description;
-        this.optional = false;
-        this.placeholder = new ArrayList<>();
-        Collections.addAll(this.placeholder, placeholder);
+    public Argument(String description, String placeholder) {
+        this(description, placeholder, false);
     }
 
-    public String getDescription() {
-        return description;
+    public String getRuntimeDescription() {
+        return new Translation(this.plugin, this.description).getTranslation();
     }
 
-    public ArrayList<String> getPlaceholder() {
-        return placeholder;
+    public String getRuntimePlaceholder() {
+        return new Translation(this.plugin, this.placeholder).getTranslation();
     }
 
     public boolean isOptional() {
         return optional;
     }
 
+
+    public void setPlugin(BasePlugin plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public String toString() {
         return "Argument{" +
-                "description='" + description + '\'' +
-                ", placeholder=" + placeholder +
+                "description='" + runtimeDescription + '\'' +
+                ", placeholder=" + runtimePlaceholder +
                 ", optional=" + optional +
                 '}';
     }
+
 }

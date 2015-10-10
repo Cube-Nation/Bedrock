@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.command.argument.CommandArguments;
+import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
@@ -9,7 +9,10 @@ import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -18,16 +21,73 @@ import java.util.*;
  */
 public abstract class AbstractCommand {
 
+    protected StringBuilder description = new StringBuilder();
+
+    //protected ArrayList<String> permissions = new ArrayList<>();
+
+    protected ArrayList<String[]> subcommands = new ArrayList<>();
+
+    protected ArrayList<Argument> arguments = new ArrayList<>();
+
+    private ArrayList<Permission> runtimePermissions = new ArrayList<>();
+
+    protected BasePlugin plugin;
+
+    protected CommandManager commandManager;
+    
+    
+    public AbstractCommand(BasePlugin plugin, CommandManager commandManager) {
+        this.plugin = plugin;
+        this.commandManager = commandManager;
+
+        setDescription(this.description);
+        setSubCommands(this.subcommands);
+        setArguments(this.arguments);
+
+        for (Argument argument : this.arguments) {
+            argument.setPlugin(plugin);
+        }
+
+        ArrayList<String> permissions = new ArrayList<>();
+        setPermissions(permissions);
+
+        for (String permission : permissions) {
+            addRuntimePermission(new Permission(permission, getPlugin()));
+        }
+    }
+
+    /**
+     *
+     * @param permissions   ArrayList of permission strings
+     */
+    public abstract void setPermissions(ArrayList<String> permissions);
+
+    /**
+     *
+     * @param subcommands    ArrayList with subcommand string arrays
+     */
+    public abstract void setSubCommands(ArrayList<String[]> subcommands);
+
+    /**
+     *
+     * @param description   Locale identifier string
+     */
+    public abstract void setDescription(StringBuilder description);
+
+    /**
+     *
+     * @param arguments     ArrayList of de.cubenation.bedrock.command.argument.Argument objects
+     */
+    public abstract void setArguments(ArrayList<Argument> arguments);
+
     /**
      * @param sender      the sender of the command
-     * @param label       the label of the command
      * @param subcommands the list of subcommands
      * @param args        the list of arguments
      * @throws CommandException
      * @throws IllegalCommandArgumentException
      */
     public abstract void execute(CommandSender sender,
-                                 String label,
                                  String[] subcommands,
                                  String[] args) throws CommandException, IllegalCommandArgumentException;
 
@@ -40,14 +100,14 @@ public abstract class AbstractCommand {
     public abstract ArrayList<String> getTabCompletion(String[] args, CommandSender sender);
 
     public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
-        if (getCommands().size() < args.length) {
+        if (this.subcommands.size() < args.length) {
             return null;
         }
 
         for (int i = 0; i < args.length; i++) {
 
             boolean validCommand = false;
-            for (String com : getCommands().get(i)) {
+            for (String com : this.subcommands.get(i)) {
                 // Last Argument can start with
                 // Other MUST be equal
                 if (i < args.length - 1) {
@@ -66,7 +126,7 @@ public abstract class AbstractCommand {
             }
         }
 
-        final ArrayList<String> list = new ArrayList<>(Arrays.asList(getCommands().get(args.length - 1)));
+        final ArrayList<String> list = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
 
         Collections.sort(list, new Comparator<String>() {
             @Override
@@ -81,9 +141,7 @@ public abstract class AbstractCommand {
         return new ArrayList<String>() {{
             add(completionCommand);
         }};
-
     }
-
 
     /**
      * Returns if the subcommand is a valid trigger for the asking command.
@@ -110,81 +168,51 @@ public abstract class AbstractCommand {
      * @return true, if the sender has Permissions, else false.
      */
     public final boolean hasPermission(CommandSender sender) {
-
-        if (getPermissions() != null) {
-            for (Permission permission : getPermissions()) {
-                if (permission.userHasPermission(sender)) {
-                    return true;
-                }
+        for (Permission permission : getRuntimePermissions()) {
+            if (permission.userHasPermission(sender)) {
+                return true;
             }
         }
-
         return false;
     }
 
-    /**
-     * Add CommandManager, set BasePlugin instance and call setup()
-     *
-     * @param commandManager the CommandManager of this command
-     */
-    public final void addCommandManager(CommandManager commandManager) {
-        setCommandManager(commandManager);
-        setPlugin(commandManager.getPlugin());
-
-        setup();
+    protected void addRuntimePermission(Permission permission) {
+        this.runtimePermissions.add(permission);
     }
 
-
-    /**
-     * Use this method to init some stuff.
-     * It's called after BasePlugin instance 'plugin' is set.
-     */
-    public void setup() {
-
-        if (getPlugin() == null) {
-            throw new RuntimeException("BasePlugin instance isn't availabe!");
-        }
-
-        if (getCommandManager() == null) {
-            throw new RuntimeException("BasePlugin instance isn't availabe!");
-        }
-
-        setLabel(getCommandManager().getPluginCommand().getLabel());
-
-        for (String permission : getPermissionStrings()) {
-            addPermission(new Permission(permission, getPlugin()));
-        }
-
+    public ArrayList<Permission> getRuntimePermissions() {
+        return this.runtimePermissions;
     }
 
-    //public abstract LinkedHashMap<String, String> getArguments();
+    public CommandManager getCommandManager() {
+        return this.commandManager;
+    }
 
-    public abstract CommandArguments getCommandArguments();
+    public BasePlugin getPlugin() {
+        return this.plugin;
+    }
 
-    public abstract ArrayList<String[]> getCommands();
+    public ArrayList<String[]> getSubcommands() {
+        return subcommands;
+    }
 
-    public abstract String getDescription();
+    public ArrayList<Argument> getArguments() {
+        return arguments;
+    }
 
-    public abstract String getLabel();
+    public String getDescription() {
+        return description.toString();
+    }
 
-    public abstract ArrayList<Permission> getPermissions();
-
-    public abstract CommandManager getCommandManager();
-
-    public abstract ArrayList<String> getPermissionStrings();
-
-    public abstract BasePlugin getPlugin();
-
-
-    public abstract void setCommands(ArrayList<String[]> commands);
-
-    public abstract void setDescription(String description);
-
-    public abstract void setLabel(String label);
-
-    public abstract void addPermission(Permission permission);
-
-    public abstract void setCommandManager(CommandManager commandManager);
-
-    public abstract void setPlugin(BasePlugin plugin);
+    @Override
+    public String toString() {
+        return "AbstractCommand{" +
+                "description=" + description +
+                ", subcommands=" + subcommands +
+                ", arguments=" + arguments +
+                ", runtimePermissions=" + runtimePermissions +
+                ", plugin=" + plugin +
+                ", commandManager=" + commandManager +
+                '}';
+    }
 }

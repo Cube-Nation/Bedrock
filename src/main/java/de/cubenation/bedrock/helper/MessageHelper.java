@@ -169,7 +169,7 @@ public class MessageHelper {
          * The string is used for the suggest event when clicking on the help command output
          */
         ArrayList<String> suggest_string = new ArrayList<>();
-        suggest_string.add("/" + command.getLabel());
+        suggest_string.add("/" + command.getCommandManager().getPluginCommand().getLabel());
 
 
         // The command divider string
@@ -185,8 +185,8 @@ public class MessageHelper {
          * Holds all subcommands for this command
          */
         ArrayList<String> command_strings = new ArrayList<>();
-        if (command.getCommands() != null) {
-            for (String[] commands : command.getCommands()) {
+        if (command.getSubcommands() != null) {
+            for (String[] commands : command.getSubcommands()) {
                 // sort commands by length
                 Arrays.sort(commands, new LengthComparator());
 
@@ -230,7 +230,7 @@ public class MessageHelper {
         hover_string.add(command_description);
 
         // process all arguments
-        for (Argument argument : command.getCommandArguments()) {
+        for (Argument argument : command.getArguments()) {
 
             ArrayList<String> argument_hover_string = new ArrayList<>();
 
@@ -265,13 +265,13 @@ public class MessageHelper {
                 placeholder = new Translation(
                         plugin,
                         "help.command.args.optional",
-                        new String[] { "argument", StringUtils.join(argument.getPlaceholder(), " ") }
+                        new String[] { "argument", argument.getRuntimePlaceholder() }
                 ).getTranslation();
             } else {
                 placeholder = new Translation(
                         plugin,
                         "help.command.args.needed",
-                        new String[] { "argument", StringUtils.join(argument.getPlaceholder(), " ") }
+                        new String[] { "argument", argument.getRuntimePlaceholder() }
                 ).getTranslation();
             }
 
@@ -287,7 +287,7 @@ public class MessageHelper {
             String argument_description = new Translation(
                     plugin,
                     "help.command.args.description",
-                    new String[]{"description", argument.getDescription()}
+                    new String[]{"description", argument.getRuntimeDescription()}
             ).getTranslation();
 
             //argument_hover_string.add(argument_description);
@@ -305,7 +305,7 @@ public class MessageHelper {
                 plugin,
                 "help.command.command",
                 new String[]{
-                        "label",    command.getLabel(),
+                        "label",    command.getCommandManager().getPluginCommand().getLabel(),
                         "commands", StringUtils.join(command_strings, " "),
                         "args",     StringUtils.join(argument_string, " ")
                 }

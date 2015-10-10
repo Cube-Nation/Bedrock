@@ -1,8 +1,10 @@
 package de.cubenation.bedrock.command.predefined;
 
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.Command;
+import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -21,36 +23,44 @@ import java.util.*;
  */
 public class HelpCommand extends Command {
 
-    private final CommandManager commandManager;
-
-    private String helpPrefix;
-
-    public HelpCommand(CommandManager commandManager, String helpPrefix) {
-        super(
-                "help",
-                "help.plugin",
-                new ArrayList<String>()
-        );
-
-        this.commandManager = commandManager;
-        this.helpPrefix = helpPrefix;
+    public HelpCommand(BasePlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String label, String[] subCommands, String[] args) throws CommandException {
+    public void setPermissions(ArrayList<String> permissions) {
+        permissions.add("help.plugin");
+    }
+
+    @Override
+    public void setSubCommands(ArrayList<String[]> subcommands) {
+        subcommands.add(new String[] { "help" } );
+    }
+
+    @SuppressWarnings("UnusedAssignment")
+    @Override
+    public void setDescription(StringBuilder description) {
+        description.append("help.plugin");
+    }
+
+    @Override
+    public void setArguments(ArrayList<Argument> arguments) {
+    }
+
+    @Override
+    public void execute(CommandSender sender, String[] subCommands, String[] args) throws CommandException {
         if (args.length == 0) {
             // Display help for all commands
 
             // =========================
             // create header
             // =========================
-            sendHeader(sender, label);
+            sendHeader(sender, getCommandManager().getPluginCommand().getLabel());
 
 
             // =========================
             // create help for each subcommand
             // =========================
-
             for (AbstractCommand command : commandManager.getHelpCommands()) {
                 TextComponent component_help = command.getBeautifulHelp(sender);
                 if (component_help != null)
@@ -76,7 +86,7 @@ public class HelpCommand extends Command {
                 }
             }
 
-            sendHeader(sender, label);
+            sendHeader(sender, getCommandManager().getPluginCommand().getLabel());
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
                 for (AbstractCommand command : commandManager.getHelpCommands()) {
@@ -95,14 +105,10 @@ public class HelpCommand extends Command {
                 }
             }
         }
-
     }
 
     private void sendHeader(CommandSender sender, String label) {
         String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
-        if (helpPrefix != null) {
-            commandHeaderName = helpPrefix;
-        }
 
         TextComponent header = new TextComponent(
                 new Translation(
@@ -116,18 +122,15 @@ public class HelpCommand extends Command {
 
     private boolean isValidHelpTrigger(AbstractCommand command, String[] args) {
         for (int i = 0; i < args.length; i++) {
-            if (!Arrays.asList(command.getCommands().get(i)).contains(args[i])) {
+            if (!Arrays.asList(command.getSubcommands().get(i)).contains(args[i])) {
                 return false;
             }
         }
         return true;
     }
 
-    public void setHelpPrefix(String helpPrefix) {
-        this.helpPrefix = helpPrefix;
-    }
-
     @Override
+    @SuppressWarnings("unchecked")
     public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
 
         if (args.length > 1) {

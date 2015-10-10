@@ -1,6 +1,9 @@
 package de.cubenation.bedrock.command.predefined;
 
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.Command;
+import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -19,17 +22,33 @@ import java.util.Map;
  */
 public class PermissionListCommand extends Command {
 
-    public PermissionListCommand() {
-        super(
-                new String[]{"permissionlist", "permlist" },
-                "help.permission.list",
-                "permission.list"
-        );
+    public PermissionListCommand(BasePlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
+    }
+
+    @Override
+    public void setPermissions(ArrayList<String> permissions) {
+        permissions.add("permission.list");
+    }
+
+    @Override
+    public void setSubCommands(ArrayList<String[]> subcommands) {
+        subcommands.add(new String[] { "pl", "permslist", "permissionslist" } );
+    }
+
+    @Override
+    public void setDescription(StringBuilder description) {
+        description.append("help.permissions.list");
+    }
+
+    @Override
+    public void setArguments(ArrayList<Argument> arguments) {
+
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
 
         if (permissionService != null) {

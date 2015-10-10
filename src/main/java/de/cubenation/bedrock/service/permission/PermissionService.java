@@ -81,7 +81,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         for (CommandManager manager : this.getPlugin().getCommandService().getCommandMamagers()) {
             for (AbstractCommand command : manager.getCommands()) {
 
-                for (Permission permission : command.getPermissions()) {
+                for (Permission permission : command.getRuntimePermissions()) {
                     String stringPermission = permission.getName();
                     if (stringPermission == null)
                         continue;

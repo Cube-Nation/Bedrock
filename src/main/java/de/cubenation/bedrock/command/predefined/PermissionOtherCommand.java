@@ -1,8 +1,9 @@
 package de.cubenation.bedrock.command.predefined;
 
-import de.cubenation.bedrock.BedrockPlugin;
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.PlayerNotFoundException;
@@ -23,30 +24,42 @@ import java.util.Map;
  */
 public class PermissionOtherCommand extends Command {
 
-    public PermissionOtherCommand() {
-        super(
-                new String[]{"permissions", "perms"},
-                "help.permission.other",
-                "permission.other",
-                new Argument(
-                        new Translation(
-                                BedrockPlugin.getInstance(),
-                                "help.args.username_uuid"
-                        ).getTranslation(),
-                        "username/uuid"
-                )
-        );
+    public PermissionOtherCommand(BasePlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
+    }
+
+    @Override
+    public void setPermissions(ArrayList<String> permissions) {
+        permissions.add("permissions.self");
+        permissions.add("permissions.other");
+    }
+
+    @Override
+    public void setSubCommands(ArrayList<String[]> subcommands) {
+        subcommands.add(new String[]{"permissions", "perms"});
+    }
+
+    @Override
+    public void setDescription(StringBuilder description) {
+        description.append("help.permissions.other");
+    }
+
+    @Override
+    public void setArguments(ArrayList<Argument> arguments) {
+        arguments.add(new Argument("help.command.args.username_uuid.description", "help.command.args.username_uuid.placeholder", true));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
 
         // check args length
-        if (args.length != 1)
+        if (args.length > 1)
             throw new IllegalCommandArgumentException();
 
-        PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
+        String player = (args.length == 0) ? sender.getName() : args[0];
+
+        PermissionService permissionService = getPlugin().getPermissionService();
         if (permissionService != null) {
 
             MessageHelper.send(
@@ -60,9 +73,9 @@ public class PermissionOtherCommand extends Command {
 
             HashMap<String, ArrayList<String>> permissionDump;
             try {
-                permissionDump = permissionService.getPermissionRoleDump(Bukkit.getPlayer(args[0]));
+                permissionDump = permissionService.getPermissionRoleDump(Bukkit.getPlayer(player));
             } catch (PlayerNotFoundException e) {
-                MessageHelper.noSuchPlayer(this.plugin, sender, args[0]);
+                MessageHelper.noSuchPlayer(this.plugin, sender, player);
                 return;
             }
 

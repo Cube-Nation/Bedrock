@@ -2,20 +2,17 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.argument.Argument;
-import de.cubenation.bedrock.command.argument.CommandArguments;
 import de.cubenation.bedrock.command.argument.UnsortedArgument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.IgnoreCaseArrayList;
 import de.cubenation.bedrock.helper.MessageHelper;
-import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -23,140 +20,22 @@ import java.util.HashMap;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command
  */
+@SuppressWarnings("unused")
 public abstract class UnsortedArgsCommand extends AbstractCommand {
 
-    private ArrayList<String[]> commands;
-    private CommandArguments commandArguments = new CommandArguments();
-    private String label;
-    private String description;
-    private ArrayList<Permission> permissions = new ArrayList<>();
-    private CommandManager commandManager;
-    private ArrayList<String> permissionStrings;
-    protected BasePlugin plugin;
-
-
-    /**
-     * Instantiates a new Command with just one command
-     * Like '/city help'
-     *
-     * @param command     the command
-     * @param description the description
-     * @param permission  the permission
-     */
-    @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(final String command, String description, final String permission, UnsortedArgument... arguments) {
-        init(new ArrayList<String[]>() {{
-            add(new String[]{command});
-        }}, description, new ArrayList<String>() {{
-            add(permission);
-        }}, arguments);
-
-    }
-
-    /**
-     * Instantiates a new Command with just one command
-     * Like '/city help'
-     *
-     * @param command     the command
-     * @param description the description
-     * @param permissions the permissions
-     */
-    @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(final String command, String description, ArrayList<String> permissions, UnsortedArgument... arguments) {
-        init(new ArrayList<String[]>() {{
-            add(new String[]{command});
-        }}, description, permissions, arguments);
-
-    }
-
-    /**
-     * Instantiates a new Command.
-     * Each element in commands symbolizes an alias for a command
-     * Like '/city teleport' and '/city tp'
-     *
-     * @param commands    the commands
-     * @param description the description
-     * @param permission  the permission
-     */
-    @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(final String[] commands, String description, final String permission, UnsortedArgument... arguments) {
-        ArrayList<String[]> list = new ArrayList<>();
-        list.add(commands);
-
-        init(list, description, new ArrayList<String>() {{
-            add(permission);
-        }}, arguments);
-    }
-
-    /**
-     * Instantiates a new Command.
-     * Each element in commands symbolizes an alias for a command
-     * Like '/city teleport' and '/city tp'
-     *
-     * @param commands    the commands
-     * @param description the description
-     * @param permissions the permissions
-     */
-    @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(final String[] commands, String description, ArrayList<String> permissions, UnsortedArgument... arguments) {
-        ArrayList<String[]> list = new ArrayList<>();
-        list.add(commands);
-
-        init(list, description, permissions, arguments);
-    }
-
-    /**
-     * Instantiates a new Command.
-     * Each element in <code>commands</code> symbolizes a new command
-     * Like '/city set bonus'
-     * The String[] contains a single command or aliases
-     * Like '/city set bonus', '/city s bonus', /
-     *
-     * @param commands    the commands
-     * @param description the description
-     * @param permission  the permission
-     */
-    @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(ArrayList<String[]> commands, String description, final String permission, UnsortedArgument... arguments) {
-        init(commands, description, new ArrayList<String>() {{
-            add(permission);
-        }}, arguments);
-    }
-
-    /**
-     * Instantiates a new Command.
-     * Each element in <code>commands</code> symbolizes a new command
-     * Like '/city set bonus'
-     * The String[] contains a single command or aliases
-     * Like '/city set bonus', '/city s bonus', /
-     *
-     * @param commands    the commands
-     * @param description the description
-     * @param permissions the permissions
-     */
-    @SuppressWarnings(value = "unused")
-    public UnsortedArgsCommand(ArrayList<String[]> commands, String description, ArrayList<String> permissions, UnsortedArgument... arguments) {
-        init(commands, description, permissions, arguments);
-    }
-
-
-    private void init(ArrayList<String[]> commands, String description, ArrayList<String> permissions, UnsortedArgument... arguments) {
-        this.commands = commands;
-        this.permissionStrings = permissions;
-        this.description = description;
-
-        Collections.addAll(this.commandArguments, arguments);
+    public UnsortedArgsCommand(BasePlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
     }
 
     @Override
-    public final void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public final void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         // Parse Arguments
 
         IgnoreCaseArrayList arrayList = new IgnoreCaseArrayList(Arrays.asList(args));
 
-        HashMap<String, ArrayList<String>> parsedArguments = new HashMap<>();
+        HashMap<String, String> parsedArguments = new HashMap<>();
 
-        for (Argument argument : getCommandArguments()) {
+        for (Argument argument : getArguments()) {
             if (argument instanceof UnsortedArgument) {
                 UnsortedArgument unsortedArgument = (UnsortedArgument) argument;
 
@@ -164,17 +43,10 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
                     int index = arrayList.indexOf(unsortedArgument.getKey());
                     // Add new Key to HasMap
-                    ArrayList<String> filledPlaceholder = new ArrayList<>();
-                    parsedArguments.put(unsortedArgument.getKey(), filledPlaceholder);
 
-                    for (int j = index + 1; j < (index + 1 + unsortedArgument.getPlaceholder().size()); j++) {
-                        try {
-                            filledPlaceholder.add(args[j]);
-                        } catch (Exception e) {
-                            // Out of Range, Missing an Argument.
-                            throw new IllegalCommandArgumentException();
-                        }
-                    }
+                    parsedArguments.put(unsortedArgument.getKey(), unsortedArgument.getRuntimePlaceholder());
+
+
 
                 } else {
                     if (!unsortedArgument.isOptional()) {
@@ -185,17 +57,17 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
             }
         }
 
-        execute(sender, label, subcommands, parsedArguments);
+        execute(sender, subcommands, parsedArguments);
 
     }
 
-    public abstract void execute(CommandSender sender, String label, String[] subcommands, HashMap<String, ArrayList<String>> arguments) throws CommandException, IllegalCommandArgumentException;
+    public abstract void execute(CommandSender sender, String[] subcommands, HashMap<String, String> arguments) throws CommandException, IllegalCommandArgumentException;
 
     @Override
     public final ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
-        if (commands.size() >= args.length) {
+        if (this.subcommands.size() >= args.length) {
             return getTabCompletionFromCommands(args);
-        } else if (args.length > commands.size()) {
+        } else if (args.length > this.subcommands.size()) {
             return getTabCompletionFromArguments(args);
         }
         return null;
@@ -207,8 +79,8 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         }
 
         //Check if last command is equal, not startswith
-        int index = commands.size() - 1;
-        for (String com : getCommands().get(index)) {
+        int index = this.subcommands.size() - 1;
+        for (String com : getSubcommands().get(index)) {
             if (!com.equalsIgnoreCase(args[index])) {
                 return null;
 
@@ -218,14 +90,14 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         // TODO
         // Unschön, etwas besseres überlegen
         ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
-        for (int i = 0; i < getCommandArguments().size(); i++) {
-            if (getCommandArguments().get(i) instanceof UnsortedArgument) {
-                cmdArgs.add((UnsortedArgument) getCommandArguments().get(i));
+        for (int i = 0; i < getArguments().size(); i++) {
+            if (getArguments().get(i) instanceof UnsortedArgument) {
+                cmdArgs.add((UnsortedArgument) getArguments().get(i));
             }
         }
 
-        ArrayList<UnsortedArgument> recursive = getPossibleArguments(cmdArgs, args, commands.size());
-
+        ArrayList<UnsortedArgument> recursive = getPossibleArguments(cmdArgs, args, this.subcommands.size());
+        
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
             for (UnsortedArgument argument : recursive) {
@@ -252,7 +124,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
             // Add this argument
             position++;
             // Add Placeholder size to ignore them
-            position += argument.getPlaceholder().size();
+            position ++;
             return getPossibleArguments(list, args, position);
         }
         return null;
@@ -270,15 +142,15 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     private boolean checkCommands(String[] args) {
 
-        if (args.length < commands.size()) {
+        if (args.length < this.subcommands.size()) {
             return false;
         }
 
-        for (int i = 0; i < commands.size(); i++) {
+        for (int i = 0; i < this.subcommands.size(); i++) {
 
             boolean validCommand = false;
-            for (String com : getCommands().get(i)) {
-                if (i < commands.size() - 1) {
+            for (String com : getSubcommands().get(i)) {
+                if (i < this.subcommands.size() - 1) {
                     if (com.equalsIgnoreCase(args[i])) {
                         validCommand = true;
                     }
@@ -321,32 +193,32 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     private boolean checkArguments(String[] args) {
 
         int commandArgumentSize = 0;
-        for (Argument argument : getCommandArguments()) {
+        for (Argument argument : getArguments()) {
             // Ignore Optional Commands, this can handle the parse method
             if (!argument.isOptional()) {
                 // Add 1 for the key
                 commandArgumentSize++;
                 // Add placeholder Size
-                commandArgumentSize += argument.getPlaceholder().size();
+                commandArgumentSize++;
             }
         }
 
-        if (args.length < (commands.size() + commandArgumentSize)) {
+        if (args.length < (this.subcommands.size() + commandArgumentSize)) {
             return false;
         }
 
         // Unschön, etwas besseres überlegen
         ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
-        for (int i = 0; i < getCommandArguments().size(); i++) {
-            if (getCommandArguments().get(i) instanceof UnsortedArgument) {
-                cmdArgs.add((UnsortedArgument) getCommandArguments().get(i));
+        for (int i = 0; i < getArguments().size(); i++) {
+            if (getArguments().get(i) instanceof UnsortedArgument) {
+                cmdArgs.add((UnsortedArgument) getArguments().get(i));
             }
         }
 
         System.out.println("All Args");
         System.out.println(cmdArgs);
 
-        for (int i = commands.size(); i < args.length; i++) {
+        for (int i = this.subcommands.size(); i < args.length; i++) {
             UnsortedArgument argument = containsKey(cmdArgs, args[i]);
             if (argument != null) {
                 cmdArgs.remove(argument);
@@ -370,78 +242,4 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
-
-    @Override
-    public ArrayList<String[]> getCommands() {
-        return commands;
-    }
-
-    @Override
-    public String getLabel() {
-        return label;
-    }
-
-    @Override
-    public CommandArguments getCommandArguments() {
-        return commandArguments;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public ArrayList<Permission> getPermissions() {
-        return permissions;
-    }
-
-    @Override
-    public CommandManager getCommandManager() {
-        return commandManager;
-    }
-
-    @Override
-    public ArrayList<String> getPermissionStrings() {
-        return permissionStrings;
-    }
-
-    @Override
-    public BasePlugin getPlugin() {
-        return plugin;
-    }
-
-
-    @Override
-    public void setCommands(ArrayList<String[]> commands) {
-        this.commands = commands;
-    }
-
-    @Override
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
-    public void addPermission(Permission permission) {
-        if (this.permissions == null) {
-            this.permissions = new ArrayList<>();
-        }
-        permissions.add(permission);
-    }
-
-    @Override
-    public void setCommandManager(CommandManager commandManager) {
-        this.commandManager = commandManager;
-    }
-
-    @Override
-    public void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
-    }
 }

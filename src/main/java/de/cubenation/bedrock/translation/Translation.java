@@ -7,7 +7,6 @@ import de.cubenation.bedrock.service.localization.LocalizationService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
 
 public class Translation {
 
@@ -25,6 +24,7 @@ public class Translation {
     }
 
     public Translation(BasePlugin plugin, String locale_ident, String[] locale_args) {
+        /*
         if (plugin instanceof BedrockPlugin) {
             StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
             plugin.log(Level.WARNING, "========================================================================================================");
@@ -36,6 +36,7 @@ public class Translation {
             }
             plugin.log(Level.WARNING, "========================================================================================================");
         }
+        */
 
         this.setPlugin(plugin);
         this.setLocale_ident(locale_ident);

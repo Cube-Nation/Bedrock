@@ -1,6 +1,5 @@
 package de.cubenation.bedrock;
 
-import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.config.BedrockDefaults;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
@@ -64,16 +63,16 @@ public class BedrockPlugin extends BasePlugin {
     }
 
     @Override
-    public HashMap<String, ArrayList<AbstractCommand>> getCommands() {
-        return null;
-    }
-
-    @Override
     public HashMap<String, String> getCustomConfigurationFiles() {
         return new HashMap<String, String>() {{
             put(de_DE.getFilename(), de_DE.class.getName());
             put(en_US.getFilename(), en_US.class.getName());
         }};
+    }
+
+    @Override
+    public void setCommands(HashMap<String, ArrayList<Class<?>>> commands) {
+
     }
 
     /**

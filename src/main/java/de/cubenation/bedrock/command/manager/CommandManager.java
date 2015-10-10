@@ -2,7 +2,7 @@ package de.cubenation.bedrock.command.manager;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
-import de.cubenation.bedrock.command.predefined.*;
+import de.cubenation.bedrock.command.predefined.HelpCommand;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
@@ -30,7 +30,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private HelpCommand helpCommand;
 
 
-    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix, ArrayList<AbstractCommand> commands) {
+    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix) {
 
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
@@ -39,24 +39,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             this.commands.add(command);
         }
 
-        this.helpCommand = new HelpCommand(this, helpPrefix);
+        this.helpCommand = new HelpCommand(plugin, this);
 
         this.commands.add(helpCommand);
-        helpCommand.setHelpPrefix(helpPrefix);
-
-        // add default commands that all plugins are capable of
-        this.commands.add(new ReloadCommand());
-        this.commands.add(new VersionCommand());
-        this.commands.add(new PermissionListCommand());
-        this.commands.add(new PermissionSelfCommand());
-        this.commands.add(new PermissionOtherCommand());
 
 
-        if (this.commands != null) {
-            for (AbstractCommand command : this.commands) {
-                command.addCommandManager(this);
-            }
-        }
+    }
+
+    public void addCommand(AbstractCommand command) {
+        this.commands.add(command);
     }
 
 
@@ -65,7 +56,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         AbstractCommand commandToExecute = helpCommand;
         try {
             if (args.length <= 0) {
-                commandToExecute.execute(commandSender, label, null, args);
+                commandToExecute.execute(commandSender, null, args);
                 return true;
             } else {
                 for (AbstractCommand cmd : commands) {
@@ -82,9 +73,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             commandToExecute.execute(
                     commandSender,
-                    label,
-                    Arrays.copyOfRange(args, 0, commandToExecute.getCommands().size()),
-                    Arrays.copyOfRange(args, commandToExecute.getCommands().size(), args.length));
+                    Arrays.copyOfRange(args, 0, commandToExecute.getSubcommands().size()),
+                    Arrays.copyOfRange(args, commandToExecute.getSubcommands().size(), args.length));
             return true;
 
 
