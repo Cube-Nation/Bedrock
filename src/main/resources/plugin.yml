@@ -7,3 +7,6 @@ name: Bedrock
 version: "${project.version}"
 depend:
   - Yamler
+commands:
+  ${project.artifactId}:
+    description: Bedrock Base Command

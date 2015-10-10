@@ -1,6 +1,5 @@
 package de.cubenation.bedrock;
 
-import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.UnknownServiceException;
@@ -203,7 +202,7 @@ public abstract class BasePlugin extends JavaPlugin {
         return (CommandService) this.getService("command");
     }
 
-    public abstract HashMap<String,ArrayList<AbstractCommand>> getCommands();
+    public abstract void setCommands(HashMap<String,ArrayList<Class<?>>> commands);
 
     /*
      * Permission Service

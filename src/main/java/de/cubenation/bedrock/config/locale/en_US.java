@@ -96,8 +96,11 @@ public class en_US extends CustomConfigurationFile {
     @Path("help.command.args.description")
     private String help_command_args_description    = "&TEXT& - %description%&RESET&";
 
-    @Path("help.command.args.username_uuid")
-    private String help_args_username_uuid          = "Username/UUID";
+    @Path("help.command.args.username_uuid.description")
+    private String help_args_username_uuid_description  = "Username/UUID eines Spielers";
+
+    @Path("help.command.args.username_uuid.placeholder")
+    private String help_args_username_uuid_placeholder  = "Username/UUID";
 
     @Path("help.plugin")
     private String help_plugin                      = "&TEXT&Display a help for this plugin";
@@ -108,13 +111,10 @@ public class en_US extends CustomConfigurationFile {
     @Path("help.reload")
     private String help_reload                      = "&TEXT&Reload the plugin";
 
-    @Path("help.permission.list")
+    @Path("help.permissions.list")
     private String help_permission_list             = "&TEXT&Show all plugin roles and permissions";
 
-    @Path("help.permission.self")
-    private String help_permission_self             = "&TEXT&Shows your plugin permissions";
-
-    @Path("help.permission.other")
+    @Path("help.permissions.other")
     private String help_permission_other            = "&TEXT&Shows a player's plugin permissions";
 
 

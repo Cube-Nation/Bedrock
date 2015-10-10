@@ -10,14 +10,14 @@ public class UnsortedArgument extends Argument {
     private final String key;
 
     @SuppressWarnings(value = "unused")
-    public UnsortedArgument(String key, String description, boolean optional, String... placeholder) {
-        super(description, optional, placeholder);
+    public UnsortedArgument(String key, String description, String placeholder, boolean optional) {
+        super(description, placeholder, optional);
         this.key = key;
     }
 
     @SuppressWarnings(value = "unused")
-    public UnsortedArgument(String key, String description, String... placeholder) {
-        super(description, false, placeholder);
+    public UnsortedArgument(String key, String description, String placeholder) {
+        super(description, placeholder, false);
         this.key = key;
     }
 
@@ -31,8 +31,8 @@ public class UnsortedArgument extends Argument {
     public String toString() {
         return "UnsortedArgument{" +
                 "key='" + key + '\'' +
-                ", description='" + getDescription() + '\'' +
-                ", placeholder=" + getPlaceholder() +
+                ", description='" + getRuntimeDescription() + '\'' +
+                ", placeholder=" + getRuntimePlaceholder() +
                 ", optional=" + isOptional() +
                 '}';
     }

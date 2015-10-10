@@ -1,6 +1,9 @@
 package de.cubenation.bedrock.command.predefined;
 
+import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.Command;
+import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
@@ -8,20 +11,36 @@ import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class ReloadCommand extends Command {
 
-    public ReloadCommand() {
-        super(
-                new String[]{"reload", "r"},
-                "help.reload",
-                "reload"
-        );
+    public ReloadCommand(BasePlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String label, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void setPermissions(ArrayList<String> permissions) {
+        permissions.add("reload");
+    }
+
+    @Override
+    public void setSubCommands(ArrayList<String[]> subcommands) {
+        subcommands.add(new String[] { "r", "reload" } );
+    }
+
+    @Override
+    public void setDescription(StringBuilder description) {
+        description.append("help.reload");
+    }
+
+    @Override
+    public void setArguments(ArrayList<Argument> arguments) {
+    }
+
+    @Override
+    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
 
             this.getPlugin().log(Level.INFO, "Reloading plugin services");
@@ -54,4 +73,5 @@ public class ReloadCommand extends Command {
             e.printStackTrace();
         }
     }
+
 }
