@@ -9,8 +9,12 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class BedrockDefaults extends CustomConfigurationFile {
+
+    public static String getFilename() {
+        return "bedrock.yaml";
+    }
 
     public String[] getHeader() {
         return new String[]{
@@ -24,11 +28,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
                 "   do so, the whole file will be regenerated!",
                 "",
                 "   In case you delete or set an invalid value to an option, the default value from the Bedrock Plugin",
-                "   config.yml are taken.",
+                "   bedrock.yaml are taken.",
                 "",
-                "   Please note: In general it is a bad idea to edit the config.yml if the Bedrock Plugin. Please leave",
-                "                this file *as is* if so.",
-                "                To change the behaviour of a certain plugin refer to its own config.yml!",
+                "   Please note: In general it is a bad idea to edit the bedrock.yaml of the Bedrock Plugin. Please leave",
+                "                this file *as is*.",
+                "                To change the behaviour of a certain plugin refer to its own bedrock.yaml.",
                 "",
                 "",
                 "2. To Plugin developers:",
@@ -54,8 +58,12 @@ public class BedrockDefaults extends CustomConfigurationFile {
 
     }
 
+    public BedrockDefaults(BasePlugin plugin) {
+        this(plugin, getFilename());
+    }
+
     public BedrockDefaults(BasePlugin plugin, String name) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), "config.yml");
+        CONFIG_FILE = new File(plugin.getDataFolder(), name);
         CONFIG_HEADER = getHeader();
     }
 

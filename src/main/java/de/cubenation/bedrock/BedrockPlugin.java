@@ -43,7 +43,7 @@ public class BedrockPlugin extends BasePlugin {
             BedrockDefaults bd = new BedrockDefaults(this, null);
             bd.init();
         } catch (InvalidConfigurationException e) {
-            this.log(Level.SEVERE, "Error creating config.yml", e);
+            this.log(Level.SEVERE, "Error creating " + BedrockDefaults.getFilename(), e);
             this.disable(e);
         }
 

@@ -7,6 +7,7 @@ public abstract class CustomConfigurationFile extends Config {
 
     public CustomConfigurationFile() { }
 
+    @SuppressWarnings("unused")
     public CustomConfigurationFile(BasePlugin plugin, String name) { }
 
     public CustomConfigurationFile get() {

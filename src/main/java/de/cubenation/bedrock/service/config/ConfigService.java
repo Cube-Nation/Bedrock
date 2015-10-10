@@ -31,14 +31,14 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         // first create the plugin data folder
         this.createDataFolder();
 
-        // try to create the plugin config.yml
+        // try to create the plugin bedrock.yaml
         try {
-            this.registerFile("config.yml", this.instantiatePluginConfig());
+            this.registerFile(BedrockDefaults.getFilename(), this.instantiatePluginConfig());
         } catch (InstantiationException | InvalidConfigurationException ignored) {
 
-            // try to create the config.yml from Bedrock (yes, for this plugin)
+            // try to create the bedrock.yaml from Bedrock (yes, for this plugin)
             try {
-                this.registerFile("config.yml", this.instantiateBedrockConfig());
+                this.registerFile(BedrockDefaults.getFilename(), this.instantiateBedrockConfig());
             } catch (InstantiationException | InvalidConfigurationException e) {
                 throw new ServiceInitException(e.getMessage());
             }
@@ -52,9 +52,9 @@ public class ConfigService extends AbstractService implements ServiceInterface {
          * ths default config file will be overwritten merciless *muhaha*
          */
         if (!this.isValidPluginConfiguration()) {
-            this.getPlugin().log(Level.WARNING, "The plugin configuration file config.yml became invalid and will be recreated from scratch");
+            this.getPlugin().log(Level.WARNING, "The plugin configuration file bedrock.yaml became invalid and will be recreated from scratch");
             try {
-                this.registerFile("config.yml", this.instantiatePluginConfig());
+                this.registerFile(BedrockDefaults.getFilename(), this.instantiatePluginConfig());
             } catch (InstantiationException | InvalidConfigurationException e) {
                 throw new ServiceInitException(e.getMessage());
             }
@@ -97,7 +97,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
                 String.format("%s.config.BedrockDefaults",
                         this.getPlugin().getClass().getPackage().getName()
                 ),
-                "config.yml"
+                BedrockDefaults.getFilename()
         );
         config.init();
         return config;
@@ -107,7 +107,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
         CustomConfigurationFile config = this.createPluginConfig(
                 this.getPlugin(),
                 BedrockDefaults.class.getName(),
-                "config.yml"
+                BedrockDefaults.getFilename()
         );
         config.init();
         return config;
@@ -170,7 +170,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     @Deprecated
     @SuppressWarnings("deprecation")
     public YamlConfiguration getReadOnlyConfig() {
-        return getReadOnlyConfig("config.yml");
+        return getReadOnlyConfig(BedrockDefaults.getFilename());
     }
 
     @Deprecated
