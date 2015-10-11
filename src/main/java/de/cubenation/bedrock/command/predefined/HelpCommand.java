@@ -52,21 +52,19 @@ public class HelpCommand extends Command {
         if (args.length == 0) {
             // Display help for all commands
 
+            // =========================
             // create header
+            // =========================
             sendHeader(sender, getCommandManager().getPluginCommand().getLabel());
 
+
+            // =========================
             // create help for each subcommand
-            ArrayList<TextComponent> commandComponents = new ArrayList<>();
+            // =========================
             for (AbstractCommand command : commandManager.getHelpCommands()) {
                 TextComponent component_help = command.getBeautifulHelp(sender);
-                if (component_help != null) {
-                    commandComponents.add(component_help);
-                }
-            }
-
-            // Preparation for Pagination
-            for (TextComponent component : commandComponents) {
-                MessageHelper.send(this.plugin, sender, component);
+                if (component_help != null)
+                    MessageHelper.send(this.plugin, sender, component_help);
             }
 
         } else if (StringUtils.isNumeric(args[0])) {
@@ -77,6 +75,7 @@ public class HelpCommand extends Command {
         } else {
 
             // Send help for special command
+
             ArrayList<AbstractCommand> helpList = new ArrayList<>();
             for (AbstractCommand command : getCommandManager().getHelpCommands()) {
                 if (command instanceof HelpCommand) {
@@ -123,10 +122,7 @@ public class HelpCommand extends Command {
 
     private boolean isValidHelpTrigger(AbstractCommand command, String[] args) {
         for (int i = 0; i < args.length; i++) {
-            for (String cmd : command.getSubcommands().get(i)) {
-                if (cmd.startsWith(args[i])) {
-                    continue;
-                }
+            if (!Arrays.asList(command.getSubcommands().get(i)).contains(args[i])) {
                 return false;
             }
         }

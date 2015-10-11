@@ -179,11 +179,6 @@ public abstract class AbstractCommand {
      * @return true, if the sender has Permissions, else false.
      */
     public final boolean hasPermission(CommandSender sender) {
-        if (getRuntimePermissions().isEmpty()) {
-            // No Permission defined -> sender has permission
-            return true;
-        }
-
         for (Permission permission : getRuntimePermissions()) {
             if (permission.userHasPermission(sender)) {
                 return true;
