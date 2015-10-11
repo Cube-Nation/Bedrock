@@ -62,6 +62,15 @@ public class PermissionOtherCommand extends Command {
         PermissionService permissionService = getPlugin().getPermissionService();
         if (permissionService != null) {
 
+            HashMap<String, ArrayList<String>> permissionDump;
+            try {
+                permissionDump = permissionService.getPermissionRoleDump(Bukkit.getPlayer(player));
+            } catch (PlayerNotFoundException e) {
+                MessageHelper.noSuchPlayer(this.plugin, sender, player);
+                return;
+            }
+
+
             MessageHelper.send(
                     getCommandManager().getPlugin(),
                     sender,
@@ -70,14 +79,6 @@ public class PermissionOtherCommand extends Command {
                             "permission.list.header"
                     ).getTranslation()
             );
-
-            HashMap<String, ArrayList<String>> permissionDump;
-            try {
-                permissionDump = permissionService.getPermissionRoleDump(Bukkit.getPlayer(player));
-            } catch (PlayerNotFoundException e) {
-                MessageHelper.noSuchPlayer(this.plugin, sender, player);
-                return;
-            }
 
             for (Map.Entry entry : permissionDump.entrySet()) {
 
