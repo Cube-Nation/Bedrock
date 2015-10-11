@@ -63,7 +63,11 @@ public abstract class AbstractPageableListService extends AbstractService implem
     }
 
     public int getPages() {
-        return (int) Math.round(this.storage.size() / this.next + 0.5);
+        double factor = 0.5;
+        if (this.storage.size() % this.next == 0) {
+            factor = 0.0;
+        }
+        return (int) Math.round(this.storage.size() / this.next + factor);
     }
 
     public int getPageSize(int page) throws IndexOutOfBoundsException {
@@ -101,8 +105,9 @@ public abstract class AbstractPageableListService extends AbstractService implem
     public String toString() {
         return "AbstractPageableListService{" +
                 "next=" + next +
+                "getPages()" + getPages() +
+                "size" + size() +
                 ", storage=" + storage +
                 '}';
     }
-
 }
