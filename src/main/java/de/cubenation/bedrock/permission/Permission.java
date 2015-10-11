@@ -22,8 +22,6 @@ public class Permission {
     public Permission(String name, String role) {
         this.name = name;
         this.role = role;
-
-        System.out.println("register new Permission: " + role + "." + name);
     }
 
     public boolean userHasPermission(CommandSender sender) {

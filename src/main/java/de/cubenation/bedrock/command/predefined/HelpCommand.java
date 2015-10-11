@@ -30,7 +30,6 @@ public class HelpCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add( new Permission("help.plugin") );
     }
 
     @Override
