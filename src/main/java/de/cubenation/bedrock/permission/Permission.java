@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.permission;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -16,7 +17,7 @@ public class Permission {
 
 
     public Permission(String name) {
-        this(name, "no_role");
+        this(name, PermissionService.no_role);
     }
 
     public Permission(String name, String role) {

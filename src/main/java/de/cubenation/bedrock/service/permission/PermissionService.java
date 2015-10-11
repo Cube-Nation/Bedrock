@@ -30,15 +30,15 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private ConfigService config_service;
 
-    private ArrayList<String> unregistered_permissions = new ArrayList<>();
+    private ArrayList<String> unregistered_permissions                  = new ArrayList<>();
 
-    private HashMap<String, String> active_permissions = new HashMap<>();
+    private HashMap<String, String> active_permissions                  = new HashMap<>();
 
-    private HashMap<String, ArrayList<String>> permission_dump = new HashMap<>();
+    private HashMap<String, ArrayList<String>> permission_dump          = new HashMap<>();
 
-    private HashMap<String, ArrayList<String>> external_permissions = new HashMap<>();
+    private HashMap<String, ArrayList<String>> external_permissions     = new HashMap<>();
 
-    private final String no_role    = "no_role";
+    public final static String no_role                                  = "no_role";
 
 
     public PermissionService(BasePlugin plugin) {
@@ -96,7 +96,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     @SuppressWarnings("unused")
     public void registerPermission(String permission) {
-        this.registerPermission(this.no_role, permission);
+        this.registerPermission(PermissionService.no_role, permission);
     }
 
     public void registerPermission(String role, String permission) {
@@ -129,7 +129,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             permissions = (Permissions) this.config_service.getConfig(Permissions.class);
 
         // clean up default role - will be restored if necessary
-        permissions.removeRole(this.no_role);
+        permissions.removeRole(PermissionService.no_role);
 
 
         // 1) create all permissions from scratch in default role if
@@ -137,7 +137,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         //   - plugin commands use permissions
         if (permissions.getRoles().size() == 0 && this.unregistered_permissions.size() != 0) {
             // no roles -> create all permissions in the default role
-            permissions.addPermissions(this.no_role, this.unregistered_permissions);
+            permissions.addPermissions(PermissionService.no_role, this.unregistered_permissions);
         }
 
         // 2) check external permissions
@@ -154,7 +154,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         if (permissions.getRoles().size() > 0) {
             for (String permission : this.unregistered_permissions) {
                 if (permissions.getRoleForPermission(permission) == null) {
-                    permissions.addPermission(this.no_role, permission);
+                    permissions.addPermission(PermissionService.no_role, permission);
                 }
             }
         }
@@ -186,13 +186,13 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
         for (final String role : roled_permissions.keySet()) {
 
-            String formaatted_role = (role.equals(this.no_role))
+            String formaatted_role = (role.equals(PermissionService.no_role))
                     ? role
                     : String.format("%s.%s", this.getPermissionPrefix(), role);
 
             for (String permission : permissions.getPermissionsFor(role)) {
 
-                String formatted_permission = (role.equals(this.no_role))
+                String formatted_permission = (role.equals(PermissionService.no_role))
                         ? String.format("%s.%s", this.getPermissionPrefix(), permission)
                         : String.format("%s.%s.%s", this.getPermissionPrefix(), role, permission);
 
