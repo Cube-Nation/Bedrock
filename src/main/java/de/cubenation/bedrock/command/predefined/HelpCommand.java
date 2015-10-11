@@ -1,20 +1,27 @@
 package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
+import de.cubenation.bedrock.helper.HelpPageableListService;
 import de.cubenation.bedrock.helper.MessageHelper;
+import de.cubenation.bedrock.helper.TextHolder;
+import de.cubenation.bedrock.helper.design.PageDesignHelper;
 import de.cubenation.bedrock.permission.Permission;
+import de.cubenation.bedrock.service.pageablelist.PageableListRegistry;
+import de.cubenation.bedrock.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -34,7 +41,7 @@ public class HelpCommand extends Command {
 
     @Override
     public void setSubCommands(ArrayList<String[]> subcommands) {
-        subcommands.add(new String[] { "help" } );
+        subcommands.add(new String[]{"help"});
     }
 
     @SuppressWarnings("UnusedAssignment")
@@ -49,11 +56,8 @@ public class HelpCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] subCommands, String[] args) throws CommandException {
-        if (args.length == 0) {
+        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
-
-            // create header
-            sendHeader(sender, getCommandManager().getPluginCommand().getLabel());
 
             // create help for each subcommand
             ArrayList<TextComponent> commandComponents = new ArrayList<>();
@@ -64,15 +68,33 @@ public class HelpCommand extends Command {
                 }
             }
 
+            HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
+
             // Preparation for Pagination
             for (TextComponent component : commandComponents) {
-                MessageHelper.send(this.plugin, sender, component);
+                PageableListStorable msgStoreable = new PageableListStorable();
+                msgStoreable.set(new TextHolder(component, component.getHoverEvent(), component.getClickEvent()));
+                helpPageableListService.store(msgStoreable);
             }
 
-        } else if (StringUtils.isNumeric(args[0])) {
-            // FIXME: use PageableListService
-            String message = "Zeige (irgendwann) Seite: " + args[0] + " der Hilfe.";
-            MessageHelper.send(BedrockPlugin.getInstance(), sender, message);
+            PageableListRegistry.getInstance()._register(
+                    getPlugin(),
+                    "help",
+                    sender,
+                    helpPageableListService);
+
+            int number = 1;
+            if (args.length > 0 && StringUtils.isNumeric(args[0])) {
+                number = Integer.parseInt(args[0]);
+            }
+
+            PageDesignHelper.pagination(getPlugin(),
+                    helpPageableListService,
+                    number,
+                    "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%",
+                    sender,
+                    getHeader(getCommandManager().getPluginCommand().getLabel()));
+
 
         } else {
 
@@ -87,7 +109,7 @@ public class HelpCommand extends Command {
                 }
             }
 
-            sendHeader(sender, getCommandManager().getPluginCommand().getLabel());
+            MessageHelper.send(getPlugin(), sender, getHeader(getCommandManager().getPluginCommand().getLabel()));
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
                 for (AbstractCommand command : commandManager.getHelpCommands()) {
@@ -108,17 +130,14 @@ public class HelpCommand extends Command {
         }
     }
 
-    private void sendHeader(CommandSender sender, String label) {
+    private String getHeader(String label) {
         String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
 
-        TextComponent header = new TextComponent(
-                new Translation(
-                        this.getCommandManager().getPlugin(),
-                        "help.header",
-                        new String[]{"plugin", commandHeaderName}
-                ).getTranslation()
-        );
-        MessageHelper.send(commandManager.getPlugin(), sender, header, null, null);
+        return new Translation(
+                this.getCommandManager().getPlugin(),
+                "help.header",
+                new String[]{"plugin", commandHeaderName}
+        ).getTranslation();
     }
 
     private boolean isValidHelpTrigger(AbstractCommand command, String[] args) {

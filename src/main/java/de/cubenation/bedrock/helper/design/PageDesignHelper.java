@@ -1,13 +1,13 @@
 package de.cubenation.bedrock.helper.design;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.helper.TextHolder;
 import de.cubenation.bedrock.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.service.pageablelist.PageableListStorable;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,7 +29,7 @@ public class PageDesignHelper {
 
     private static final int NAVIGATIONSIZE = 7;
 
-    public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, CommandSender sender) {
+    public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, CommandSender sender, String headline) {
         // Can't show pages, cause its empty
         if (service.isEmpty()) {
             plugin.log(Level.INFO, "Empty PageableListService. Can't display pages.");
@@ -51,8 +51,11 @@ public class PageDesignHelper {
 
         List<PageableListStorable> list = service.getPage(page);
 
-        TextComponent header = PageDesignMessages.getHeader(plugin, page, service.getPages());
-        PageDesignMessages.send(plugin, sender, header);
+        if (headline != null) {
+            MessageHelper.send(plugin, sender, headline);
+        }
+//        TextComponent header = PageDesignMessages.getHeader(plugin, page, service.getPages());
+//        PageDesignMessages.send(plugin, sender, header);
 
 
         // Send entries of page
@@ -205,6 +208,10 @@ public class PageDesignHelper {
 
         boolean isCurrent = false;
 
+        pagination.event(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", page + "")));
+
+
         pagination.append(page + "").color(secondary);
         if (page == currentPage) {
             pagination.bold(true);
@@ -212,8 +219,6 @@ public class PageDesignHelper {
             isCurrent = true;
         }
 
-        pagination.event(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", page + "")));
 
         if (pipeSeparator) {
             pagination.append("|").color(flag);
@@ -222,7 +227,6 @@ public class PageDesignHelper {
         }
 
         return isCurrent;
-
     }
 
     private static double getSteps(int start, int end) {
