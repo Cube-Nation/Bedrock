@@ -1,8 +1,10 @@
 package de.cubenation.bedrock;
 
+import de.cubenation.bedrock.exception.DependencyException;
 import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.UnknownServiceException;
+import de.cubenation.bedrock.helper.version.VersionComparator;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
@@ -236,6 +238,28 @@ public abstract class BasePlugin extends JavaPlugin {
     @Override
     public final void reloadConfig() {
         this.log(Level.SEVERE, "Access to Bukkit reloadConfig() is prohibited. GTFO!");
+    }
+
+    protected void assertPluginDependency(String name, String version) throws Exception {
+
+        JavaPlugin plugin = this.getPlugin(name);
+        if (plugin == null) {
+            throw new NoSuchPluginException("Dependency error: Could not find plugin " + name);
+        }
+
+        VersionComparator cmp = new VersionComparator();
+        String plugin_version = this.getPlugin("Yamler").getDescription().getVersion();
+
+        if (plugin_version.matches(".+-.+"))
+            plugin_version = plugin_version.split("-")[0];
+
+        int result = cmp.compare(plugin_version, version);
+        if (result < 0)
+            throw new DependencyException(String.format(
+                    "Dependency error: You need at least version %s of the %s plugin",
+                    version,
+                    name
+            ));
     }
 
 }
