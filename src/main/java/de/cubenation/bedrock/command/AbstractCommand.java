@@ -128,15 +128,29 @@ public abstract class AbstractCommand {
         Collections.sort(list, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
-                return s2.compareToIgnoreCase(s1);
+                return s1.compareToIgnoreCase(s2);
             }
         });
 
-        // Just return the "largets" command for completion to help the user to choose the right.
-        final String completionCommand = list.get(0);
 
+        // If the user typed a part of the command, return the matching
+        String completionCommand = "";
+
+        for (String completion : list) {
+            if (completion.startsWith(args[args.length - 1])) {
+                completionCommand = completion;
+                break;
+            }
+        }
+
+        // If the user typed nothing, return the largest
+        if (completionCommand.equals("")) {
+            completionCommand = list.get(list.size()-1);
+        }
+
+        final String finalCompletionCommand = completionCommand;
         return new ArrayList<String>() {{
-            add(completionCommand);
+            add(finalCompletionCommand);
         }};
     }
 
