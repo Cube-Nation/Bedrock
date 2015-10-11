@@ -84,7 +84,8 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     public void reload() throws ServiceReloadException {
         for (Object o : this.configuration_files.entrySet()) {
             Map.Entry pair = (Map.Entry) o;
-            String name = (String) pair.getKey();
+            Class<?> name = (Class<?>) pair.getKey();
+
             try {
                 //this.getPlugin().log(Level.INFO, "  config service: Reloading file " + name);
                 ((CustomConfigurationFile) pair.getValue()).reload();
