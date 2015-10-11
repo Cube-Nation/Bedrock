@@ -77,7 +77,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
 
 
         CommandManager pluginCommandManager = null;
-        for (CommandManager commandManager : this.getCommandMamagers()) {
+        for (CommandManager commandManager : this.getCommandManagers()) {
             if (commandManager.getPluginCommand().getLabel().equalsIgnoreCase(getPlugin().getDescription().getName())) {
                 pluginCommandManager = commandManager;
                 break;
@@ -117,7 +117,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
         this.command_manager.add(manager);
     }
 
-    public ArrayList<CommandManager> getCommandMamagers() {
+    public ArrayList<CommandManager> getCommandManagers() {
         return this.command_manager;
     }
 

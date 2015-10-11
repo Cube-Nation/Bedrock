@@ -7,6 +7,7 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
+import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.service.permission.PermissionService;
 import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
@@ -27,8 +28,8 @@ public class PermissionListCommand extends Command {
     }
 
     @Override
-    public void setPermissions(ArrayList<String> permissions) {
-        permissions.add("permission.list");
+    public void setPermissions(ArrayList<Permission> permissions) {
+        permissions.add(new Permission("permission.list"));
     }
 
     @Override

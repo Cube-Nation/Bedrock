@@ -23,8 +23,6 @@ public abstract class AbstractCommand {
 
     protected StringBuilder description = new StringBuilder();
 
-    //protected ArrayList<String> permissions = new ArrayList<>();
-
     protected ArrayList<String[]> subcommands = new ArrayList<>();
 
     protected ArrayList<Argument> arguments = new ArrayList<>();
@@ -48,11 +46,10 @@ public abstract class AbstractCommand {
             argument.setPlugin(plugin);
         }
 
-        ArrayList<String> permissions = new ArrayList<>();
-        setPermissions(permissions);
+        setPermissions(this.runtimePermissions);
 
-        for (String permission : permissions) {
-            addRuntimePermission(new Permission(permission, getPlugin()));
+        for (Permission permission : this.runtimePermissions) {
+            permission.setPlugin(plugin);
         }
     }
 
@@ -60,7 +57,7 @@ public abstract class AbstractCommand {
      *
      * @param permissions   ArrayList of permission strings
      */
-    public abstract void setPermissions(ArrayList<String> permissions);
+    public abstract void setPermissions(ArrayList<Permission> permissions);
 
     /**
      *
@@ -174,10 +171,6 @@ public abstract class AbstractCommand {
             }
         }
         return false;
-    }
-
-    protected void addRuntimePermission(Permission permission) {
-        this.runtimePermissions.add(permission);
     }
 
     public ArrayList<Permission> getRuntimePermissions() {

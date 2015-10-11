@@ -77,7 +77,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     private void initializeCommandPermissions() {
         this.unregistered_permissions = new ArrayList<>();
 
-        for (CommandManager manager : this.getPlugin().getCommandService().getCommandMamagers()) {
+        for (CommandManager manager : this.getPlugin().getCommandService().getCommandManagers()) {
             for (AbstractCommand command : manager.getCommands()) {
 
                 for (Permission permission : command.getRuntimePermissions()) {

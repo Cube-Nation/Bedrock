@@ -8,6 +8,7 @@ import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.MessageHelper;
+import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
@@ -28,8 +29,8 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void setPermissions(ArrayList<String> permissions) {
-        permissions.add("help.plugin");
+    public void setPermissions(ArrayList<Permission> permissions) {
+        permissions.add( new Permission("help.plugin") );
     }
 
     @Override
