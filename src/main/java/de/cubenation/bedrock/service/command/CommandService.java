@@ -93,8 +93,12 @@ public class CommandService extends AbstractService implements ServiceInterface 
             );
             this.addCommandManager(pluginCommandManager);
 
-            pluginCommandManager.getPluginCommand().setExecutor(pluginCommandManager);
-            pluginCommandManager.getPluginCommand().setTabCompleter(pluginCommandManager);
+            try {
+                pluginCommandManager.getPluginCommand().setExecutor(pluginCommandManager);
+                pluginCommandManager.getPluginCommand().setTabCompleter(pluginCommandManager);
+            } catch (Exception e) {
+                throw new ServiceInitException("Please add your Pluginname as command in the plugin.yml!");
+            }
         }
 
         // add default commands that all plugins are capable of
