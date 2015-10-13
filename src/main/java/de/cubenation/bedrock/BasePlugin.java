@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Created by B1acksheep on 30.03.15.
  * Project: Bedrock
@@ -31,21 +32,35 @@ import java.util.logging.Logger;
  */
 public abstract class BasePlugin extends JavaPlugin {
 
+    /** tbd */
     private boolean intentionally_ready = false;
 
+    /** The ServiceManager object */
     private ServiceManager serviceManager;
 
+    /**
+     * BasePlugin constructor
+     * Calls the JavaPlugin constructor
+     *
+     * @see JavaPlugin
+     */
     public BasePlugin() {
         super();
     }
 
-    /*
-     * Plugin enabling
+    /**
      *
-     * @throws Exception    may throw any exception
+     * @throws Exception
      */
     protected void onPreEnable() throws Exception { }
 
+    /**
+     * This method is executed when Bukkit enables this plugin.
+     * <p>
+     * For custom pre- and post-enabling functions use
+     *
+     *
+     */
     @Override
     public final void onEnable() {
 
@@ -96,8 +111,12 @@ public abstract class BasePlugin extends JavaPlugin {
 
     protected void onPostEnable() throws Exception { }
 
-    /*
-     * get a foreign plugin object
+    /**
+     * Returns a Bukkit plugin object
+     *
+     * @param name  The plugin name
+     * @return      The requested plugin object
+     * @throws      NoSuchPluginException
      */
     @SuppressWarnings("unused")
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
@@ -109,13 +128,30 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
 
-    /*
-     * Logging
+    /**
+     * Returns a colored string of the current plugin, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @return          The message prefix
      */
     public String getMessagePrefix() {
         return this.getMessagePrefix(this);
     }
 
+
+    /**
+     * Returns a colored string of a given plugin, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @param plugin    The plugin
+     * @return          The message prefix
+     */
     public String getMessagePrefix(BasePlugin plugin) {
         return this.getMessagePrefix(plugin.getDescription().getName());
     }
@@ -208,9 +244,9 @@ public abstract class BasePlugin extends JavaPlugin {
         this.disable(e);
     }
 
-
     /**
-     * Returns a Bedrock Service
+     * Returns a Bedrock Service.
+     * If the service is not enabled yet, <code>null</code> is returned
      *
      * @param   name                The service name
      * @return  ServiceInterface
@@ -229,7 +265,7 @@ public abstract class BasePlugin extends JavaPlugin {
     /**
      *
      * Returns the Bedrock ConfigService object instance.
-     * If the ConfigService is not ready, null is returned.
+     * If the ConfigService is not ready, <code>null</code> is returned.
      *
      * @return      The Bedrock ConfigService
      * @see         ConfigService
@@ -241,7 +277,7 @@ public abstract class BasePlugin extends JavaPlugin {
     /**
      *
      * Returns the Bedrock ColorSchemeService object instance.
-     * If the ColorSchemeService is not ready, null is returned.
+     * If the ColorSchemeService is not ready, <code>null</code> is returned.
      *
      * @return      The Bedrock ColorSchemeService
      * @see         ColorSchemeService
@@ -252,7 +288,7 @@ public abstract class BasePlugin extends JavaPlugin {
 
     /**
      * Returns the Bedrock CommandService object instance.
-     * If the CommandService is not ready, null is returned.
+     * If the CommandService is not ready, <code>null</code> is returned.
      *
      * @return      The Bedrock CommandService
      * @see         CommandService
@@ -263,7 +299,7 @@ public abstract class BasePlugin extends JavaPlugin {
 
     /**
      * Returns the Bedrock PermissionService object instance.
-     * If the PermissionService is not ready, null is returned.
+     * If the PermissionService is not ready, <code>null</code> is returned.
      *
      * @return      The Bedrock PermissionService
      * @see         PermissionService
@@ -274,7 +310,7 @@ public abstract class BasePlugin extends JavaPlugin {
 
     /**
      * Returns the Bedrock LocalizationService object instance.
-     * If the LocalizationService is not ready, null is returned.
+     * If the LocalizationService is not ready, <code>null</code> is returned.
      *
      * @return      The Bedrock LocalizationService
      * @see         LocalizationService
@@ -283,17 +319,21 @@ public abstract class BasePlugin extends JavaPlugin {
         return (LocalizationService) this.getService("localization");
     }
 
-
     /**
      * Set the commands that are handled by this plugin
      *
      * @param commands  A HashMap that contains Strings as keys (the command itself)
-     *                  and an ArrayList of Classes as Hashmap values.
+     *                  and an ArrayList of Classes that handle this command as HashMap values.
      */
     public abstract void setCommands(HashMap<String,ArrayList<Class<?>>> commands);
 
+    /**
+     * Returns a list of CustomConfigurationFiles classes
+     *
+     * @return  An ArrayList of classes
+     * @see     de.cubenation.bedrock.service.config.CustomConfigurationFile
+     */
     public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
-
 
     /**
      * Disabled Bukkit Commands

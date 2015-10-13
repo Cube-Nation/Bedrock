@@ -2,13 +2,33 @@ package de.cubenation.bedrock.helper.version;
 
 import java.util.Comparator;
 
+/**
+ *
+ */
 public class VersionComparator implements Comparator {
 
+    /**
+     *
+     * @param o1
+     * @param o2
+     * @return
+     */
     @SuppressWarnings("unused")
     public boolean equals(Object o1, Object o2) {
         return compare(o1, o2) == 0;
     }
 
+    /**
+     * Compares two version strings.
+     * <p>
+     * If o1 is lower than o2, -1 is returned.
+     * If o2 is higher than o2, 1 is returned.
+     * 0 is returned otherwise.
+     *
+     * @param o1    Version string
+     * @param o2    Version string
+     * @return      Integer
+     */
     public int compare(Object o1, Object o2) {
         String version1 = (String) o1;
         String version2 = (String) o2;
@@ -59,8 +79,8 @@ public class VersionComparator implements Comparator {
             // Lexical comparison of suffixes
             int result = suffix1.compareTo(suffix2);
             if (result != 0) return result;
-
         }
+
         if (tokenizer2.MoveNext()) {
             do {
                 number2 = tokenizer2.getNumber();
@@ -78,5 +98,3 @@ public class VersionComparator implements Comparator {
         return 0;
     }
 }
-
-// VersionTokenizer.java
