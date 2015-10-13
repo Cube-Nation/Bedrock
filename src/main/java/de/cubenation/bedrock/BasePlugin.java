@@ -120,6 +120,16 @@ public abstract class BasePlugin extends JavaPlugin {
         return this.getMessagePrefix(plugin.getDescription().getName());
     }
 
+    /**
+     * Returns a colored string with the plugin name, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @param plugin    The plugin name
+     * @return          The message prefix
+     */
     public String getMessagePrefix(String plugin) {
         try {
             if (this.getColorSchemeService() == null)
@@ -135,6 +145,13 @@ public abstract class BasePlugin extends JavaPlugin {
                 ChatColor.RESET;
     }
 
+    /**
+     * Log a message with a given log level to the Minecraft logfile
+     *
+     * @param level     The Log4J log level
+     * @param message   The message to log
+     * @see             Level
+     */
     public void log(Level level, String message) {
         Logger.getLogger("Minecraft").log(
                 level,
@@ -142,12 +159,28 @@ public abstract class BasePlugin extends JavaPlugin {
         );
     }
 
+    /**
+     * Log a message with a given log level to the Minecraft logfile.
+     * The stacktrace of the Throwable object is printed to STDOUT.
+     *
+     * @param level     The Log4J log level
+     * @param message   The message to log
+     * @param t         The throwable object
+     * @see             Level
+     */
     @SuppressWarnings("unused")
     public void log(Level level, String message, Throwable t) {
         this.log(level, message);
         t.printStackTrace();
     }
 
+    /**
+     * Disables this plugin.
+     * The exception message is being logged to the Minecraft logfile and the stacktrace
+     * is printed to STDOUT.
+     *
+     * @param e     The exception that lead to disabling the plugin
+     */
     public void disable(Exception e) {
         log(Level.SEVERE, String.format("Unrecoverable error: %s",
                 (e.getMessage() == null)
@@ -159,6 +192,16 @@ public abstract class BasePlugin extends JavaPlugin {
         this.getPluginLoader().disablePlugin(this);
     }
 
+    /**
+     * Disables this plugin.
+     * The exception message is being logged to the Minecraft logfile and the stacktrace
+     * is printed to STDOUT.
+     * <p>
+     * A given sender will be informed, that the plugin is being disabled.
+     *
+     * @param e         The exception that lead to disabling this plugin
+     * @param sender    The CommandSender that needs to be informed
+     */
     @SuppressWarnings("unused")
     public void disable(Exception e, CommandSender sender) {
         sender.sendMessage(this.getMessagePrefix() + "Unrecoverable error. Disabling plugin");
@@ -166,8 +209,12 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
 
-    /*
-     * Service access
+    /**
+     * Returns a Bedrock Service
+     *
+     * @param   name                The service name
+     * @return  ServiceInterface
+     * @see     ServiceManager
      */
     public ServiceInterface getService(String name) {
         try {
@@ -179,46 +226,73 @@ public abstract class BasePlugin extends JavaPlugin {
         return null;
     }
 
-
-
-    /*
-     * Plugin Config Service
+    /**
+     *
+     * Returns the Bedrock ConfigService object instance.
+     * If the ConfigService is not ready, null is returned.
+     *
+     * @return      The Bedrock ConfigService
+     * @see         ConfigService
      */
     public ConfigService getConfigService() {
         return (ConfigService) this.getService("config");
     }
 
-    public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
-
-    /*
-     * Color Scheme Service
+    /**
+     *
+     * Returns the Bedrock ColorSchemeService object instance.
+     * If the ColorSchemeService is not ready, null is returned.
+     *
+     * @return      The Bedrock ColorSchemeService
+     * @see         ColorSchemeService
      */
     public ColorSchemeService getColorSchemeService() {
         return (ColorSchemeService) this.getService("colorscheme");
     }
 
-    /*
-     * Command Service
+    /**
+     * Returns the Bedrock CommandService object instance.
+     * If the CommandService is not ready, null is returned.
+     *
+     * @return      The Bedrock CommandService
+     * @see         CommandService
      */
     public CommandService getCommandService() {
         return (CommandService) this.getService("command");
     }
 
-    public abstract void setCommands(HashMap<String,ArrayList<Class<?>>> commands);
-
-    /*
-     * Permission Service
+    /**
+     * Returns the Bedrock PermissionService object instance.
+     * If the PermissionService is not ready, null is returned.
+     *
+     * @return      The Bedrock PermissionService
+     * @see         PermissionService
      */
     public PermissionService getPermissionService() {
         return (PermissionService) this.getService("permission");
     }
 
-    /*
-     * Localization Service
+    /**
+     * Returns the Bedrock LocalizationService object instance.
+     * If the LocalizationService is not ready, null is returned.
+     *
+     * @return      The Bedrock LocalizationService
+     * @see         LocalizationService
      */
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getService("localization");
     }
+
+
+    /**
+     * Set the commands that are handled by this plugin
+     *
+     * @param commands  A HashMap that contains Strings as keys (the command itself)
+     *                  and an ArrayList of Classes as Hashmap values.
+     */
+    public abstract void setCommands(HashMap<String,ArrayList<Class<?>>> commands);
+
+    public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
 
 
     /**
@@ -240,7 +314,17 @@ public abstract class BasePlugin extends JavaPlugin {
         this.log(Level.SEVERE, "Access to Bukkit reloadConfig() is prohibited. GTFO!");
     }
 
-    protected void assertPluginDependency(String name, String version) throws Exception {
+    /**
+     * Assert a plugin dependency.
+     * If the plugin could not be found a NoSuchPluginException is thrown.
+     * If the plugin version dependency is not met, a DependencyException is thrown.
+     *
+     * @param name      The plugin name
+     * @param version   The plugin version
+     * @throws          DependencyException
+     * @throws          NoSuchPluginException
+     */
+    protected void assertPluginDependency(String name, String version) throws DependencyException, NoSuchPluginException {
 
         JavaPlugin plugin = this.getPlugin(name);
         if (plugin == null) {
