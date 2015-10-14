@@ -5,6 +5,7 @@ import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.permission.Permission;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
@@ -86,7 +87,7 @@ public abstract class AbstractCommand {
      */
     public abstract void execute(CommandSender sender,
                                  String[] subcommands,
-                                 String[] args) throws CommandException, IllegalCommandArgumentException;
+                                 String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     /**
      * Gets tab completion for argument.

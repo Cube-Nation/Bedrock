@@ -6,6 +6,7 @@ import de.cubenation.bedrock.command.argument.UnsortedArgument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.helper.IgnoreCaseArrayList;
 import de.cubenation.bedrock.helper.MessageHelper;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -28,7 +29,8 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     }
 
     @Override
-    public final void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public final void execute(CommandSender sender, String[] subcommands, String[] args)
+            throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         // Parse Arguments
 
         IgnoreCaseArrayList arrayList = new IgnoreCaseArrayList(Arrays.asList(args));
@@ -61,7 +63,8 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     }
 
-    public abstract void execute(CommandSender sender, String[] subcommands, HashMap<String, String> arguments) throws CommandException, IllegalCommandArgumentException;
+    public abstract void execute(CommandSender sender, String[] subcommands, HashMap<String, String> arguments)
+            throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     @Override
     public final ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
