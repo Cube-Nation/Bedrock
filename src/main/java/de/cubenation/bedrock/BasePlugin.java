@@ -10,6 +10,7 @@ import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.service.command.CommandService;
 import de.cubenation.bedrock.service.config.ConfigService;
+import de.cubenation.bedrock.service.inventory.InventoryService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.metrics.MetricsService;
 import de.cubenation.bedrock.service.permission.PermissionService;
@@ -95,6 +96,9 @@ public abstract class BasePlugin extends JavaPlugin {
 
             // register metrics service
             this.serviceManager.registerService("metrics", new MetricsService(this));
+
+            // register inventory service
+            this.serviceManager.registerService("inventory", new InventoryService(this));
 
         } catch (ServiceInitException e) {
             this.disable(e);
