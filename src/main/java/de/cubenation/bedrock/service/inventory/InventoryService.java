@@ -3,6 +3,7 @@ package de.cubenation.bedrock.service.inventory;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
+import de.cubenation.bedrock.helper.MapUtil;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,7 +18,7 @@ public class InventoryService extends AbstractService implements ServiceInterfac
 
     private File inventoryDirectory;
 
-    private HashMap<String,Long> inventories;
+    private HashMap<String, Long> inventories;
 
     public InventoryService(BasePlugin plugin) {
         super(plugin);
@@ -89,22 +90,27 @@ public class InventoryService extends AbstractService implements ServiceInterfac
     }
 
 
-    public void create(String identifier, ItemStack[] itemStacks, final int lifetime) throws IOException {
+    public void create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta, final int lifetime) throws IOException {
         File f = new File(this.inventoryDirectory, identifier + ".yaml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         c.set("inventory", itemStacks);
 
         c.set("meta", new HashMap<String, Object>() {{
-            put("lifetime",         lifetime);
-            put("creation_date",    new Date().getTime());
+            put("lifetime", lifetime);
+            put("creation_date", new Date().getTime());
         }});
+
+        if (customMeta != null) {
+            c.set("custom", customMeta);
+        }
+
         c.save(f);
     }
 
 
     @SuppressWarnings("unused")
-    public void create(String identifier, ItemStack[] itemStacks) throws IOException {
-        this.create(identifier, itemStacks, -1);
+    public void create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta) throws IOException {
+        this.create(identifier, itemStacks, customMeta, -1);
     }
 
     @SuppressWarnings("unchecked")
@@ -121,24 +127,24 @@ public class InventoryService extends AbstractService implements ServiceInterfac
         return new File(this.inventoryDirectory, identifier + ".yaml").delete();
     }
 
-    public ArrayList<String> list() {
+    public HashMap<String, Long> list() {
         return this.list(0, new Date().getTime());
     }
 
-    public ArrayList<String>  list(long timestamp_start) {
+    public HashMap<String, Long> list(long timestamp_start) {
         return this.list(timestamp_start, new Date().getTime());
     }
 
-    public ArrayList<String>  list(long timestamp_start, long timestamp_end) {
-        ArrayList<String> list = new ArrayList<>();
+    public HashMap<String, Long> list(long timestamp_start, long timestamp_end) {
+        HashMap<String, Long> list = new HashMap<>();
         for (Map.Entry entry : this.inventories.entrySet()) {
 
-            if ( (long) entry.getValue() < timestamp_start && (long) entry.getValue() > timestamp_end)
+            if ((long) entry.getValue() < timestamp_start && (long) entry.getValue() > timestamp_end)
                 continue;
 
-            list.add((String) entry.getKey());
+            list.put((String) entry.getKey(), (Long) entry.getValue());
         }
-        return list;
+        return (HashMap<String, Long>) MapUtil.sortByValue(list);
     }
 
 }
