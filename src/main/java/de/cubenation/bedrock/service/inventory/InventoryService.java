@@ -95,9 +95,10 @@ public class InventoryService extends AbstractService implements ServiceInterfac
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         c.set("inventory", itemStacks);
 
+        final long time = new Date().getTime();
         c.set("meta", new HashMap<String, Object>() {{
             put("lifetime", lifetime);
-            put("creation_date", new Date().getTime());
+            put("creation_date", time);
         }});
 
         if (customMeta != null) {
@@ -105,6 +106,8 @@ public class InventoryService extends AbstractService implements ServiceInterfac
         }
 
         c.save(f);
+
+        this.inventories.put(identifier, time);
     }
 
 
