@@ -55,49 +55,52 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
         AbstractCommand commandToExecute = helpCommand;
-        try {
-            if (args.length <= 0) {
+//        try {
+        if (args.length <= 0) {
+            try {
                 commandToExecute.execute(commandSender, null, args);
-                return true;
-            } else {
-                for (AbstractCommand cmd : commands) {
-                    if (cmd.isValidTrigger(args)) {
-                        commandToExecute = cmd;
+            } catch (Exception e) {
+                plugin.getLogger().info("Error while executing help command. Shouldn't happen!");
+                e.printStackTrace();
+            }
+            return true;
+        } else {
+            for (AbstractCommand cmd : commands) {
+                if (cmd.isValidTrigger(args)) {
+                    if (!commandToExecute.hasPermission(commandSender)) {
+                        MessageHelper.insufficientPermission(plugin, commandSender);
+                        return true;
                     }
+
+                    // If the execution fails with an exception, the manager will search for another command to execute!
+                    try {
+                        commandToExecute.execute(
+                                commandSender,
+                                Arrays.copyOfRange(args, 0, commandToExecute.getSubcommands().size()),
+                                Arrays.copyOfRange(args, commandToExecute.getSubcommands().size(), args.length));
+
+                    } catch (CommandException e) {
+                        MessageHelper.commandExecutionError(this.plugin, commandSender, e);
+                        e.printStackTrace();
+
+                    } catch (IllegalCommandArgumentException e) {
+                        MessageHelper.invalidCommand(this.plugin, commandSender);
+
+                        TextComponent component_help = commandToExecute.getBeautifulHelp(commandSender);
+                        if (component_help == null) {
+                            MessageHelper.insufficientPermission(this.plugin, commandSender);
+                        } else {
+                            MessageHelper.send(this.plugin, commandSender, component_help);
+                        }
+
+                        return true;
+                    } catch (InsufficientPermissionException e) {
+                        MessageHelper.insufficientPermission(this.plugin, commandSender);
+                        return true;
+                    }
+                    return true;
                 }
             }
-
-            if (!commandToExecute.hasPermission(commandSender)) {
-                MessageHelper.insufficientPermission(plugin, commandSender);
-                return true;
-            }
-
-            commandToExecute.execute(
-                    commandSender,
-                    Arrays.copyOfRange(args, 0, commandToExecute.getSubcommands().size()),
-                    Arrays.copyOfRange(args, commandToExecute.getSubcommands().size(), args.length));
-            return true;
-
-
-        } catch (CommandException e) {
-            MessageHelper.commandExecutionError(this.plugin, commandSender, e);
-            e.printStackTrace();
-
-        } catch (IllegalCommandArgumentException e) {
-            MessageHelper.invalidCommand(this.plugin, commandSender);
-
-            TextComponent component_help = commandToExecute.getBeautifulHelp(commandSender);
-            if (component_help == null) {
-                MessageHelper.insufficientPermission(this.plugin, commandSender);
-            } else {
-                MessageHelper.send(this.plugin, commandSender, component_help);
-            }
-            return true;
-
-        } catch (InsufficientPermissionException e) {
-            MessageHelper.insufficientPermission(this.plugin, commandSender);
-            return true;
-
         }
 
         // unknown command
