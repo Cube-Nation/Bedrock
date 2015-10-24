@@ -90,7 +90,7 @@ public class InventoryService extends AbstractService implements ServiceInterfac
     }
 
 
-    public void create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta, final int lifetime) throws IOException {
+    public Boolean create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta, final int lifetime) {
         File f = new File(this.inventoryDirectory, identifier + ".yaml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         c.set("inventory", itemStacks);
@@ -105,15 +105,20 @@ public class InventoryService extends AbstractService implements ServiceInterfac
             c.set("custom", customMeta);
         }
 
-        c.save(f);
+        try {
+            c.save(f);
+        } catch (IOException e) {
+            return false;
+        }
 
         this.inventories.put(identifier, time);
+        return true;
     }
 
 
     @SuppressWarnings("unused")
-    public void create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta) throws IOException {
-        this.create(identifier, itemStacks, customMeta, -1);
+    public Boolean create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta) {
+        return this.create(identifier, itemStacks, customMeta, -1);
     }
 
     @SuppressWarnings("unchecked")
