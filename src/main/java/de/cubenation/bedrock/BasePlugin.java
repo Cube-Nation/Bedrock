@@ -324,6 +324,17 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     /**
+     * Returns the Bedrock InventoryService object instance.
+     * If the InventoryService is not ready, <code>null</code> is returned.
+     *
+     * @return      The Bedrock InventoryService
+     * @see         InventoryService
+     */
+    public InventoryService getInventoryService() {
+        return (InventoryService) this.getService("inventory");
+    }
+
+    /**
      * Set the commands that are handled by this plugin
      *
      * @param commands  A HashMap that contains Strings as keys (the command itself)
