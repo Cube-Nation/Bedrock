@@ -12,7 +12,6 @@ import de.cubenation.bedrock.service.command.CommandService;
 import de.cubenation.bedrock.service.config.ConfigService;
 import de.cubenation.bedrock.service.inventory.InventoryService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
-import de.cubenation.bedrock.service.metrics.MetricsService;
 import de.cubenation.bedrock.service.permission.PermissionService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -93,9 +92,6 @@ public abstract class BasePlugin extends JavaPlugin {
 
             // register permission service
             this.serviceManager.registerService("permission", new PermissionService(this));
-
-            // register metrics service
-            this.serviceManager.registerService("metrics", new MetricsService(this));
 
             // register inventory service
             this.serviceManager.registerService("inventory", new InventoryService(this));

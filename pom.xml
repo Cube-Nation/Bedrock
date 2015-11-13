@@ -6,7 +6,7 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.9.11~spigot188+5</version>
+    <version>0.9.12~spigot188+1</version>
     <name>Bedrock</name>
 
     <repositories>
@@ -19,11 +19,6 @@
         <repository>
             <id>de.cube-nation.nexus.public</id>
             <url>http://nexus.cube-nation.de/content/groups/public/</url>
-        </repository>
-
-        <repository>
-            <id>minecraft</id>
-            <url>http://repo.shortbyte.de/content/repositories/minecraft</url>
         </repository>
 
         <repository>
@@ -92,13 +87,6 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
-        </dependency>
-
-        <!-- mcstats.org metrics -->
-        <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics</artifactId>
-            <version>R6</version>
         </dependency>
 
         <!-- Yamler API -->
