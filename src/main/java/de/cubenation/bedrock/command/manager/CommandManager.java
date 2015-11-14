@@ -54,11 +54,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
-        AbstractCommand commandToExecute = helpCommand;
+        AbstractCommand commandToExecute = null;
 //        try {
         if (args.length <= 0) {
             try {
-                commandToExecute.execute(commandSender, null, args);
+                helpCommand.execute(commandSender, null, args);
             } catch (Exception e) {
                 plugin.getLogger().info("Error while executing help command. Shouldn't happen!");
                 e.printStackTrace();
@@ -67,6 +67,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         } else {
             for (AbstractCommand cmd : commands) {
                 if (cmd.isValidTrigger(args)) {
+                    commandToExecute = cmd;
+
                     if (!commandToExecute.hasPermission(commandSender)) {
                         MessageHelper.insufficientPermission(plugin, commandSender);
                         return true;
