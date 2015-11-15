@@ -3,10 +3,7 @@ package de.cubenation.bedrock.service.command;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.manager.CommandManager;
-import de.cubenation.bedrock.command.predefined.PermissionListCommand;
-import de.cubenation.bedrock.command.predefined.PermissionOtherCommand;
-import de.cubenation.bedrock.command.predefined.ReloadCommand;
-import de.cubenation.bedrock.command.predefined.VersionCommand;
+import de.cubenation.bedrock.command.predefined.*;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
@@ -102,6 +99,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
         }
 
         // add default commands that all plugins are capable of
+        pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new ReloadCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));

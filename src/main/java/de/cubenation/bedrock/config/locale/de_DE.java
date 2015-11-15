@@ -150,5 +150,16 @@ public class de_DE extends CustomConfigurationFile {
     @Path("namechange.toggle.disabled")
     private String namechange_toggle_off = "deaktiviert";
 
+    /**
+     * Commands
+     */
+
+    // CommandList
+
+    @Path("plugin.commands.header")
+    private String plugin_commands_header = "%plugin_prefix% Verfügbare Commands:";
+
+    @Path("plugin.commands.list")
+    private String plugin_command_list = "&PRIMARY&%command%: &SECONDARY&%description%";
 
 }
