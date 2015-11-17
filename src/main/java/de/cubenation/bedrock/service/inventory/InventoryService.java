@@ -6,6 +6,7 @@ import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.helper.MapUtil;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -45,7 +46,7 @@ public class InventoryService extends AbstractService implements ServiceInterfac
         for (File file : this.inventoryDirectory.listFiles()) {
             YamlConfiguration yc = YamlConfiguration.loadConfiguration(file);
 
-            YamlConfiguration meta = (YamlConfiguration) yc.get("meta");
+            MemorySection meta = (MemorySection) yc.get("meta");
             int lifetime = (int) meta.get("lifetime");
             long creation_date = (long) meta.get("creation_date");
 
@@ -90,7 +91,7 @@ public class InventoryService extends AbstractService implements ServiceInterfac
     }
 
 
-    public Boolean create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta, final int lifetime) {
+    public Boolean create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta, final long lifetime) {
         File f = new File(this.inventoryDirectory, identifier + ".yaml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
         c.set("inventory", itemStacks);

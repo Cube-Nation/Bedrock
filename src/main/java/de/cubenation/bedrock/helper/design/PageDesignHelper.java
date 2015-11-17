@@ -54,9 +54,6 @@ public class PageDesignHelper {
         if (headline != null) {
             MessageHelper.send(plugin, sender, headline);
         }
-//        TextComponent header = PageDesignMessages.getHeader(plugin, page, service.getPages());
-//        PageDesignMessages.send(plugin, sender, header);
-
 
         // Send entries of page
         for (PageableListStorable storable : list) {

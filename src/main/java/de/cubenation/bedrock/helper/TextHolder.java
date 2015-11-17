@@ -17,6 +17,9 @@ public class TextHolder {
 
     private ClickEvent clickEvent;
 
+    public TextHolder(TextComponent textComponent) {
+        this.textComponent = textComponent;
+    }
 
     public TextHolder(TextComponent textComponent, HoverEvent hoverEvent) {
         this.textComponent = textComponent;
