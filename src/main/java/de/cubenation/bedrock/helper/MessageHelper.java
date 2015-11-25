@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -51,8 +52,19 @@ public class MessageHelper {
         ).getTranslation());
     }
 
+    @SuppressWarnings("unused")
+    public static void sendToAll(BasePlugin plugin, String message) {
+        sendToAll(plugin, new TextComponent(message));
+    }
+
     public static void send(BasePlugin plugin, CommandSender sender, String message) {
         send(plugin, sender, new TextComponent(message));
+    }
+
+    public static void sendToAll(BasePlugin plugin, TextComponent component) {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            send(plugin, player, component);
+        }
     }
 
     public static void send(BasePlugin plugin, CommandSender sender, TextComponent component) {
