@@ -39,6 +39,7 @@ public class MessageHelper {
         );
     }
 
+    @SuppressWarnings("unused")
     public static void mustBePlayer(BasePlugin plugin, CommandSender commandSender) {
         send(plugin, commandSender, new Translation(plugin, "must_be_player").getTranslation());
     }
