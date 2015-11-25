@@ -68,8 +68,19 @@ public class Translation {
 
     private void setLocale_args(String[] my_locale_args) {
         ArrayList<String> args = new ArrayList<>(Arrays.asList(my_locale_args));
-        args.add("plugin_prefix");
-        args.add(this.getPlugin().getMessagePrefix());
+
+        boolean custom_prefix = false;
+        for (String my_locale_arg : my_locale_args) {
+            if (my_locale_arg.equals("plugin_prefix")) {
+                custom_prefix = true;
+                break;
+            }
+        }
+
+        if (!custom_prefix) {
+            args.add("plugin_prefix");
+            args.add(this.getPlugin().getMessagePrefix());
+        }
 
         // cast back to String[]
         String[] string_args = new String[args.size()];
