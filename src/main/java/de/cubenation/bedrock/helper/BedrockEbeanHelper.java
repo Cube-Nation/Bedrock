@@ -3,6 +3,7 @@ package de.cubenation.bedrock.helper;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
 import de.cubenation.bedrock.ebean.BedrockWorld;
+import de.cubenation.bedrock.exception.BedrockEbeanEntityAlreadyExistsException;
 import de.cubenation.bedrock.exception.BedrockEbeanEntityNotFoundException;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -75,6 +76,32 @@ public class BedrockEbeanHelper {
             throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, id);
 
         return player;
+    }
+
+    /**
+     * CAUTION!
+     * Use this method only to add players, who played on the server before installing Bedrock!
+     *
+     * @param uuid The unique id of the player
+     * @param playername The name of the player
+     */
+    public static BedrockPlayer createBedrockPlayer(UUID uuid, String playername) throws BedrockEbeanEntityAlreadyExistsException {
+        BedrockPlayer player = BedrockPlugin.getInstance().getDatabase()
+                .find(BedrockPlayer.class)
+                .where()
+                .eq("uuid", uuid.toString())
+                .findUnique();
+
+        if (player != null) {
+            throw new BedrockEbeanEntityAlreadyExistsException(BedrockPlayer.class, uuid.toString());
+        }
+
+        BedrockPlayer bedrockPlayer = new BedrockPlayer();
+        bedrockPlayer.setUuid(uuid.toString());
+        bedrockPlayer.setUsername(playername);
+        bedrockPlayer.save();
+
+        return bedrockPlayer;
     }
 
 
