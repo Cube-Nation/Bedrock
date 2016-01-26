@@ -45,7 +45,7 @@ public class en_US extends CustomConfigurationFile {
     private String permission_list_role             = "&PRIMARY&%role%&WHITE&:";
 
     @Path("permission.list.permission")
-    private String permission_list_permission       = " - &FLAG&%permission%";
+    private String permission_list_permission       = "&FLAG& - &SECONDARY&%permission%";
 
     @Path("permission.no_permissions")
     private String permission_no_permissions        = "%plugin_prefix%&RESET& &RED&Note: &SECONDARY&This plugin has no permissions";
