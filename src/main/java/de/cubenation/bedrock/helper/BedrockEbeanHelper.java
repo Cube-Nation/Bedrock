@@ -8,6 +8,8 @@ import de.cubenation.bedrock.exception.BedrockEbeanEntityNotFoundException;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -59,6 +61,34 @@ public class BedrockEbeanHelper {
     }
 
     /**
+     * Returns a BedrockPlayer object for the given name String
+     *
+     * @param username A string representing a username
+     * @return BedrockPlayer
+     * @throws BedrockEbeanEntityNotFoundException
+     */
+    public static List<BedrockPlayer> getBedrockPlayerForLastKnownName(final String username) throws BedrockEbeanEntityNotFoundException {
+
+        if (UUIDUtil.isUUID(username)) {
+            return new ArrayList<BedrockPlayer>() {{
+                getBedrockPlayer(username);
+            }};
+        }
+
+        List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
+                .where()
+                .like("username", username + "%")
+                .findList();
+
+        if (players == null) {
+            System.out.println("players == null");
+            throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username);
+        }
+
+        return players;
+    }
+
+    /**
      * Returns a BedrockPlayer object for the given id
      *
      * @param id The id of the BedrockPlayer
@@ -82,7 +112,7 @@ public class BedrockEbeanHelper {
      * CAUTION!
      * Use this method only to add players, who played on the server before installing Bedrock!
      *
-     * @param uuid The unique id of the player
+     * @param uuid       The unique id of the player
      * @param playername The name of the player
      */
     public static BedrockPlayer createBedrockPlayer(UUID uuid, String playername) throws BedrockEbeanEntityAlreadyExistsException {
