@@ -28,22 +28,22 @@ import java.util.logging.Level;
  */
 public class PermissionService extends AbstractService implements ServiceInterface {
 
-    private ConfigService config_service;
+    private ConfigService configService;
 
-    private ArrayList<String> unregistered_permissions                  = new ArrayList<>();
+    private ArrayList<Permission> unregisteredPermissions = new ArrayList<>();
 
-    private HashMap<String, String> active_permissions                  = new HashMap<>();
+    private HashMap<String, String> activePermissions = new HashMap<>();
 
-    private HashMap<String, ArrayList<String>> permission_dump          = new HashMap<>();
+    private HashMap<String, ArrayList<String>> permissionDump = new HashMap<>();
 
-    private HashMap<String, ArrayList<String>> external_permissions     = new HashMap<>();
+    private HashMap<String, ArrayList<String>> externalPermissions = new HashMap<>();
 
-    public final static String no_role                                  = "no_role";
+    public final static String no_role = "no_role";
 
 
     public PermissionService(BasePlugin plugin) {
         super(plugin);
-        this.config_service = plugin.getConfigService();
+        this.configService = plugin.getConfigService();
     }
 
     protected String getPermissionPrefix() {
@@ -58,7 +58,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         //this.getPlugin().log(Level.INFO, "  permission service: setting up " + this.toString());
 
         try {
-            this.config_service.registerFile(
+            this.configService.registerFile(
                     Permissions.class,
                     new Permissions(this.getPlugin())
             );
@@ -75,7 +75,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     }
 
     private void initializeCommandPermissions() {
-        this.unregistered_permissions = new ArrayList<>();
+        this.unregisteredPermissions = new ArrayList<>();
 
         for (CommandManager manager : this.getPlugin().getCommandService().getCommandManagers()) {
             for (AbstractCommand command : manager.getCommands()) {
@@ -85,12 +85,12 @@ public class PermissionService extends AbstractService implements ServiceInterfa
                     if (stringPermission == null)
                         continue;
 
-                    this.unregistered_permissions.add(stringPermission);
+                    this.unregisteredPermissions.add(permission);
                 }
             }
         }
 
-        this.fixPermissions((Permissions) this.config_service.getConfig(Permissions.class));
+        this.fixPermissions((Permissions) this.configService.getConfig(Permissions.class));
     }
 
 
@@ -103,20 +103,20 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         //this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
 
         // save for later in fixPermissions()
-        if (!this.external_permissions.containsKey(role))
-            this.external_permissions.put(role, new ArrayList<String>());
+        if (!this.externalPermissions.containsKey(role))
+            this.externalPermissions.put(role, new ArrayList<String>());
 
-        if (!this.external_permissions.get(role).contains(permission))
-            this.external_permissions.get(role).add(permission);
+        if (!this.externalPermissions.get(role).contains(permission))
+            this.externalPermissions.get(role).add(permission);
 
-        Permissions permissions = (Permissions) this.config_service.getConfig(Permissions.class);
+        Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
         String saved_role = permissions.getRoleForPermission(permission);
 
         // permission is not assigned to any role -> save permission in given role
         if (saved_role == null) {
             permissions.addPermission(role, permission);
 
-        // permission is already assigned to a role -> leave as is
+            // permission is already assigned to a role -> leave as is
         } else {
             return;
         }
@@ -126,7 +126,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private void fixPermissions(Permissions permissions) {
         if (permissions == null)
-            permissions = (Permissions) this.config_service.getConfig(Permissions.class);
+            permissions = (Permissions) this.configService.getConfig(Permissions.class);
 
         // clean up default role - will be restored if necessary
         permissions.removeRole(PermissionService.no_role);
@@ -135,15 +135,18 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         // 1) create all permissions from scratch in default role if
         //   - the current permission file has no roles       (AND)
         //   - plugin commands use permissions
-        if (permissions.getRoles().size() == 0 && this.unregistered_permissions.size() != 0) {
+        if (permissions.getRoles().size() == 0 && this.unregisteredPermissions.size() != 0) {
             // no roles -> create all permissions in the default role
-            permissions.addPermissions(PermissionService.no_role, this.unregistered_permissions);
+
+            for (Permission permission : this.unregisteredPermissions) {
+                permissions.addPermission(permission.getRole(), permission.getName());
+            }
         }
 
         // 2) check external permissions
         // if they have no role assigned, save them in the desired role
-        for (String role : this.external_permissions.keySet()) {
-            for (String permission : this.external_permissions.get(role)) {
+        for (String role : this.externalPermissions.keySet()) {
+            for (String permission : this.externalPermissions.get(role)) {
                 if (permissions.getRoleForPermission(permission) == null)
                     permissions.addPermission(role, permission);
             }
@@ -152,9 +155,9 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         // 3) there is at least one role in the file available.
         // check if all permissions are assigned to a role and add missing roles to the default role
         if (permissions.getRoles().size() > 0) {
-            for (String permission : this.unregistered_permissions) {
-                if (permissions.getRoleForPermission(permission) == null) {
-                    permissions.addPermission(PermissionService.no_role, permission);
+            for (Permission permission : this.unregisteredPermissions) {
+                if (permissions.getRoleForPermission(permission.getName()) == null) {
+                    permissions.addPermission(PermissionService.no_role, permission.getName());
                 }
             }
         }
@@ -178,11 +181,11 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @SuppressWarnings("unchecked")
     private void loadPermissions() {
 
-        Permissions permissions = (Permissions) this.config_service.getConfig(Permissions.class);
+        Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
         HashMap<String, List<String>> roled_permissions = permissions.getAll();
 
-        this.permission_dump    = new HashMap<>();
-        this.active_permissions = new HashMap<>();
+        this.permissionDump = new HashMap<>();
+        this.activePermissions = new HashMap<>();
 
         for (final String role : roled_permissions.keySet()) {
 
@@ -196,13 +199,13 @@ public class PermissionService extends AbstractService implements ServiceInterfa
                         ? String.format("%s.%s", this.getPermissionPrefix(), permission)
                         : String.format("%s.%s.%s", this.getPermissionPrefix(), role, permission);
 
-                this.active_permissions.put(permission, formatted_permission);
+                this.activePermissions.put(permission, formatted_permission);
 
 
-                if (!this.permission_dump.containsKey(formaatted_role))
-                    this.permission_dump.put(formaatted_role, new ArrayList<String>());
+                if (!this.permissionDump.containsKey(formaatted_role))
+                    this.permissionDump.put(formaatted_role, new ArrayList<String>());
 
-                this.permission_dump.get(formaatted_role).add(formatted_permission);
+                this.permissionDump.get(formaatted_role).add(formatted_permission);
             } // for permission
         } // for role
 
@@ -212,15 +215,15 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public boolean hasPermission(CommandSender sender, String permission) {
         Boolean op_has_permission = (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true);
 
-       return  (sender.isOp() && op_has_permission) ||
+        return (sender.isOp() && op_has_permission) ||
                 permission == null ||
                 permission.isEmpty() ||
-                (this.active_permissions.containsKey(permission) && sender.hasPermission(this.active_permissions.get(permission)));
+                (this.activePermissions.containsKey(permission) && sender.hasPermission(this.activePermissions.get(permission)));
     }
 
     @SuppressWarnings("unchecked")
     public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
-        return this.permission_dump;
+        return this.permissionDump;
     }
 
     @SuppressWarnings("unchecked")
@@ -237,7 +240,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
         HashMap<String, ArrayList<String>> dump = new HashMap<>();
 
-        for (Object o : this.permission_dump.entrySet()) {
+        for (Object o : this.permissionDump.entrySet()) {
             Map.Entry pair = (Map.Entry) o;
             String role = (String) pair.getKey();
 
@@ -258,13 +261,11 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @Override
     public String toString() {
         return "PermissionService{" +
-                "config_service=" + config_service +
-                ", unregistered_permissions=" + unregistered_permissions +
-                ", active_permissions=" + active_permissions +
-                ", permission_dump=" + permission_dump +
-                ", external_permissions=" + external_permissions +
-                ", no_role='" + no_role + '\'' +
+                "configService=" + configService +
+                ", unregisteredPermissions=" + unregisteredPermissions +
+                ", activePermissions=" + activePermissions +
+                ", permissionDump=" + permissionDump +
+                ", externalPermissions=" + externalPermissions +
                 '}';
     }
-
 }

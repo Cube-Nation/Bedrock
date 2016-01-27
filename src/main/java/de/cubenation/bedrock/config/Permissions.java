@@ -65,14 +65,17 @@ public class Permissions extends CustomConfigurationFile {
      */
 
     public void addPermission(String role, String permission) {
-        if (permission == null)
+        if (permission == null) {
             return;
+        }
 
-        if (!this.roleExists(role))
+        if (!this.roleExists(role)) {
             this.createRole(role);
+        }
 
-        if (this.getPermissionsFor(role).contains(permission))
+        if (this.getPermissionsFor(role).contains(permission)) {
             return;
+        }
 
         this.permissions.get(role).add(permission);
     }
