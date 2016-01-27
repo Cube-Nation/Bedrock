@@ -245,6 +245,10 @@ public class MessageHelper {
         // process all arguments
         for (Argument argument : command.getArguments()) {
 
+            if (!argument.userHasPermission(sender)) {
+                continue;
+            }
+
             ArrayList<String> argument_hover_string = new ArrayList<>();
 
             /*

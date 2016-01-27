@@ -1,7 +1,9 @@
 package de.cubenation.bedrock.command.argument;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.translation.Translation;
+import org.bukkit.command.CommandSender;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -13,21 +15,33 @@ public class Argument {
     private final String description;
     private final String placeholder;
     private final boolean optional;
+    private final Permission permission;
 
     private String runtimeDescription;
     private String runtimePlaceholder;
     private BasePlugin plugin;
 
     @SuppressWarnings(value = "unused")
-    public Argument(String description, String placeholder, boolean optional) {
+    public Argument(String description, String placeholder, boolean optional, Permission permission) {
         this.description = description;
         this.placeholder = placeholder;
         this.optional = optional;
+        this.permission = permission;
+    }
+
+    @SuppressWarnings(value = "unused")
+    public Argument(String description, String placeholder, boolean optional) {
+        this(description, placeholder, optional, null);
+    }
+
+    @SuppressWarnings(value = "unused")
+    public Argument(String description, String placeholder, Permission permission) {
+        this(description, placeholder, false, permission);
     }
 
     @SuppressWarnings(value = "unused")
     public Argument(String description, String placeholder) {
-        this(description, placeholder, false);
+        this(description, placeholder, false, null);
     }
 
     public String getRuntimeDescription() {
@@ -45,6 +59,9 @@ public class Argument {
 
     public void setPlugin(BasePlugin plugin) {
         this.plugin = plugin;
+        if (permission != null) {
+            permission.setPlugin(plugin);
+        }
     }
 
     @Override
@@ -56,4 +73,8 @@ public class Argument {
                 '}';
     }
 
+    public boolean userHasPermission(CommandSender sender) {
+        return permission == null || permission.userHasPermission(sender);
+
+    }
 }
