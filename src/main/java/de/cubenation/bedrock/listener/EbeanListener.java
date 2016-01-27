@@ -2,8 +2,8 @@ package de.cubenation.bedrock.listener;
 
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
-import de.cubenation.bedrock.ebean.BedrockWorld;
 import de.cubenation.bedrock.event.PlayerChangesNameEvent;
+import de.cubenation.bedrock.helper.BedrockEbeanHelper;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -67,20 +67,7 @@ public class EbeanListener implements Listener {
 
             @Override
             public void run() {
-
-                String uuid = event.getWorld().getUID().toString();
-                BedrockWorld bw = BedrockPlugin.getInstance().getDatabase()
-                        .find(BedrockWorld.class)
-                        .where()
-                        .eq("uuid", uuid)
-                        .findUnique();
-
-                if (bw == null) {
-                    // save to table
-                    bw = new BedrockWorld();
-                    bw.setUuid(uuid);
-                    bw.save();
-                }
+                BedrockEbeanHelper.createBedrockWorld(event.getWorld());
             }
 
         }.runTaskAsynchronously(BedrockPlugin.getInstance());

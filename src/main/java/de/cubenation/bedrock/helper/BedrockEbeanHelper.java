@@ -197,4 +197,22 @@ public class BedrockEbeanHelper {
         return world;
     }
 
+
+    public static BedrockWorld createBedrockWorld(World world) {
+
+        BedrockWorld bw = BedrockPlugin.getInstance().getDatabase()
+                .find(BedrockWorld.class)
+                .where()
+                .eq("uuid", world.getUID())
+                .findUnique();
+
+        if (bw == null) {
+            // save to table
+            bw = new BedrockWorld();
+            bw.setUuid(world.getUID().toString());
+            bw.save();
+        }
+        return bw;
+    }
+
 }
