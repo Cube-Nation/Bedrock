@@ -2,6 +2,7 @@ package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
+import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.config.Permissions;
 import de.cubenation.bedrock.exception.PlayerNotFoundException;
@@ -82,10 +83,22 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
                 for (Permission permission : command.getRuntimePermissions()) {
                     String stringPermission = permission.getName();
-                    if (stringPermission == null)
+                    if (stringPermission == null) {
                         continue;
+                    }
 
                     this.unregisteredPermissions.add(permission);
+                }
+
+                for (Argument argument : command.getArguments()) {
+                    if (argument.getPermission() != null) {
+                        String stringPermission = argument.getPermission().getName();
+                        if (stringPermission == null) {
+                            continue;
+                        }
+
+                        this.unregisteredPermissions.add(argument.getPermission());
+                    }
                 }
             }
         }

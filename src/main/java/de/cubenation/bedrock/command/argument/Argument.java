@@ -52,6 +52,10 @@ public class Argument {
         return new Translation(this.plugin, this.placeholder).getTranslation();
     }
 
+    public Permission getPermission() {
+        return permission;
+    }
+
     public boolean isOptional() {
         return optional;
     }
