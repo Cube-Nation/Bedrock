@@ -120,4 +120,32 @@ public class en_US extends CustomConfigurationFile {
     @Path("page.design.header")
     private String page_design_header               = "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======";
 
+    /*
+     * Facing Directions
+     */
+
+    @Path("direction.south")
+    private String south = "south";
+
+    @Path("direction.southwest")
+    private String southwest = "southwest";
+
+    @Path("direction.west")
+    private String west = "west";
+
+    @Path("direction.nothwest")
+    private String northwest = "nothwest";
+
+    @Path("direction.north")
+    private String north = "north";
+
+    @Path("direction.northeast")
+    private String northeast = "northeast";
+
+    @Path("direction.east")
+    private String east = "east";
+
+    @Path("direction.southeast")
+    private String southeast = "southeast";
+
 }

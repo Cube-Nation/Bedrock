@@ -20,7 +20,7 @@ public class de_DE extends CustomConfigurationFile {
 
 
     @Path("version")
-    private String version                          = "%plugin_prefix%&RESET& &TEXT&Version &PRIMARY&%version%";
+    private String version = "%plugin_prefix%&RESET& &TEXT&Version &PRIMARY&%version%";
 
 
     /**
@@ -29,99 +29,124 @@ public class de_DE extends CustomConfigurationFile {
 
     @Path("reload.complete")
     @Comment("Plugin reload operations")
-    private String reload_complete                  = "%plugin_prefix%&RESET& Plugin neu geladen";
+    private String reload_complete = "%plugin_prefix%&RESET& Plugin neu geladen";
 
     @Path("reload.failed")
-    private String reload_failed                    = "%plugin_prefix%&RESET& Plugin konnte nicht neu geladen werden";
+    private String reload_failed = "%plugin_prefix%&RESET& Plugin konnte nicht neu geladen werden";
 
 
     /**
      * Permission stuff
      */
     @Path("permission.list.header")
-    private String permission_list_header           = "%plugin_prefix%&RESET& &SECONDARY&Alle Berechtigungen:";
+    private String permission_list_header = "%plugin_prefix%&RESET& &SECONDARY&Alle Berechtigungen:";
 
     @Path("permission.list.role")
-    private String permission_list_role             = "&PRIMARY&%role%&WHITE&:";
+    private String permission_list_role = "&PRIMARY&%role%&WHITE&:";
 
     @Path("permission.list.permission")
-    private String permission_list_permission       = "&FLAG& - &SECONDARY&%permission%";
+    private String permission_list_permission = "&FLAG& - &SECONDARY&%permission%";
 
     @Path("permission.no_permissions")
-    private String permission_no_permissions        = "%plugin_prefix%&RESET& &RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen";
+    private String permission_no_permissions = "%plugin_prefix%&RESET& &RED&Hinweis: &SECONDARY&Dieses Plugin nutzt keine Berechtigungen";
 
     @Path("permission.insufficient")
-    private String permission_insufficient          = "%plugin_prefix%&RESET& &RED&Für diesen Befehl hast Du keine Berechtigung";
-
+    private String permission_insufficient = "%plugin_prefix%&RESET& &RED&Für diesen Befehl hast Du keine Berechtigung";
 
 
     @Path("command.invalid")
-    private String command_invalid                  = "%plugin_prefix%&RESET& &RED&Ungültiger Befehl";
+    private String command_invalid = "%plugin_prefix%&RESET& &RED&Ungültiger Befehl";
 
     @Path("must_be_player")
-    private String must_be_player                   = "%plugin_prefix%&RESET& &RED&Um diesen Befehl zu verwenden musst Du im Spiel sein";
+    private String must_be_player = "%plugin_prefix%&RESET& &RED&Um diesen Befehl zu verwenden musst Du im Spiel sein";
 
     @Path("no_such_player")
-    private String no_such_player                   = "%plugin_prefix%&RESET& &RED&Spieler &SECONDARY&%player% &RED&nicht gefunden";
+    private String no_such_player = "%plugin_prefix%&RESET& &RED&Spieler &SECONDARY&%player% &RED&nicht gefunden";
 
     /*
      * Help messages
      */
 
     @Path("help.header")
-    private String help_header                      = "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====";
+    private String help_header = "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====";
 
     @Path("help.command.command")
-    private String help_command_command             = "&PRIMARY&/%label%&RESET& &SECONDARY&%commands%&RESET& %args%&RESET&";
+    private String help_command_command = "&PRIMARY&/%label%&RESET& &SECONDARY&%commands%&RESET& %args%&RESET&";
 
     @Path("help.command.divider")
-    private String help_command_divider             = "&PRIMARY&|&SECONDARY&";
+    private String help_command_divider = "&PRIMARY&|&SECONDARY&";
 
     @Path("help.command.description")
-    private String help_command_description         = "&TEXT&%description%&RESET&";
+    private String help_command_description = "&TEXT&%description%&RESET&";
 
     @Path("help.command.args.key")
-    private String help_command_args_key            = "&SECONDARY&%key%&RESET&";
+    private String help_command_args_key = "&SECONDARY&%key%&RESET&";
 
     @Path("help.command.args.needed")
-    private String help_command_args_needed         = "&GRAY&&ITALIC&%argument%&RESET&";
+    private String help_command_args_needed = "&GRAY&&ITALIC&%argument%&RESET&";
 
     @Path("help.command.args.optional")
-    private String help_command_args_optional       = "&GRAY&&ITALIC&[%argument%]&RESET&";
+    private String help_command_args_optional = "&GRAY&&ITALIC&[%argument%]&RESET&";
 
     @Path("help.command.args.description")
-    private String help_command_args_description    = "&TEXT& - %description%&RESET&";
+    private String help_command_args_description = "&TEXT& - %description%&RESET&";
 
     @Path("help.command.args.username_uuid.description")
-    private String help_args_username_uuid_description  = "Username/UUID eines Spielers";
+    private String help_args_username_uuid_description = "Username/UUID eines Spielers";
 
     @Path("help.command.args.username_uuid.placeholder")
-    private String help_args_username_uuid_placeholder  = "Username/UUID";
+    private String help_args_username_uuid_placeholder = "Username/UUID";
 
     @Path("help.plugin")
-    private String help_plugin                      = "&TEXT&Hilfe zu allen Plugin Befehlen";
+    private String help_plugin = "&TEXT&Hilfe zu allen Plugin Befehlen";
 
     @Path("help.version")
-    private String help_version                     = "&TEXT&Zeigt die Version des Plugins an";
+    private String help_version = "&TEXT&Zeigt die Version des Plugins an";
 
     @Path("help.reload")
-    private String help_reload                      = "&TEXT&Lädt das Plugin neu";
+    private String help_reload = "&TEXT&Lädt das Plugin neu";
 
     @Path("help.permissions.list")
-    private String help_permission_list             = "&TEXT&Zeigt alle Plugin-Berechtigungen an";
+    private String help_permission_list = "&TEXT&Zeigt alle Plugin-Berechtigungen an";
 
     @Path("help.permissions.other")
-    private String help_permission_other            = "&TEXT&Zeigt Plugin-Berechtigungen eines Spielers an";
+    private String help_permission_other = "&TEXT&Zeigt Plugin-Berechtigungen eines Spielers an";
 
 
     /*
      * PageDesignHelper Messages
     */
     @Path("page.design.header")
-    private String page_design_header               = "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======";
+    private String page_design_header = "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======";
 
 
+    /*
+     * Facing Directions
+     */
 
+    @Path("direction.south")
+    private String south = "Süden";
+
+    @Path("direction.southwest")
+    private String southwest = "Südwesten";
+
+    @Path("direction.west")
+    private String west = "Westen";
+
+    @Path("direction.nothwest")
+    private String northwest = "Nordwesten";
+
+    @Path("direction.north")
+    private String north = "Norden";
+
+    @Path("direction.northeast")
+    private String northeast = "Nordosten";
+
+    @Path("direction.east")
+    private String east = "Osten";
+
+    @Path("direction.southeast")
+    private String southeast = "Südosten";
 
     /*
      * Bedrock Commands

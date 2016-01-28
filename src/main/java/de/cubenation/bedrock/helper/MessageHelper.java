@@ -344,4 +344,34 @@ public class MessageHelper {
         return component;
     }
 
+    public static String direction(BasePlugin plugin, FacingDirection facingDirection) {
+        String string = "";
+        switch (facingDirection) {
+            case SOUTH:
+                string = new Translation(plugin, "direction.south").getTranslation();
+                break;
+            case SOUTHWEST:
+                string = new Translation(plugin, "direction.southwest").getTranslation();
+                break;
+            case WEST:
+                string = new Translation(plugin, "direction.west").getTranslation();
+                break;
+            case NORTHWEST:
+                string = new Translation(plugin, "direction.nothwest").getTranslation();
+                break;
+            case NORTH:
+                string = new Translation(plugin, "direction.north").getTranslation();
+                break;
+            case NORTHEAST:
+                string = new Translation(plugin, "direction.northeast").getTranslation();
+                break;
+            case EAST:
+                string = new Translation(plugin, "direction.east").getTranslation();
+                break;
+            case SOUTHEAST:
+                string = new Translation(plugin, "direction.southeast").getTranslation();
+                break;
+        }
+        return string;
+    }
 }
