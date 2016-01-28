@@ -2,6 +2,7 @@ package de.cubenation.bedrock.command.predefined;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.Command;
+import de.cubenation.bedrock.command.CommandRole;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
@@ -29,7 +30,7 @@ public class PermissionListCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("permission.list"));
+        permissions.add(new Permission("permission.list", CommandRole.ADMIN.getType()));
     }
 
     @Override
