@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.helper;
 
+import de.cubenation.bedrock.BedrockPlugin;
 import org.bukkit.Location;
 
 /**
@@ -45,7 +46,8 @@ public enum FacingDirection {
         }
 
         // Shouldn't happen.
-        return SOUTH;
+        BedrockPlugin.getInstance().getLogger().warning("Can't calulate direction for yaw: " + yaw);
+        return null;
     }
 
 }

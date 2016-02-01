@@ -70,4 +70,28 @@ public class BedrockPlayer {
         BedrockPlugin.getInstance().getDatabase().save(this);
     }
 
+
+    /*
+     * Helper
+     */
+
+    public boolean isEqual(Player player) {
+        return this.getUUID().equals(player.getUniqueId());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BedrockPlayer that = (BedrockPlayer) o;
+
+        return uuid != null ? uuid.equals(that.uuid) : that.uuid == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid != null ? uuid.hashCode() : 0;
+    }
 }
