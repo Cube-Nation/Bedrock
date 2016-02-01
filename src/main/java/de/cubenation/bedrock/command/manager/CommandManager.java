@@ -140,6 +140,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 helpCommands.add(command);
             }
         }
+
+        // Sorting
+        Collections.sort(helpCommands, new Comparator<AbstractCommand>() {
+            @Override
+            public int compare(AbstractCommand command2, AbstractCommand command1)
+            {
+                return command2.getHelpPriority().compareTo(command1.getHelpPriority());
+            }
+        });
+
         return helpCommands;
     }
 

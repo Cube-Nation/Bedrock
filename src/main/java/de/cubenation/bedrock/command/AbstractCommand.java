@@ -90,6 +90,16 @@ public abstract class AbstractCommand {
                                  String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     /**
+     * Define the priority to change the help order
+     * Smaller = more important.
+     *
+     * @return priority
+     */
+    public Integer getHelpPriority() {
+        return 0;
+    }
+
+    /**
      * Gets tab completion for argument.
      *
      * @param args the args of the asking command
