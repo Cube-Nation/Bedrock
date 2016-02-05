@@ -3,9 +3,11 @@ package de.cubenation.bedrock.ebean;
 import com.avaje.ebean.validation.NotNull;
 import de.cubenation.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -74,6 +76,31 @@ public class BedrockPlayer {
     /*
      * Helper
      */
+
+    public Date offlineTime() {
+        boolean playerIsOnline = false;
+        Player onlinePlayer = Bukkit.getServer().getPlayer(uuid);
+        if (onlinePlayer != null) {
+            playerIsOnline = onlinePlayer.isOnline();
+        }
+
+        if (playerIsOnline) {
+            return new Date();
+        } else {
+            OfflinePlayer offlinePlayer = Bukkit.getServer().getOfflinePlayer(getUUID());
+
+            if (offlinePlayer == null) {
+                return null;
+            } else {
+                Long lastSeen = offlinePlayer.getLastPlayed();
+                if (lastSeen != null) {
+                    return new Date(lastSeen);
+                } else {
+                    return null;
+                }
+            }
+        }
+    }
 
     public boolean isEqual(Player player) {
         return this.getUUID().equals(player.getUniqueId());
