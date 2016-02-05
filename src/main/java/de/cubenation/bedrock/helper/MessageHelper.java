@@ -3,7 +3,7 @@ package de.cubenation.bedrock.helper;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.argument.Argument;
-import de.cubenation.bedrock.command.argument.UnsortedArgument;
+import de.cubenation.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
@@ -229,7 +229,7 @@ public class MessageHelper {
          *
          * Command arguments string:
          * The string is being displayed in the command help which is printed into the chat.
-         * It contains the label, all subcommands and all arguments (those from the UnsortedArgument, too)
+         * It contains the label, all subcommands and all arguments (those from the KeyValueArgument, too)
          *
          * Hover string:
          * The hover string contains a linefeed-separated string of
@@ -252,18 +252,18 @@ public class MessageHelper {
             ArrayList<String> argument_hover_string = new ArrayList<>();
 
             /*
-             * UnsortedArgument
+             * KeyValueArgument
              *
-             * In case the argument is an instanceof the UnsortedArgument class (which is kind of a
+             * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
              * key-value command) we need to prepend the key
              */
-            if (argument instanceof UnsortedArgument) {
-                UnsortedArgument unsorted_argument = (UnsortedArgument) argument;
+            if (argument instanceof KeyValueArgument) {
+                KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
                 String key_string = new Translation(
                         plugin,
                         "help.command.args.key",
-                        new String[ ] {"key", unsorted_argument.getRuntimeKey() }
+                        new String[ ] {"key", keyValueArgument.getRuntimeKey() }
                 ).getTranslation();
 
                 // add this to argument_hover_string

@@ -8,24 +8,24 @@ import de.cubenation.bedrock.translation.Translation;
  * Project: Bedrock
  * Package: de.cubenation.bedrock.command.argument
  */
-public class UnsortedArgument extends Argument {
+public class KeyValueArgument extends Argument {
 
     private final String key;
 
     @SuppressWarnings(value = "unused")
-    public UnsortedArgument(String key, String description, String placeholder, boolean optional, Permission permission) {
+    public KeyValueArgument(String key, String description, String placeholder, boolean optional, Permission permission) {
         super(description, placeholder, optional, permission);
         this.key = key;
 
     }
     @SuppressWarnings(value = "unused")
-    public UnsortedArgument(String key, String description, String placeholder, boolean optional) {
+    public KeyValueArgument(String key, String description, String placeholder, boolean optional) {
         super(description, placeholder, optional);
         this.key = key;
     }
 
     @SuppressWarnings(value = "unused")
-    public UnsortedArgument(String key, String description, String placeholder) {
+    public KeyValueArgument(String key, String description, String placeholder) {
         super(description, placeholder, false);
         this.key = key;
     }
@@ -34,10 +34,13 @@ public class UnsortedArgument extends Argument {
         return new Translation(getPlugin(), this.key).getTranslation();
     }
 
+    public String getKey() {
+        return key;
+    }
 
     @Override
     public String toString() {
-        return "UnsortedArgument{" +
+        return "KeyValueArgument{" +
                 "key='" + key + '\'' +
                 ", description='" + getRuntimeDescription() + '\'' +
                 ", placeholder=" + getRuntimePlaceholder() +

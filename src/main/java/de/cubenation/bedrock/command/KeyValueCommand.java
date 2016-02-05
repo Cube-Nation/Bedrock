@@ -2,7 +2,7 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.argument.Argument;
-import de.cubenation.bedrock.command.argument.UnsortedArgument;
+import de.cubenation.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
@@ -22,9 +22,9 @@ import java.util.HashMap;
  * Package: de.cubenation.bedrock.command
  */
 @SuppressWarnings("unused")
-public abstract class UnsortedArgsCommand extends AbstractCommand {
+public abstract class KeyValueCommand extends AbstractCommand {
 
-    public UnsortedArgsCommand(BasePlugin plugin, CommandManager commandManager) {
+    public KeyValueCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
@@ -38,23 +38,23 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         HashMap<String, String> parsedArguments = new HashMap<>();
 
         for (Argument argument : getArguments()) {
-            if (argument instanceof UnsortedArgument) {
-                UnsortedArgument unsortedArgument = (UnsortedArgument) argument;
+            if (argument instanceof KeyValueArgument) {
+                KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
-                if (arrayList.contains(unsortedArgument.getRuntimeKey())) {
+                if (arrayList.contains(keyValueArgument.getRuntimeKey())) {
 
-                    int index = arrayList.indexOf(unsortedArgument.getRuntimeKey());
+                    int index = arrayList.indexOf(keyValueArgument.getRuntimeKey());
                     // Add new Key to HasMap
                     if (index == -1 || (index+1) >= arrayList.size()) {
                         throw new IllegalCommandArgumentException();
                     }
 
-                    parsedArguments.put(unsortedArgument.getRuntimeKey(), arrayList.get((index+1)));
+                    parsedArguments.put(keyValueArgument.getKey(), arrayList.get((index+1)));
 
 
 
                 } else {
-                    if (!unsortedArgument.isOptional()) {
+                    if (!keyValueArgument.isOptional()) {
                         // Missing required Argument
                         throw new IllegalCommandArgumentException();
                     }
@@ -95,18 +95,18 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
         // TODO
         // Unschön, etwas besseres überlegen
-        ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
+        ArrayList<KeyValueArgument> cmdArgs = new ArrayList<>();
         for (int i = 0; i < getArguments().size(); i++) {
-            if (getArguments().get(i) instanceof UnsortedArgument) {
-                cmdArgs.add((UnsortedArgument) getArguments().get(i));
+            if (getArguments().get(i) instanceof KeyValueArgument) {
+                cmdArgs.add((KeyValueArgument) getArguments().get(i));
             }
         }
 
-        ArrayList<UnsortedArgument> recursive = getPossibleArguments(cmdArgs, args, this.subcommands.size());
+        ArrayList<KeyValueArgument> recursive = getPossibleArguments(cmdArgs, args, this.subcommands.size());
         
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
-            for (UnsortedArgument argument : recursive) {
+            for (KeyValueArgument argument : recursive) {
                 if (argument.getRuntimeKey().startsWith(args[args.length - 1])) {
                     arrayList.add(argument.getRuntimeKey());
                 }
@@ -117,14 +117,14 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
     }
 
 
-    private ArrayList<UnsortedArgument> getPossibleArguments(ArrayList<UnsortedArgument> list, String[] args, int position) {
+    private ArrayList<KeyValueArgument> getPossibleArguments(ArrayList<KeyValueArgument> list, String[] args, int position) {
         if (position >= args.length) {
             return null;
         } else if (position == args.length - 1) {
             return list;
         }
 
-        UnsortedArgument argument = containsKey(list, args[position]);
+        KeyValueArgument argument = containsKey(list, args[position]);
         if (argument != null) {
             list.remove(argument);
             // Add this argument
@@ -136,8 +136,8 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         return null;
     }
 
-    private UnsortedArgument containsKey(ArrayList<UnsortedArgument> list, String key) {
-        for (UnsortedArgument argument : list) {
+    private KeyValueArgument containsKey(ArrayList<KeyValueArgument> list, String key) {
+        for (KeyValueArgument argument : list) {
             if (argument.getRuntimeKey().startsWith(key)) {
                 return argument;
             }
@@ -214,18 +214,15 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         }
 
         // Unschön, etwas besseres überlegen
-        ArrayList<UnsortedArgument> cmdArgs = new ArrayList<>();
+        ArrayList<KeyValueArgument> cmdArgs = new ArrayList<>();
         for (int i = 0; i < getArguments().size(); i++) {
-            if (getArguments().get(i) instanceof UnsortedArgument) {
-                cmdArgs.add((UnsortedArgument) getArguments().get(i));
+            if (getArguments().get(i) instanceof KeyValueArgument) {
+                cmdArgs.add((KeyValueArgument) getArguments().get(i));
             }
         }
 
-        System.out.println("All Args");
-        System.out.println(cmdArgs);
-
         for (int i = this.subcommands.size(); i < args.length; i++) {
-            UnsortedArgument argument = containsKey(cmdArgs, args[i]);
+            KeyValueArgument argument = containsKey(cmdArgs, args[i]);
             if (argument != null) {
                 cmdArgs.remove(argument);
             }
@@ -233,9 +230,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
         // cmdArgs should contains none or optional commands
         // else return false
-        System.out.println("Should contain only optional");
-        System.out.println(cmdArgs);
-        for (UnsortedArgument argument : cmdArgs) {
+        for (KeyValueArgument argument : cmdArgs) {
             if (!argument.isOptional()) {
                 return false;
             }
