@@ -4,6 +4,7 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.service.localization.LocalizationService;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -111,6 +112,10 @@ public class Translation {
         //  a) the locale file is damaged/incomplete - try deleting it and restart the server
         //  b) check if the plugin refers to the correct path in the YamlConfiguration object
         return "";
+    }
+
+    public TextComponent getTextComponent() {
+        return new TextComponent(getTranslation());
     }
 
     public String[] getTranslationStrings() {
