@@ -1,5 +1,8 @@
 package de.cubenation.bedrock.command.argument;
 
+import de.cubenation.bedrock.permission.Permission;
+import de.cubenation.bedrock.translation.Translation;
+
 /**
  * Created by BenediktHr on 27.07.15.
  * Project: Bedrock
@@ -9,6 +12,12 @@ public class UnsortedArgument extends Argument {
 
     private final String key;
 
+    @SuppressWarnings(value = "unused")
+    public UnsortedArgument(String key, String description, String placeholder, boolean optional, Permission permission) {
+        super(description, placeholder, optional, permission);
+        this.key = key;
+
+    }
     @SuppressWarnings(value = "unused")
     public UnsortedArgument(String key, String description, String placeholder, boolean optional) {
         super(description, placeholder, optional);
@@ -21,9 +30,8 @@ public class UnsortedArgument extends Argument {
         this.key = key;
     }
 
-
-    public String getKey() {
-        return key;
+    public String getRuntimeKey() {
+        return new Translation(getPlugin(), this.key).getTranslation();
     }
 
 

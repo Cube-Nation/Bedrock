@@ -41,12 +41,15 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
             if (argument instanceof UnsortedArgument) {
                 UnsortedArgument unsortedArgument = (UnsortedArgument) argument;
 
-                if (arrayList.contains(unsortedArgument.getKey())) {
+                if (arrayList.contains(unsortedArgument.getRuntimeKey())) {
 
-                    int index = arrayList.indexOf(unsortedArgument.getKey());
+                    int index = arrayList.indexOf(unsortedArgument.getRuntimeKey());
                     // Add new Key to HasMap
+                    if (index == -1 || (index+1) >= arrayList.size()) {
+                        throw new IllegalCommandArgumentException();
+                    }
 
-                    parsedArguments.put(unsortedArgument.getKey(), unsortedArgument.getRuntimePlaceholder());
+                    parsedArguments.put(unsortedArgument.getRuntimeKey(), arrayList.get((index+1)));
 
 
 
@@ -104,8 +107,8 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
             for (UnsortedArgument argument : recursive) {
-                if (argument.getKey().startsWith(args[args.length - 1])) {
-                    arrayList.add(argument.getKey());
+                if (argument.getRuntimeKey().startsWith(args[args.length - 1])) {
+                    arrayList.add(argument.getRuntimeKey());
                 }
             }
         }
@@ -135,7 +138,7 @@ public abstract class UnsortedArgsCommand extends AbstractCommand {
 
     private UnsortedArgument containsKey(ArrayList<UnsortedArgument> list, String key) {
         for (UnsortedArgument argument : list) {
-            if (argument.getKey().startsWith(key)) {
+            if (argument.getRuntimeKey().startsWith(key)) {
                 return argument;
             }
         }

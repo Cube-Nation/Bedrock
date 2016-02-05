@@ -263,7 +263,7 @@ public class MessageHelper {
                 String key_string = new Translation(
                         plugin,
                         "help.command.args.key",
-                        new String[ ] {"key", unsorted_argument.getKey() }
+                        new String[ ] {"key", unsorted_argument.getRuntimeKey() }
                 ).getTranslation();
 
                 // add this to argument_hover_string

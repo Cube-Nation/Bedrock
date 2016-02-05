@@ -56,6 +56,10 @@ public class Argument {
         return permission;
     }
 
+    public BasePlugin getPlugin() {
+        return plugin;
+    }
+
     public boolean isOptional() {
         return optional;
     }
