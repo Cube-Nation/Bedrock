@@ -37,6 +37,7 @@ public class EbeanListener implements Listener {
                     bp = new BedrockPlayer();
                     bp.setUuid(uuid);
                     bp.setUsername(event.getPlayer().getName());
+                    bp.save();
                 }
 
                 // check if username changed
@@ -51,10 +52,10 @@ public class EbeanListener implements Listener {
 
                     // update username
                     bp.setUsername(event.getPlayer().getName());
+                    bp.update();
                 }
 
-                // save record
-                bp.save();
+
             }
 
         }.runTaskAsynchronously(BedrockPlugin.getInstance());

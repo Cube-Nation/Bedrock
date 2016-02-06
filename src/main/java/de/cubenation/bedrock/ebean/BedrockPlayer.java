@@ -72,6 +72,10 @@ public class BedrockPlayer {
         BedrockPlugin.getInstance().getDatabase().save(this);
     }
 
+    public void update() {
+        BedrockPlugin.getInstance().getDatabase().update(this);
+    }
+
 
     /*
      * Helper
