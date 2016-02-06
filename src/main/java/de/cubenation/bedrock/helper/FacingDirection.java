@@ -1,6 +1,5 @@
 package de.cubenation.bedrock.helper;
 
-import de.cubenation.bedrock.BedrockPlugin;
 import org.bukkit.Location;
 
 /**
@@ -31,11 +30,14 @@ public enum FacingDirection {
 
     public static FacingDirection directionForYaw(float yaw) {
         float value = yaw % 360;
-
+        if (yaw < 0) {
+            value += 360;
+        }
 
         for (FacingDirection facingDirection : FacingDirection.values()) {
             if (facingDirection == SOUTH) {
-                if (value >= 360 - (45f / 2) && value <= facingDirection.value + (45f / 2)) {
+                if ((value >= 360 - (45f / 2) && value <= 360) ||
+                        (value >= (45f / 2) && value <= facingDirection.value + (45f / 2))) {
                     return facingDirection;
                 }
             }
@@ -46,8 +48,7 @@ public enum FacingDirection {
         }
 
         // Shouldn't happen.
-        BedrockPlugin.getInstance().getLogger().warning("Can't calulate direction for yaw: " + yaw);
-        return null;
+        throw new RuntimeException("Can't calulate direction for yaw: " + yaw);
     }
 
 }
