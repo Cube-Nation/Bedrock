@@ -33,7 +33,7 @@ public class EbeanListener implements Listener {
                         .findUnique();
 
                 if (bp == null) {
-                    System.out.println("bp is null, creating new for uuid " + uuid);
+                    BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: Create new for uuid: " + uuid);
                     bp = new BedrockPlayer();
                     bp.setUuid(uuid);
                     bp.setUsername(event.getPlayer().getName());
@@ -42,7 +42,8 @@ public class EbeanListener implements Listener {
 
                 // check if username changed
                 if (!bp.getUsername().equals(event.getPlayer().getName())) {
-
+                    BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: " + bp.getUsername() + " " +
+                            "changed name to " + event.getPlayer().getName());
                     // fire name change event
                     PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
                             event.getPlayer(),
