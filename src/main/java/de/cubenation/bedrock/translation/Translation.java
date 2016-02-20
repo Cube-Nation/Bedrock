@@ -3,8 +3,13 @@ package de.cubenation.bedrock.translation;
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.service.localization.LocalizationService;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +49,42 @@ public class Translation {
         this.setLocale_args(locale_args);
 
         this.service    = plugin.getLocalizationService();
+    }
+
+    public void send(CommandSender commandSender) {
+        String message = getTranslation();
+        if (message == null) {
+            return;
+        }
+
+        // color scheme service
+        ColorScheme colorScheme = plugin.getColorSchemeService().getColorScheme();
+
+        // apply colors from color scheme to message
+        message = colorScheme.applyColorScheme(message);
+        TextComponent component = new TextComponent(message);
+
+        if (commandSender instanceof Player) {
+            Player player = (Player) commandSender;
+            sendPlayer(player, component);
+        } else {
+            sendConsole(commandSender, component);
+        }
+    }
+
+    public void broadcast() {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            send(player);
+        }
+    }
+
+    private void sendPlayer(Player player, TextComponent components) {
+        player.spigot().sendMessage(components);
+    }
+
+    private void sendConsole(CommandSender commandSender, TextComponent components) {
+        String legacyText = BaseComponent.toLegacyText(components);
+        commandSender.sendMessage(legacyText);
     }
 
 

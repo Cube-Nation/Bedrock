@@ -7,6 +7,7 @@ import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -41,27 +42,20 @@ public class JsonMessage {
     }
 
     public void send(CommandSender commandSender) {
-        String jsonMessage = getTranslation();
-        if (jsonMessage == null) {
-            return;
-        }
-
-        // color scheme service
-        ColorScheme colorScheme = plugin.getColorSchemeService().getColorScheme();
-
-        // apply colors from color scheme to message
-        jsonMessage = colorScheme.applyColorSchemeForJson(jsonMessage);
-
-        BaseComponent[] components = ComponentSerializer.parse(jsonMessage);
-        if (components == null) {
-            return;
-        }
+        BaseComponent[] components = createBaseComponent();
+        if (components == null) return;
 
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
             sendPlayer(player, components);
         } else {
             sendConsole(commandSender, components);
+        }
+    }
+
+    public void broadcast() {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            send(player);
         }
     }
 
@@ -72,6 +66,25 @@ public class JsonMessage {
     private void sendConsole(CommandSender commandSender, BaseComponent[] components) {
         String legacyText = BaseComponent.toLegacyText(components);
         commandSender.sendMessage(legacyText);
+    }
+
+    private BaseComponent[] createBaseComponent() {
+        String jsonMessage = getTranslation();
+        if (jsonMessage == null) {
+            return null;
+        }
+
+        // color scheme service
+        ColorScheme colorScheme = plugin.getColorSchemeService().getColorScheme();
+
+        // apply colors from color scheme to message
+        jsonMessage = colorScheme.applyColorSchemeForJson(jsonMessage);
+
+        BaseComponent[] components = ComponentSerializer.parse(jsonMessage);
+        if (components == null) {
+            return null;
+        }
+        return components;
     }
 
     public String getTranslation() {
