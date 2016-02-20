@@ -79,6 +79,8 @@ public class ColorScheme {
         }
     }
 
+
+
     public ColorSchemeName getName() {
         return name;
     }
@@ -158,6 +160,30 @@ public class ColorScheme {
                 matcher.appendReplacement(sb, "" + this.getText());
             } else {
                 matcher.appendReplacement(sb, ChatColor.valueOf(matcher.group(2)).toString());
+            }
+        }
+
+        matcher.appendTail(sb);
+
+        // in case there are some old-school color codes left in the string, transform them and return
+        return ChatColor.translateAlternateColorCodes('&', sb.toString());
+    }
+
+    public String applyColorSchemeForJson(String jsonMessage) {
+        Matcher matcher = this.pattern.matcher(jsonMessage);
+        StringBuffer sb = new StringBuffer();
+
+        while (matcher.find()) {
+            if (matcher.group(2).equals("PRIMARY")) {
+                matcher.appendReplacement(sb, "" + this.getPrimary().getName());
+            } else if (matcher.group(2).equals("SECONDARY")) {
+                matcher.appendReplacement(sb, "" + this.getSecondary().getName());
+            } else if (matcher.group(2).equals("FLAG")) {
+                matcher.appendReplacement(sb, "" + this.getFlag().getName());
+            } else if (matcher.group(2).equals("TEXT")) {
+                matcher.appendReplacement(sb, "" + this.getText().getName());
+            } else {
+                matcher.appendReplacement(sb, ChatColor.valueOf(matcher.group(2)).getName());
             }
         }
 
