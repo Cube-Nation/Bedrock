@@ -112,15 +112,7 @@ public class PermissionOtherCommand extends Command {
 
             // no permissions
         } else {
-            MessageHelper.send(
-                    this.getCommandManager().getPlugin(),
-                    sender,
-                    new Translation(
-                            this.getCommandManager().getPlugin(),
-                            "permission.no_permissions"
-                    ).getTranslation()
-            );
-
+            MessageHelper.noPermission(this.getCommandManager().getPlugin(), sender);
         } // if
     }
 

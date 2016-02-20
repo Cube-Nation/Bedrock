@@ -10,7 +10,6 @@ import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
-import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -54,24 +53,9 @@ public class ReloadCommand extends Command {
             this.plugin.getCommandService().reload();
             this.plugin.getPermissionService().reload();
 
-            MessageHelper.send(
-                    this.getCommandManager().getPlugin(),
-                    sender,
-                    new Translation(
-                            this.getCommandManager().getPlugin(),
-                            "reload.complete"
-                    ).getTranslation()
-            );
+            MessageHelper.reloadComplete(this.getCommandManager().getPlugin(),sender);
         } catch (ServiceReloadException e) {
-
-            MessageHelper.send(
-                    this.getCommandManager().getPlugin(),
-                    sender,
-                    new Translation(
-                            this.getCommandManager().getPlugin(),
-                            "reload.failed"
-                    ).getTranslation()
-            );
+            MessageHelper.reloadFailed(this.getCommandManager().getPlugin(),sender);
             e.printStackTrace();
         }
     }
