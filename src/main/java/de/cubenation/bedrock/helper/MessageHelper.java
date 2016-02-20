@@ -5,6 +5,7 @@ import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
+import de.cubenation.bedrock.translation.JsonMessage;
 import de.cubenation.bedrock.translation.Translation;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -21,52 +22,64 @@ import java.util.Arrays;
 public class MessageHelper {
 
     public static void commandExecutionError(BasePlugin plugin, CommandSender sender, Exception e) {
-        MessageHelper.send(plugin, sender, plugin.getMessagePrefix() + " " + e.getMessage());
+        sender.sendMessage(plugin.getMessagePrefix() + " " + e.getMessage());
     }
 
     public static void insufficientPermission(BasePlugin plugin, CommandSender sender) {
-        MessageHelper.send(
-                plugin,
-                sender,
-                new Translation(plugin, "permission.insufficient").getTranslation()
-        );
+        new JsonMessage(plugin, "json.permission.insufficient").send(sender);
+    }
+
+    public static void noPermission(BasePlugin plugin, CommandSender sender) {
+        new JsonMessage(plugin, "json.no_permissions").send(sender);
     }
 
     public static void invalidCommand(BasePlugin plugin, CommandSender sender) {
-        MessageHelper.send(
-                plugin,
-                sender,
-                new Translation(plugin, "command.invalid").getTranslation()
-        );
+        JsonMessage jsonMessage = new JsonMessage(plugin, "json.command.invalid");
+        System.out.println("Json Message: " + jsonMessage.getTranslation());
+        jsonMessage.send(sender);
     }
 
     @SuppressWarnings("unused")
     public static void mustBePlayer(BasePlugin plugin, CommandSender commandSender) {
-        send(plugin, commandSender, new Translation(plugin, "must_be_player").getTranslation());
+        new JsonMessage(plugin, "json.must_be_player").send(commandSender);
     }
 
     public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender, String player) {
-        send(plugin, commandSender, new Translation(
-                plugin, "no_such_player",
-                new String[]{"player", player}
-        ).getTranslation());
+        new JsonMessage(plugin, "json.no_such_player", "player", player).send(commandSender);
     }
 
+    public static void reloadComplete(BasePlugin plugin, CommandSender sender) {
+        new JsonMessage(plugin, "json.reload.complete").send(sender);
+    }
+
+    public static void reloadFailed(BasePlugin plugin, CommandSender sender) {
+        new JsonMessage(plugin, "json.reload.failed").send(sender);
+    }
+
+    public static void version(BasePlugin plugin, CommandSender sender) {
+        new JsonMessage(plugin, "json.version", "version", plugin.getDescription().getVersion()).send(sender);
+    }
+
+
     @SuppressWarnings("unused")
+    @Deprecated
     public static void sendToAll(BasePlugin plugin, String message) {
         sendToAll(plugin, new TextComponent(message));
     }
 
+    @Deprecated
     public static void send(BasePlugin plugin, CommandSender sender, String message) {
         send(plugin, sender, new TextComponent(message));
     }
 
+    @Deprecated
     public static void sendToAll(BasePlugin plugin, TextComponent component) {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             send(plugin, player, component);
         }
     }
 
+    @Deprecated
     public static void send(BasePlugin plugin, CommandSender sender, TextComponent component) {
         // check for NullPointerException
         if (component == null)
@@ -74,6 +87,7 @@ public class MessageHelper {
         send(plugin, sender, component, component.getHoverEvent(), component.getClickEvent());
     }
 
+    @Deprecated
     public static void send(BasePlugin plugin, CommandSender sender, TextComponent component, HoverEvent hover_event, ClickEvent click_event) {
         // check for NullPointerException
         if (component == null)
