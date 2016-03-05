@@ -7,6 +7,10 @@ import de.cubenation.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.translation.JsonMessage;
 import de.cubenation.bedrock.translation.Translation;
+import de.cubenation.bedrock.translation.parts.BedrockClickEvent;
+import de.cubenation.bedrock.translation.parts.BedrockHoverEvent;
+import de.cubenation.bedrock.translation.parts.BedrockJson;
+import de.cubenation.bedrock.translation.parts.JsonColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -130,8 +134,8 @@ public class MessageHelper {
                     // generate header and footer line
                     String hf_line =
                             ChatColor.DARK_GRAY + "   " +
-                            new String(new char[max_len + 3]).replace('\0', '-') +
-                            ChatColor.RESET;
+                                    new String(new char[max_len + 3]).replace('\0', '-') +
+                                    ChatColor.RESET;
 
                     lines.add(0, hf_line);
 
@@ -139,9 +143,9 @@ public class MessageHelper {
                         int pad_length = max_len - ChatColor.stripColor(lines.get(i)).length();
                         lines.set(i,
                                 ChatColor.DARK_GRAY + "  | " + ChatColor.RESET +
-                                lines.get(i) +
-                                new String(new char[pad_length]).replace('\0', ' ') +
-                                ChatColor.DARK_GRAY + "  |" + ChatColor.RESET
+                                        lines.get(i) +
+                                        new String(new char[pad_length]).replace('\0', ' ') +
+                                        ChatColor.DARK_GRAY + "  |" + ChatColor.RESET
                         );
                     }
 
@@ -151,9 +155,9 @@ public class MessageHelper {
                 } else {
                     hover_message =
                             " " +   // make explicit string
-                            ChatColor.DARK_GRAY + "[ " + ChatColor.RESET +
-                            hover_message +
-                            ChatColor.DARK_GRAY + " ]" + ChatColor.RESET;
+                                    ChatColor.DARK_GRAY + "[ " + ChatColor.RESET +
+                                    hover_message +
+                                    ChatColor.DARK_GRAY + " ]" + ChatColor.RESET;
                 }
             }
 
@@ -162,10 +166,10 @@ public class MessageHelper {
         }
     }
 
-    private static int longestLength(ArrayList<String> list){
+    private static int longestLength(ArrayList<String> list) {
         String longest = list.get(0);
-        for(String str : list){
-            if(str.length()> longest.length()){
+        for (String str : list) {
+            if (str.length() > longest.length()) {
                 longest = str;
             }
         }
@@ -176,52 +180,62 @@ public class MessageHelper {
     /**
      * Get a TextComponent with the help for a SubCommand
      *
-     * @param plugin      a reference to the plugin
-     * @param sender      the command sender
-     * @param command     a class that is abstracted from AbstractCommand
+     * @param plugin  a reference to the plugin
+     * @param sender  the command sender
+     * @param command a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
-    public static TextComponent getHelpForSubCommand(BasePlugin plugin, CommandSender sender, AbstractCommand command) {
+    public static JsonMessage getHelpForSubCommand(BasePlugin plugin, CommandSender sender, AbstractCommand command) {
 
         // check for permission
-        if (!command.hasPermission(sender))
+        if (!command.hasPermission(sender)) {
             return null;
+        }
 
-        /*
-         * suggest string
-         *
-         * This string contains the label and all subcommands (except arguments)
-         * In case of a KeyValueCommand, the key-value arguments are not added to the clickable string
-         *
-         * The string is used for the suggest event when clicking on the help command output
-         */
-        ArrayList<String> suggest_string = new ArrayList<>();
-        suggest_string.add("/" + command.getCommandManager().getPluginCommand().getLabel());
+        String commandHeadline = "/" + command.getCommandManager().getPluginCommand().getLabel();
 
+        BedrockJson helpJson = BedrockJson.JsonWithText("");
+        BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.DARK_GRAY);
+        BedrockJson questionSpace = BedrockJson.Space();
+        BedrockJson commandHead = BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY);
 
-        // The command divider string
-        String command_divider = new Translation(
-                plugin,
-                "help.command.divider"
-        ).getTranslation();
+        helpJson.addExtra(questionMark);
+        helpJson.addExtra(questionSpace);
+        helpJson.addExtra(commandHead);
+        helpJson.addExtra(BedrockJson.Space());
 
-
-        /*
-         * command string
-         *
-         * Holds all subcommands for this command
-         */
-        ArrayList<String> command_strings = new ArrayList<>();
         if (command.getSubcommands() != null) {
             for (String[] commands : command.getSubcommands()) {
                 // sort commands by length
                 Arrays.sort(commands, new LengthComparator());
 
-                // add command to command array
-                command_strings.add(StringUtils.join(commands, command_divider));
+                String subCmd = commands[commands.length - 1];
+                BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
 
-                // add longest command to suggest string
-                suggest_string.add((commands.length > 1) ? commands[1] : commands[0]);
+                // Add hover with alias
+                if (commands.length > 1) {
+                    BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd)
+                            .color(JsonColor.SECONDARY)
+                            .bold(true);
+                    subCommandHover.addExtra(BedrockJson.NewLine());
+                    String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
+
+                    subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
+
+                    for (int i = 0; i < commands.length - 1; i++) {
+                        subCommandHover.addExtra(BedrockJson.NewLine());
+                        String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
+                                "alias", commands[i]
+                        }).getTranslation();
+
+                        subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
+                    }
+
+                    subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
+                }
+
+                helpJson.addExtra(subCommand);
+                helpJson.addExtra(BedrockJson.Space());
             }
         }
 
@@ -231,30 +245,27 @@ public class MessageHelper {
          * The translation for this description string is taken from the plugin
          * or the BedrockPlugins' locale files
          */
-        String command_description = "";
+        String commandDescription = "";
 
         if (command.getDescription() != null && !command.getDescription().isEmpty()) {
-            command_description = new Translation(plugin, command.getDescription()).getTranslation();
+            commandDescription = new Translation(plugin, command.getDescription()).getTranslation();
         }
 
+        String[] split = commandDescription.split("\n");
 
-        /*
-         * Command arguments and hover strings
-         *
-         * Command arguments string:
-         * The string is being displayed in the command help which is printed into the chat.
-         * It contains the label, all subcommands and all arguments (those from the KeyValueArgument, too)
-         *
-         * Hover string:
-         * The hover string contains a linefeed-separated string of
-         *  - the command description
-         *     and linefeed-separated occurrences of all
-         *  - command arguments and their description
-         */
-        ArrayList<String> argument_string   = new ArrayList<>();
-        ArrayList<String> hover_string      = new ArrayList<>();
-        // add the command description at first position
-        hover_string.add(command_description);
+        BedrockJson cmdDesc = BedrockJson.JsonWithText("");
+
+        if (split.length > 0) {
+            for (String aSplit : split) {
+                cmdDesc.addExtra(BedrockJson.NewLine());
+                cmdDesc.addExtra(BedrockJson.JsonWithText(aSplit));
+            }
+        }
+
+        cmdDesc.addExtra(BedrockJson.Space());
+
+        Boolean hasOptional = false;
+        Boolean hasRequired = false;
 
         // process all arguments
         for (Argument argument : command.getArguments()) {
@@ -263,7 +274,7 @@ public class MessageHelper {
                 continue;
             }
 
-            ArrayList<String> argument_hover_string = new ArrayList<>();
+            cmdDesc.addExtra(BedrockJson.NewLine());
 
             /*
              * KeyValueArgument
@@ -274,88 +285,96 @@ public class MessageHelper {
             if (argument instanceof KeyValueArgument) {
                 KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
-                String key_string = new Translation(
-                        plugin,
-                        "help.command.args.key",
-                        new String[ ] {"key", keyValueArgument.getRuntimeKey() }
-                ).getTranslation();
+                helpJson.addExtra(BedrockJson.JsonWithText(keyValueArgument.getRuntimeKey()).color(JsonColor.SECONDARY));
+                helpJson.addExtra(BedrockJson.Space());
 
-                // add this to argument_hover_string
-                argument_hover_string.add(key_string);
+                cmdDesc.addExtra(BedrockJson.JsonWithText(keyValueArgument.getRuntimeKey()).color(JsonColor.GRAY));
+                cmdDesc.addExtra(BedrockJson.Space());
             }
-
 
             /*
              * Argument placeholder
-             *
-             *
              */
-            // placeholders
-            String placeholder;
-            if (argument.isOptional()) {
-                placeholder = new Translation(
-                        plugin,
-                        "help.command.args.optional",
-                        new String[] { "argument", argument.getRuntimePlaceholder() }
-                ).getTranslation();
+
+            Boolean optional = argument.isOptional();
+
+
+            BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
+                    .color(JsonColor.GRAY)
+                    .italic(optional);
+
+            helpJson.addExtra(runtimePlaceholder);
+            helpJson.addExtra(BedrockJson.Space());
+
+            if (optional) {
+                hasOptional = true;
+                String translation = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
             } else {
-                placeholder = new Translation(
-                        plugin,
-                        "help.command.args.needed",
-                        new String[] { "argument", argument.getRuntimePlaceholder() }
-                ).getTranslation();
+                hasRequired = true;
+                String translation = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
             }
+            cmdDesc.addExtra(BedrockJson.Space());
+            cmdDesc.addExtra(runtimePlaceholder);
 
-            // add the placeholder to argument_hover_string
-            argument_hover_string.add(placeholder);
+            cmdDesc.addExtra(BedrockJson.JsonWithText("  :  ").color(JsonColor.FLAG));
 
+            cmdDesc.addExtra(BedrockJson.JsonWithText(argument.getRuntimeDescription())).color(JsonColor.WHITE);
 
-            // add the arguments to argument_string. This does not contain the description
-            argument_string.add(StringUtils.join(argument_hover_string, " "));
-
-
-            // description for argument
-            String argument_description = new Translation(
-                    plugin,
-                    "help.command.args.description",
-                    new String[]{"description", argument.getRuntimeDescription()}
-            ).getTranslation();
-
-            //argument_hover_string.add(argument_description);
-            // Do not add the argument_description to argument_hover_string.
-            // This would lead to double whitespaces
-            //
-            // Instead, we just add the string after joining the argument_hover_string
-
-            // finally add argument_hover_string to hover_string
-            hover_string.add(StringUtils.join(argument_hover_string, " ") + argument_description);
         }
 
-        // finally
-        String help_string = new Translation(
-                plugin,
-                "help.command.command",
-                new String[]{
-                        "label",    command.getCommandManager().getPluginCommand().getLabel(),
-                        "commands", StringUtils.join(command_strings, " "),
-                        "args",     StringUtils.join(argument_string, " ")
-                }
-        ).getTranslation();
+        if (command.getArguments() != null && !command.getArguments().isEmpty()) {
+            cmdDesc.addExtra(BedrockJson.NewLine());
+
+            // Apply info for command type
+            if (hasOptional) {
+                cmdDesc.addExtra(BedrockJson.NewLine());
+
+                // Add symbol
+                String symbol = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(symbol).color(JsonColor.FLAG));
+
+                // Add blank
+                cmdDesc.addExtra(BedrockJson.Space());
+
+                // Add explanation
+                String translation = new Translation(plugin, "help.info.arg.optional.desc").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.GRAY));
+            }
+
+            if (hasRequired) {
+                cmdDesc.addExtra(BedrockJson.NewLine());
+
+                // Add symbol
+                String symbol = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(symbol).color(JsonColor.FLAG));
+
+                // Add blank
+                cmdDesc.addExtra(BedrockJson.Space());
+
+                // Add explanation
+                String translation = new Translation(plugin, "help.info.arg.required.desc").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.GRAY));
+            }
+        }
+
+        ArrayList<BedrockJson> extras = cmdDesc.getExtras();
+        ArrayList<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
+        for (int i = coloredSuggestion.size() - 1; i >= 0; i--) {
+            BedrockJson json = coloredSuggestion.get(i);
+            extras.add(0, json);
+        }
+        cmdDesc.extra(extras);
 
 
-        TextComponent component = new TextComponent(
-                TextComponent.fromLegacyText(help_string)
-        );
-        component.setClickEvent(new ClickEvent(
-                ClickEvent.Action.SUGGEST_COMMAND,
-                StringUtils.join(suggest_string, " ")
-        ));
-        component.setHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                TextComponent.fromLegacyText(StringUtils.join(hover_string, System.lineSeparator()))
-        ));
+        questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+        questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+        commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
 
-        return component;
+        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, command.getStringSuggestion());
+
+        return new JsonMessage(plugin, helpJson);
     }
 
     public static String direction(BasePlugin plugin, FacingDirection facingDirection) {
