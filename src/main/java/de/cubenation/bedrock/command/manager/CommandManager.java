@@ -7,7 +7,7 @@ import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.helper.MessageHelper;
-import net.md_5.bungee.api.chat.TextComponent;
+import de.cubenation.bedrock.translation.JsonMessage;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -88,11 +88,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     } catch (IllegalCommandArgumentException e) {
                         MessageHelper.invalidCommand(this.plugin, commandSender);
 
-                        TextComponent component_help = commandToExecute.getBeautifulHelp(commandSender);
-                        if (component_help == null) {
+                        JsonMessage jsonHelp = commandToExecute.getJsonHelp(commandSender);
+                        if (jsonHelp == null) {
                             MessageHelper.insufficientPermission(this.plugin, commandSender);
                         } else {
-                            MessageHelper.send(this.plugin, commandSender, component_help);
+                            jsonHelp.send(commandSender);
                         }
 
                         return true;
