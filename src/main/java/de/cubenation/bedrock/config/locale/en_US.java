@@ -138,27 +138,43 @@ public class en_US extends CustomConfigurationFile {
     @Path("help.command.args.description")
     private String help_command_args_description    = "&TEXT& - %description%&RESET&";
 
-    @Path("help.command.args.username_uuid.description")
-    private String help_args_username_uuid_description  = "Username/UUID eines Spielers";
 
-    @Path("help.command.args.username_uuid.placeholder")
-    private String help_args_username_uuid_placeholder  = "Username/UUID";
 
-    @Path("help.plugin")
-    private String help_plugin                      = "&TEXT&Display a help for this plugin";
 
-    @Path("help.version")
-    private String help_version                     = "&TEXT&Show the plugin version";
 
-    @Path("help.reload")
-    private String help_reload                      = "&TEXT&Reload the plugin";
+    /**
+     * Commands
+     */
 
-    @Path("help.permissions.list")
-    private String help_permission_list             = "&TEXT&Show all plugin roles and permissions";
+    @Path("command.bedrock.help.desc")
+    private String help_plugin = "Display a help for this plugin";
 
-    @Path("help.permissions.other")
-    private String help_permission_other            = "&TEXT&Shows a player's plugin permissions";
+    @Path("command.bedrock.cmd.list.desc")
+    private String string = "Displays a list of all plugin commands";
 
+    @Path("command.bedrock.permissions.list.desc")
+    private String help_permission_list = "Show all plugin roles and permissions";
+
+    @Path("command.bedrock.permissions.desc")
+    private String help_permission_other = "Shows a player's plugin permissions";
+
+    @Path("command.bedrock.reload.desc")
+    private String help_reload = "Reload the plugin";
+
+    @Path("command.bedrock.version.desc")
+    private String help_version = "Show the plugin version";
+
+
+    /**
+     * Args
+     */
+
+
+    @Path("command.bedrock.username_uuid.desc")
+    private String help_args_username_uuid_description = "Username/UUID of a Player";
+
+    @Path("command.bedrock.username_uuid.ph")
+    private String help_args_username_uuid_placeholder = "Username/UUID";
 
     /*
      * PageDesignHelper Messages
