@@ -8,7 +8,6 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.HelpPageableListService;
 import de.cubenation.bedrock.helper.MessageHelper;
-import de.cubenation.bedrock.helper.design.PageDesignHelper;
 import de.cubenation.bedrock.helper.design.PageableMessageHelper;
 import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.service.pageablelist.PageableListRegistry;
@@ -90,13 +89,6 @@ public class HelpCommand extends Command {
             }
 
             PageableMessageHelper.pagination(getPlugin(),
-                    helpPageableListService,
-                    number,
-                    "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%",
-                    sender,
-                    getHeader(getCommandManager().getPluginCommand().getLabel()));
-
-            PageDesignHelper.pagination(getPlugin(),
                     helpPageableListService,
                     number,
                     "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%",
