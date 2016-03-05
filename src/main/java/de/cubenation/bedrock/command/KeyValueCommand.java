@@ -8,8 +8,6 @@ import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.helper.IgnoreCaseArrayList;
-import de.cubenation.bedrock.helper.MessageHelper;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -237,10 +235,6 @@ public abstract class KeyValueCommand extends AbstractCommand {
         }
 
         return true;
-    }
-
-    public TextComponent getBeautifulHelp(CommandSender sender) {
-        return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
 }

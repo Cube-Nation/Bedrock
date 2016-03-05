@@ -2,12 +2,18 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.argument.Argument;
+import de.cubenation.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.helper.LengthComparator;
+import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
-import net.md_5.bungee.api.chat.TextComponent;
+import de.cubenation.bedrock.translation.JsonMessage;
+import de.cubenation.bedrock.translation.parts.BedrockJson;
+import de.cubenation.bedrock.translation.parts.JsonColor;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -33,8 +39,8 @@ public abstract class AbstractCommand {
     protected BasePlugin plugin;
 
     protected CommandManager commandManager;
-    
-    
+
+
     public AbstractCommand(BasePlugin plugin, CommandManager commandManager) {
         this.plugin = plugin;
         this.commandManager = commandManager;
@@ -55,26 +61,22 @@ public abstract class AbstractCommand {
     }
 
     /**
-     *
-     * @param permissions   ArrayList of permission strings
+     * @param permissions ArrayList of permission strings
      */
     public abstract void setPermissions(ArrayList<Permission> permissions);
 
     /**
-     *
-     * @param subcommands    ArrayList with subcommand string arrays
+     * @param subcommands ArrayList with subcommand string arrays
      */
     public abstract void setSubCommands(ArrayList<String[]> subcommands);
 
     /**
-     *
-     * @param description   Locale identifier string
+     * @param description Locale identifier string
      */
     public abstract void setDescription(StringBuilder description);
 
     /**
-     *
-     * @param arguments     ArrayList of de.cubenation.bedrock.command.argument.Argument objects
+     * @param arguments ArrayList of de.cubenation.bedrock.command.argument.Argument objects
      */
     public abstract void setArguments(ArrayList<Argument> arguments);
 
@@ -156,7 +158,7 @@ public abstract class AbstractCommand {
 
         // If the user typed nothing, return the largest
         if (completionCommand.equals("")) {
-            completionCommand = list.get(list.size()-1);
+            completionCommand = list.get(list.size() - 1);
         }
 
         final String finalCompletionCommand = completionCommand;
@@ -173,7 +175,80 @@ public abstract class AbstractCommand {
      */
     public abstract boolean isValidTrigger(String[] args);
 
-    public abstract TextComponent getBeautifulHelp(CommandSender sender);
+    public JsonMessage getJsonHelp(CommandSender sender) {
+        return MessageHelper.getHelpForSubCommand(plugin, sender, this);
+    }
+
+    public String getStringSuggestion() {
+
+        ArrayList<String> suggestString = new ArrayList<>();
+        suggestString.add("/" + getCommandManager().getPluginCommand().getLabel());
+
+        if (getSubcommands() != null) {
+            for (String[] commands : getSubcommands()) {
+                // sort commands by length
+                Arrays.sort(commands, new LengthComparator());
+
+                // add longest command to suggest string
+                suggestString.add(commands[commands.length - 1]);
+            }
+        }
+
+        return StringUtils.join(suggestString, " ");
+    }
+
+    public ArrayList<BedrockJson> getColoredSuggestion(Boolean argPlaceholderEnabled) {
+        ArrayList<BedrockJson> result = new ArrayList<>();
+        String commandHeadline = "/" + getCommandManager().getPluginCommand().getLabel();
+        result.add(BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY));
+        result.add(BedrockJson.Space());
+
+        if (getSubcommands() != null) {
+            for (String[] commands : getSubcommands()) {
+                // sort commands by length
+                Arrays.sort(commands, new LengthComparator());
+
+                String subCmd = commands[commands.length - 1];
+                BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
+
+                result.add(subCommand);
+                result.add(BedrockJson.Space());
+            }
+        }
+
+        if (argPlaceholderEnabled) {
+            // process all arguments
+            for (Argument argument : getArguments()) {
+
+
+                /*
+                 * KeyValueArgument
+                 *
+                 * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
+                 * key-value command) we need to prepend the key
+                 */
+                if (argument instanceof KeyValueArgument) {
+                    KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
+
+                    result.add(BedrockJson.JsonWithText(keyValueArgument.getRuntimeKey()).color(JsonColor.SECONDARY));
+                    result.add(BedrockJson.Space());
+                }
+
+                /*
+                 * Argument placeholder
+                 */
+
+                BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
+                        .color(JsonColor.GRAY)
+                        .italic(argument.isOptional());
+
+                result.add(runtimePlaceholder);
+                result.add(BedrockJson.Space());
+            }
+        }
+
+        return result;
+    }
 
     public boolean displayInHelp() {
         return true;

@@ -2,8 +2,6 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.manager.CommandManager;
-import de.cubenation.bedrock.helper.MessageHelper;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -53,10 +51,4 @@ public abstract class Command extends AbstractCommand {
         // TODO: Should display if not enough arguments available!
         return false;
     }
-
-    @Override
-    public TextComponent getBeautifulHelp(CommandSender sender) {
-        return MessageHelper.getHelpForSubCommand(plugin, sender, this);
-    }
-
 }
