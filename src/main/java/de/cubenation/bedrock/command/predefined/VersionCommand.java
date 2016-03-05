@@ -31,7 +31,7 @@ public class VersionCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.version");
+        description.append("command.bedrock.version.desc");
     }
 
     @Override

@@ -43,12 +43,12 @@ public class PermissionOtherCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.permissions.other");
+        description.append("command.bedrock.permissions.desc");
     }
 
     @Override
     public void setArguments(ArrayList<Argument> arguments) {
-        arguments.add(new Argument("help.command.args.username_uuid.description", "help.command.args.username_uuid.placeholder", true));
+        arguments.add(new Argument("command.bedrock.username_uuid.desc", "command.bedrock.username_uuid.ph", true));
     }
 
     @Override

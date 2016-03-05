@@ -44,10 +44,9 @@ public class HelpCommand extends Command {
         subcommands.add(new String[]{"help"});
     }
 
-    @SuppressWarnings("UnusedAssignment")
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.plugin");
+        description.append("command.bedrock.help.desc");
     }
 
     @Override

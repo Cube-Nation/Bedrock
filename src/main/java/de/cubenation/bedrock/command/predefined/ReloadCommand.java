@@ -33,7 +33,7 @@ public class ReloadCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.reload");
+        description.append("command.bedrock.reload.desc");
     }
 
     @Override

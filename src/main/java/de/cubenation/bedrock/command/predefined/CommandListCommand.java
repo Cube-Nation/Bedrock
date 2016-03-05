@@ -40,7 +40,7 @@ public class CommandListCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("command.cmd.list.desc");
+        description.append("command.bedrock.cmd.list.desc");
     }
 
     @Override

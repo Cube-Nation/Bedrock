@@ -86,7 +86,6 @@ public class de_DE extends CustomConfigurationFile {
     private String no_such_player = "%plugin_prefix%&RESET& &RED&Spieler &SECONDARY&%player% &RED&nicht gefunden";
 
 
-
     @Path("json.permission.list.header")
     private String json_permission_list_header = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Alle Berechtigungen:\",color:\"&SECONDARY&\"}]}";
 
@@ -138,27 +137,6 @@ public class de_DE extends CustomConfigurationFile {
 
     @Path("help.command.args.description")
     private String help_command_args_description = "&TEXT& - %description%&RESET&";
-
-    @Path("help.command.args.username_uuid.description")
-    private String help_args_username_uuid_description = "Username/UUID eines Spielers";
-
-    @Path("help.command.args.username_uuid.placeholder")
-    private String help_args_username_uuid_placeholder = "Username/UUID";
-
-    @Path("help.plugin")
-    private String help_plugin = "&TEXT&Hilfe zu allen Plugin Befehlen";
-
-    @Path("help.version")
-    private String help_version = "&TEXT&Zeigt die Version des Plugins an";
-
-    @Path("help.reload")
-    private String help_reload = "&TEXT&Lädt das Plugin neu";
-
-    @Path("help.permissions.list")
-    private String help_permission_list = "&TEXT&Zeigt alle Plugin-Berechtigungen an";
-
-    @Path("help.permissions.other")
-    private String help_permission_other = "&TEXT&Zeigt Plugin-Berechtigungen eines Spielers an";
 
 
     /*
@@ -227,6 +205,36 @@ public class de_DE extends CustomConfigurationFile {
      * Commands
      */
 
+    @Path("command.bedrock.help.desc")
+    private String help_plugin = "Hilfe zu allen Plugin Befehlen";
+
+    @Path("command.bedrock.cmd.list.desc")
+    private String string = "Gibt dir eine Liste aller Haupt-Commands, welche dieses Plugin bietet";
+
+    @Path("command.bedrock.permissions.list.desc")
+    private String help_permission_list = "Zeigt alle Plugin-Berechtigungen an";
+
+    @Path("command.bedrock.permissions.desc")
+    private String help_permission_other = "Zeigt Plugin-Berechtigungen eines Spielers an";
+
+    @Path("command.bedrock.reload.desc")
+    private String help_reload = "Lädt das Plugin neu";
+
+    @Path("command.bedrock.version.desc")
+    private String help_version = "Zeigt die Version des Plugins an";
+
+
+    /**
+     * Args
+     */
+
+
+    @Path("command.bedrock.username_uuid.desc")
+    private String help_args_username_uuid_description = "Username/UUID eines Spielers";
+
+    @Path("command.bedrock.username_uuid.ph")
+    private String help_args_username_uuid_placeholder = "Username/UUID";
+
     // CommandList
 
     @Path("plugin.commands.header")
@@ -234,5 +242,6 @@ public class de_DE extends CustomConfigurationFile {
 
     @Path("plugin.commands.list")
     private String plugin_command_list = "&PRIMARY&%command%: &SECONDARY&%description%";
+
 
 }

@@ -40,7 +40,7 @@ public class PermissionListCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.permissions.list");
+        description.append("command.bedrock.permissions.list.desc");
     }
 
     @Override
