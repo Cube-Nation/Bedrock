@@ -5,6 +5,7 @@ import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.service.localization.LocalizationService;
+import de.cubenation.bedrock.translation.parts.BedrockJson;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -26,6 +27,8 @@ public class JsonMessage {
 
     private String localeIdentifier;
 
+    private String json;
+
     private String[] localeArgs;
 
     private final LocalizationService service;
@@ -39,6 +42,15 @@ public class JsonMessage {
         this.localeIdentifier = localeIdentifier;
         this.setLocaleArgs(localeArgs);
         this.service = plugin.getLocalizationService();
+
+        json = getTranslation();
+    }
+
+    public JsonMessage(BasePlugin plugin, BedrockJson bedrockJson) {
+        this.plugin = plugin;
+        this.service = plugin.getLocalizationService();
+
+        json = bedrockJson.toJSONString();
     }
 
     public void send(CommandSender commandSender) {
@@ -69,18 +81,13 @@ public class JsonMessage {
     }
 
     private BaseComponent[] createBaseComponent() {
-        String jsonMessage = getTranslation();
-        if (jsonMessage == null) {
-            return null;
-        }
-
         // color scheme service
         ColorScheme colorScheme = plugin.getColorSchemeService().getColorScheme();
 
         // apply colors from color scheme to message
-        jsonMessage = colorScheme.applyColorSchemeForJson(jsonMessage);
+        json = colorScheme.applyColorSchemeForJson(json);
 
-        BaseComponent[] components = ComponentSerializer.parse(jsonMessage);
+        BaseComponent[] components = ComponentSerializer.parse(json);
         if (components == null) {
             return null;
         }

@@ -115,7 +115,7 @@ public class de_DE extends CustomConfigurationFile {
      */
 
     @Path("help.header")
-    private String help_header = "&FLAG&==== &PRIMARY&%plugin% Hilfe &FLAG&====";
+    private String help_header = "%plugin% Hilfe";
 
     @Path("help.command.command")
     private String help_command_command = "&PRIMARY&/%label%&RESET& &SECONDARY&%commands%&RESET& %args%&RESET&";
@@ -139,11 +139,34 @@ public class de_DE extends CustomConfigurationFile {
     private String help_command_args_description = "&TEXT& - %description%&RESET&";
 
 
+
+    @Path("help.subcommand.alias.desc")
+    private String help_subcommand_alias_desc = "Alternativ kannst du folgendes nutzen:";
+
+    @Path("help.subcommand.alias.value")
+    private String help_subcommand_alias_value = " - %alias%";
+
+
+    @Path("help.info.arg.required.symbol")
+    private String string2 = "-";
+
+    @Path("help.info.arg.optional.symbol")
+    private String string3 = "*";
+
+    @Path("help.info.arg.required.desc")
+    private String string1 = "Bedeutet dass dieses Argument benötigt wird.";
+
+    @Path("help.info.arg.optional.desc")
+    private String string4 = "Bedeutet dass dieses Argument optional ist.";
+
     /*
      * PageDesignHelper Messages
     */
     @Path("page.design.header")
     private String page_design_header = "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======";
+
+    @Path("json.page.design.header")
+    private String json_page_design_header = "{\"color\":\"&FLAG&\",\"underlined\":false,\"extra\":[{\"color\":\"white\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\" \",\"italic\":false,\"obfuscated\":false},{\"color\":\"&SECONDARY&\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\"%pageheader%\",\"italic\":false,\"obfuscated\":false},{\"color\":\"white\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\" \",\"italic\":false,\"obfuscated\":false},{\"color\":\"&SECONDARY&\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\"(%currentpagecount%\\/%totalpagecount%)\",\"italic\":false,\"obfuscated\":false},{\"color\":\"white\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\" \",\"italic\":false,\"obfuscated\":false},{\"color\":\"&FLAG&\",\"underlined\":false,\"bold\":false,\"strikethrough\":true,\"text\":\"--------\",\"italic\":false,\"obfuscated\":false}],\"bold\":false,\"strikethrough\":true,\"text\":\"--------\",\"italic\":false,\"obfuscated\":false}";
 
 
     /*
