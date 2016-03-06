@@ -43,12 +43,11 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
                     int index = arrayList.indexOf(keyValueArgument.getRuntimeKey());
                     // Add new Key to HasMap
-                    if (index == -1 || (index+1) >= arrayList.size()) {
+                    if (index == -1 || (index + 1) >= arrayList.size()) {
                         throw new IllegalCommandArgumentException();
                     }
 
-                    parsedArguments.put(keyValueArgument.getKey(), arrayList.get((index+1)));
-
+                    parsedArguments.put(keyValueArgument.getKey(), arrayList.get((index + 1)));
 
 
                 } else {
@@ -83,11 +82,12 @@ public abstract class KeyValueCommand extends AbstractCommand {
         }
 
         //Check if last command is equal, not startswith
-        int index = this.subcommands.size() - 1;
-        for (String com : getSubcommands().get(index)) {
-            if (!com.equalsIgnoreCase(args[index])) {
-                return null;
-
+        if (getSubcommands() != null && !getSubcommands().isEmpty()) {
+            int index = this.subcommands.size() - 1;
+            for (String com : getSubcommands().get(index)) {
+                if (com.equalsIgnoreCase(args[index])) {
+                    break;
+                }
             }
         }
 
@@ -101,7 +101,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
         }
 
         ArrayList<KeyValueArgument> recursive = getPossibleArguments(cmdArgs, args, this.subcommands.size());
-        
+
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
             for (KeyValueArgument argument : recursive) {
@@ -128,7 +128,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
             // Add this argument
             position++;
             // Add Placeholder size to ignore them
-            position ++;
+            position++;
             return getPossibleArguments(list, args, position);
         }
         return null;
