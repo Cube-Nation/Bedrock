@@ -42,13 +42,21 @@ public abstract class KeyValueCommand extends AbstractCommand {
                 if (arrayList.contains(keyValueArgument.getRuntimeKey())) {
 
                     int index = arrayList.indexOf(keyValueArgument.getRuntimeKey());
-                    // Add new Key to HasMap
-                    if (index == -1 || (index + 1) >= arrayList.size()) {
+
+                    if (index == -1) {
                         throw new IllegalCommandArgumentException();
                     }
 
-                    parsedArguments.put(keyValueArgument.getKey(), arrayList.get((index + 1)));
+                    if (!keyValueArgument.getKeyOnly()) {
+                        index++;
+                    }
 
+                    if ((index) >= arrayList.size()) {
+                        throw new IllegalCommandArgumentException();
+                    }
+
+                    // Add new Key to HasMap
+                    parsedArguments.put(keyValueArgument.getKey(), arrayList.get((index)));
 
                 } else {
                     if (!keyValueArgument.isOptional()) {
@@ -127,8 +135,10 @@ public abstract class KeyValueCommand extends AbstractCommand {
             list.remove(argument);
             // Add this argument
             position++;
-            // Add Placeholder size to ignore them
-            position++;
+            if (!argument.getKeyOnly()) {
+                // Add Placeholder size to ignore them
+                position++;
+            }
             return getPossibleArguments(list, args, position);
         }
         return null;

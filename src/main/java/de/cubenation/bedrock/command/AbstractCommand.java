@@ -238,12 +238,15 @@ public abstract class AbstractCommand {
                  * Argument placeholder
                  */
 
-                BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
-                        .color(JsonColor.GRAY)
-                        .italic(argument.isOptional());
+                if (!(argument instanceof KeyValueArgument)
+                        || !((KeyValueArgument) argument).getKeyOnly()) {
+                    BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
+                            .color(JsonColor.GRAY)
+                            .italic(argument.isOptional());
 
-                result.add(runtimePlaceholder);
-                result.add(BedrockJson.Space());
+                    result.add(runtimePlaceholder);
+                    result.add(BedrockJson.Space());
+                }
             }
         }
 
