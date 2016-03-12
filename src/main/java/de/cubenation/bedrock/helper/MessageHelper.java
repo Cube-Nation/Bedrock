@@ -276,6 +276,17 @@ public class MessageHelper {
 
             cmdDesc.addExtra(BedrockJson.NewLine());
 
+            Boolean optional = argument.isOptional();
+            if (optional) {
+                hasOptional = true;
+                String translation = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
+            } else {
+                hasRequired = true;
+                String translation = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
+                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
+            }
+
             /*
              * KeyValueArgument
              *
@@ -285,38 +296,44 @@ public class MessageHelper {
             if (argument instanceof KeyValueArgument) {
                 KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
-                helpJson.addExtra(BedrockJson.JsonWithText(keyValueArgument.getRuntimeKey()).color(JsonColor.SECONDARY));
+                String keyString = "[" + keyValueArgument.getRuntimeKey() + (keyValueArgument.getKeyOnly() ? "]" : "");
+
+                helpJson.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
                 helpJson.addExtra(BedrockJson.Space());
 
-                cmdDesc.addExtra(BedrockJson.JsonWithText(keyValueArgument.getRuntimeKey()).color(JsonColor.GRAY));
                 cmdDesc.addExtra(BedrockJson.Space());
+                cmdDesc.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
+                if (!keyValueArgument.getKeyOnly()) {
+                    cmdDesc.addExtra(BedrockJson.Space());
+                }
             }
 
             /*
              * Argument placeholder
              */
 
-            Boolean optional = argument.isOptional();
-
-
             if (!(argument instanceof KeyValueArgument)
                     || !((KeyValueArgument) argument).getKeyOnly()) {
-                BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
-                        .color(JsonColor.GRAY)
-                        .italic(optional);
+                BedrockJson runtimePlaceholder = null;
+
+                if (argument instanceof KeyValueArgument) {
+                    runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
+                            ? argument.getRuntimePlaceholder() + "]"
+                            : argument.getRuntimePlaceholder()))
+                            .color(JsonColor.GRAY)
+                            .italic(optional);
+                } else {
+                    runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
+                            ? "[" + argument.getRuntimePlaceholder() + "]"
+                            : argument.getRuntimePlaceholder()))
+                            .color(JsonColor.GRAY)
+                            .italic(optional);
+                }
+
 
                 helpJson.addExtra(runtimePlaceholder);
                 helpJson.addExtra(BedrockJson.Space());
 
-                if (optional) {
-                    hasOptional = true;
-                    String translation = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
-                    cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
-                } else {
-                    hasRequired = true;
-                    String translation = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
-                    cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
-                }
                 cmdDesc.addExtra(BedrockJson.Space());
                 cmdDesc.addExtra(runtimePlaceholder);
             }

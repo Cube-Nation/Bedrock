@@ -5,12 +5,12 @@ import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.service.localization.LocalizationService;
-import de.cubenation.bedrock.translation.parts.BedrockJson;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +46,7 @@ public class JsonMessage {
         json = getTranslation();
     }
 
-    public JsonMessage(BasePlugin plugin, BedrockJson bedrockJson) {
+    public JsonMessage(BasePlugin plugin, JSONObject bedrockJson) {
         this.plugin = plugin;
         this.service = plugin.getLocalizationService();
 
@@ -145,6 +145,10 @@ public class JsonMessage {
 
     public BasePlugin getPlugin() {
         return plugin;
+    }
+
+    public String getJson() {
+        return json;
     }
 
     public String getLocaleIdentifier() {

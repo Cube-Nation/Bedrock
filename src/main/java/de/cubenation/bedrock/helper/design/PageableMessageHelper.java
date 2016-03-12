@@ -4,11 +4,15 @@ import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.translation.JsonMessage;
+import de.cubenation.bedrock.translation.parts.BedrockJson;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,10 +27,73 @@ import java.util.logging.Level;
 public class PageableMessageHelper {
 
     private static final int NAVIGATIONSIZE = 7;
+    public static final String PAGE_PLACEHOLDER = "%page%";
 
+    private final BasePlugin plugin;
+    private final AbstractPageableListService listService;
+    private final List<JsonMessage> jsonMessageList;
+    private final String command;
+    private int page;
+    private int totalPages;
+    private String headline;
+    private ArrayList<BedrockJson> jsonHeadline;
+
+    public PageableMessageHelper(BasePlugin plugin, String command, AbstractPageableListService listService) {
+        this.plugin = plugin;
+        this.command = command;
+        this.listService = listService;
+        this.jsonMessageList = null;
+    }
+
+    public PageableMessageHelper(BasePlugin plugin, String command, List<JsonMessage> jsonMessageList) {
+        this.plugin = plugin;
+        this.command = command;
+        this.listService = null;
+        this.jsonMessageList = jsonMessageList;
+    }
+
+    public void paginate(CommandSender sender) {
+        // Can't show pages
+        if (listService == null && jsonMessageList == null) {
+            return;
+        }
+
+        if (!command.contains("%page%")) {
+            plugin.log(Level.INFO, "No placeholder for RunCommand index");
+            return;
+        }
+
+        List<PageableListStorable> page = null;
+        try {
+            page = listService.getPage(this.page);
+        } catch (Exception ignored) {
+        }
+        display(plugin, this.page, command, sender, headline, jsonHeadline, page, jsonMessageList, totalPages);
+    }
+
+    @Deprecated
     public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, CommandSender sender, String headline) {
         // Can't show pages, cause its empty
         if (service.isEmpty()) {
+            plugin.log(Level.INFO, "Space PageableListService. Can't display pages.");
+            return;
+        }
+
+        if (!pageExecutionCmd.contains(PAGE_PLACEHOLDER)) {
+            plugin.log(Level.INFO, "No placeholder for RunCommand index");
+            return;
+        }
+
+        List<PageableListStorable> list = service.getPage(page);
+
+        int totalPages = service.getPages();
+        display(plugin, page, pageExecutionCmd, sender, headline, null, list, null, totalPages);
+    }
+
+    @Deprecated
+    public static void pagination(BasePlugin plugin, List<JsonMessage> list, int page, int totalPages, String pageExecutionCmd, CommandSender sender, String headline) {
+        // Can't show pages, cause its empty
+        if (list.isEmpty()) {
             plugin.log(Level.INFO, "Space PageableListService. Can't display pages.");
             return;
         }
@@ -36,32 +103,57 @@ public class PageableMessageHelper {
             return;
         }
 
-        List<PageableListStorable> list = service.getPage(page);
+        display(plugin, page, pageExecutionCmd, sender, headline, null, null, list, totalPages);
+    }
 
+    private static void display(BasePlugin plugin, int page, String pageExecutionCmd,
+                                CommandSender sender,
+                                String headline,
+                                ArrayList<BedrockJson> jsonHeadline,
+                                List<PageableListStorable> pageableList,
+                                List<JsonMessage> jsonList,
+                                int totalPages) {
         if (headline != null) {
             new JsonMessage(plugin,
                     "json.page.design.header",
                     "pageheader", headline,
                     "currentpagecount", page + "",
-                    "totalpagecount", service.getPages() + "").send(sender);
+                    "totalpagecount", totalPages + "").send(sender);
+        } else if (jsonHeadline != null) {
+            JsonMessage jsonMessage = new JsonMessage(plugin,
+                    "json.page.design.header",
+                    "pageheader", "%pageheader%",
+                    "currentpagecount", page + "",
+                    "totalpagecount", totalPages + "");
+            getFullJsonHeader(plugin, jsonMessage, jsonHeadline).send(sender);
+
         }
 
         // Send entries of page
-        for (PageableListStorable storable : list) {
-            if (storable.get() instanceof JsonMessage) {
-                ((JsonMessage) storable.get()).send(sender);
+        if (pageableList != null && !pageableList.isEmpty()) {
+            for (PageableListStorable storable : pageableList) {
+                if (storable.get() instanceof JsonMessage) {
+                    ((JsonMessage) storable.get()).send(sender);
+                }
+            }
+        } else if (jsonList != null && !jsonList.isEmpty()) {
+            for (JsonMessage jsonMessage : jsonList) {
+                jsonMessage.send(sender);
             }
         }
 
-        // Display Navigation
 
-        ComponentBuilder pagination = getPagination(plugin, page, service.getPages(), pageExecutionCmd);
-        if (pagination != null) {
+        // Display Navigation
+        ComponentBuilder pagination = getPagination(plugin, page, totalPages, pageExecutionCmd);
+        if (pagination != null)
+
+        {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 player.spigot().sendMessage(pagination.create());
             }
         }
+
     }
 
 
@@ -72,8 +164,8 @@ public class PageableMessageHelper {
         }
 
         //ChatColor primary =     plugin.getColorSchemeService().getColorScheme().getPrimary();
-        ChatColor secondary =   plugin.getColorSchemeService().getColorScheme().getSecondary();
-        ChatColor flag =        plugin.getColorSchemeService().getColorScheme().getFlag();
+        ChatColor secondary = plugin.getColorSchemeService().getColorScheme().getSecondary();
+        ChatColor flag = plugin.getColorSchemeService().getColorScheme().getFlag();
 
         ComponentBuilder pagination = new ComponentBuilder("");
         if (page > 1) {
@@ -112,6 +204,38 @@ public class PageableMessageHelper {
             pagination.append("=======").color(flag);
         }
         return pagination;
+    }
+
+    public static JsonMessage getFullJsonHeader(BasePlugin plugin, JsonMessage jsonMessage, ArrayList<BedrockJson> messages) {
+
+        JSONParser parser = new JSONParser();
+        try {
+            JSONObject parse = (JSONObject) JSONValue.parse(jsonMessage.getJson());
+
+            int position = -1;
+
+            ArrayList<BedrockJson> extra = (ArrayList<BedrockJson>) parse.get("extra");
+            if (extra != null) {
+                for (JSONObject json : extra) {
+                    if (((String) (json.get("text"))).equalsIgnoreCase("%pageheader%")) {
+                        position = extra.indexOf(json);
+                        break;
+                    }
+                }
+
+                if (position != -1) {
+                    extra.remove(position);
+                    extra.addAll(position, messages);
+                    parse.put("extra", extra);
+                    return new JsonMessage(plugin, parse);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new JsonMessage(plugin, BedrockJson.JsonWithText(""));
     }
 
     private static void addCalculatedPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd, ChatColor secondary, ChatColor flag, ComponentBuilder pagination) {
@@ -199,9 +323,13 @@ public class PageableMessageHelper {
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, pageExecutionCmd.replace("%page%", page + "")));
 
 
+        if (page == currentPage) {
+            pagination.append("[").color(secondary);
+        }
         pagination.append(page + "").color(secondary);
         if (page == currentPage) {
             pagination.bold(true);
+            pagination.append("]").color(secondary);
             pagination.append("").reset();
             isCurrent = true;
         }
@@ -221,4 +349,84 @@ public class PageableMessageHelper {
     }
 
 
+    // Getter & Setter
+
+
+    public BasePlugin getPlugin() {
+        return plugin;
+    }
+
+    public AbstractPageableListService getListService() {
+        return listService;
+    }
+
+    public List<JsonMessage> getJsonMessageList() {
+        return jsonMessageList;
+    }
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    public String getHeadline() {
+        return headline;
+    }
+
+    public void setHeadline(String headline) {
+        this.headline = headline;
+    }
+
+    public ArrayList<BedrockJson> getJsonHeadline() {
+        return jsonHeadline;
+    }
+
+    public void setJsonHeadline(ArrayList<BedrockJson> jsonHeadline) {
+        this.jsonHeadline = jsonHeadline;
+    }
+
+    public static class Builder {
+
+        private PageableMessageHelper pageableMessageHelper;
+
+        public Builder(BasePlugin plugin, String command, AbstractPageableListService listService) {
+            pageableMessageHelper = new PageableMessageHelper(plugin, command, listService);
+        }
+
+        public Builder(BasePlugin plugin, String command, List<JsonMessage> jsonMessageList) {
+            pageableMessageHelper = new PageableMessageHelper(plugin, command, jsonMessageList);
+        }
+
+        public Builder setPages(int currentPage, int totalPages) {
+            pageableMessageHelper.setPage(currentPage);
+            pageableMessageHelper.setTotalPages(totalPages);
+            return this;
+        }
+
+        public Builder setHeadline(String headline) {
+            pageableMessageHelper.setHeadline(headline);
+            return this;
+        }
+
+        public Builder setHeadline(ArrayList<BedrockJson> headline) {
+            pageableMessageHelper.setJsonHeadline(headline);
+            return this;
+        }
+
+        public PageableMessageHelper build() {
+            return pageableMessageHelper;
+        }
+
+    }
 }
