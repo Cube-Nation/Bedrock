@@ -67,6 +67,7 @@ public class BedrockEbeanHelper {
      * @return BedrockPlayer
      * @throws BedrockEbeanEntityNotFoundException
      */
+    @Deprecated
     public static List<BedrockPlayer> getBedrockPlayerForLastKnownName(final String username) throws BedrockEbeanEntityNotFoundException {
 
         if (UUIDUtil.isUUID(username)) {
@@ -78,6 +79,35 @@ public class BedrockEbeanHelper {
         List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
                 .where()
                 .like("username", username + "%")
+                .findList();
+
+        if (players == null) {
+            System.out.println("players == null");
+            throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username);
+        }
+
+        return players;
+    }
+
+    /**
+     * Returns a BedrockPlayer object for the given name String
+     *
+     * @param username A string representing a username
+     * @param exact Mach all or an exact player
+     * @return BedrockPlayer
+     * @throws BedrockEbeanEntityNotFoundException
+     */
+    public static List<BedrockPlayer> getBedrockPlayerForLastKnownName(final String username, boolean exact) throws BedrockEbeanEntityNotFoundException {
+
+        if (UUIDUtil.isUUID(username)) {
+            return new ArrayList<BedrockPlayer>() {{
+                getBedrockPlayer(username);
+            }};
+        }
+
+        List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
+                .where()
+                .like("username", username + (exact ? "" : "%"))
                 .findList();
 
         if (players == null) {
