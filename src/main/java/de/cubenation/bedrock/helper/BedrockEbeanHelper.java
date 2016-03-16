@@ -69,24 +69,7 @@ public class BedrockEbeanHelper {
      */
     @Deprecated
     public static List<BedrockPlayer> getBedrockPlayerForLastKnownName(final String username) throws BedrockEbeanEntityNotFoundException {
-
-        if (UUIDUtil.isUUID(username)) {
-            return new ArrayList<BedrockPlayer>() {{
-                getBedrockPlayer(username);
-            }};
-        }
-
-        List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
-                .where()
-                .like("username", username + "%")
-                .findList();
-
-        if (players == null) {
-            System.out.println("players == null");
-            throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username);
-        }
-
-        return players;
+        return getBedrockPlayerForLastKnownName(username, false);
     }
 
     /**
