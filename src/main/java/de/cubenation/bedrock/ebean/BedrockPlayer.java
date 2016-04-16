@@ -18,15 +18,26 @@ import java.util.UUID;
 @Table(name = "bedrock_players")
 public class BedrockPlayer {
 
+    public BedrockPlayer() {
+    }
+
+    public BedrockPlayer(String uuid, String username, Date lastlogin) {
+        this.uuid = uuid;
+        this.username = username;
+        this.lastlogin = lastlogin;
+    }
+
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String uuid;
 
     @NotNull
     private String username;
+
+    private Date lastlogin;
 
     public Integer getId() {
         return id;
@@ -54,6 +65,14 @@ public class BedrockPlayer {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Date getLastlogin() {
+        return lastlogin;
+    }
+
+    public void setLastlogin(Date lastlogin) {
+        this.lastlogin = lastlogin;
     }
 
     public void setPlayer(UUID uuid) {
@@ -124,5 +143,15 @@ public class BedrockPlayer {
     @Override
     public int hashCode() {
         return uuid != null ? uuid.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "BedrockPlayer{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                ", username='" + username + '\'' +
+                (lastlogin == null ? "" : ", lastlogin=" + lastlogin) +
+                '}';
     }
 }

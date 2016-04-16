@@ -158,6 +158,7 @@ public class BedrockEbeanHelper {
         List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
                 .where()
                 .like("username", username + (exact ? "" : "%"))
+                .orderBy().desc("lastlogin")
                 .findList();
 
         if (players == null) {
@@ -203,6 +204,7 @@ public class BedrockEbeanHelper {
                 final List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
                         .where()
                         .like("username", username + (exact ? "" : "%"))
+                        .orderBy().desc("lastlogin")
                         .findList();
 
                 Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), new Callable<Void>() {
@@ -299,12 +301,12 @@ public class BedrockEbeanHelper {
             throw new BedrockEbeanEntityAlreadyExistsException(BedrockPlayer.class, uuid.toString());
         }
 
-        BedrockPlayer bedrockPlayer = new BedrockPlayer();
-        bedrockPlayer.setUuid(uuid.toString());
-        bedrockPlayer.setUsername(playername);
+        BedrockPlayer bedrockPlayer = new BedrockPlayer(uuid.toString(), playername, null);
         bedrockPlayer.save();
 
         return bedrockPlayer;
+
+
     }
 
 
