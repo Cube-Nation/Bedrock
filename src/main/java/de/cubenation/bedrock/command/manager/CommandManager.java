@@ -36,6 +36,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
 
+        // !? Add doubles?
         for (AbstractCommand command : commands) {
             this.commands.add(command);
         }

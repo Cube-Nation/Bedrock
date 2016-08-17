@@ -8,5 +8,8 @@ version: "${project.version}"
 depend:
   - Yamler
 commands:
+  bedrockplayer:
+    description: Bedrock Player Command
+    aliases: bp
   ${project.artifactId}:
     description: Bedrock Base Command

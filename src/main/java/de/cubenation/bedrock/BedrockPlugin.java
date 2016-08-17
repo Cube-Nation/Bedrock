@@ -1,5 +1,6 @@
 package de.cubenation.bedrock;
 
+import de.cubenation.bedrock.command.player.BedrockPlayerInfoCommand;
 import de.cubenation.bedrock.config.BedrockDefaults;
 import de.cubenation.bedrock.config.locale.de_DE;
 import de.cubenation.bedrock.config.locale.en_US;
@@ -71,7 +72,9 @@ public class BedrockPlugin extends BasePlugin {
 
     @Override
     public void setCommands(HashMap<String, ArrayList<Class<?>>> commands) {
-
+        commands.put("bp", new ArrayList<Class<?>>() {{
+            add(BedrockPlayerInfoCommand.class);
+        }});
     }
 
     /**
