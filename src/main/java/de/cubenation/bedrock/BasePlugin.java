@@ -5,6 +5,7 @@ import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.UnknownServiceException;
 import de.cubenation.bedrock.helper.version.VersionComparator;
+import de.cubenation.bedrock.reloadable.Reloadable;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
@@ -345,6 +346,15 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see     de.cubenation.bedrock.service.config.CustomConfigurationFile
      */
     public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
+
+    /**
+     * Returns a list of Reloadable classes
+     *
+     * @return An ArrayList of classes
+     */
+    public ArrayList<Reloadable> getReloadable() {
+        return null;
+    }
 
     /**
      * Disabled Bukkit Commands
