@@ -110,6 +110,9 @@ public class de_DE extends CustomConfigurationFile {
     @Path("json.no_such_player")
     private String json_no_such_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"nicht gefunden\",color:\"red\"}]}";
 
+    @Path("json.no_such_world")
+    private String json_no_such_world = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Welt \",color:\"red\"},{text:\"%world% \",color:\"&SECONDARY&\"},{text:\"nicht gefunden\",color:\"red\"}]}";
+
     /*
      * Help messages
      */

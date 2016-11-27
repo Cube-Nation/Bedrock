@@ -71,6 +71,15 @@ public class JsonMessage {
         }
     }
 
+    public void broadcast(ArrayList<Player> withoutPlayer) {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (withoutPlayer.contains(player)) {
+                continue;
+            }
+            send(player);
+        }
+    }
+
     private void sendPlayer(Player player, BaseComponent[] components) {
         player.spigot().sendMessage(components);
     }

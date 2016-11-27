@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings("unused")
 public class MessageHelper {
 
     public static void commandExecutionError(BasePlugin plugin, CommandSender sender, Exception e) {
@@ -43,13 +44,16 @@ public class MessageHelper {
         jsonMessage.send(sender);
     }
 
-    @SuppressWarnings("unused")
     public static void mustBePlayer(BasePlugin plugin, CommandSender commandSender) {
         new JsonMessage(plugin, "json.must_be_player").send(commandSender);
     }
 
     public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender, String player) {
         new JsonMessage(plugin, "json.no_such_player", "player", player).send(commandSender);
+    }
+
+    public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender, String world) {
+        new JsonMessage(plugin, "json.no_such_world", "world", world).send(commandSender);
     }
 
     public static void reloadComplete(BasePlugin plugin, CommandSender sender) {
