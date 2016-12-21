@@ -19,7 +19,19 @@ public abstract class Command extends AbstractCommand {
 
     @Override
     public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
-        return getTabCompletionFromCommands(args);
+        ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
+
+        if (args != null && subcommands != null) {
+            ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(args.length - subcommands.size() - 1);
+            if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
+                if (tabCompletionFromCommands == null) {
+                    tabCompletionFromCommands = new ArrayList<>();
+                }
+                tabCompletionFromCommands.addAll(tabArgumentCompletion);
+            }
+        }
+
+        return tabCompletionFromCommands;
     }
 
     /**
@@ -51,4 +63,9 @@ public abstract class Command extends AbstractCommand {
         // TODO: Should display if not enough arguments available!
         return false;
     }
+
+    public ArrayList<String> getTabArgumentCompletion(int argumentIndex) {
+        return null;
+    }
+
 }
