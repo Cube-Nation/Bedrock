@@ -20,15 +20,32 @@ public abstract class Command extends AbstractCommand {
     @Override
     public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
         ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
-
-        if (args != null && subcommands != null) {
-            ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(args.length - subcommands.size() - 1, args);
-            if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
-                if (tabCompletionFromCommands == null) {
-                    tabCompletionFromCommands = new ArrayList<>();
+        if (isValidTrigger(args)) {
+            if (args != null && subcommands != null) {
+                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(args.length - subcommands.size() - 1, args);
+                if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
+                    if (tabCompletionFromCommands == null) {
+                        tabCompletionFromCommands = new ArrayList<>();
+                    }
+                    tabCompletionFromCommands.addAll(tabArgumentCompletion);
                 }
-                tabCompletionFromCommands.addAll(tabArgumentCompletion);
             }
+
+
+            if (tabCompletionFromCommands == null || args == null) {
+                return tabCompletionFromCommands;
+            }
+
+            ArrayList<String> toRemove = new ArrayList<>();
+            String arg = args[args.length - 1];
+
+            for (String completion: tabCompletionFromCommands) {
+                if (!completion.startsWith(arg)) {
+                    toRemove.add(completion);
+                }
+            }
+
+            tabCompletionFromCommands.removeAll(toRemove);
         }
 
         return tabCompletionFromCommands;
