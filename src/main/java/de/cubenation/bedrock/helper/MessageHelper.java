@@ -40,7 +40,6 @@ public class MessageHelper {
 
     public static void invalidCommand(BasePlugin plugin, CommandSender sender) {
         JsonMessage jsonMessage = new JsonMessage(plugin, "json.command.invalid");
-        System.out.println("Json Message: " + jsonMessage.getTranslation());
         jsonMessage.send(sender);
     }
 
@@ -53,7 +52,15 @@ public class MessageHelper {
     }
 
     public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender, String world) {
+        if (world == null || world.equals("")) {
+            noSuchWorld(plugin, commandSender);
+            return;
+        }
         new JsonMessage(plugin, "json.no_such_world", "world", world).send(commandSender);
+    }
+
+    public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender) {
+        new JsonMessage(plugin, "json.no_such_world_empty").send(commandSender);
     }
 
     public static void reloadComplete(BasePlugin plugin, CommandSender sender) {
@@ -430,5 +437,13 @@ public class MessageHelper {
                 break;
         }
         return string;
+    }
+
+    public static class Error {
+
+        public static void SettingsNotFound(BasePlugin plugin, CommandSender sender, String key) {
+            new JsonMessage(plugin, "json.no_such_setting", "key", key).send(sender);
+        }
+
     }
 }
