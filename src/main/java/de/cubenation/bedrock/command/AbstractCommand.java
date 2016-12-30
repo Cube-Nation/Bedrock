@@ -80,6 +80,19 @@ public abstract class AbstractCommand {
      */
     public abstract void setArguments(ArrayList<Argument> arguments);
 
+    public void preExecute(CommandSender commandSender, String[] args)  throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+        if (performPreArgumentCheck()) {
+            int requiredArgumentsSize = getRequiredArgumentsSize();
+            if (requiredArgumentsSize > 0) {
+                if (args == null || args.length < requiredArgumentsSize) {
+                    throw new IllegalCommandArgumentException();
+                }
+            }
+        }
+
+        execute(commandSender, args);
+    }
+
     /**
      * @param sender      the sender of the command
      * @param subcommands the list of subcommands
@@ -87,9 +100,24 @@ public abstract class AbstractCommand {
      * @throws CommandException
      * @throws IllegalCommandArgumentException
      */
-    public abstract void execute(CommandSender sender,
+    @Deprecated
+    public void execute(CommandSender sender,
                                  String[] subcommands,
-                                 String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
+                                 String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+
+    }
+
+    /**
+     * @param sender      the sender of the command
+     * @param args        the list of arguments
+     * @throws CommandException
+     * @throws IllegalCommandArgumentException
+     */
+    // TODO: Make abstract when removing old 'execute'
+    public void execute(CommandSender sender,
+                                 String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+        execute(sender, null, args);
+    }
 
     /**
      * Define the priority to change the help order
@@ -197,6 +225,18 @@ public abstract class AbstractCommand {
         return StringUtils.join(suggestString, " ");
     }
 
+
+    private int getRequiredArgumentsSize() {
+        int requiredArguments = 0;
+        for (Argument argument : arguments) {
+            if (!argument.isOptional()) {
+                requiredArguments++;
+            }
+        }
+
+        return requiredArguments;
+    }
+
     public ArrayList<BedrockJson> getColoredSuggestion(Boolean argPlaceholderEnabled) {
         ArrayList<BedrockJson> result = new ArrayList<>();
         String commandHeadline = "/" + getCommandManager().getPluginCommand().getLabel();
@@ -258,6 +298,10 @@ public abstract class AbstractCommand {
     }
 
     public boolean displayInCompletion() {
+        return true;
+    }
+
+    public boolean performPreArgumentCheck() {
         return true;
     }
 
