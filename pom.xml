@@ -4,7 +4,7 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.9.25-SNAPSHOT</version>
+    <version>0.10.0-SNAPSHOT</version>
     <name>Bedrock</name>
 
     <repositories>
