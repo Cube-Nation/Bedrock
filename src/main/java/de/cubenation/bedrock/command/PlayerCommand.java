@@ -21,16 +21,16 @@ public abstract class PlayerCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] subcommands, String[] args)
+    public void execute(CommandSender sender, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         if (sender instanceof Player) {
-            execute((Player) sender, subcommands, args);
+            execute((Player) sender, args);
         } else {
             MessageHelper.mustBePlayer(plugin, sender);
         }
     }
 
-    public abstract void execute(Player player, String[] subcommands, String[] args)
+    public abstract void execute(Player player, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
 }
