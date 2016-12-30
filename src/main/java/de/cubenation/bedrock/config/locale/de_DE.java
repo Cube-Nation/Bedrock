@@ -108,10 +108,14 @@ public class de_DE extends CustomConfigurationFile {
     private String json_must_be_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Um diesen Befehl zu verwenden musst Du im Spiel sein\",color:\"red\"}]}";
 
     @Path("json.no_such_player")
-    private String json_no_such_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"nicht gefunden\",color:\"red\"}]}";
+    private String json_no_such_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
 
     @Path("json.no_such_world")
-    private String json_no_such_world = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Welt \",color:\"red\"},{text:\"%world% \",color:\"&SECONDARY&\"},{text:\"nicht gefunden\",color:\"red\"}]}";
+    private String json_no_such_world = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Welt \",color:\"red\"},{text:\"%world% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
+
+    @Path("json.no_such_world_empty")
+    private String json_no_such_world_empty = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Die Welt wurde nicht gefunden\",color:\"red\"}]}";
+
 
     /*
      * Help messages
