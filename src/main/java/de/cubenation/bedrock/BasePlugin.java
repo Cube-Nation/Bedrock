@@ -14,6 +14,7 @@ import de.cubenation.bedrock.service.config.ConfigService;
 import de.cubenation.bedrock.service.inventory.InventoryService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.permission.PermissionService;
+import de.cubenation.bedrock.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -39,6 +40,7 @@ public abstract class BasePlugin extends JavaPlugin {
     private static final String SERVICE_COMMAND = "command";
     private static final String SERVICE_PERMISSION = "permission";
     private static final String SERVICE_INVENTORY = "inventory";
+    private static final String SERVICE_SETTINGS = "settings";
 
     /** tbd */
     private boolean intentionally_ready = false;
@@ -94,6 +96,9 @@ public abstract class BasePlugin extends JavaPlugin {
 
             // register localization service
             this.serviceManager.registerService(SERVICE_LOCALIZATION, new LocalizationService(this));
+
+            // register settings service
+            this.serviceManager.registerService(SERVICE_SETTINGS, new SettingsService(this));
 
             // register command service
             this.serviceManager.registerService(SERVICE_COMMAND, new CommandService(this));
@@ -339,6 +344,17 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     /**
+     * Returns the Bedrock SettingsService object instance.
+     * If the InventoryService is not ready, <code>null</code> is returned.
+     *
+     * @return      The Bedrock SettingsService
+     * @see         SettingsService
+     */
+    public SettingsService getSettingService() {
+        return (SettingsService) this.getService(SERVICE_SETTINGS);
+    }
+
+    /**
      * Set the commands that are handled by this plugin
      *
      * @param commands  A HashMap that contains Strings as keys (the command itself)
@@ -353,6 +369,16 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see     de.cubenation.bedrock.service.config.CustomConfigurationFile
      */
     public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
+
+    /**
+     * Returns a list of CustomSettingsFile classes
+     *
+     * @return  An ArrayList of classes
+     * @see     de.cubenation.bedrock.service.settings.CustomSettingsFile
+     */
+    public ArrayList<Class<?>> getCustomSettingsFiles() {
+        return null;
+    }
 
     /**
      * Returns a list of Reloadable classes

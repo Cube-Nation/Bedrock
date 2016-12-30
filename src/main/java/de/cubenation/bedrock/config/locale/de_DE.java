@@ -107,6 +107,10 @@ public class de_DE extends CustomConfigurationFile {
     @Path("json.must_be_player")
     private String json_must_be_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Um diesen Befehl zu verwenden musst Du im Spiel sein\",color:\"red\"}]}";
 
+    @Path("json.no_such_setting")
+    private String json_no_such_setting = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Einstellungen für \",color:\"red\"},{text:\"%key% \",color:\"&SECONDARY&\"},{text:\"wurden nicht gefunden\",color:\"red\"}]}";
+
+
     @Path("json.no_such_player")
     private String json_no_such_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
 
@@ -244,6 +248,9 @@ public class de_DE extends CustomConfigurationFile {
     @Path("command.bedrock.permissions.list.desc")
     private String help_permission_list = "Zeigt alle Plugin-Berechtigungen an";
 
+    @Path("command.bedrock.settings.info.desc")
+    private String help_settings_info = "Zeigt Infos zu Settings an";
+
     @Path("command.bedrock.permissions.desc")
     private String help_permission_other = "Zeigt Plugin-Berechtigungen eines Spielers an";
 
@@ -264,6 +271,12 @@ public class de_DE extends CustomConfigurationFile {
 
     @Path("command.bedrock.username_uuid.ph")
     private String help_args_username_uuid_placeholder = "Username/UUID";
+
+    @Path("command.bedrock.key.desc")
+    private String help_args_key_description = "Eindeutiger Key";
+
+    @Path("command.bedrock.key.ph")
+    private String help_args_key_placeholder = "Key";
 
     // CommandList
 
