@@ -59,7 +59,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 //        try {
         if (args.length <= 0) {
             try {
-                helpCommand.execute(commandSender, null, args);
+                helpCommand.preExecute(commandSender, args);
             } catch (Exception e) {
                 plugin.getLogger().info("Error while executing help command. Shouldn't happen!");
                 e.printStackTrace();
@@ -77,9 +77,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
                     // If the execution fails with an exception, the manager will search for another command to execute!
                     try {
-                        commandToExecute.execute(
+                        commandToExecute.preExecute(
                                 commandSender,
-                                Arrays.copyOfRange(args, 0, commandToExecute.getSubcommands().size()),
                                 Arrays.copyOfRange(args, commandToExecute.getSubcommands().size(), args.length));
 
                     } catch (CommandException e) {
