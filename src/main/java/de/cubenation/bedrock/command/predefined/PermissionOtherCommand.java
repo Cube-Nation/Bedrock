@@ -32,8 +32,8 @@ public class PermissionOtherCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("permissions.self", CommandRole.USER.getType()));
-        permissions.add(new Permission("permissions.other", CommandRole.ADMIN.getType()));
+        permissions.add(new Permission("permissions.self", CommandRole.USER));
+        permissions.add(new Permission("permissions.other", CommandRole.ADMIN));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PermissionOtherCommand extends Command {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
 
         // check args length
         if (args.length > 1)

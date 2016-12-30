@@ -53,7 +53,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] subCommands, String[] args) throws CommandException {
+    public void execute(CommandSender sender, String[] args) throws CommandException {
         System.out.println("Exec Help cmd: " + commandManager.getHelpCommands().size());
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands

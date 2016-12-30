@@ -21,7 +21,7 @@ public class VersionCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("version", CommandRole.MODERATOR.getType()));
+        permissions.add(new Permission("version", CommandRole.MODERATOR));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class VersionCommand extends Command {
 
 
     @Override
-    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         MessageHelper.version(this.getCommandManager().getPlugin(), sender);
     }
 

@@ -152,7 +152,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             // no roles -> create all permissions in the default role
 
             for (Permission permission : this.unregisteredPermissions) {
-                permissions.addPermission(permission.getRole(), permission.getName());
+                permissions.addPermission(permission.getRoleName(), permission.getName());
             }
         }
 
