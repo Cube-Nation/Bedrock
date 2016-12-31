@@ -89,29 +89,34 @@ public class SettingsService extends AbstractService implements ServiceInterface
         return settingsClassMap.get(aClass);
     }
 
-    public CustomSettingsFile readSettings(Class<?> aClass, UUID uuid) throws NoSuchPlayerException {
+    public CustomSettingsFile getSettings(Class<?> aClass, UUID uuid) throws NoSuchPlayerException {
         SettingsManager settingsManager = settingsClassMap.get(aClass);
-        if (settingsManager == null) {
-            return null;
-        }
-
-        return settingsManager.getSettingsOrDefault(uuid);
+        return getOrCreateSettingsForUser(settingsManager, uuid);
     }
 
-    public CustomSettingsFile readSettings(Class<?> aClass, Player player) throws NoSuchPlayerException {
-        return readSettings(aClass, player.getUniqueId());
+    public CustomSettingsFile getSettings(Class<?> aClass, Player player) throws NoSuchPlayerException {
+        return getSettings(aClass, player.getUniqueId());
     }
 
-    public CustomSettingsFile readSettings(String key, UUID uuid) throws NoSuchPlayerException {
+    public CustomSettingsFile getSettings(String key, UUID uuid) throws NoSuchPlayerException {
         SettingsManager settingsManager = settingsMap.get(key);
+        return getOrCreateSettingsForUser(settingsManager, uuid);
+    }
+
+    public CustomSettingsFile getSettings(String key, Player player) throws NoSuchPlayerException {
+        return getSettings(key, player.getUniqueId());
+    }
+
+    private CustomSettingsFile getOrCreateSettingsForUser(SettingsManager settingsManager, UUID uuid){
         if (settingsManager == null) {
             return null;
         }
 
-        return settingsManager.getSettingsOrDefault(uuid);
-    }
+        CustomSettingsFile settings = settingsManager.getSettings(uuid);
+        if (settings == null) {
+            settings = settingsManager.createSettingsFileForUser(uuid);
+        }
 
-    public CustomSettingsFile readSettings(String key, Player player) throws NoSuchPlayerException {
-        return readSettings(key, player.getUniqueId());
+        return settings;
     }
 }

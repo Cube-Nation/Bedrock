@@ -183,51 +183,36 @@ public class SettingsManager {
         if (UUIDUtil.isUUID(user)) {
             return getSettings(UUID.fromString(user));
         } else {
-            return getSettings(Bukkit.getPlayer(user));
+            Player player = Bukkit.getPlayer(user);
+            if (player == null) {
+                throw new NoSuchPlayerException(user);
+            }
+            return getSettings(player);
         }
     }
 
-    public CustomSettingsFile getSettings(Player player) throws NoSuchPlayerException {
+    public CustomSettingsFile getSettings(Player player) {
         if (player == null) {
-            throw new NoSuchPlayerException();
+            return null;
         }
 
         return getSettings(player.getUniqueId());
     }
 
-    public CustomSettingsFile getSettings(UUID uuid) throws NoSuchPlayerException {
+    public CustomSettingsFile getSettings(UUID uuid) {
         if (uuid == null) {
-            throw new NoSuchPlayerException();
+            return null;
         }
 
         return userSettings.get(uuid.toString());
     }
 
-    public CustomSettingsFile getSettingsOrDefault(Player player) throws NoSuchPlayerException {
-        if (player == null) {
-            throw new NoSuchPlayerException();
-        }
-
-        CustomSettingsFile settingsFile = getSettings(player.getUniqueId());
-        if (settingsFile == null) {
-            return defaultFile;
-        }
-        return settingsFile;
-    }
-
-    public CustomSettingsFile getSettingsOrDefault(UUID uuid) throws NoSuchPlayerException {
-        if (uuid == null) {
-            throw new NoSuchPlayerException();
-        }
-
-        CustomSettingsFile settingsFile = userSettings.get(uuid.toString());
-        if (settingsFile == null) {
-            return defaultFile;
-        }
-        return settingsFile;
-    }
-
     public CustomSettingsFile createSettingsFileForUser(UUID uuid) {
+        if (userSettings.containsKey(uuid.toString())) {
+            return userSettings.get(uuid.toString());
+        }
+
+
         try {
             CustomSettingsFile settings = createSettings(plugin, className, uuid.toString() + ".yml");
             if (settings == null) {
