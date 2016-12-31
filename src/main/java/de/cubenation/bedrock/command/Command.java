@@ -22,7 +22,7 @@ public abstract class Command extends AbstractCommand {
         ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
         if (isValidTrigger(args)) {
             if (args != null && subcommands != null) {
-                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(args.length - subcommands.size() - 1, args);
+                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - subcommands.size() - 1, args);
                 if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
                     if (tabCompletionFromCommands == null) {
                         tabCompletionFromCommands = new ArrayList<>();
@@ -81,8 +81,13 @@ public abstract class Command extends AbstractCommand {
         return false;
     }
 
+    @Deprecated
     public ArrayList<String> getTabArgumentCompletion(int argumentIndex, String[] args) {
         return null;
+    }
+
+    public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
+        return getTabArgumentCompletion(argumentIndex, args);
     }
 
 }
