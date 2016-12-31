@@ -89,22 +89,40 @@ public class SettingsService extends AbstractService implements ServiceInterface
         return settingsClassMap.get(aClass);
     }
 
-    public CustomSettingsFile getSettings(Class<?> aClass, UUID uuid) throws NoSuchPlayerException {
+    public CustomSettingsFile getReadWriteSettings(Class<?> aClass, UUID uuid) throws NoSuchPlayerException {
         SettingsManager settingsManager = settingsClassMap.get(aClass);
         return getOrCreateSettingsForUser(settingsManager, uuid);
     }
 
-    public CustomSettingsFile getSettings(Class<?> aClass, Player player) throws NoSuchPlayerException {
-        return getSettings(aClass, player.getUniqueId());
+    public CustomSettingsFile getReadWriteSettings(Class<?> aClass, Player player) throws NoSuchPlayerException {
+        return getReadWriteSettings(aClass, player.getUniqueId());
     }
 
-    public CustomSettingsFile getSettings(String key, UUID uuid) throws NoSuchPlayerException {
+    public CustomSettingsFile getReadWriteSettings(String key, UUID uuid) throws NoSuchPlayerException {
         SettingsManager settingsManager = settingsMap.get(key);
         return getOrCreateSettingsForUser(settingsManager, uuid);
     }
 
-    public CustomSettingsFile getSettings(String key, Player player) throws NoSuchPlayerException {
-        return getSettings(key, player.getUniqueId());
+    public CustomSettingsFile getReadWriteSettings(String key, Player player) throws NoSuchPlayerException {
+        return getReadWriteSettings(key, player.getUniqueId());
+    }
+
+    public CustomSettingsFile getReadOnlySettings(Class<?> aClass, UUID uuid) throws NoSuchPlayerException {
+        SettingsManager settingsManager = settingsClassMap.get(aClass);
+        return getSettingsForUser(settingsManager, uuid);
+    }
+
+    public CustomSettingsFile getReadOnlySettings(Class<?> aClass, Player player) throws NoSuchPlayerException {
+        return getReadOnlySettings(aClass, player.getUniqueId());
+    }
+
+    public CustomSettingsFile getReadOnlySettings(String key, UUID uuid) throws NoSuchPlayerException {
+        SettingsManager settingsManager = settingsMap.get(key);
+        return getSettingsForUser(settingsManager, uuid);
+    }
+
+    public CustomSettingsFile getReadOnlySettings(String key, Player player) throws NoSuchPlayerException {
+        return getReadOnlySettings(key, player.getUniqueId());
     }
 
     private CustomSettingsFile getOrCreateSettingsForUser(SettingsManager settingsManager, UUID uuid){
@@ -115,6 +133,19 @@ public class SettingsService extends AbstractService implements ServiceInterface
         CustomSettingsFile settings = settingsManager.getSettings(uuid);
         if (settings == null) {
             settings = settingsManager.createSettingsFileForUser(uuid);
+        }
+
+        return settings;
+    }
+
+    private CustomSettingsFile getSettingsForUser(SettingsManager settingsManager, UUID uuid){
+        if (settingsManager == null) {
+            return null;
+        }
+
+        CustomSettingsFile settings = settingsManager.getSettings(uuid);
+        if (settings == null) {
+            settings = settingsManager.getDefaultFile();
         }
 
         return settings;
