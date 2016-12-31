@@ -1,14 +1,17 @@
 package de.cubenation.bedrock.service.settings;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by bhruschka on 10.11.16.
@@ -84,5 +87,31 @@ public class SettingsService extends AbstractService implements ServiceInterface
 
     public SettingsManager getSettingsManager(Class<?> aClass) {
         return settingsClassMap.get(aClass);
+    }
+
+    public CustomSettingsFile readSettings(Class<?> aClass, UUID uuid) throws NoSuchPlayerException {
+        SettingsManager settingsManager = settingsClassMap.get(aClass);
+        if (settingsManager == null) {
+            return null;
+        }
+
+        return settingsManager.getSettingsOrDefault(uuid);
+    }
+
+    public CustomSettingsFile readSettings(Class<?> aClass, Player player) throws NoSuchPlayerException {
+        return readSettings(aClass, player.getUniqueId());
+    }
+
+    public CustomSettingsFile readSettings(String key, UUID uuid) throws NoSuchPlayerException {
+        SettingsManager settingsManager = settingsMap.get(key);
+        if (settingsManager == null) {
+            return null;
+        }
+
+        return settingsManager.getSettingsOrDefault(uuid);
+    }
+
+    public CustomSettingsFile readSettings(String key, Player player) throws NoSuchPlayerException {
+        return readSettings(key, player.getUniqueId());
     }
 }
