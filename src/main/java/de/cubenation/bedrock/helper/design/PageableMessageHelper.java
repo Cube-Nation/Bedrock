@@ -84,10 +84,13 @@ public class PageableMessageHelper {
             return;
         }
 
-        List<PageableListStorable> list = service.getPage(page);
-
-        int totalPages = service.getPages();
-        display(plugin, page, pageExecutionCmd, sender, headline, null, list, null, totalPages);
+        try {
+            List<PageableListStorable> list = service.getPage(page);
+            int totalPages = service.getPages();
+            display(plugin, page, pageExecutionCmd, sender, headline, null, list, null, totalPages);
+        } catch (IndexOutOfBoundsException e) {
+            new JsonMessage(plugin, "json.page.notexsist").send(sender);
+        }
     }
 
     @Deprecated
@@ -330,6 +333,7 @@ public class PageableMessageHelper {
         if (page == currentPage) {
             pagination.bold(true);
             pagination.append("]").color(secondary);
+            pagination.bold(false);
             pagination.append("").reset();
             isCurrent = true;
         }

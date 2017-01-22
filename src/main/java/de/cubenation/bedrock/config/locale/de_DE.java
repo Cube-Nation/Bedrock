@@ -177,7 +177,10 @@ public class de_DE extends CustomConfigurationFile {
     private String page_design_header = "&FLAG&======= &PRIMARY&%from%/%to% &FLAG&=======";
 
     @Path("json.page.design.header")
-    private String json_page_design_header = "{\"color\":\"&FLAG&\",\"underlined\":false,\"extra\":[{\"color\":\"white\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\" \",\"italic\":false,\"obfuscated\":false},{\"color\":\"&SECONDARY&\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\"%pageheader%\",\"italic\":false,\"obfuscated\":false},{\"color\":\"white\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\" \",\"italic\":false,\"obfuscated\":false},{\"color\":\"&SECONDARY&\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\"(%currentpagecount%\\/%totalpagecount%)\",\"italic\":false,\"obfuscated\":false},{\"color\":\"white\",\"underlined\":false,\"bold\":false,\"strikethrough\":false,\"text\":\" \",\"italic\":false,\"obfuscated\":false},{\"color\":\"&FLAG&\",\"underlined\":false,\"bold\":false,\"strikethrough\":true,\"text\":\"--------\",\"italic\":false,\"obfuscated\":false}],\"bold\":false,\"strikethrough\":true,\"text\":\"--------\",\"italic\":false,\"obfuscated\":false}";
+    private String json_page_design_header = "{\"text\":\"\",\"extra\":[{\"color\":\"&FLAG&\",\"strikethrough\":true,\"text\":\"--------\"},{\"color\":\"white\",\"text\":\" \"},{\"color\":\"&SECONDARY&\",\"text\":\"%pageheader%\"},{\"color\":\"white\",\"text\":\" \"},{\"color\":\"&SECONDARY&\",\"text\":\"(%currentpagecount%\\/%totalpagecount%)\"},{\"color\":\"white\",\"text\":\" \"},{\"color\":\"&FLAG&\",\"strikethrough\":true,\"text\":\"--------\"}]}";
+
+    @Path("json.page.notexsist")
+    private String json_page_not_exists = "{text:\"%plugin_prefix% \",extra:[{text:\"Diese Seite gibt es nicht.\",color:\"&SECONDARY&\"}]}";
 
 
     /*
