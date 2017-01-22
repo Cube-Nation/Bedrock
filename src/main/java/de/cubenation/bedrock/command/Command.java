@@ -5,6 +5,7 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -22,7 +23,7 @@ public abstract class Command extends AbstractCommand {
         ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
         if (isValidTrigger(args)) {
             if (args != null && subcommands != null) {
-                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - subcommands.size() - 1, args);
+                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - subcommands.size() - 1, Arrays.copyOfRange(args, subcommands.size(), args.length));
                 if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
                     if (tabCompletionFromCommands == null) {
                         tabCompletionFromCommands = new ArrayList<>();
