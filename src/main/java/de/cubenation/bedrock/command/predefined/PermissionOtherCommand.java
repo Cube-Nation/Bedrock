@@ -33,7 +33,7 @@ public class PermissionOtherCommand extends Command {
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
         permissions.add(new Permission("permissions.self", CommandRole.USER));
-        permissions.add(new Permission("permissions.other", CommandRole.ADMIN));
+        permissions.add(new Permission("permissions.other", CommandRole.MODERATOR));
     }
 
     @Override

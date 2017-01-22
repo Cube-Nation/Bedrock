@@ -30,7 +30,7 @@ public class PermissionListCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("permission.list", CommandRole.ADMIN));
+        permissions.add(new Permission("permission.list", CommandRole.MODERATOR));
     }
 
     @Override
