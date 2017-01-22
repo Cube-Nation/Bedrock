@@ -27,7 +27,8 @@ public class SettingsManager {
     private File settingsDirectory;
 
     private CustomSettingsFile defaultFile;
-    private HashMap<String, CustomSettingsFile> userSettings;
+    private HashMap<UUID, CustomSettingsFile> userSettings;
+    private HashMap<String, CustomSettingsFile> _userSettings;
 
     public SettingsManager(BasePlugin plugin, Class<?> className) throws ServiceInitException {
         this.plugin = plugin;
@@ -64,7 +65,9 @@ public class SettingsManager {
     private String initDefault() {
         try {
             CustomSettingsFile settings = createSettings(plugin, className, null);
-            this.registerFile(className, settings);
+
+
+            this.defaultFile = this.registerFile(className, settings);
 
             return settings.getSettingsName();
         } catch (InstantiationException e) {
@@ -93,7 +96,8 @@ public class SettingsManager {
 
             try {
                 CustomSettingsFile settings = createSettings(plugin, className, file.getName());
-                this.userSettings.put(file.getName().replaceAll("\\.yml$", ""), settings);
+                String uuidString = file.getName().replaceAll("\\.yml$", "");
+                this.userSettings.put(UUID.fromString(uuidString), settings);
                 registerFile(className, settings);
             } catch (InstantiationException e) {
                 plugin.log(Level.WARNING, "Can't load settings for " + file.getName());
@@ -130,27 +134,28 @@ public class SettingsManager {
 
     /**
      * Register a CustomConfigurationFile object
-     *
-     * @param clazz     class name
+     *  @param clazz     class name
      * @param file      CustomConfigurationFile object
      */
-    public void registerFile(Class<?> clazz, CustomSettingsFile file) {
+    public CustomSettingsFile registerFile(Class<?> clazz, CustomSettingsFile file) {
         if (file == null) {
-            return;
+            return file;
         }
 
         try {
             file.init();
         } catch (InvalidConfigurationException e) {
             plugin.log(Level.SEVERE, "  config service: Could not register file for " + clazz.getName(), e);
-            return;
+            return null;
         }
 
-        this.defaultFile = file;
+        return file;
     }
 
     public void reload() {
-        for (Map.Entry<String, CustomSettingsFile> pair : userSettings.entrySet()) {
+        initDefault();
+
+        for (Map.Entry<UUID, CustomSettingsFile> pair : userSettings.entrySet()) {
 
             try {
                 pair.getValue().reload();
@@ -175,7 +180,7 @@ public class SettingsManager {
         return defaultFile;
     }
 
-    public HashMap<String, CustomSettingsFile> getUserSettings() {
+    public HashMap<UUID, CustomSettingsFile> getUserSettings() {
         return userSettings;
     }
 
@@ -204,12 +209,12 @@ public class SettingsManager {
             return null;
         }
 
-        return userSettings.get(uuid.toString());
+        return userSettings.get(uuid);
     }
 
     public CustomSettingsFile createSettingsFileForUser(UUID uuid) {
-        if (userSettings.containsKey(uuid.toString())) {
-            return userSettings.get(uuid.toString());
+        if (userSettings.containsKey(uuid)) {
+            return userSettings.get(uuid);
         }
 
 
@@ -218,7 +223,7 @@ public class SettingsManager {
             if (settings == null) {
                 return null;
             }
-            this.userSettings.put(uuid.toString(), settings);
+            this.userSettings.put(uuid, settings);
             return settings;
         } catch (InstantiationException e) {
             return null;
