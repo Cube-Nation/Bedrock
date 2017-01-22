@@ -5,6 +5,7 @@ import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.service.localization.LocalizationService;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
@@ -54,34 +55,46 @@ public class JsonMessage {
     }
 
     public void send(CommandSender commandSender) {
+        send(commandSender, ChatMessageType.CHAT);
+    }
+
+    public void send(CommandSender commandSender, ChatMessageType chatMessageType) {
         BaseComponent[] components = createBaseComponent();
         if (components == null) return;
 
         if (commandSender instanceof Player) {
             Player player = (Player) commandSender;
-            sendPlayer(player, components);
+            sendPlayer(player, components, chatMessageType);
         } else {
             sendConsole(commandSender, components);
         }
     }
 
     public void broadcast() {
+        broadcast(ChatMessageType.CHAT);
+    }
+
+    public void broadcast(ChatMessageType chatMessageType) {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            send(player);
+            send(player, chatMessageType);
         }
     }
 
     public void broadcast(ArrayList<Player> withoutPlayer) {
+        broadcast(withoutPlayer, ChatMessageType.CHAT);
+    }
+
+    public void broadcast(ArrayList<Player> withoutPlayer, ChatMessageType chatMessageType) {
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             if (withoutPlayer.contains(player)) {
                 continue;
             }
-            send(player);
+            send(player, chatMessageType);
         }
     }
 
-    private void sendPlayer(Player player, BaseComponent[] components) {
-        player.spigot().sendMessage(components);
+    private void sendPlayer(Player player, BaseComponent[] components, ChatMessageType chatMessageType) {
+        player.spigot().sendMessage(chatMessageType, components);
     }
 
     private void sendConsole(CommandSender commandSender, BaseComponent[] components) {

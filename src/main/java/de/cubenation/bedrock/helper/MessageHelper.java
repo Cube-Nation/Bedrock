@@ -1,9 +1,11 @@
 package de.cubenation.bedrock.helper;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.argument.KeyValueArgument;
+import de.cubenation.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.translation.JsonMessage;
 import de.cubenation.bedrock.translation.Translation;
@@ -437,6 +439,30 @@ public class MessageHelper {
                 break;
         }
         return string;
+    }
+
+    public static String getPlainText(BasePlugin plugin, String localeIdentifier, String... localeArgs) {
+        // try to get the localized string from the plugins locale file
+        try {
+            return plugin.getLocalizationService().getTranslation(localeIdentifier, localeArgs);
+        } catch (LocalizationNotFoundException ignored) {
+        }
+
+        if (!(plugin instanceof BedrockPlugin)) {
+            // if the above failed, we try to get the string from Bedrocks locale file
+            try {
+                return BedrockPlugin.getInstance().getLocalizationService().getTranslation(
+                        localeIdentifier, localeArgs
+                );
+            } catch (LocalizationNotFoundException ignored) {
+            }
+        }
+
+        // we do not return null to avoid NullPointerExceptions.
+        // If you see an empty string somewhere
+        //  a) the locale file is damaged/incomplete - try deleting it and restart the server
+        //  b) check if the plugin refers to the correct path in the YamlConfiguration object
+        return "";
     }
 
     public static class Error {
