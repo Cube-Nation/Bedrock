@@ -10,8 +10,8 @@ pipelines:
     master:
       - step:
           script:
-          - mvn clean install deploy
+          - mvn clean install -V -B -s settings.xml deploy
     develop:
       - step:
           script:
-          - mvn clean install deploy
+          - mvn clean install -V -B -s settings.xml deploy
