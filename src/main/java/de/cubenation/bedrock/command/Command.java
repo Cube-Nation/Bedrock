@@ -2,11 +2,10 @@ package de.cubenation.bedrock.command;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.manager.CommandManager;
-import de.cubenation.bedrock.helper.MessageHelper;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -21,7 +20,36 @@ public abstract class Command extends AbstractCommand {
 
     @Override
     public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
-        return getTabCompletionFromCommands(args);
+        ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
+        if (isValidTrigger(args)) {
+            if (args != null && subcommands != null) {
+                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - subcommands.size() - 1, Arrays.copyOfRange(args, subcommands.size(), args.length));
+                if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
+                    if (tabCompletionFromCommands == null) {
+                        tabCompletionFromCommands = new ArrayList<>();
+                    }
+                    tabCompletionFromCommands.addAll(tabArgumentCompletion);
+                }
+            }
+
+
+            if (tabCompletionFromCommands == null || args == null) {
+                return tabCompletionFromCommands;
+            }
+
+            ArrayList<String> toRemove = new ArrayList<>();
+            String arg = args[args.length - 1];
+
+            for (String completion: tabCompletionFromCommands) {
+                if (!completion.startsWith(arg)) {
+                    toRemove.add(completion);
+                }
+            }
+
+            tabCompletionFromCommands.removeAll(toRemove);
+        }
+
+        return tabCompletionFromCommands;
     }
 
     /**
@@ -54,9 +82,13 @@ public abstract class Command extends AbstractCommand {
         return false;
     }
 
-    @Override
-    public TextComponent getBeautifulHelp(CommandSender sender) {
-        return MessageHelper.getHelpForSubCommand(plugin, sender, this);
+    @Deprecated
+    public ArrayList<String> getTabArgumentCompletion(int argumentIndex, String[] args) {
+        return null;
+    }
+
+    public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
+        return getTabArgumentCompletion(argumentIndex, args);
     }
 
 }

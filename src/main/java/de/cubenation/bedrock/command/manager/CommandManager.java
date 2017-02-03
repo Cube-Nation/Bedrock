@@ -7,7 +7,7 @@ import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.helper.MessageHelper;
-import net.md_5.bungee.api.chat.TextComponent;
+import de.cubenation.bedrock.translation.JsonMessage;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -36,6 +36,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
 
+        // !? Add doubles?
         for (AbstractCommand command : commands) {
             this.commands.add(command);
         }
@@ -58,7 +59,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 //        try {
         if (args.length <= 0) {
             try {
-                helpCommand.execute(commandSender, null, args);
+                helpCommand.preExecute(commandSender, args);
             } catch (Exception e) {
                 plugin.getLogger().info("Error while executing help command. Shouldn't happen!");
                 e.printStackTrace();
@@ -76,9 +77,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
                     // If the execution fails with an exception, the manager will search for another command to execute!
                     try {
-                        commandToExecute.execute(
+                        commandToExecute.preExecute(
                                 commandSender,
-                                Arrays.copyOfRange(args, 0, commandToExecute.getSubcommands().size()),
                                 Arrays.copyOfRange(args, commandToExecute.getSubcommands().size(), args.length));
 
                     } catch (CommandException e) {
@@ -88,11 +88,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     } catch (IllegalCommandArgumentException e) {
                         MessageHelper.invalidCommand(this.plugin, commandSender);
 
-                        TextComponent component_help = commandToExecute.getBeautifulHelp(commandSender);
-                        if (component_help == null) {
+                        JsonMessage jsonHelp = commandToExecute.getJsonHelp(commandSender);
+                        if (jsonHelp == null) {
                             MessageHelper.insufficientPermission(this.plugin, commandSender);
                         } else {
-                            MessageHelper.send(this.plugin, commandSender, component_help);
+                            jsonHelp.send(commandSender);
                         }
 
                         return true;

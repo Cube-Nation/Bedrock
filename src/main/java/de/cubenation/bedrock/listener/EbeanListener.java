@@ -11,6 +11,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Date;
+
 /**
  * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
  */
@@ -33,26 +35,25 @@ public class EbeanListener implements Listener {
                         .findUnique();
 
                 if (bp == null) {
-                    BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: Create new for uuid: " + uuid);
-                    bp = new BedrockPlayer();
-                    bp.setUuid(uuid);
-                    bp.setUsername(event.getPlayer().getName());
+                    bp = new BedrockPlayer(uuid, event.getPlayer().getName(), new Date());
                     bp.save();
-                }
+                } else {
+                    // check if username changed
+                    if (!bp.getUsername().equals(event.getPlayer().getName())) {
+                        BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: " + bp.getUsername() + " " +
+                                "changed name to " + event.getPlayer().getName());
+                        // fire name change event
+                        PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
+                                event.getPlayer(),
+                                bp.getUsername(),
+                                event.getPlayer().getName());
+                        BedrockPlugin.getInstance().getServer().getPluginManager().callEvent(playerChangesNameEvent);
 
-                // check if username changed
-                if (!bp.getUsername().equals(event.getPlayer().getName())) {
-                    BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: " + bp.getUsername() + " " +
-                            "changed name to " + event.getPlayer().getName());
-                    // fire name change event
-                    PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
-                            event.getPlayer(),
-                            bp.getUsername(),
-                            event.getPlayer().getName());
-                    BedrockPlugin.getInstance().getServer().getPluginManager().callEvent(playerChangesNameEvent);
-
-                    // update username
-                    bp.setUsername(event.getPlayer().getName());
+                        // update username
+                        bp.setUsername(event.getPlayer().getName());
+                    }
+                    // update timestamp
+                    bp.setLastlogin(new Date());
                     bp.update();
                 }
 

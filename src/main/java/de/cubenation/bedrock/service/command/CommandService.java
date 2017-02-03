@@ -8,6 +8,7 @@ import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.ServiceReloadException;
 import de.cubenation.bedrock.service.AbstractService;
 import de.cubenation.bedrock.service.ServiceInterface;
+import de.cubenation.bedrock.service.settings.SettingsService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -104,6 +105,11 @@ public class CommandService extends AbstractService implements ServiceInterface 
         pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
+
+        SettingsService settingService = plugin.getSettingService();
+        if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
+            pluginCommandManager.addCommand(new SettingsInfoCommand(getPlugin(), pluginCommandManager));
+        }
     }
 
     @Override

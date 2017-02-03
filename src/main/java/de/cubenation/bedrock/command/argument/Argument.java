@@ -14,11 +14,11 @@ public class Argument {
 
     private final String description;
     private final String placeholder;
-    private final boolean optional;
-    private final Permission permission;
+    private boolean optional = false;
+    private Permission permission = null;
 
-    private String runtimeDescription;
-    private String runtimePlaceholder;
+    private String runtimeDescription = null;
+    private String runtimePlaceholder = null;
     private BasePlugin plugin;
 
     @SuppressWarnings(value = "unused")
@@ -41,7 +41,8 @@ public class Argument {
 
     @SuppressWarnings(value = "unused")
     public Argument(String description, String placeholder) {
-        this(description, placeholder, false, null);
+        this.description = description;
+        this.placeholder = placeholder;
     }
 
     public String getRuntimeDescription() {
@@ -50,6 +51,10 @@ public class Argument {
 
     public String getRuntimePlaceholder() {
         return new Translation(this.plugin, this.placeholder).getTranslation();
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
     }
 
     public Permission getPermission() {
@@ -64,6 +69,13 @@ public class Argument {
         return optional;
     }
 
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    public void setPermission(Permission permission) {
+        this.permission = permission;
+    }
 
     public void setPlugin(BasePlugin plugin) {
         this.plugin = plugin;

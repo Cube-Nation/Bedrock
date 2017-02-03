@@ -1,9 +1,9 @@
 package de.cubenation.bedrock.service.config;
 
 import de.cubenation.bedrock.BasePlugin;
-import net.cubespace.Yamler.Config.Config;
+import net.cubespace.Yamler.Config.YamlConfig;
 
-public abstract class CustomConfigurationFile extends Config {
+public abstract class CustomConfigurationFile extends YamlConfig {
 
     public CustomConfigurationFile() { }
 

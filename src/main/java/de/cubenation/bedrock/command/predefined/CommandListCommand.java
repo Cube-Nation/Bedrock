@@ -29,7 +29,7 @@ public class CommandListCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("command.list", CommandRole.USER.getType()));
+        permissions.add(new Permission("command.list", CommandRole.USER));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class CommandListCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("command.cmd.list.desc");
+        description.append("command.bedrock.cmd.list.desc");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class CommandListCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();
 

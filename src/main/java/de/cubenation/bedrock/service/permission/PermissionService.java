@@ -2,6 +2,7 @@ package de.cubenation.bedrock.service.permission;
 
 import de.cubenation.bedrock.BasePlugin;
 import de.cubenation.bedrock.command.AbstractCommand;
+import de.cubenation.bedrock.command.CommandRole;
 import de.cubenation.bedrock.command.argument.Argument;
 import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.config.Permissions;
@@ -112,6 +113,12 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         this.registerPermission(PermissionService.no_role, permission);
     }
 
+    @SuppressWarnings("unused")
+    public void registerPermission(String permission, CommandRole role) {
+        registerPermission(role.getType(), permission);
+    }
+
+    @Deprecated
     public void registerPermission(String role, String permission) {
         //this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
 
@@ -152,7 +159,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             // no roles -> create all permissions in the default role
 
             for (Permission permission : this.unregisteredPermissions) {
-                permissions.addPermission(permission.getRole(), permission.getName());
+                permissions.addPermission(permission.getRoleName(), permission.getName());
             }
         }
 

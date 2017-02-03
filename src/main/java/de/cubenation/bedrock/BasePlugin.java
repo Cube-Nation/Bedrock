@@ -5,6 +5,7 @@ import de.cubenation.bedrock.exception.NoSuchPluginException;
 import de.cubenation.bedrock.exception.ServiceInitException;
 import de.cubenation.bedrock.exception.UnknownServiceException;
 import de.cubenation.bedrock.helper.version.VersionComparator;
+import de.cubenation.bedrock.reloadable.Reloadable;
 import de.cubenation.bedrock.service.ServiceInterface;
 import de.cubenation.bedrock.service.ServiceManager;
 import de.cubenation.bedrock.service.colorscheme.ColorSchemeService;
@@ -13,6 +14,7 @@ import de.cubenation.bedrock.service.config.ConfigService;
 import de.cubenation.bedrock.service.inventory.InventoryService;
 import de.cubenation.bedrock.service.localization.LocalizationService;
 import de.cubenation.bedrock.service.permission.PermissionService;
+import de.cubenation.bedrock.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -31,6 +33,14 @@ import java.util.logging.Logger;
  * Package: de.cubenation.bedrock
  */
 public abstract class BasePlugin extends JavaPlugin {
+
+    private static final String SERVICE_CONFIG = "config";
+    private static final String SERVICE_COLORSCHEME = "colorscheme";
+    private static final String SERVICE_LOCALIZATION = "localization";
+    private static final String SERVICE_COMMAND = "command";
+    private static final String SERVICE_PERMISSION = "permission";
+    private static final String SERVICE_INVENTORY = "inventory";
+    private static final String SERVICE_SETTINGS = "settings";
 
     /** tbd */
     private boolean intentionally_ready = false;
@@ -77,24 +87,27 @@ public abstract class BasePlugin extends JavaPlugin {
         // DO NOT MODIFY THIS ORDER!
         try {
             // register config service
-            this.serviceManager.registerService("config", new ConfigService(this));
+            this.serviceManager.registerService(SERVICE_CONFIG, new ConfigService(this));
 
             // register color scheme service
-            this.serviceManager.registerService("colorscheme", new ColorSchemeService(this));
+            this.serviceManager.registerService(SERVICE_COLORSCHEME, new ColorSchemeService(this));
 
             this.intentionally_ready = true;
 
             // register localization service
-            this.serviceManager.registerService("localization", new LocalizationService(this));
+            this.serviceManager.registerService(SERVICE_LOCALIZATION, new LocalizationService(this));
+
+            // register settings service
+            this.serviceManager.registerService(SERVICE_SETTINGS, new SettingsService(this));
 
             // register command service
-            this.serviceManager.registerService("command", new CommandService(this));
+            this.serviceManager.registerService(SERVICE_COMMAND, new CommandService(this));
 
             // register permission service
-            this.serviceManager.registerService("permission", new PermissionService(this));
+            this.serviceManager.registerService(SERVICE_PERMISSION, new PermissionService(this));
 
             // register inventory service
-            this.serviceManager.registerService("inventory", new InventoryService(this));
+            this.serviceManager.registerService(SERVICE_INVENTORY, new InventoryService(this));
 
         } catch (ServiceInitException e) {
             this.disable(e);
@@ -271,7 +284,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see         ConfigService
      */
     public ConfigService getConfigService() {
-        return (ConfigService) this.getService("config");
+        return (ConfigService) this.getService(SERVICE_CONFIG);
     }
 
     /**
@@ -283,7 +296,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see         ColorSchemeService
      */
     public ColorSchemeService getColorSchemeService() {
-        return (ColorSchemeService) this.getService("colorscheme");
+        return (ColorSchemeService) this.getService(SERVICE_COLORSCHEME);
     }
 
     /**
@@ -294,7 +307,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see         CommandService
      */
     public CommandService getCommandService() {
-        return (CommandService) this.getService("command");
+        return (CommandService) this.getService(SERVICE_COMMAND);
     }
 
     /**
@@ -305,7 +318,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see         PermissionService
      */
     public PermissionService getPermissionService() {
-        return (PermissionService) this.getService("permission");
+        return (PermissionService) this.getService(SERVICE_PERMISSION);
     }
 
     /**
@@ -316,7 +329,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see         LocalizationService
      */
     public LocalizationService getLocalizationService() {
-        return (LocalizationService) this.getService("localization");
+        return (LocalizationService) this.getService(SERVICE_LOCALIZATION);
     }
 
     /**
@@ -327,7 +340,18 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see         InventoryService
      */
     public InventoryService getInventoryService() {
-        return (InventoryService) this.getService("inventory");
+        return (InventoryService) this.getService(SERVICE_INVENTORY);
+    }
+
+    /**
+     * Returns the Bedrock SettingsService object instance.
+     * If the InventoryService is not ready, <code>null</code> is returned.
+     *
+     * @return      The Bedrock SettingsService
+     * @see         SettingsService
+     */
+    public SettingsService getSettingService() {
+        return (SettingsService) this.getService(SERVICE_SETTINGS);
     }
 
     /**
@@ -345,6 +369,25 @@ public abstract class BasePlugin extends JavaPlugin {
      * @see     de.cubenation.bedrock.service.config.CustomConfigurationFile
      */
     public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
+
+    /**
+     * Returns a list of CustomSettingsFile classes
+     *
+     * @return  An ArrayList of classes
+     * @see     de.cubenation.bedrock.service.settings.CustomSettingsFile
+     */
+    public ArrayList<Class<?>> getCustomSettingsFiles() {
+        return null;
+    }
+
+    /**
+     * Returns a list of Reloadable classes
+     *
+     * @return An ArrayList of classes
+     */
+    public ArrayList<Reloadable> getReloadable() {
+        return null;
+    }
 
     /**
      * Disabled Bukkit Commands

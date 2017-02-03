@@ -5,6 +5,7 @@ package de.cubenation.bedrock.command;
  * Project: CNPlots
  */
 
+@SuppressWarnings("unused")
 public enum CommandRole {
     GUEST("guest"),
     USER("user"),

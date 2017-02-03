@@ -1,0 +1,14 @@
+<settings>
+    <servers>
+        <server>
+            <id>de.cube-nation.nexus.release</id>
+            <username>${env.NEXUS_DEPLOY_USER}</username>
+            <password>${env.NEXUS_DEPLOY_PASSWORD}</password>
+        </server>
+        <server>
+            <id>de.cube-nation.nexus.snapshot</id>
+            <username>${env.NEXUS_DEPLOY_USER}</username>
+            <password>${env.NEXUS_DEPLOY_PASSWORD}</password>
+        </server>
+    </servers>
+</settings>

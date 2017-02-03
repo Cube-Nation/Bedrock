@@ -30,7 +30,7 @@ public class PermissionListCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("permission.list", CommandRole.ADMIN.getType()));
+        permissions.add(new Permission("permission.list", CommandRole.MODERATOR));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PermissionListCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.permissions.list");
+        description.append("command.bedrock.permissions.list.desc");
     }
 
     @Override
@@ -50,7 +50,7 @@ public class PermissionListCommand extends Command {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
 
         if (permissionService != null) {
@@ -95,15 +95,7 @@ public class PermissionListCommand extends Command {
 
             // no permissions
         } else {
-            MessageHelper.send(
-                    this.getCommandManager().getPlugin(),
-                    sender,
-                    new Translation(
-                            this.getCommandManager().getPlugin(),
-                            "permission.no_permissions"
-                    ).getTranslation()
-            );
-
+            MessageHelper.noPermission(this.getCommandManager().getPlugin(), sender);
         } // if
     }
 

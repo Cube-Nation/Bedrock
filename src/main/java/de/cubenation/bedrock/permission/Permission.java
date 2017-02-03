@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.permission;
 
 import de.cubenation.bedrock.BasePlugin;
+import de.cubenation.bedrock.command.CommandRole;
 import de.cubenation.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
@@ -12,8 +13,10 @@ import org.bukkit.command.CommandSender;
 public class Permission {
 
     private BasePlugin plugin;
+
     private String name;
-    private String role;
+    private String roleName;
+    private CommandRole role;
 
 
     public Permission(String name) {
@@ -22,7 +25,15 @@ public class Permission {
 
     public Permission(String name, String role) {
         this.name = name;
+        this.roleName = role;
+        this.role = null;
+    }
+
+    public Permission(String name, CommandRole role) {
+        this.name = name;
+        this.roleName = role.getType();
         this.role = role;
+
     }
 
     public boolean userHasPermission(CommandSender sender) {
@@ -51,11 +62,19 @@ public class Permission {
         this.name = name;
     }
 
-    public String getRole() {
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String role) {
+        this.roleName = role;
+    }
+
+    public CommandRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(CommandRole role) {
         this.role = role;
     }
 }

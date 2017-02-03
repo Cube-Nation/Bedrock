@@ -32,8 +32,8 @@ public class PermissionOtherCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("permissions.self", CommandRole.USER.getType()));
-        permissions.add(new Permission("permissions.other", CommandRole.ADMIN.getType()));
+        permissions.add(new Permission("permissions.self", CommandRole.USER));
+        permissions.add(new Permission("permissions.other", CommandRole.MODERATOR));
     }
 
     @Override
@@ -43,17 +43,17 @@ public class PermissionOtherCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.permissions.other");
+        description.append("command.bedrock.permissions.desc");
     }
 
     @Override
     public void setArguments(ArrayList<Argument> arguments) {
-        arguments.add(new Argument("help.command.args.username_uuid.description", "help.command.args.username_uuid.placeholder", true));
+        arguments.add(new Argument("command.bedrock.username_uuid.desc", "command.bedrock.username_uuid.ph", true));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
 
         // check args length
         if (args.length > 1)
@@ -112,15 +112,7 @@ public class PermissionOtherCommand extends Command {
 
             // no permissions
         } else {
-            MessageHelper.send(
-                    this.getCommandManager().getPlugin(),
-                    sender,
-                    new Translation(
-                            this.getCommandManager().getPlugin(),
-                            "permission.no_permissions"
-                    ).getTranslation()
-            );
-
+            MessageHelper.noPermission(this.getCommandManager().getPlugin(), sender);
         } // if
     }
 

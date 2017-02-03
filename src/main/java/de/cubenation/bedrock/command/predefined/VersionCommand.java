@@ -9,7 +9,6 @@ import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.helper.MessageHelper;
 import de.cubenation.bedrock.permission.Permission;
-import de.cubenation.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class VersionCommand extends Command {
 
     @Override
     public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("version", CommandRole.MODERATOR.getType()));
+        permissions.add(new Permission("version", CommandRole.MODERATOR));
     }
 
     @Override
@@ -32,7 +31,7 @@ public class VersionCommand extends Command {
 
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.version");
+        description.append("command.bedrock.version.desc");
     }
 
     @Override
@@ -41,12 +40,8 @@ public class VersionCommand extends Command {
 
 
     @Override
-    public void execute(CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException {
-        MessageHelper.send(this.plugin, sender, new Translation(
-                this.getCommandManager().getPlugin(),
-                "version",
-                new String[] { "version", this.getCommandManager().getPlugin().getDescription().getVersion() }
-        ).getTranslation());
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+        MessageHelper.version(this.getCommandManager().getPlugin(), sender);
     }
 
 }

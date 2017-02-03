@@ -8,13 +8,12 @@ import de.cubenation.bedrock.command.manager.CommandManager;
 import de.cubenation.bedrock.exception.CommandException;
 import de.cubenation.bedrock.helper.HelpPageableListService;
 import de.cubenation.bedrock.helper.MessageHelper;
-import de.cubenation.bedrock.helper.TextHolder;
-import de.cubenation.bedrock.helper.design.PageDesignHelper;
+import de.cubenation.bedrock.helper.design.PageableMessageHelper;
 import de.cubenation.bedrock.permission.Permission;
 import de.cubenation.bedrock.service.pageablelist.PageableListRegistry;
 import de.cubenation.bedrock.service.pageablelist.PageableListStorable;
+import de.cubenation.bedrock.translation.JsonMessage;
 import de.cubenation.bedrock.translation.Translation;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
@@ -44,10 +43,9 @@ public class HelpCommand extends Command {
         subcommands.add(new String[]{"help"});
     }
 
-    @SuppressWarnings("UnusedAssignment")
     @Override
     public void setDescription(StringBuilder description) {
-        description.append("help.plugin");
+        description.append("command.bedrock.help.desc");
     }
 
     @Override
@@ -55,25 +53,26 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] subCommands, String[] args) throws CommandException {
+    public void execute(CommandSender sender, String[] args) throws CommandException {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
 
             // create help for each subcommand
-            ArrayList<TextComponent> commandComponents = new ArrayList<>();
+            ArrayList<JsonMessage> commandComponents = new ArrayList<>();
             for (AbstractCommand command : commandManager.getHelpCommands()) {
-                TextComponent component_help = command.getBeautifulHelp(sender);
-                if (component_help != null) {
-                    commandComponents.add(component_help);
+                JsonMessage componentHelp = command.getJsonHelp(sender);
+                if (componentHelp != null) {
+                    commandComponents.add(componentHelp);
                 }
             }
+
 
             HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
 
             // Preparation for Pagination
-            for (TextComponent component : commandComponents) {
+            for (JsonMessage commandComponent : commandComponents) {
                 PageableListStorable msgStoreable = new PageableListStorable();
-                msgStoreable.set(new TextHolder(component, component.getHoverEvent(), component.getClickEvent()));
+                msgStoreable.set(commandComponent);
                 helpPageableListService.store(msgStoreable);
             }
 
@@ -88,7 +87,7 @@ public class HelpCommand extends Command {
                 number = Integer.parseInt(args[0]);
             }
 
-            PageDesignHelper.pagination(getPlugin(),
+            PageableMessageHelper.pagination(getPlugin(),
                     helpPageableListService,
                     number,
                     "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%",
@@ -113,18 +112,11 @@ public class HelpCommand extends Command {
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
                 for (AbstractCommand command : commandManager.getHelpCommands()) {
-                    MessageHelper.send(
-                            this.getPlugin(),
-                            sender,
-                            command.getBeautifulHelp(sender)
-                    );
+                    command.getJsonHelp(sender).send(sender);
                 }
             } else {
                 for (AbstractCommand command : helpList) {
-                    MessageHelper.send(
-                            this.getPlugin(),
-                            sender,
-                            command.getBeautifulHelp(sender));
+                    command.getJsonHelp(sender).send(sender);
                 }
             }
         }
