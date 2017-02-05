@@ -47,16 +47,15 @@ public abstract class AbstractCommand {
 
         setDescription(this.description);
         setSubCommands(this.subcommands);
-        setArguments(this.arguments);
-
-        for (Argument argument : this.arguments) {
-            argument.setPlugin(plugin);
-        }
 
         setPermissions(this.runtimePermissions);
-
         for (Permission permission : this.runtimePermissions) {
             permission.setPlugin(plugin);
+        }
+
+        setArguments(this.arguments);
+        for (Argument argument : this.arguments) {
+            argument.setPlugin(plugin);
         }
     }
 
