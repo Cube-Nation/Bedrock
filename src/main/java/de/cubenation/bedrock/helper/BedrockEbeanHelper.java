@@ -1,9 +1,7 @@
 package de.cubenation.bedrock.helper;
 
 import de.cubenation.bedrock.BedrockPlugin;
-import de.cubenation.bedrock.callback.MultipleBedrockPlayerCallback;
-import de.cubenation.bedrock.callback.SingleBedrockPlayerCallback;
-import de.cubenation.bedrock.callback.SingleBedrockWorldCallback;
+import de.cubenation.bedrock.callback.*;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
 import de.cubenation.bedrock.ebean.BedrockWorld;
 import de.cubenation.bedrock.exception.BedrockEbeanEntityAlreadyExistsException;
@@ -20,7 +18,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
  */
-@SuppressWarnings({"unused", "DefaultFileTemplate"})
+@SuppressWarnings("ALL")
 public class BedrockEbeanHelper {
 
     /**
@@ -38,11 +36,23 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockPlayer object for the given org.bukkit.entity.Player.
      *
-     * @param player A org.bukkit.entity.Player object.
+     * @param player   A org.bukkit.entity.Player object.
      * @param callback The callback for the result of the request.
      */
-    public static void requestBedrockPlayer(final Player player, SingleBedrockPlayerCallback callback){
+    @Deprecated
+    public static void requestBedrockPlayer(final Player player, SingleBedrockPlayerCallback callback) {
         requestBedrockPlayer(player.getUniqueId(), callback);
+    }
+
+    /**
+     * Returns a BedrockPlayer object for the given org.bukkit.entity.Player.
+     *
+     * @param player          A org.bukkit.entity.Player object.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockPlayer(final Player player, SuccessCallback<BedrockPlayer> successCallback, FailureCallback<Exception> failureCallback) {
+        requestBedrockPlayer(player.getUniqueId(), successCallback, failureCallback);
     }
 
     /**
@@ -60,11 +70,23 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockPlayer object for the given java.util.UUID
      *
-     * @param uuid The UUID of a player.
+     * @param uuid     The UUID of a player.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockPlayer(UUID uuid, SingleBedrockPlayerCallback callback) {
         requestBedrockPlayer(uuid.toString(), callback);
+    }
+
+    /**
+     * Returns a BedrockPlayer object for the given java.util.UUID
+     *
+     * @param uuid            The UUID of a player.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockPlayer(UUID uuid, SuccessCallback<BedrockPlayer> successCallback, FailureCallback<Exception> failureCallback) {
+        requestBedrockPlayer(uuid.toString(), successCallback, failureCallback);
     }
 
     /**
@@ -91,11 +113,26 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockPlayer object for the given uuid String.
      *
-     * @param uuid A string representing a UUID.
+     * @param uuid     A string representing a UUID.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockPlayer(final String uuid, final SingleBedrockPlayerCallback callback) {
         if (callback == null) {
+            return;
+        }
+        requestBedrockPlayer(uuid, callback::didFinished, callback::didFailed);
+    }
+
+    /**
+     * Returns a BedrockPlayer object for the given uuid String.
+     *
+     * @param uuid            A string representing a UUID.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockPlayer(final String uuid, final SuccessCallback<BedrockPlayer> successCallback, final FailureCallback<Exception> failureCallback) {
+        if (successCallback == null) {
             return;
         }
 
@@ -109,18 +146,15 @@ public class BedrockEbeanHelper {
                         .eq("uuid", uuid)
                         .findUnique();
 
-                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-
-                        if (player == null) {
-                            callback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, uuid));
-                        } else {
-                            callback.didFinished(player);
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (player == null) {
+                        if (failureCallback != null) {
+                            failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, uuid));
                         }
-
-                        return null;
+                    } else {
+                        successCallback.didFinished(player);
                     }
+                    return null;
                 });
             }
         });
@@ -142,7 +176,7 @@ public class BedrockEbeanHelper {
      * Returns a BedrockPlayer object for the given name String
      *
      * @param username A string representing a username
-     * @param exact Mach all or an exact player
+     * @param exact    Mach all or an exact player
      * @return BedrockPlayer
      * @throws BedrockEbeanEntityNotFoundException
      */
@@ -173,11 +207,27 @@ public class BedrockEbeanHelper {
      * Returns a BedrockPlayer object for the given name String.
      *
      * @param username A string representing a username.
-     * @param exact Mach all or an exact player.
+     * @param exact    Mach all or an exact player.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockPlayerForLastKnownName(final String username, final boolean exact, final MultipleBedrockPlayerCallback callback) {
         if (callback == null) {
+            return;
+        }
+        requestBedrockPlayerForLastKnownName(username, exact, callback::didFinished, callback::didFailed);
+    }
+
+    /**
+     * Returns a BedrockPlayer object for the given name String.
+     *
+     * @param username A string representing a username.
+     * @param exact    Mach all or an exact player.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockPlayerForLastKnownName(final String username, final boolean exact, final SuccessCallback<ArrayList<BedrockPlayer>> successCallback, FailureCallback<Exception> failureCallback) {
+        if (successCallback == null) {
             return;
         }
 
@@ -185,21 +235,10 @@ public class BedrockEbeanHelper {
             @Override
             public void run() {
                 if (UUIDUtil.isUUID(username)) {
-                    requestBedrockPlayer(username, new SingleBedrockPlayerCallback() {
-                        @Override
-                        public void didFinished(final BedrockPlayer player) {
-                            callback.didFinished(new ArrayList<BedrockPlayer>(){{
-                                add(player);
-                            }});
-                        }
-
-                        @Override
-                        public void didFailed(Exception e) {
-                            callback.didFailed(e);
-                        }
-                    });
+                    requestBedrockPlayer(username, object -> successCallback.didFinished(new ArrayList<BedrockPlayer>() {{
+                        add(object);
+                    }}), failureCallback);
                 }
-
 
                 final List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
                         .where()
@@ -207,19 +246,15 @@ public class BedrockEbeanHelper {
                         .orderBy().desc("lastlogin")
                         .findList();
 
-                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
 
-                        if (players == null) {
-                            callback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username));
-                        } else {
-                            callback.didFinished(players);
-                        }
-
-
-                        return null;
+                    if (players == null) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username));
+                    } else {
+                        successCallback.didFinished((ArrayList<BedrockPlayer>) players);
                     }
+
+                    return null;
                 });
             }
         });
@@ -250,9 +285,10 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockPlayer object for the given id
      *
-     * @param id The id of the BedrockPlayer.
+     * @param id       The id of the BedrockPlayer.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockPlayer(final int id, final SingleBedrockPlayerCallback callback) {
         if (callback == null) {
             return;
@@ -284,6 +320,41 @@ public class BedrockEbeanHelper {
     }
 
     /**
+     * Returns a BedrockPlayer object for the given id
+     *
+     * @param id              The id of the BedrockPlayer.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockPlayer(final int id, final SuccessCallback<BedrockPlayer> successCallback, FailureCallback<Exception> failureCallback) {
+        if (successCallback == null) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                final BedrockPlayer player = BedrockPlugin.getInstance().getDatabase()
+                        .find(BedrockPlayer.class)
+                        .where()
+                        .eq("id", id)
+                        .findUnique();
+
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (player == null) {
+                        if (failureCallback != null) {
+                            failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, id));
+                        }
+                    } else {
+                        successCallback.didFinished(player);
+                    }
+                    return null;
+                });
+            }
+        });
+    }
+
+    /**
      * CAUTION!
      * Use this method only to add players, who played on the server before installing Bedrock!
      *
@@ -305,10 +376,7 @@ public class BedrockEbeanHelper {
         bedrockPlayer.save();
 
         return bedrockPlayer;
-
-
     }
-
 
     /**
      * Returns a BedrockWorld for the given org.bukkit.World
@@ -325,11 +393,23 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockWorld for the given org.bukkit.World.
      *
-     * @param world A org.bukkit.World object.
+     * @param world    A org.bukkit.World object.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockWorld(World world, SingleBedrockWorldCallback callback) {
         requestBedrockWorld(world.getUID(), callback);
+    }
+
+    /**
+     * Returns a BedrockWorld for the given org.bukkit.World.
+     *
+     * @param world           A org.bukkit.World object.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockWorld(World world, SuccessCallback<BedrockWorld> successCallback, FailureCallback<Exception> failureCallback) {
+        requestBedrockWorld(world.getUID(), successCallback, failureCallback);
     }
 
     /**
@@ -347,11 +427,23 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockWorld for the given java.util.UUID
      *
-     * @param uuid A UUID.
+     * @param uuid     A UUID.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockWorld(UUID uuid, SingleBedrockWorldCallback callback) {
         requestBedrockWorld(uuid.toString(), callback);
+    }
+
+    /**
+     * Returns a BedrockWorld for the given java.util.UUID
+     *
+     * @param uuid            A UUID.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockWorld(UUID uuid, SuccessCallback<BedrockWorld> successCallback, FailureCallback<Exception> failureCallback) {
+        requestBedrockWorld(uuid.toString(), successCallback, failureCallback);
     }
 
     /**
@@ -378,9 +470,10 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockWorld for the given uuid String.
      *
-     * @param uuid A string representing a UUID.
+     * @param uuid     A string representing a UUID.
      * @param callback The callback for the result of the request.
      */
+    @Deprecated
     public static void requestBedrockWorld(final String uuid, final SingleBedrockWorldCallback callback) {
         if (callback == null) {
             return;
@@ -413,6 +506,40 @@ public class BedrockEbeanHelper {
     }
 
     /**
+     * Returns a BedrockWorld for the given uuid String.
+     *
+     * @param uuid            A string representing a UUID.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockWorld(final String uuid, final SuccessCallback<BedrockWorld> successCallback, final FailureCallback<Exception> failureCallback) {
+        if (successCallback == null) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), () -> {
+            final BedrockWorld world = BedrockPlugin.getInstance().getDatabase()
+                    .find(BedrockWorld.class)
+                    .where()
+                    .eq("uuid", uuid)
+                    .findUnique();
+
+            Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                if (world == null) {
+                    if (failureCallback != null) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockWorld.class, uuid));
+                    }
+                } else {
+                    successCallback.didFinished(world);
+                }
+                return null;
+            });
+
+        });
+
+    }
+
+    /**
      * Returns a BedrockWorld for the given id
      *
      * @param id The id of the BedrockPlayer
@@ -433,33 +560,44 @@ public class BedrockEbeanHelper {
         return world;
     }
 
+    @Deprecated
     public static void requestBedrockWorld(final int id, final SingleBedrockWorldCallback callback) {
         if (callback == null) {
             return;
         }
+        requestBedrockWorld(id, callback::didFinished, callback::didFailed);
+    }
 
-        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                final BedrockWorld world = BedrockPlugin.getInstance().getDatabase()
-                        .find(BedrockWorld.class)
-                        .where()
-                        .eq("id", id)
-                        .findUnique();
+    /**
+     * Returns a BedrockWorld for the given id.
+     *
+     * @param id              The id of the world.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
+     */
+    public static void requestBedrockWorld(final int id, final SuccessCallback<BedrockWorld> successCallback, FailureCallback<Exception> failureCallback) {
+        if (successCallback == null) {
+            return;
+        }
 
-                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), new Callable<Void>() {
-                    @Override
-                    public Void call() throws Exception {
-                        if (world == null) {
-                            callback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockWorld.class, id));
-                        } else {
-                            callback.didFinished(world);
-                        }
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), () -> {
+            final BedrockWorld world = BedrockPlugin.getInstance().getDatabase()
+                    .find(BedrockWorld.class)
+                    .where()
+                    .eq("id", id)
+                    .findUnique();
 
-                        return null;
+            Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                if (world == null) {
+                    if (failureCallback != null) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockWorld.class, id));
                     }
-                });
-            }
+                } else {
+                    successCallback.didFinished(world);
+                }
+
+                return null;
+            });
         });
     }
 

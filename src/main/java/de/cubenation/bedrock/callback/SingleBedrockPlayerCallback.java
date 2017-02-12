@@ -7,6 +7,7 @@ import de.cubenation.bedrock.ebean.BedrockPlayer;
  * Project: Bedrock
  */
 
+@Deprecated
 public interface SingleBedrockPlayerCallback {
 
     void didFinished(BedrockPlayer player);
