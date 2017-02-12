@@ -14,6 +14,7 @@ import de.cubenation.bedrock.translation.parts.BedrockHoverEvent;
 import de.cubenation.bedrock.translation.parts.BedrockJson;
 import de.cubenation.bedrock.translation.parts.JsonColor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -463,6 +464,14 @@ public class MessageHelper {
         //  a) the locale file is damaged/incomplete - try deleting it and restart the server
         //  b) check if the plugin refers to the correct path in the YamlConfiguration object
         return "";
+    }
+
+    public static class Bypass {
+
+        public static void Info(BasePlugin plugin, Player player) {
+            new JsonMessage(plugin, "bypass.used").send(player, ChatMessageType.ACTION_BAR);
+        }
+
     }
 
     public static class Error {
