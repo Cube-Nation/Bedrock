@@ -326,7 +326,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockPlayer(final int id, final SuccessCallback<BedrockPlayer> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockPlayer(final int id, final SuccessCallback<BedrockPlayer> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null) {
             return;
         }
