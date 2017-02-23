@@ -51,7 +51,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockPlayer(final Player player, SuccessCallback<BedrockPlayer> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockPlayer(final Player player, SuccessCallback<BedrockPlayer> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         requestBedrockPlayer(player.getUniqueId(), successCallback, failureCallback);
     }
 
@@ -85,7 +85,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockPlayer(UUID uuid, SuccessCallback<BedrockPlayer> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockPlayer(UUID uuid, SuccessCallback<BedrockPlayer> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         requestBedrockPlayer(uuid.toString(), successCallback, failureCallback);
     }
 
@@ -131,7 +131,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockPlayer(final String uuid, final SuccessCallback<BedrockPlayer> successCallback, final FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockPlayer(final String uuid, final SuccessCallback<BedrockPlayer> successCallback, final FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null) {
             return;
         }
@@ -226,7 +226,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockPlayerForLastKnownName(final String username, final boolean exact, final SuccessCallback<ArrayList<BedrockPlayer>> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockPlayerForLastKnownName(final String username, final boolean exact, final SuccessCallback<ArrayList<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null) {
             return;
         }
@@ -408,7 +408,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockWorld(World world, SuccessCallback<BedrockWorld> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockWorld(World world, SuccessCallback<BedrockWorld> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         requestBedrockWorld(world.getUID(), successCallback, failureCallback);
     }
 
@@ -442,7 +442,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockWorld(UUID uuid, SuccessCallback<BedrockWorld> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockWorld(UUID uuid, SuccessCallback<BedrockWorld> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         requestBedrockWorld(uuid.toString(), successCallback, failureCallback);
     }
 
@@ -512,7 +512,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockWorld(final String uuid, final SuccessCallback<BedrockWorld> successCallback, final FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockWorld(final String uuid, final SuccessCallback<BedrockWorld> successCallback, final FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null) {
             return;
         }
@@ -575,7 +575,7 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void requestBedrockWorld(final int id, final SuccessCallback<BedrockWorld> successCallback, FailureCallback<Exception> failureCallback) {
+    public static void requestBedrockWorld(final int id, final SuccessCallback<BedrockWorld> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null) {
             return;
         }
