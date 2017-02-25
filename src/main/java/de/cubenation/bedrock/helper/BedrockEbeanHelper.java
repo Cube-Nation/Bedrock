@@ -13,9 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -53,13 +51,19 @@ public class BedrockEbeanHelper {
      * @param successCallback   The success callback for the result of the request.
      * @param failureCallback   The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockPlayerForPlayers(final ArrayList<Player> players, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockPlayerForPlayers(final ArrayList<Player> players, final SuccessCallback<HashMap<Player, BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || players == null || players.isEmpty()) {
             return;
         }
 
         List<UUID> collect = players.stream().map(player -> { return player.getUniqueId(); }).collect(Collectors.toList());
-        bulkRequestBedrockPlayerForUuids((ArrayList<UUID>) collect, successCallback, failureCallback);
+        bulkRequestBedrockPlayerForUuids((ArrayList<UUID>) collect, bedrockPlayers -> {
+            HashMap<Player, BedrockPlayer> result = new HashMap<>();
+            for (Map.Entry<UUID, BedrockPlayer> entry : bedrockPlayers.entrySet()) {
+                result.put(entry.getValue().getPlayer(), entry.getValue());
+            }
+            successCallback.didFinished(result);
+        }, failureCallback);
     }
 
     /**
@@ -90,13 +94,19 @@ public class BedrockEbeanHelper {
      * @param successCallback   The success callback for the result of the request.
      * @param failureCallback   The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockPlayerForUuids(final ArrayList<UUID> uuids, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockPlayerForUuids(final ArrayList<UUID> uuids, final SuccessCallback<HashMap<UUID, BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || uuids == null || uuids.isEmpty()) {
             return;
         }
 
         List<String> collect = uuids.stream().map(uuid -> { return uuid.toString(); }).collect(Collectors.toList());
-        bulkRequestBedrockPlayerForUuidStrings((ArrayList<String>) collect, successCallback, failureCallback);
+        bulkRequestBedrockPlayerForUuidStrings((ArrayList<String>) collect, bedrockPlayers -> {
+            HashMap<UUID, BedrockPlayer> result = new HashMap<>();
+            for (Map.Entry<String, BedrockPlayer> entry : bedrockPlayers.entrySet()) {
+                result.put(entry.getValue().getUUID(), entry.getValue());
+            }
+            successCallback.didFinished(result);
+        }, failureCallback);
     }
 
     /**
@@ -155,7 +165,7 @@ public class BedrockEbeanHelper {
      * @param successCallback   The success callback for the result of the request.
      * @param failureCallback   The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockPlayerForUuidStrings(final ArrayList<String> uuids, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockPlayerForUuidStrings(final ArrayList<String> uuids, final SuccessCallback<HashMap<String, BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || uuids == null || uuids.isEmpty()) {
             return;
         }
@@ -175,7 +185,11 @@ public class BedrockEbeanHelper {
                     if (list == null || list.isEmpty()) {
                         failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(uuids, BedrockPlayer.class));
                     } else {
-                        successCallback.didFinished(list);
+                        HashMap<String , BedrockPlayer> result = new HashMap<>();
+                        for (BedrockPlayer bedrockPlayer: list) {
+                            result.put(bedrockPlayer.getUuid(), bedrockPlayer);
+                        }
+                        successCallback.didFinished(result);
                     }
                     return null;
                 });
@@ -318,7 +332,7 @@ public class BedrockEbeanHelper {
      * @param successCallback   The success callback for the result of the request.
      * @param failureCallback   The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockPlayerForIds(final ArrayList<Integer> ids, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockPlayerForIds(final ArrayList<Integer> ids, final SuccessCallback<HashMap<Integer, BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || ids == null || ids.isEmpty()) {
             return;
         }
@@ -338,7 +352,11 @@ public class BedrockEbeanHelper {
                     if (list == null || list.isEmpty()) {
                         failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, ids));
                     } else {
-                        successCallback.didFinished(list);
+                        HashMap<Integer, BedrockPlayer> result = new HashMap<>();
+                        for (BedrockPlayer bedrockPlayer: list) {
+                            result.put(bedrockPlayer.getId(), bedrockPlayer);
+                        }
+                        successCallback.didFinished(result);
                     }
                     return null;
                 });
@@ -421,13 +439,19 @@ public class BedrockEbeanHelper {
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockWorldForUuids(final ArrayList<UUID> uuids, final SuccessCallback<List<BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockWorldForUuids(final ArrayList<UUID> uuids, final SuccessCallback<HashMap<UUID, BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || uuids == null || uuids.isEmpty()) {
             return;
         }
 
         List<String> collect = uuids.stream().map(uuid -> { return uuid.toString(); }).collect(Collectors.toList());
-        bulkRequestBedrockWorldForUuidStrings((ArrayList<String>) collect, successCallback, failureCallback);
+        bulkRequestBedrockWorldForUuidStrings((ArrayList<String>) collect, bedrockWorldHashMap -> {
+            HashMap<UUID, BedrockWorld> result = new HashMap<>();
+            for (Map.Entry<String, BedrockWorld> entry : bedrockWorldHashMap.entrySet()) {
+                result.put(UUID.fromString(entry.getValue().getUuid()), entry.getValue());
+            }
+            successCallback.didFinished(result);
+        }, failureCallback);
     }
 
     /**
@@ -508,7 +532,7 @@ public class BedrockEbeanHelper {
      * @param successCallback   The success callback for the result of the request.
      * @param failureCallback   The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockWorldForUuidStrings(final ArrayList<String> uuids, final SuccessCallback<List<BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockWorldForUuidStrings(final ArrayList<String> uuids, final SuccessCallback<HashMap<String, BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || uuids == null || uuids.isEmpty()) {
             return;
         }
@@ -528,7 +552,11 @@ public class BedrockEbeanHelper {
                     if (list == null || list.isEmpty()) {
                         failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(uuids, BedrockPlayer.class));
                     } else {
-                        successCallback.didFinished(list);
+                        HashMap<String, BedrockWorld> result = new HashMap<>();
+                        for (BedrockWorld bedrockWorld : list) {
+                            result.put(bedrockWorld.getUuid(), bedrockWorld);
+                        }
+                        successCallback.didFinished(result);
                     }
                     return null;
                 });
@@ -583,7 +611,7 @@ public class BedrockEbeanHelper {
      * @param successCallback   The success callback for the result of the request.
      * @param failureCallback   The failure callback for the result of the request.
      */
-    public static void bulkRequestBedrockWorld(final ArrayList<Integer> ids, final SuccessCallback<List<BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+    public static void bulkRequestBedrockWorldForIds(final ArrayList<Integer> ids, final SuccessCallback<HashMap<Integer, BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null || ids == null || ids.isEmpty()) {
             return;
         }
@@ -603,7 +631,11 @@ public class BedrockEbeanHelper {
                     if (list == null || list.isEmpty()) {
                         failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, ids));
                     } else {
-                        successCallback.didFinished(list);
+                        HashMap<Integer, BedrockWorld> result = new HashMap<>();
+                        for (BedrockWorld bedrockWorld : list) {
+                            result.put(bedrockWorld.getId(), bedrockWorld);
+                        }
+                        successCallback.didFinished(result);
                     }
                     return null;
                 });
