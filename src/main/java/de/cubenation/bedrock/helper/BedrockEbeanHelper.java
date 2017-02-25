@@ -1,11 +1,14 @@
 package de.cubenation.bedrock.helper;
 
+import com.avaje.ebean.RawSql;
+import com.avaje.ebean.RawSqlBuilder;
 import de.cubenation.bedrock.BedrockPlugin;
 import de.cubenation.bedrock.callback.*;
 import de.cubenation.bedrock.ebean.BedrockPlayer;
 import de.cubenation.bedrock.ebean.BedrockWorld;
 import de.cubenation.bedrock.exception.BedrockEbeanEntityAlreadyExistsException;
 import de.cubenation.bedrock.exception.BedrockEbeanEntityNotFoundException;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -14,24 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /**
  * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
  */
 @SuppressWarnings("ALL")
 public class BedrockEbeanHelper {
-
-    /**
-     * Returns a BedrockPlayer object for the given org.bukkit.entity.Player
-     *
-     * @param player A org.bukkit.entity.Player object
-     * @return BedrockPlayer
-     * @throws BedrockEbeanEntityNotFoundException
-     */
-    @Deprecated
-    public static BedrockPlayer getBedrockPlayer(Player player) throws BedrockEbeanEntityNotFoundException {
-        return getBedrockPlayer(player.getUniqueId());
-    }
 
     /**
      * Returns a BedrockPlayer object for the given org.bukkit.entity.Player.
@@ -56,15 +48,18 @@ public class BedrockEbeanHelper {
     }
 
     /**
-     * Returns a BedrockPlayer object for the given java.util.UUID
-     *
-     * @param uuid A UUID
-     * @return BedrockPlayer
-     * @throws BedrockEbeanEntityNotFoundException
+     * Request a list of BedrockPlayer for a list of players.
+     * @param uuids             Player of the BedrockPlayers to request.
+     * @param successCallback   The success callback for the result of the request.
+     * @param failureCallback   The failure callback for the result of the request.
      */
-    @Deprecated
-    public static BedrockPlayer getBedrockPlayer(UUID uuid) throws BedrockEbeanEntityNotFoundException {
-        return getBedrockPlayer(uuid.toString());
+    public static void bulkRequestBedrockPlayerForPlayers(final ArrayList<Player> players, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || players == null || players.isEmpty()) {
+            return;
+        }
+
+        List<UUID> collect = players.stream().map(player -> { return player.getUniqueId(); }).collect(Collectors.toList());
+        bulkRequestBedrockPlayerForUuids((ArrayList<UUID>) collect, successCallback, failureCallback);
     }
 
     /**
@@ -90,24 +85,18 @@ public class BedrockEbeanHelper {
     }
 
     /**
-     * Returns a BedrockPlayer object for the given uuid String
-     *
-     * @param uuid A string representing a UUID
-     * @return BedrockPlayer
-     * @throws BedrockEbeanEntityNotFoundException
+     * Request a list of BedrockPlayer for a list of uuids.
+     * @param uuids             UUIDs of the BedrockPlayers to request.
+     * @param successCallback   The success callback for the result of the request.
+     * @param failureCallback   The failure callback for the result of the request.
      */
-    @Deprecated
-    public static BedrockPlayer getBedrockPlayer(String uuid) throws BedrockEbeanEntityNotFoundException {
-        BedrockPlayer player = BedrockPlugin.getInstance().getDatabase()
-                .find(BedrockPlayer.class)
-                .where()
-                .eq("uuid", uuid)
-                .findUnique();
+    public static void bulkRequestBedrockPlayerForUuids(final ArrayList<UUID> uuids, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || uuids == null || uuids.isEmpty()) {
+            return;
+        }
 
-        if (player == null)
-            throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, uuid);
-
-        return player;
+        List<String> collect = uuids.stream().map(uuid -> { return uuid.toString(); }).collect(Collectors.toList());
+        bulkRequestBedrockPlayerForUuidStrings((ArrayList<String>) collect, successCallback, failureCallback);
     }
 
     /**
@@ -161,46 +150,37 @@ public class BedrockEbeanHelper {
     }
 
     /**
-     * Returns a BedrockPlayer object for the given name String
-     *
-     * @param username A string representing a username
-     * @return BedrockPlayer
-     * @throws BedrockEbeanEntityNotFoundException
+     * Request a list of BedrockPlayer for a list of uuids.
+     * @param uuids             UUIDs of the BedrockPlayers to request.
+     * @param successCallback   The success callback for the result of the request.
+     * @param failureCallback   The failure callback for the result of the request.
      */
-    @Deprecated
-    public static List<BedrockPlayer> getBedrockPlayerForLastKnownName(final String username) throws BedrockEbeanEntityNotFoundException {
-        return getBedrockPlayerForLastKnownName(username, false);
-    }
-
-    /**
-     * Returns a BedrockPlayer object for the given name String
-     *
-     * @param username A string representing a username
-     * @param exact    Mach all or an exact player
-     * @return BedrockPlayer
-     * @throws BedrockEbeanEntityNotFoundException
-     */
-    @Deprecated
-    public static List<BedrockPlayer> getBedrockPlayerForLastKnownName(final String username, boolean exact) throws BedrockEbeanEntityNotFoundException {
-
-        if (UUIDUtil.isUUID(username)) {
-            return new ArrayList<BedrockPlayer>() {{
-                getBedrockPlayer(username);
-            }};
+    public static void bulkRequestBedrockPlayerForUuidStrings(final ArrayList<String> uuids, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || uuids == null || uuids.isEmpty()) {
+            return;
         }
 
-        List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
-                .where()
-                .like("username", username + (exact ? "" : "%"))
-                .orderBy().desc("lastlogin")
-                .findList();
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
 
-        if (players == null) {
-            System.out.println("players == null");
-            throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username);
-        }
+                String oql = "SELECT id, uuid, username, lastlogin " +
+                        "FROM `bedrock_players` " +
+                        "WHERE uuid IN (" +  StringUtils.join(uuids, ", ") + ");";
 
-        return players;
+                RawSql rawSql = RawSqlBuilder.parse(oql).create();
+                List<BedrockPlayer> list = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class).setRawSql(rawSql).findList();
+
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (list == null || list.isEmpty()) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(uuids, BedrockPlayer.class));
+                    } else {
+                        successCallback.didFinished(list);
+                    }
+                    return null;
+                });
+            }
+        });
     }
 
     /**
@@ -258,28 +238,6 @@ public class BedrockEbeanHelper {
                 });
             }
         });
-    }
-
-
-    /**
-     * Returns a BedrockPlayer object for the given id
-     *
-     * @param id The id of the BedrockPlayer
-     * @return BedrockPlayer
-     * @throws BedrockEbeanEntityNotFoundException
-     */
-    @Deprecated
-    public static BedrockPlayer getBedrockPlayer(int id) throws BedrockEbeanEntityNotFoundException {
-        BedrockPlayer player = BedrockPlugin.getInstance().getDatabase()
-                .find(BedrockPlayer.class)
-                .where()
-                .eq("id", id)
-                .findUnique();
-
-        if (player == null)
-            throw new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, id);
-
-        return player;
     }
 
     /**
@@ -355,6 +313,40 @@ public class BedrockEbeanHelper {
     }
 
     /**
+     * Request a list of BedrockPlayer for a list of ids.
+     * @param ids               Ids of the BedrockPlayers to request.
+     * @param successCallback   The success callback for the result of the request.
+     * @param failureCallback   The failure callback for the result of the request.
+     */
+    public static void bulkRequestBedrockPlayerForIds(final ArrayList<Integer> ids, final SuccessCallback<List<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || ids == null || ids.isEmpty()) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+
+                String oql = "SELECT id, uuid, username, lastlogin " +
+                        "FROM `bedrock_players` " +
+                        "WHERE id IN (" +  StringUtils.join(ids, ", ") + ");";
+
+                RawSql rawSql = RawSqlBuilder.parse(oql).create();
+                List<BedrockPlayer> list = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class).setRawSql(rawSql).findList();
+
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (list == null || list.isEmpty()) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, ids));
+                    } else {
+                        successCallback.didFinished(list);
+                    }
+                    return null;
+                });
+            }
+        });
+    }
+
+    /**
      * CAUTION!
      * Use this method only to add players, who played on the server before installing Bedrock!
      *
@@ -376,18 +368,6 @@ public class BedrockEbeanHelper {
         bedrockPlayer.save();
 
         return bedrockPlayer;
-    }
-
-    /**
-     * Returns a BedrockWorld for the given org.bukkit.World
-     *
-     * @param world A org.bukkit.World object
-     * @return BedrockWorld
-     * @throws BedrockEbeanEntityNotFoundException
-     */
-    @Deprecated
-    public static BedrockWorld getBedrockWorld(World world) throws BedrockEbeanEntityNotFoundException {
-        return getBedrockWorld(world.getUID());
     }
 
     /**
@@ -415,18 +395,6 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockWorld for the given java.util.UUID
      *
-     * @param uuid A UUID
-     * @return BedrockWorld
-     * @throws BedrockEbeanEntityNotFoundException
-     */
-    @Deprecated
-    public static BedrockWorld getBedrockWorld(UUID uuid) throws BedrockEbeanEntityNotFoundException {
-        return getBedrockWorld(uuid.toString());
-    }
-
-    /**
-     * Returns a BedrockWorld for the given java.util.UUID
-     *
      * @param uuid     A UUID.
      * @param callback The callback for the result of the request.
      */
@@ -447,24 +415,19 @@ public class BedrockEbeanHelper {
     }
 
     /**
-     * Returns a BedrockWorld for the given uuid String
+     * Returns a BedrockWorld for the given uuid String.
      *
-     * @param uuid A string representing a UUID
-     * @return BedrockWorld
-     * @throws BedrockEbeanEntityNotFoundException
+     * @param uuid            A list of UUIDs.
+     * @param successCallback The success callback for the result of the request.
+     * @param failureCallback The failure callback for the result of the request.
      */
-    @Deprecated
-    public static BedrockWorld getBedrockWorld(String uuid) throws BedrockEbeanEntityNotFoundException {
-        BedrockWorld world = BedrockPlugin.getInstance().getDatabase()
-                .find(BedrockWorld.class)
-                .where()
-                .eq("uuid", uuid)
-                .findUnique();
+    public static void bulkRequestBedrockWorldForUuids(final ArrayList<UUID> uuids, final SuccessCallback<List<BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || uuids == null || uuids.isEmpty()) {
+            return;
+        }
 
-        if (world == null)
-            throw new BedrockEbeanEntityNotFoundException(BedrockWorld.class, uuid);
-
-        return world;
+        List<String> collect = uuids.stream().map(uuid -> { return uuid.toString(); }).collect(Collectors.toList());
+        bulkRequestBedrockWorldForUuidStrings((ArrayList<String>) collect, successCallback, failureCallback);
     }
 
     /**
@@ -540,24 +503,37 @@ public class BedrockEbeanHelper {
     }
 
     /**
-     * Returns a BedrockWorld for the given id
-     *
-     * @param id The id of the BedrockPlayer
-     * @return BedrockWorld
-     * @throws BedrockEbeanEntityNotFoundException
+     * Request a list of BedrockWorld for a list of uuids.
+     * @param uuids             UUIDs of the BedrockWorld to request.
+     * @param successCallback   The success callback for the result of the request.
+     * @param failureCallback   The failure callback for the result of the request.
      */
-    @Deprecated
-    public static BedrockWorld getBedrockWorld(int id) throws BedrockEbeanEntityNotFoundException {
-        BedrockWorld world = BedrockPlugin.getInstance().getDatabase()
-                .find(BedrockWorld.class)
-                .where()
-                .eq("id", id)
-                .findUnique();
+    public static void bulkRequestBedrockWorldForUuidStrings(final ArrayList<String> uuids, final SuccessCallback<List<BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || uuids == null || uuids.isEmpty()) {
+            return;
+        }
 
-        if (world == null)
-            throw new BedrockEbeanEntityNotFoundException(BedrockWorld.class, id);
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
 
-        return world;
+                String oql = "SELECT id, uuid " +
+                        "FROM `bedrock_worlds` " +
+                        "WHERE uuid IN (" +  StringUtils.join(uuids, ", ") + ");";
+
+                RawSql rawSql = RawSqlBuilder.parse(oql).create();
+                List<BedrockWorld> list = BedrockPlugin.getInstance().getDatabase().find(BedrockWorld.class).setRawSql(rawSql).findList();
+
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (list == null || list.isEmpty()) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(uuids, BedrockPlayer.class));
+                    } else {
+                        successCallback.didFinished(list);
+                    }
+                    return null;
+                });
+            }
+        });
     }
 
     @Deprecated
@@ -598,6 +574,40 @@ public class BedrockEbeanHelper {
 
                 return null;
             });
+        });
+    }
+
+    /**
+     * Request a list of BedrockWorld for a list of ids.
+     * @param ids               Ids of the BedrockWorlds to request.
+     * @param successCallback   The success callback for the result of the request.
+     * @param failureCallback   The failure callback for the result of the request.
+     */
+    public static void bulkRequestBedrockWorld(final ArrayList<Integer> ids, final SuccessCallback<List<BedrockWorld>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
+        if (successCallback == null || ids == null || ids.isEmpty()) {
+            return;
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+
+                String oql = "SELECT id, uuid " +
+                        "FROM `bedrock_worlds` " +
+                        "WHERE id IN (" +  StringUtils.join(ids, ", ") + ");";
+
+                RawSql rawSql = RawSqlBuilder.parse(oql).create();
+                List<BedrockWorld> list = BedrockPlugin.getInstance().getDatabase().find(BedrockWorld.class).setRawSql(rawSql).findList();
+
+                Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (list == null || list.isEmpty()) {
+                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, ids));
+                    } else {
+                        successCallback.didFinished(list);
+                    }
+                    return null;
+                });
+            }
         });
     }
 
