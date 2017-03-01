@@ -106,8 +106,11 @@ public class en_US extends CustomConfigurationFile {
     @Path("json.must_be_player")
     private String json_must_be_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"You must be ingame to use this command\",color:\"red\"}]}";
 
-    @Path("json.no_such_player")
-    private String json_no_such_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Player \",color:\"red\"},{text:\"%player% \",color:\"white\"},{text:\"not found\",color:\"red\"}]}";
+    @Path("json.no_such_player.specific")
+    private String json_no_such_player_specific = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Player \",color:\"red\"},{text:\"%player% \",color:\"white\"},{text:\"not found\",color:\"red\"}]}";
+
+    @Path("json.no_such_player.default")
+    private String json_no_such_player_default = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Player not found\",color:\"red\"}]}";
 
 
     /*

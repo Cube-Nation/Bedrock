@@ -51,7 +51,11 @@ public class MessageHelper {
     }
 
     public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender, String player) {
-        new JsonMessage(plugin, "json.no_such_player", "player", player).send(commandSender);
+        new JsonMessage(plugin, "json.no_such_player.specific", "player", player).send(commandSender);
+    }
+
+    public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender) {
+        new JsonMessage(plugin, "json.no_such_player.default").send(commandSender);
     }
 
     public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender, String world) {
