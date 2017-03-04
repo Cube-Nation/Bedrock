@@ -244,32 +244,37 @@ public class BedrockEbeanHelper {
      */
     public static void requestBedrockPlayerForLastKnownName(final String username, final boolean exact, final SuccessCallback<ArrayList<BedrockPlayer>> successCallback, FailureCallback<BedrockEbeanEntityNotFoundException> failureCallback) {
         if (successCallback == null) {
+            failureCallback.didFailed(null);
+            return;
+        }
+
+        if (UUIDUtil.isUUID(username)) {
+            requestBedrockPlayer(username,
+                    player -> successCallback.didFinished(new ArrayList<BedrockPlayer>() {{add(player);}}),
+                    failureCallback);
             return;
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
             @Override
             public void run() {
-                if (UUIDUtil.isUUID(username)) {
-                    requestBedrockPlayer(username, object -> successCallback.didFinished(new ArrayList<BedrockPlayer>() {{
-                        add(object);
-                    }}), failureCallback);
-                }
 
-                final List<BedrockPlayer> players = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
+                final List<BedrockPlayer> foundPlayers = BedrockPlugin.getInstance().getDatabase().find(BedrockPlayer.class)
                         .where()
                         .like("username", username + (exact ? "" : "%"))
                         .orderBy().desc("lastlogin")
                         .findList();
 
                 Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
+                    if (foundPlayers != null && !foundPlayers.isEmpty()) {
+                        ArrayList<BedrockPlayer> bedrockPlayers = new ArrayList<BedrockPlayer>();
+                        bedrockPlayers.addAll(foundPlayers);
 
-                    if (players == null) {
-                        failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username));
-                    } else {
-                        successCallback.didFinished((ArrayList<BedrockPlayer>) players);
+                        successCallback.didFinished(bedrockPlayers);
+                        return null;
                     }
 
+                    failureCallback.didFailed(new BedrockEbeanEntityNotFoundException(BedrockPlayer.class, username));
                     return null;
                 });
             }
@@ -307,7 +312,7 @@ public class BedrockEbeanHelper {
                         .collect(Collectors.toCollection(ArrayList::new));
 
                 // Prepare result list
-                HashMap<String, ArrayList<BedrockPlayer>> result = new HashMap<String, ArrayList<BedrockPlayer>>(){{
+                HashMap<String, ArrayList<BedrockPlayer>> result = new HashMap<String, ArrayList<BedrockPlayer>>() {{
                     for (String username : usernames) {
                         put(username, new ArrayList<>());
                     }
