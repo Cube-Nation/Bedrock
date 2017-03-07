@@ -62,7 +62,7 @@ public class PageDesignHelper {
 
         // Display Navigation
 
-        ComponentBuilder pagination = PageableMessageHelper.getPagination(plugin, page, service.getPages(), pageExecutionCmd);
+        ComponentBuilder pagination = PageableMessageHelper.getPagination(plugin, page, service.getPages(), pageExecutionCmd, NAVIGATIONSIZE);
         if (pagination != null) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;

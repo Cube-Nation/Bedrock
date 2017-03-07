@@ -41,7 +41,7 @@ public abstract class Command extends AbstractCommand {
             String arg = args[args.length - 1];
 
             for (String completion: tabCompletionFromCommands) {
-                if (!completion.startsWith(arg)) {
+                if (!completion.toLowerCase().startsWith(arg.toLowerCase())) {
                     toRemove.add(completion);
                 }
             }
