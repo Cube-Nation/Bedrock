@@ -60,6 +60,11 @@ public abstract class AbstractConfirmService extends AbstractService implements 
     }
 
     @Override
+    final public void invalidate() {
+        this.task.cancel();
+    }
+
+    @Override
     public void reload() {
         this.getPlugin().log(Level.WARNING, "  confirm service: Reloading of service confirm not supported");
     }
