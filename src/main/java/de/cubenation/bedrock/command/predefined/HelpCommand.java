@@ -112,7 +112,9 @@ public class HelpCommand extends Command {
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
                 for (AbstractCommand command : commandManager.getHelpCommands()) {
-                    command.getJsonHelp(sender).send(sender);
+                    if (command != null && command.getJsonHelp(sender) != null) {
+                        command.getJsonHelp(sender).send(sender);
+                    }
                 }
             } else {
                 for (AbstractCommand command : helpList) {
