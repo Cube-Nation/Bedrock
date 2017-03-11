@@ -25,11 +25,11 @@
     <distributionManagement>
         <repository>
             <id>de.cube-nation.nexus.release</id>
-            <url>http://nexus3.cube-nation.de/content/repositories/releases</url>
+            <url>http://nexus3.cube-nation.de/repositories/releases</url>
         </repository>
         <snapshotRepository>
             <id>de.cube-nation.nexus.snapshot</id>
-            <url>http://nexus3.cube-nation.de/content/repositories/snapshots</url>
+            <url>http://nexus3.cube-nation.de/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     
