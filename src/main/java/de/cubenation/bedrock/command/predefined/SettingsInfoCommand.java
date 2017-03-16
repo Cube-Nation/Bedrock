@@ -85,7 +85,7 @@ public class SettingsInfoCommand extends Command {
     }
 
     @Override
-    public ArrayList<String> getTabArgumentCompletion(int argumentIndex, String[] args) {
+    public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{
                 addAll(plugin.getSettingService().getSettingsMap().keySet());

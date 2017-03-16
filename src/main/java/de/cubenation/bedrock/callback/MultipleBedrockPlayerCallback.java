@@ -9,6 +9,7 @@ import java.util.List;
  * Project: Bedrock
  */
 
+@Deprecated
 public interface MultipleBedrockPlayerCallback {
 
     void didFinished(List<BedrockPlayer> players);

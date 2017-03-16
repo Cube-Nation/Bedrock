@@ -29,6 +29,11 @@ public class ConfirmRegistry {
     }
 
     public void put(CommandSender sender, ConfirmInterface command) {
+        // Check if there is already a confirm action & remove it.
+        ConfirmInterface confirmInterface = confirm.get(sender);
+        if (confirmInterface != null) {
+            confirmInterface.invalidate();
+        }
         confirm.put(sender, command);
     }
 

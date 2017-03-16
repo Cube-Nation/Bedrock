@@ -6,4 +6,6 @@ public interface ConfirmInterface {
 
     public void abort();
 
+    public void invalidate();
+
 }

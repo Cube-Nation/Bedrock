@@ -37,9 +37,11 @@ public class SettingsService extends AbstractService implements ServiceInterface
      */
     @Override
     public void init() throws ServiceInitException {
-        // first create the plugin data folder
-        this.createDataFolder();
         this.loadSettings();
+        if (!settingsMap.isEmpty()) {
+            // Create folder if there is a settings file
+            this.createDataFolder();
+        }
     }
 
     private void loadSettings() {

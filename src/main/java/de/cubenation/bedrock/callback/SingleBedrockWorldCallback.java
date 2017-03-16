@@ -7,6 +7,7 @@ import de.cubenation.bedrock.ebean.BedrockWorld;
  * Project: Bedrock
  */
 
+@Deprecated
 public interface SingleBedrockWorldCallback {
 
     void didFinished(BedrockWorld world);

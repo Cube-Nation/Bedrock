@@ -15,7 +15,7 @@ public abstract class AbstractPageableListService extends AbstractService implem
 
     public static int FIRSTPAGE = 1;
 
-    private int next = 10;
+    private Integer next = 10;
 
     private List<PageableListStorable> storage;
 
@@ -95,6 +95,10 @@ public abstract class AbstractPageableListService extends AbstractService implem
 
     public PageableListStorable getStorableAtIndex(int i) {
         return storage.get(i);
+    }
+
+    public Integer getItemsPerPage() {
+        return next;
     }
 
     public boolean isEmpty() {

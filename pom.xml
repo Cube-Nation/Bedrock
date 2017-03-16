@@ -4,32 +4,24 @@
 
     <groupId>de.cubenation</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.10.3</version>
+    <version>0.11.5</version>
     <name>Bedrock</name>
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>de.cube-nation.nexus.public</id>
-            <url>http://nexus.cube-nation.de/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>md_5-releaseso</id>
-            <url>http://repo.md-5.net/content/repositories/public/</url>
+            <url>http://nexus3.cube-nation.de/repository/maven-public/</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
             <id>de.cube-nation.nexus.release</id>
-            <url>http://nexus.cube-nation.de/repositories/releases</url>
+            <url>http://nexus3.cube-nation.de/repository/releases</url>
         </repository>
         <snapshotRepository>
             <id>de.cube-nation.nexus.snapshot</id>
-            <url>http://nexus.cube-nation.de/repositories/snapshots</url>
+            <url>http://nexus3.cube-nation.de/repository/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     
@@ -64,8 +56,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
 			<plugin>

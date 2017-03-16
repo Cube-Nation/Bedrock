@@ -207,7 +207,6 @@ public class BedrockDefaults extends CustomConfigurationFile {
     }
 
 
-
     /**
      * Metrics service
      */

@@ -26,7 +26,7 @@ import java.util.logging.Level;
 
 public class PageableMessageHelper {
 
-    private static final int NAVIGATIONSIZE = 7;
+    private static final int DEFAULT_NAVIGATIONSIZE = 7;
     public static final String PAGE_PLACEHOLDER = "%page%";
 
     private final BasePlugin plugin;
@@ -53,6 +53,10 @@ public class PageableMessageHelper {
     }
 
     public void paginate(CommandSender sender) {
+        paginate(sender, DEFAULT_NAVIGATIONSIZE);
+    }
+
+    public void paginate(CommandSender sender, Integer itemsPerPage) {
         // Can't show pages
         if (listService == null && jsonMessageList == null) {
             return;
@@ -68,11 +72,16 @@ public class PageableMessageHelper {
             page = listService.getPage(this.page);
         } catch (Exception ignored) {
         }
-        display(plugin, this.page, command, sender, headline, jsonHeadline, page, jsonMessageList, totalPages);
+        display(plugin, this.page, command, sender, headline, jsonHeadline, page, jsonMessageList, totalPages, itemsPerPage);
     }
 
     @Deprecated
     public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, CommandSender sender, String headline) {
+        pagination(plugin, service, page, pageExecutionCmd, sender, headline, DEFAULT_NAVIGATIONSIZE);
+    }
+
+    @Deprecated
+    public static void pagination(BasePlugin plugin, AbstractPageableListService service, int page, String pageExecutionCmd, CommandSender sender, String headline, Integer itemsPerPage) {
         // Can't show pages, cause its empty
         if (service.isEmpty()) {
             plugin.log(Level.INFO, "Space PageableListService. Can't display pages.");
@@ -84,10 +93,11 @@ public class PageableMessageHelper {
             return;
         }
 
+        Integer items = service.getItemsPerPage() == null ? itemsPerPage : service.getItemsPerPage();
         try {
             List<PageableListStorable> list = service.getPage(page);
             int totalPages = service.getPages();
-            display(plugin, page, pageExecutionCmd, sender, headline, null, list, null, totalPages);
+            display(plugin, page, pageExecutionCmd, sender, headline, null, list, null, totalPages, items);
         } catch (IndexOutOfBoundsException e) {
             new JsonMessage(plugin, "json.page.notexsist").send(sender);
         }
@@ -95,6 +105,11 @@ public class PageableMessageHelper {
 
     @Deprecated
     public static void pagination(BasePlugin plugin, List<JsonMessage> list, int page, int totalPages, String pageExecutionCmd, CommandSender sender, String headline) {
+        pagination(plugin, list, page, totalPages, pageExecutionCmd, sender, headline, DEFAULT_NAVIGATIONSIZE);
+    }
+
+    @Deprecated
+    public static void pagination(BasePlugin plugin, List<JsonMessage> list, int page, int totalPages, String pageExecutionCmd, CommandSender sender, String headline, Integer itemsPerPage) {
         // Can't show pages, cause its empty
         if (list.isEmpty()) {
             plugin.log(Level.INFO, "Space PageableListService. Can't display pages.");
@@ -106,7 +121,7 @@ public class PageableMessageHelper {
             return;
         }
 
-        display(plugin, page, pageExecutionCmd, sender, headline, null, null, list, totalPages);
+        display(plugin, page, pageExecutionCmd, sender, headline, null, null, list, totalPages, itemsPerPage);
     }
 
     private static void display(BasePlugin plugin, int page, String pageExecutionCmd,
@@ -115,7 +130,7 @@ public class PageableMessageHelper {
                                 ArrayList<BedrockJson> jsonHeadline,
                                 List<PageableListStorable> pageableList,
                                 List<JsonMessage> jsonList,
-                                int totalPages) {
+                                int totalPages, int itemsPerPage) {
         if (headline != null) {
             new JsonMessage(plugin,
                     "json.page.design.header",
@@ -147,7 +162,7 @@ public class PageableMessageHelper {
 
 
         // Display Navigation
-        ComponentBuilder pagination = getPagination(plugin, page, totalPages, pageExecutionCmd);
+        ComponentBuilder pagination = getPagination(plugin, page, totalPages, pageExecutionCmd, itemsPerPage);
         if (pagination != null)
 
         {
@@ -160,7 +175,7 @@ public class PageableMessageHelper {
     }
 
 
-    public static ComponentBuilder getPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd) {
+    public static ComponentBuilder getPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd, Integer itemsPerPage) {
         if (totalPages == 1) {
             // No Pagination needed
             return null;
@@ -184,14 +199,14 @@ public class PageableMessageHelper {
         pagination.append(" ").reset();
 
 
-        if (totalPages <= NAVIGATIONSIZE) {
+        if (totalPages <= itemsPerPage) {
             //Display all, no formating logic needed.
             for (int i = 1; i <= totalPages; i++) {
                 addPageNumber(i, page, pageExecutionCmd, pagination, secondary, flag, i != totalPages, false);
             }
 
         } else {
-            addCalculatedPagination(plugin, page, totalPages, pageExecutionCmd, secondary, flag, pagination);
+            addCalculatedPagination(plugin, page, totalPages, pageExecutionCmd, secondary, flag, pagination, itemsPerPage);
         }
 
 
@@ -241,9 +256,9 @@ public class PageableMessageHelper {
         return new JsonMessage(plugin, BedrockJson.JsonWithText(""));
     }
 
-    private static void addCalculatedPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd, ChatColor secondary, ChatColor flag, ComponentBuilder pagination) {
+    private static void addCalculatedPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd, ChatColor secondary, ChatColor flag, ComponentBuilder pagination, Integer itemsPerPage) {
 
-        if (totalPages <= NAVIGATIONSIZE) {
+        if (totalPages <= itemsPerPage) {
             plugin.log(Level.WARNING, "totalPages (" + totalPages + ") <= 7 should not happen! Check your code!");
             return;
         }
@@ -349,7 +364,7 @@ public class PageableMessageHelper {
     }
 
     private static double getSteps(int start, int end) {
-        return (end - start) / (NAVIGATIONSIZE);
+        return (end - start) / (DEFAULT_NAVIGATIONSIZE);
     }
 
 

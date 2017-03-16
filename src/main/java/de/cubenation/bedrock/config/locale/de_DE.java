@@ -111,8 +111,11 @@ public class de_DE extends CustomConfigurationFile {
     private String json_no_such_setting = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Einstellungen für \",color:\"red\"},{text:\"%key% \",color:\"&SECONDARY&\"},{text:\"wurden nicht gefunden\",color:\"red\"}]}";
 
 
-    @Path("json.no_such_player")
-    private String json_no_such_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
+    @Path("json.no_such_player.specific")
+    private String json_no_such_player_specific = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
+
+    @Path("json.no_such_player.default")
+    private String json_no_such_player_default = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler wurde nicht gefunden\",color:\"red\"}]}";
 
     @Path("json.no_such_world")
     private String json_no_such_world = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Welt \",color:\"red\"},{text:\"%world% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
