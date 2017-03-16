@@ -9,16 +9,8 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
-        </repository>
-        <repository>
             <id>de.cube-nation.nexus.public</id>
             <url>http://nexus.cube-nation.de/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>md_5-releaseso</id>
-            <url>http://repo.md-5.net/content/repositories/public/</url>
         </repository>
     </repositories>
 
