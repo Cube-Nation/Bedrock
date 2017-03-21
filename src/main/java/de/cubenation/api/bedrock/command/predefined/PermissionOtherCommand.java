@@ -11,13 +11,11 @@ import de.cubenation.api.bedrock.exception.PlayerNotFoundException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
-import de.cubenation.api.bedrock.translation.Translation;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by B1acksheep on 28.04.15.
@@ -75,48 +73,10 @@ public class PermissionOtherCommand extends Command {
                 return;
             }
 
-
-            MessageHelper.send(
-                    getCommandManager().getPlugin(),
-                    sender,
-                    new Translation(
-                            this.getCommandManager().getPlugin(),
-                            "permission.list.header"
-                    ).getTranslation()
-            );
-
-            for (Map.Entry entry : permissionDump.entrySet()) {
-
-                // send role
-                MessageHelper.send(
-                        this.getCommandManager().getPlugin(),
-                        sender,
-                        new Translation(
-                                this.getCommandManager().getPlugin(),
-                                "permission.list.role",
-                                new String[]{"role", entry.getKey().toString()}
-                        ).getTranslation()
-                );
-
-                for (String perm : (ArrayList<String>) entry.getValue()) {
-                    MessageHelper.send(
-                            this.getCommandManager().getPlugin(),
-                            sender,
-                            new Translation(
-                                    this.getCommandManager().getPlugin(),
-                                    "permission.list.permission",
-                                    new String[]{"permission", perm}
-                            ).getTranslation()
-                    );
-
-                } // for (permission)
-
-            } // for (permissionDump)
-
-            // no permissions
+            MessageHelper.displayPermissions(plugin, sender, permissionDump);
         } else {
             MessageHelper.noPermission(this.getCommandManager().getPlugin(), sender);
-        } // if
+        }
     }
 
 }

@@ -2,17 +2,17 @@ package de.cubenation.api.bedrock.helper;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.BedrockPlugin;
+import de.cubenation.api.bedrock.command.AbstractCommand;
+import de.cubenation.api.bedrock.command.argument.Argument;
+import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.api.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.Translation;
-import de.cubenation.api.bedrock.translation.parts.BedrockHoverEvent;
-import de.cubenation.api.bedrock.translation.parts.JsonColor;
-import de.cubenation.api.bedrock.command.AbstractCommand;
-import de.cubenation.api.bedrock.command.argument.Argument;
-import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.translation.parts.BedrockClickEvent;
+import de.cubenation.api.bedrock.translation.parts.BedrockHoverEvent;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
+import de.cubenation.api.bedrock.translation.parts.JsonColor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -24,6 +24,8 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class MessageHelper {
@@ -33,7 +35,7 @@ public class MessageHelper {
     }
 
     public static void insufficientPermission(BasePlugin plugin, CommandSender sender) {
-        new JsonMessage(plugin, "json.permission.insufficient").send(sender);
+        new JsonMessage(plugin, "permission.insufficient").send(sender);
     }
 
     public static void noPermission(BasePlugin plugin, CommandSender sender) {
@@ -41,20 +43,20 @@ public class MessageHelper {
     }
 
     public static void invalidCommand(BasePlugin plugin, CommandSender sender) {
-        JsonMessage jsonMessage = new JsonMessage(plugin, "json.command.invalid");
+        JsonMessage jsonMessage = new JsonMessage(plugin, "command.invalid");
         jsonMessage.send(sender);
     }
 
     public static void mustBePlayer(BasePlugin plugin, CommandSender commandSender) {
-        new JsonMessage(plugin, "json.must_be_player").send(commandSender);
+        new JsonMessage(plugin, "must_be_player").send(commandSender);
     }
 
     public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender, String player) {
-        new JsonMessage(plugin, "json.no_such_player.specific", "player", player).send(commandSender);
+        new JsonMessage(plugin, "no_such_player.specific", "player", player).send(commandSender);
     }
 
     public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender) {
-        new JsonMessage(plugin, "json.no_such_player.default").send(commandSender);
+        new JsonMessage(plugin, "no_such_player.default").send(commandSender);
     }
 
     public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender, String world) {
@@ -62,23 +64,23 @@ public class MessageHelper {
             noSuchWorld(plugin, commandSender);
             return;
         }
-        new JsonMessage(plugin, "json.no_such_world", "world", world).send(commandSender);
+        new JsonMessage(plugin, "no_such_world", "world", world).send(commandSender);
     }
 
     public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender) {
-        new JsonMessage(plugin, "json.no_such_world_empty").send(commandSender);
+        new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
     }
 
     public static void reloadComplete(BasePlugin plugin, CommandSender sender) {
-        new JsonMessage(plugin, "json.reload.complete").send(sender);
+        new JsonMessage(plugin, "reload.complete").send(sender);
     }
 
     public static void reloadFailed(BasePlugin plugin, CommandSender sender) {
-        new JsonMessage(plugin, "json.reload.failed").send(sender);
+        new JsonMessage(plugin, "reload.failed").send(sender);
     }
 
     public static void version(BasePlugin plugin, CommandSender sender) {
-        new JsonMessage(plugin, "json.version", "version", plugin.getDescription().getVersion()).send(sender);
+        new JsonMessage(plugin, "version", "version", plugin.getDescription().getVersion()).send(sender);
     }
 
     @Deprecated
@@ -454,6 +456,30 @@ public class MessageHelper {
         return "";
     }
 
+    public static void displayCommandList(BasePlugin plugin, CommandSender sender, HashMap<String, String> commandList) {
+        new JsonMessage(plugin, "plugin.command.list.header").send(sender);
+
+        for (Map.Entry<String, String> entry : commandList.entrySet()) {
+            new JsonMessage(plugin, "plugin.command.list.entry",
+                    "command", entry.getKey(),
+                    "description", entry.getValue()
+            ).send(sender);
+        }
+    }
+
+    public static void displayPermissions(BasePlugin plugin, CommandSender sender, HashMap<String, ArrayList<String>> permissionDump) {
+        new JsonMessage(plugin, "permission.list.header").send(sender);
+
+        for (Map.Entry<String, ArrayList<String>> entry : permissionDump.entrySet()) {
+            // send role
+            new JsonMessage(plugin, "permission.list.role", "role", entry.getKey()).send(sender);
+
+            for (String perm : entry.getValue()) {
+                new JsonMessage(plugin, "permission.list.permission", "permission", perm).send(sender);
+            }
+        }
+    }
+
     public static class Bypass {
 
         public static void Info(BasePlugin plugin, Player player) {
@@ -465,7 +491,7 @@ public class MessageHelper {
     public static class Error {
 
         public static void SettingsNotFound(BasePlugin plugin, CommandSender sender, String key) {
-            new JsonMessage(plugin, "json.no_such_setting", "key", key).send(sender);
+            new JsonMessage(plugin, "no_such_setting", "key", key).send(sender);
         }
 
     }

@@ -5,12 +5,11 @@ import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
+import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.permission.Permission;
-import de.cubenation.api.bedrock.translation.Translation;
-import de.cubenation.api.bedrock.exception.CommandException;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -79,23 +78,6 @@ public class CommandListCommand extends Command {
             return;
         }
 
-        MessageHelper.send(plugin, sender, new Translation(
-                plugin,
-                "plugin.commands.header"
-        ).getTranslation());
-
-        for (Map.Entry<String, String> entry : commandList.entrySet()) {
-            MessageHelper.send(plugin, sender, new Translation(
-                    plugin,
-                    "plugin.commands.list",
-                    new String[] {
-                            "command", entry.getKey(),
-                            "description", entry.getValue()
-                    }
-            ).getTranslation());
-        }
-
-
-        ///TODO - B1acksheep
+        MessageHelper.displayCommandList(plugin, sender, commandList);
     }
 }
