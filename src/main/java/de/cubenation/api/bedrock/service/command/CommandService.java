@@ -7,7 +7,6 @@ import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.service.settings.SettingsService;
 import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
-import de.cubenation.bedrock.command.predefined.*;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 
