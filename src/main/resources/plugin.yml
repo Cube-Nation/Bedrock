@@ -1,15 +1,17 @@
 author: Cube-Nation, B1acksheep, d1rty
-description: Cube-Nation Plugin Base
-main: de.cubenation.bedrock.BedrockPlugin
+description: Comprehensive Plugin API
+main: de.cubenation.api.bedrock.BedrockPlugin
 database: true
 load: startup
 name: Bedrock
 version: "${project.version}"
+
 depend:
   - Yamler
+
 commands:
   bedrockplayer:
-    description: Bedrock Player Command
+    description: Bedrock Player Debug Command
     aliases: bp
   ${project.artifactId}:
     description: Bedrock Base Command
