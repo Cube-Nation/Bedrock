@@ -82,13 +82,8 @@ public abstract class Command extends AbstractCommand {
         return false;
     }
 
-    @Deprecated
-    public ArrayList<String> getTabArgumentCompletion(int argumentIndex, String[] args) {
-        return null;
-    }
-
     public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
-        return getTabArgumentCompletion(argumentIndex, args);
+        return null;
     }
 
 }

@@ -1,8 +1,6 @@
 package de.cubenation.bedrock.command.player;
 
 import de.cubenation.bedrock.BasePlugin;
-import de.cubenation.bedrock.callback.MultipleBedrockPlayerCallback;
-import de.cubenation.bedrock.callback.SingleBedrockPlayerCallback;
 import de.cubenation.bedrock.command.Command;
 import de.cubenation.bedrock.command.CommandRole;
 import de.cubenation.bedrock.command.argument.Argument;
@@ -19,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by BenediktHr on 17.08.16.
@@ -52,7 +49,7 @@ public class BedrockPlayerInfoCommand extends Command {
     }
 
     @Override
-    public void execute(final CommandSender sender, String[] subcommands, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(final CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         // check args length
         if (args.length > 1) {
@@ -67,34 +64,17 @@ public class BedrockPlayerInfoCommand extends Command {
         final String player = (args.length == 0) ? sender.getName() : args[0];
 
         if (UUIDUtil.isUUID(player)) {
-            BedrockEbeanHelper.requestBedrockPlayer(player, new SingleBedrockPlayerCallback() {
-                @Override
-                public void didFinished(BedrockPlayer player) {
-                    sender.sendMessage("Results: (1)");
-                    sender.sendMessage(player.getUsername() + ": " + player.getLastlogin());
-                }
-
-                @Override
-                public void didFailed(Exception e) {
-                    sender.sendMessage("No player found for: " + player);
-                }
-            });
+            BedrockEbeanHelper.requestBedrockPlayer(player, bedrockPlayer -> {
+                sender.sendMessage("Results: (1)");
+                sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
+            }, e -> sender.sendMessage("No player found for: " + player));
         } else {
-            BedrockEbeanHelper.requestBedrockPlayerForLastKnownName(player, false, new MultipleBedrockPlayerCallback() {
-                @Override
-                public void didFinished(List<BedrockPlayer> players) {
-                    sender.sendMessage("Results: (" + players.size() + ")");
-                    for (BedrockPlayer player : players) {
-                        sender.sendMessage(player.getUsername() + ": " + player.getLastlogin());
-                    }
+            BedrockEbeanHelper.requestBedrockPlayerForLastKnownName(player, false, bedrockPlayers -> {
+                sender.sendMessage("Results: (" + bedrockPlayers.size() + ")");
+                for (BedrockPlayer bedrockPlayer : bedrockPlayers) {
+                    sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
                 }
-
-                @Override
-                public void didFailed(Exception e) {
-                    sender.sendMessage("No player found for: " + player);
-                }
-            });
+            }, e -> sender.sendMessage("No player found for: " + player));
         }
-
     }
 }

@@ -43,14 +43,7 @@ public abstract class AbstractConfirmService extends AbstractService implements 
         final AbstractConfirmService csi = this;
         // create task with timeout
         // this task needs to be canceled when call() is executed via task.cancel();
-        task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), new Runnable() {
-
-            @Override
-            public void run() {
-                csi.abort();
-            }
-
-        }, (long) this.getTimeout() * 20L);
+        task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), csi::abort, (long) this.getTimeout() * 20L);
 
     }
 

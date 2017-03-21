@@ -37,7 +37,7 @@ public class BedrockHoverEvent {
     }
 
 
-    public static enum Action {
+    public enum Action {
         SHOW_TEXT("show_text"),
         SHOW_ACHIEVEMENT("show_achievement"),
         SHOW_ITEM("show_item"),
@@ -45,7 +45,7 @@ public class BedrockHoverEvent {
 
         private final String key;
 
-        private Action(String key) {
+        Action(String key) {
             this.key = key;
         }
 

@@ -127,14 +127,14 @@ public class ColorScheme {
     }
 
     public HoverEvent applyColorScheme(HoverEvent event) {
-        String text_components = "";
+        StringBuilder text_components = new StringBuilder();
         BaseComponent[] value = event.getValue();
 
         for (BaseComponent v : value) {
-            text_components += this.applyColorScheme(v.toLegacyText());
+            text_components.append(this.applyColorScheme(v.toLegacyText()));
         }
 
-        return new HoverEvent(event.getAction(), TextComponent.fromLegacyText(text_components));
+        return new HoverEvent(event.getAction(), TextComponent.fromLegacyText(text_components.toString()));
     }
 
     public ClickEvent applyColorScheme(ClickEvent event) {

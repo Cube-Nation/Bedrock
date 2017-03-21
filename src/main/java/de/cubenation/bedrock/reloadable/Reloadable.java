@@ -6,6 +6,6 @@ package de.cubenation.bedrock.reloadable;
  */
 public interface Reloadable {
 
-    public void reload();
+    void reload();
 
 }

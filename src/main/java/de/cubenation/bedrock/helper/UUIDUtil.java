@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public class UUIDUtil {
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static boolean isUUID(String string) {
         try {
             UUID.fromString(string);

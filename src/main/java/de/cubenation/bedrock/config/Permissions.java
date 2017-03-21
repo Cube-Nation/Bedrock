@@ -50,7 +50,7 @@ public class Permissions extends CustomConfigurationFile {
         if (this.roleExists(role))
             return;
 
-        this.permissions.put(role, new ArrayList<String>());
+        this.permissions.put(role, new ArrayList<>());
     }
 
     public void removeRole(String role) {

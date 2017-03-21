@@ -36,7 +36,7 @@ public class BedrockClickEvent {
     }
 
 
-    public static enum Action {
+    public enum Action {
         OPEN_URL ("open_url"),
         OPEN_FILE("open_file"),
         RUN_COMMAND("run_command"),
@@ -45,7 +45,7 @@ public class BedrockClickEvent {
 
         private final String key;
 
-        private Action(String key) {
+        Action(String key) {
             this.key = key;
         }
 

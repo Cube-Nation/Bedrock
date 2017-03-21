@@ -56,13 +56,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
                 try {
                     constructor = className.getConstructor(BasePlugin.class, CommandManager.class);
                     manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                     e.printStackTrace();
                 }
             }

@@ -19,7 +19,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -82,23 +81,9 @@ public class MessageHelper {
         new JsonMessage(plugin, "json.version", "version", plugin.getDescription().getVersion()).send(sender);
     }
 
-
-    @SuppressWarnings("unused")
-    @Deprecated
-    public static void sendToAll(BasePlugin plugin, String message) {
-        sendToAll(plugin, new TextComponent(message));
-    }
-
     @Deprecated
     public static void send(BasePlugin plugin, CommandSender sender, String message) {
         send(plugin, sender, new TextComponent(message));
-    }
-
-    @Deprecated
-    public static void sendToAll(BasePlugin plugin, TextComponent component) {
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            send(plugin, player, component);
-        }
     }
 
     @Deprecated
@@ -130,7 +115,7 @@ public class MessageHelper {
             ((Player) sender).spigot().sendMessage(component);
 
         } else {
-            String hover_message = "";
+            StringBuilder hover_message = new StringBuilder();
             // ClickEvents are not supported here
             //String click_message = "";
 
@@ -138,14 +123,14 @@ public class MessageHelper {
                 hover_event = color_scheme.applyColorScheme(hover_event);
 
                 for (int i = 0; i < hover_event.getValue().length; i++) {
-                    hover_message += hover_event.getValue()[i].toLegacyText();
+                    hover_message.append(hover_event.getValue()[i].toLegacyText());
                 }
 
                 // check for multiline string
-                if (hover_message.contains("\n")) {
+                if (hover_message.toString().contains("\n")) {
 
                     ArrayList<String> lines = new ArrayList<>();
-                    lines.addAll(Arrays.asList(hover_message.split("\\r?\\n")));
+                    lines.addAll(Arrays.asList(hover_message.toString().split("\\r?\\n")));
 
                     int max_len = longestLength(lines);
 
@@ -168,14 +153,13 @@ public class MessageHelper {
                     }
 
                     lines.add(hf_line);
-                    hover_message = "\n" + StringUtils.join(lines, System.lineSeparator());
+                    hover_message = new StringBuilder("\n" + StringUtils.join(lines, System.lineSeparator()));
 
                 } else {
-                    hover_message =
-                            " " +   // make explicit string
-                                    ChatColor.DARK_GRAY + "[ " + ChatColor.RESET +
-                                    hover_message +
-                                    ChatColor.DARK_GRAY + " ]" + ChatColor.RESET;
+                    hover_message = new StringBuilder(" " +   // make explicit string
+                            ChatColor.DARK_GRAY + "[ " + ChatColor.RESET +
+                            hover_message +
+                            ChatColor.DARK_GRAY + " ]" + ChatColor.RESET);
                 }
             }
 

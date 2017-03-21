@@ -4,6 +4,7 @@ package de.cubenation.bedrock.translation.parts;
  * Created by BenediktHr on 04.03.16.
  * Project: Bedrock
  */
+@SuppressWarnings("unused")
 public enum JsonColor {
     /**
      * Represents black.
@@ -90,7 +91,7 @@ public enum JsonColor {
 
     private final String code;
 
-    private JsonColor(String code) {
+    JsonColor(String code) {
         this.code = code;
     }
 

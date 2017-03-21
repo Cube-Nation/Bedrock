@@ -18,8 +18,6 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -94,29 +92,12 @@ public abstract class AbstractCommand {
 
     /**
      * @param sender      the sender of the command
-     * @param subcommands the list of subcommands
      * @param args        the list of arguments
      * @throws CommandException
      * @throws IllegalCommandArgumentException
      */
-    @Deprecated
-    public void execute(CommandSender sender,
-                                 String[] subcommands,
-                                 String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-
-    }
-
-    /**
-     * @param sender      the sender of the command
-     * @param args        the list of arguments
-     * @throws CommandException
-     * @throws IllegalCommandArgumentException
-     */
-    // TODO: Make abstract when removing old 'execute'
-    public void execute(CommandSender sender,
-                                 String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-        execute(sender, null, args);
-    }
+    public abstract void execute(CommandSender sender, String[] args)
+            throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     /**
      * Define the priority to change the help order
@@ -164,14 +145,7 @@ public abstract class AbstractCommand {
         }
 
         final ArrayList<String> list = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
-
-        Collections.sort(list, new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                return s1.compareToIgnoreCase(s2);
-            }
-        });
-
+        list.sort(String::compareToIgnoreCase);
 
         // If the user typed a part of the command, return the matching
         String completionCommand = "";

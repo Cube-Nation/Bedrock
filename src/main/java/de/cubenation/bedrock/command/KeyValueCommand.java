@@ -27,7 +27,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
     }
 
     @Override
-    public final void execute(CommandSender sender, String[] subcommands, String[] args)
+    public final void execute(CommandSender sender, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         // Parse Arguments
 
@@ -67,11 +67,11 @@ public abstract class KeyValueCommand extends AbstractCommand {
             }
         }
 
-        execute(sender, subcommands, parsedArguments);
+        execute(sender, parsedArguments);
 
     }
 
-    public abstract void execute(CommandSender sender, String[] subcommands, HashMap<String, String> arguments)
+    public abstract void execute(CommandSender sender, HashMap<String, String> arguments)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     @Override

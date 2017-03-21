@@ -37,15 +37,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.pluginCommand = pluginCommand;
 
         // !? Add doubles?
-        for (AbstractCommand command : commands) {
-            this.commands.add(command);
-        }
-
+        this.commands.addAll(commands);
         this.helpCommand = new HelpCommand(plugin, this);
-
         this.commands.add(helpCommand);
-
-
     }
 
     public void addCommand(AbstractCommand command) {
@@ -142,13 +136,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         }
 
         // Sorting
-        Collections.sort(helpCommands, new Comparator<AbstractCommand>() {
-            @Override
-            public int compare(AbstractCommand command2, AbstractCommand command1)
-            {
-                return command2.getHelpPriority().compareTo(command1.getHelpPriority());
-            }
-        });
+        helpCommands.sort(Comparator.comparing(AbstractCommand::getHelpPriority));
 
         return helpCommands;
     }

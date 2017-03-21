@@ -124,7 +124,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
         // save for later in fixPermissions()
         if (!this.externalPermissions.containsKey(role))
-            this.externalPermissions.put(role, new ArrayList<String>());
+            this.externalPermissions.put(role, new ArrayList<>());
 
         if (!this.externalPermissions.get(role).contains(permission))
             this.externalPermissions.get(role).add(permission);
@@ -223,7 +223,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
 
                 if (!this.permissionDump.containsKey(formaatted_role))
-                    this.permissionDump.put(formaatted_role, new ArrayList<String>());
+                    this.permissionDump.put(formaatted_role, new ArrayList<>());
 
                 this.permissionDump.get(formaatted_role).add(formatted_permission);
             } // for permission
@@ -270,7 +270,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
                 }
 
                 if (!dump.containsKey(role))
-                    dump.put(role, new ArrayList<String>());
+                    dump.put(role, new ArrayList<>());
 
                 dump.get(role).add(permission);
             }

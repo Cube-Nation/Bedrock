@@ -30,16 +30,6 @@ public abstract class PlayerCommand extends Command {
         }
     }
 
-    // TODO: Make abstract when removing old 'execute'
-    public void execute(Player player, String[] args)
-            throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-        execute(player, null, args);
-    }
-
-    @Deprecated
-    public void execute(Player player, String[] subcommands, String[] args)
-            throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-
-    }
+    public abstract void execute(Player player, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
 }

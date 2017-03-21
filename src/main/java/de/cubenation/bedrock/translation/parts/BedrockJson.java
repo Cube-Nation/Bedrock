@@ -9,6 +9,7 @@ import java.util.ArrayList;
  * Project: Bedrock
  */
 
+@SuppressWarnings({"WeakerAccess", "unchecked", "UnusedReturnValue", "unused", "SameParameterValue"})
 public class BedrockJson extends JSONObject {
 
     public static final String TEXT = "text";

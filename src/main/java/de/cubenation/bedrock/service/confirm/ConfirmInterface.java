@@ -2,10 +2,10 @@ package de.cubenation.bedrock.service.confirm;
 
 public interface ConfirmInterface {
 
-    public void call();
+    void call();
 
-    public void abort();
+    void abort();
 
-    public void invalidate();
+    void invalidate();
 
 }

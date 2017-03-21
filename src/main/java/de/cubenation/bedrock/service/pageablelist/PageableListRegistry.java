@@ -41,11 +41,9 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
 
         // if the timeout is zero, the list is valid until a new list is registered for this CommandSender
         if (timeout > 0) {
-            Bukkit.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-                public void run() {
-                    PageableListRegistry registry = PageableListRegistry.getInstance();
-                    remove(plugin, ident, sender);
-                }
+            Bukkit.getServer().getScheduler().runTaskTimer(plugin, () -> {
+                PageableListRegistry registry = PageableListRegistry.getInstance();
+                remove(plugin, ident, sender);
             }, 60L, (long) 20 * timeout);
         }
     }
