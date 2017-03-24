@@ -189,14 +189,11 @@ public abstract class KeyValueCommand extends AbstractCommand {
      */
     @Override
     public final boolean isValidTrigger(String[] args) {
-
         if (!checkCommands(args)) {
-            System.out.println("!checkCommands");
             return false;
         }
 
         if (!checkArguments(args)) {
-            System.out.println("!checkArguments");
             return false;
         }
 

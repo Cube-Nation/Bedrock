@@ -35,14 +35,12 @@ public class PageableMessageHelper {
     private ArrayList<BedrockJson> jsonHeadline;
 
     public PageableMessageHelper(BasePlugin plugin, String command, AbstractPageableListService listService) {
-        System.out.println("new PageableMessageHelper");
         this.plugin = plugin;
         this.command = command;
         this.listService = listService;
     }
 
     public void paginate(CommandSender sender, int pageIndex) {
-        System.out.println("paginate");
         if (command == null || !command.contains(PAGE_PLACEHOLDER)) {
             plugin.log(Level.INFO, "No placeholder for RunCommand index");
             return;
@@ -61,15 +59,9 @@ public class PageableMessageHelper {
                                      ArrayList<BedrockJson> jsonHeadline,
 
                                      AbstractPageableListService listService) {
-        System.out.println("displayPageableList");
-        int items = listService.size();
         int itemsPerPage = listService.getGeneralPageSize();
         int totalPages = listService.getPages();
         List<PageableListStorable> pageableList = listService.getPage(pageIndex);
-
-        System.out.println("TotalItems: " + items);
-        System.out.println("PageSize: " + itemsPerPage);
-        System.out.println("displayPageableList " + totalPages);
 
         if (jsonHeadline != null) {
             JsonMessage jsonMessage = new JsonMessage(plugin,
