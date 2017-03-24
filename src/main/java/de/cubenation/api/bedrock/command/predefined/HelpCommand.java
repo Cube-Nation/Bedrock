@@ -7,7 +7,6 @@ import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.helper.HelpPageableListService;
-import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.pageablelist.PageableListStorable;
 import de.cubenation.api.bedrock.translation.JsonMessage;
@@ -54,59 +53,67 @@ public class HelpCommand extends Command {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
 
-            // create help for each subcommand
-            ArrayList<JsonMessage> commandComponents = new ArrayList<>();
-            for (AbstractCommand command : commandManager.getHelpCommands()) {
-                JsonMessage componentHelp = command.getJsonHelp(sender);
-                if (componentHelp != null) {
-                    commandComponents.add(componentHelp);
-                }
-            }
-
-
-            HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
-
-            // Preparation for Pagination
-            for (JsonMessage commandComponent : commandComponents) {
-                PageableListStorable msgStoreable = new PageableListStorable();
-                msgStoreable.set(commandComponent);
-                helpPageableListService.store(msgStoreable);
-            }
-            String header = getHeader(getCommandManager().getPluginCommand().getLabel());
-
-            int number = 1;
-            if (args.length > 0 && StringUtils.isNumeric(args[0])) {
-                number = Integer.parseInt(args[0]);
-            }
-            helpPageableListService.paginate(sender, "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%", header, number);
+            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
+            printHelp(sender, args, commandComponents);
 
         } else {
-
             // Send help for special command
             ArrayList<AbstractCommand> helpList = new ArrayList<>();
             for (AbstractCommand command : getCommandManager().getHelpCommands()) {
-                if (command instanceof HelpCommand) {
-                    continue;
-                }
-                if (isValidHelpTrigger(command, args)) {
+                if (!(command instanceof HelpCommand) && isValidHelpTrigger(command, args)) {
                     helpList.add(command);
                 }
             }
 
-            MessageHelper.send(getPlugin(), sender, getHeader(getCommandManager().getPluginCommand().getLabel()));
+            ArrayList<JsonMessage> jsonList;
             if (helpList.isEmpty()) {
                 // If no command is valid, show help for all
-                for (AbstractCommand command : commandManager.getHelpCommands()) {
-                    if (command != null && command.getJsonHelp(sender) != null) {
-                        command.getJsonHelp(sender).send(sender);
-                    }
-                }
+                jsonList = getFullHelpList(sender);
             } else {
-                for (AbstractCommand command : helpList) {
-                    command.getJsonHelp(sender).send(sender);
-                }
+                jsonList = getHelpJsonMessages(sender, helpList);
+            }
+
+            printHelp(sender, args, jsonList);
+        }
+    }
+
+    private ArrayList<JsonMessage> getFullHelpList(CommandSender sender) {
+        // create help for each subcommand
+        ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>() {{
+            addAll(commandManager.getHelpCommands());
+        }};
+
+        return getHelpJsonMessages(sender, commands);
+    }
+
+    private ArrayList<JsonMessage> getHelpJsonMessages(CommandSender sender, ArrayList<AbstractCommand> helpList) {
+        ArrayList<JsonMessage> jsonList = new ArrayList<>();
+
+        for (AbstractCommand abstractCommand : helpList) {
+            JsonMessage jsonHelp = abstractCommand.getJsonHelp(sender);
+            if (jsonHelp != null) {
+                jsonList.add(jsonHelp);
             }
         }
+        return jsonList;
+    }
+
+    private void printHelp(CommandSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
+        HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
+
+        // Preparation for Pagination
+        for (JsonMessage commandComponent : commandComponents) {
+            PageableListStorable msgStoreable = new PageableListStorable();
+            msgStoreable.set(commandComponent);
+            helpPageableListService.store(msgStoreable);
+        }
+        String header = getHeader(getCommandManager().getPluginCommand().getLabel());
+
+        int number = 1;
+        if (args.length > 0 && StringUtils.isNumeric(args[0])) {
+            number = Integer.parseInt(args[0]);
+        }
+        helpPageableListService.paginate(sender, "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%", header, number);
     }
 
     private String getHeader(String label) {
