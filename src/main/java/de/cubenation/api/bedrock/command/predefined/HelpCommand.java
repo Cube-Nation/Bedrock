@@ -1,19 +1,17 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
+import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.helper.HelpPageableListService;
 import de.cubenation.api.bedrock.helper.MessageHelper;
-import de.cubenation.api.bedrock.helper.design.PageableMessageHelper;
 import de.cubenation.api.bedrock.permission.Permission;
-import de.cubenation.api.bedrock.service.pageablelist.PageableListRegistry;
 import de.cubenation.api.bedrock.service.pageablelist.PageableListStorable;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.Translation;
-import de.cubenation.api.bedrock.command.AbstractCommand;
-import de.cubenation.api.bedrock.exception.CommandException;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
@@ -74,25 +72,13 @@ public class HelpCommand extends Command {
                 msgStoreable.set(commandComponent);
                 helpPageableListService.store(msgStoreable);
             }
-
-            PageableListRegistry.getInstance()._register(
-                    getPlugin(),
-                    "help",
-                    sender,
-                    helpPageableListService);
+            String header = getHeader(getCommandManager().getPluginCommand().getLabel());
 
             int number = 1;
             if (args.length > 0 && StringUtils.isNumeric(args[0])) {
                 number = Integer.parseInt(args[0]);
             }
-
-            PageableMessageHelper.pagination(getPlugin(),
-                    helpPageableListService,
-                    number,
-                    "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%",
-                    sender,
-                    getHeader(getCommandManager().getPluginCommand().getLabel()));
-
+            helpPageableListService.paginate(sender, "/" + getCommandManager().getPluginCommand().getLabel() + " help %page%", header, number);
 
         } else {
 

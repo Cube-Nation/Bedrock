@@ -65,7 +65,7 @@ public class ColorScheme {
 
         try {
             Class cls = Class.forName(
-                    "de.cubenation.bedrock.service.colorscheme.scheme." +
+                    "de.cubenation.api.bedrock.service.colorscheme.scheme." +
                     name.toString().substring(0, 1).toUpperCase() + name.toString().substring(1).toLowerCase() +
                     "ColorScheme"
             );

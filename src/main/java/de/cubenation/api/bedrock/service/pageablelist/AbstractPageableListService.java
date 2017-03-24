@@ -1,9 +1,12 @@
 package de.cubenation.api.bedrock.service.pageablelist;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.helper.design.PageableMessageHelper;
 import de.cubenation.api.bedrock.registry.Registerable;
 import de.cubenation.api.bedrock.service.AbstractService;
 import de.cubenation.api.bedrock.service.ServiceInterface;
+import de.cubenation.api.bedrock.translation.parts.BedrockJson;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +16,7 @@ import java.util.logging.Level;
 @SuppressWarnings("unused")
 public abstract class AbstractPageableListService extends AbstractService implements ServiceInterface, Registerable {
 
-    public static int FIRSTPAGE = 1;
-
-    private Integer next = 10;
+    private Integer generalPageSize = 10;
 
     private List<PageableListStorable> storage;
 
@@ -24,14 +25,14 @@ public abstract class AbstractPageableListService extends AbstractService implem
         this.init();
     }
 
-    public AbstractPageableListService(BasePlugin plugin, int next) {
+    public AbstractPageableListService(BasePlugin plugin, int generalPageSize) {
         super(plugin);
-        this.init(next);
+        this.init(generalPageSize);
     }
 
     private void init(int next) {
         this.storage = new ArrayList<>();
-        this.next = next;
+        this.generalPageSize = next;
     }
 
     @Override
@@ -54,29 +55,43 @@ public abstract class AbstractPageableListService extends AbstractService implem
         }
     }
 
+    public void paginate(CommandSender sender, String command, String header, int page) {
+        PageableMessageHelper pageableMessageHelper = new PageableMessageHelper(getPlugin(), command, this);
+
+        pageableMessageHelper.setHeadline(header);
+        pageableMessageHelper.paginate(sender, page);
+    }
+
+    public void paginate(CommandSender sender, String command, ArrayList<BedrockJson> header, int page) {
+        PageableMessageHelper pageableMessageHelper = new PageableMessageHelper(getPlugin(), command, this);
+
+        pageableMessageHelper.setJsonHeadline(header);
+        pageableMessageHelper.paginate(sender, page);
+    }
+
     public int size() {
         return this.storage.size();
     }
 
     public List<PageableListStorable> getPage(int page) {
-        return this.getPage(this.next, page);
+        return this.getPage(this.generalPageSize, page);
     }
 
     public int getPages() {
         double factor = 0.5;
-        if (this.storage.size() % this.next == 0) {
+        if (storage.size() % generalPageSize == 0) {
             factor = 0.0;
         }
-        return (int) Math.round(this.storage.size() / this.next + factor);
+        return (int) Math.round(storage.size() / generalPageSize + factor);
     }
 
     public int getPageSize(int page) throws IndexOutOfBoundsException {
         if (page > this.getPages()) {
             throw new IndexOutOfBoundsException("page " + page + " is greater than " + this.getPages());
         } else if (page < this.getPages()) {
-            return this.next;
+            return this.generalPageSize;
         } else {
-            return size() - ((page - 1) * next);
+            return size() - ((page - 1) * generalPageSize);
         }
     }
 
@@ -97,8 +112,12 @@ public abstract class AbstractPageableListService extends AbstractService implem
         return storage.get(i);
     }
 
-    public Integer getItemsPerPage() {
-        return next;
+    public List<PageableListStorable> getStorage() {
+        return storage;
+    }
+
+    public Integer getGeneralPageSize() {
+        return generalPageSize;
     }
 
     public boolean isEmpty() {
@@ -108,7 +127,7 @@ public abstract class AbstractPageableListService extends AbstractService implem
     @Override
     public String toString() {
         return "AbstractPageableListService{" +
-                "next=" + next +
+                "generalPageSize=" + generalPageSize +
                 "getPages()" + getPages() +
                 "size" + size() +
                 ", storage=" + storage +

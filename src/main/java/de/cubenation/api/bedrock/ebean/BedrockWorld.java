@@ -56,4 +56,11 @@ public class BedrockWorld {
         BedrockPlugin.getInstance().getDatabase().save(this);
     }
 
+    @Override
+    public String toString() {
+        return "BedrockWorld{" +
+                "id=" + id +
+                ", uuid='" + uuid + '\'' +
+                '}';
+    }
 }
