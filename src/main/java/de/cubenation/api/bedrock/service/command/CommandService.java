@@ -1,14 +1,14 @@
 package de.cubenation.api.bedrock.service.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.command.AbstractCommand;
+import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.command.predefined.*;
+import de.cubenation.api.bedrock.exception.ServiceInitException;
+import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
 import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.service.settings.SettingsService;
-import de.cubenation.api.bedrock.command.AbstractCommand;
-import de.cubenation.api.bedrock.command.manager.CommandManager;
-import de.cubenation.api.bedrock.exception.ServiceInitException;
-import de.cubenation.api.bedrock.exception.ServiceReloadException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -99,6 +99,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
         pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
+        pluginCommandManager.addCommand(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
 
         SettingsService settingService = plugin.getSettingService();
         if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {

@@ -3,10 +3,10 @@ package de.cubenation.api.bedrock.service.localization;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
+import de.cubenation.api.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public final class LocalizationService extends AbstractService implements Servic
         return this.locale;
     }
 
-    private String getRelativeLocaleFile() {
+    public String getRelativeLocaleFile() {
         return this.relative_locale_file;
     }
 

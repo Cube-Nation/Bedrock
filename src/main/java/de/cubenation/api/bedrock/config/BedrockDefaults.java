@@ -184,6 +184,10 @@ public class BedrockDefaults extends CustomConfigurationFile {
         this.localization_locale = locale;
     }
 
+    public String getLocalizationLocale() {
+        return this.localization_locale;
+    }
+
 
 
     /**

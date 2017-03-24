@@ -142,7 +142,6 @@ public class en_US extends CustomConfigurationFile {
     private String help_command_args_description    = "&TEXT& - %description%&RESET&";
 
 
-
     @Path("help.subcommand.alias.desc")
     private String help_subcommand_alias_desc = "Alternatively, you can also use:";
 
@@ -171,6 +170,10 @@ public class en_US extends CustomConfigurationFile {
 
     @Path("command.bedrock.version.desc")
     private String help_version = "Show the plugin version";
+
+    @Path("command.bedrock.regeneratelocale.desc")
+    private String help_regenerate_locale = "Recreate the file for the current locale";
+
 
 
     /**

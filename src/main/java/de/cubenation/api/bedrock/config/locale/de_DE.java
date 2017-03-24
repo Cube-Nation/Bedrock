@@ -215,6 +215,9 @@ public class de_DE extends CustomConfigurationFile {
     @Path("command.bedrock.version.desc")
     private String help_version = "Zeigt die Version des Plugins an";
 
+    @Path("command.bedrock.regeneratelocale.desc")
+    private String help_regenerate_locale = "Erstellt die Datei für das aktuelle Locale neu";
+
 
     /**
      * Args
