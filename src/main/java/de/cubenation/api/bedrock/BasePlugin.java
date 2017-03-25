@@ -50,8 +50,6 @@ public abstract class BasePlugin extends JavaPlugin {
     /** The ServiceManager object */
     private ServiceManager serviceManager;
 
-    private MetricsLite metrics;
-
     /**
      * BasePlugin constructor
      * Calls the JavaPlugin constructor
@@ -118,7 +116,7 @@ public abstract class BasePlugin extends JavaPlugin {
             return;
         }
 
-        metrics = new MetricsLite(this);
+        new MetricsLite(this);
 
         // call onPostEnable after we've set everything up
         try {

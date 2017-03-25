@@ -29,9 +29,10 @@ public class MetricsLite {
 
     static {
         // Maven's Relocate is clever and changes strings, too. So we have to use this little "trick" ... :D
-        final String defaultPackage = new String(new byte[]{'d', 'e', '.', 'c', 'u', 'b', 'e', 'n', 'a', 't', 'i', 'o', 'n'});
+        final String defaultPackage = new String(new byte[] { 'o', 'r', 'g', '.', 'b', 's', 't', 'a', 't', 's' });
+        final String examplePackage = new String(new byte[] { 'y', 'o', 'u', 'r', '.', 'p', 'a', 'c', 'k', 'a', 'g', 'e' });
         // We want to make sure nobody just copy & pastes the example and use the wrong package names
-        if (MetricsLite.class.getPackage().getName().equals(defaultPackage)) {
+        if (MetricsLite.class.getPackage().getName().equals(defaultPackage) || MetricsLite.class.getPackage().getName().equals(examplePackage)) {
             throw new IllegalStateException("bStats Metrics class has not been relocated correctly!");
         }
     }
@@ -86,8 +87,7 @@ public class MetricsLite {
             ).copyDefaults(true);
             try {
                 config.save(configFile);
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) { }
         }
 
         // Load the data
@@ -101,8 +101,7 @@ public class MetricsLite {
                     service.getField("B_STATS_VERSION"); // Our identifier :)
                     found = true; // We aren't the first
                     break;
-                } catch (NoSuchFieldException ignored) {
-                }
+                } catch (NoSuchFieldException ignored) { }
             }
             // Register our service
             Bukkit.getServicesManager().register(MetricsLite.class, this, plugin, ServicePriority.Normal);
@@ -134,7 +133,7 @@ public class MetricsLite {
                     }
                 });
             }
-        }, 1000 * 60 * 5, 1000 * 60 * 30);
+        }, 1000*60*5, 1000*60*30);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start
         // WARNING: Changing the frequency has no effect but your plugin WILL be blocked/deleted!
         // WARNING: Just don't do it!
@@ -213,8 +212,7 @@ public class MetricsLite {
             // Found one!
             try {
                 pluginData.add(service.getMethod("getPluginData").invoke(Bukkit.getServicesManager().load(service)));
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) {
-            }
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignored) { }
         }
 
         data.put("plugins", pluginData);
