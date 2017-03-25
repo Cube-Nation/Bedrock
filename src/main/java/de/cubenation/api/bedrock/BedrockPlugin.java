@@ -1,9 +1,8 @@
 package de.cubenation.api.bedrock;
 
-import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.command.player.BedrockPlayerInfoCommand;
+import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.config.locale.de_DE;
-import de.cubenation.api.bedrock.config.locale.en_US;
 import de.cubenation.api.bedrock.ebean.BedrockPlayer;
 import de.cubenation.api.bedrock.ebean.BedrockWorld;
 import de.cubenation.api.bedrock.listener.EbeanListener;
@@ -65,7 +64,7 @@ public class BedrockPlugin extends BasePlugin {
     public ArrayList<Class<?>> getCustomConfigurationFiles() {
         return new ArrayList<Class<?>>() {{
             add(de_DE.class);
-            add(en_US.class);
+//            add(en_US.class);
         }};
     }
 

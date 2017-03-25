@@ -178,7 +178,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
 
     @Path("service.localization.locale")
     @Comment("the default locale that is being represented by a file, e.g. de_DE represents locale/de_DE.yml.")
-    private String localization_locale      = "en_US";
+    private String localization_locale      = "de_DE";
 
     public void setLocalizationLocale(String locale) {
         this.localization_locale = locale;

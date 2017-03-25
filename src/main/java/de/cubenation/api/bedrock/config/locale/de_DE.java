@@ -19,7 +19,7 @@ public class de_DE extends CustomConfigurationFile {
 
 
     @Path("version")
-    private String version = "{text:\"%plugin_prefix%\",color:\"white\",extra:[{text:\" Version \",color:\"&TEXT&\"},{text:\"%version%\",color:\"&PRIMARY&\"}]}";
+    private String version = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Version \",\"color\":\"&TEXT&\"},{\"text\":\"%version%\",\"color\":\"&PRIMARY&\"}]}";
 
 
     /**
@@ -27,10 +27,10 @@ public class de_DE extends CustomConfigurationFile {
      */
 
     @Path("reload.complete")
-    private String reload_complete = "{text:\"%plugin_prefix%\",color:\"white\",extra:[{text:\" Plugin neu geladen\",color:\"white\"}]}";
+    private String reload_complete = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Plugin neu geladen\",\"color\":\"white\"}]}";
 
     @Path("reload.failed")
-    private String reload_failed = "{text:\"%plugin_prefix%\",color:\"white\",extra:[{text:\"Plugin konnte nicht neu geladen werden\",color:\"white\"}]}";
+    private String reload_failed = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Plugin konnte nicht neu geladen werden\",\"color\":\"white\"}]}";
 
 
     /**
@@ -39,38 +39,38 @@ public class de_DE extends CustomConfigurationFile {
 
 
     @Path("permission.list.header")
-    private String permission_list_header = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Alle Berechtigungen:\",color:\"&SECONDARY&\"}]}";
+    private String permission_list_header = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Alle Berechtigungen:\",\"color\":\"&SECONDARY&\"}]}";
 
     @Path("permission.list.role")
-    private String permission_list_role = "{text:\"%role%\",color:\"&PRIMARY&\",extra:[{text:\":\",color:\"white\"}]}";
+    private String permission_list_role = "{\"text\":\"%role%\",\"color\":\"&PRIMARY&\",\"extra\":[{\"text\":\":\",\"color\":\"white\"}]}";
 
     @Path("permission.list.permission")
-    private String permission_list_permission = "{text:\" - \",color:\"&FLAG&\",extra:[{text:\"%permission%\",color:\"&SECONDARY&\"}]}%";
+    private String permission_list_permission = "{\"text\":\" - \",\"color\":\"&FLAG&\",\"extra\":[{\"text\":\"%permission%\",\"color\":\"&SECONDARY&\"}]}";
 
     @Path("permission.insufficient")
-    private String permission_insufficient = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Für diesen Befehl hast Du keine Berechtigung!\",color:\"red\"}]}";
+    private String permission_insufficient = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Für diesen Befehl hast Du keine Berechtigung!\",\"color\":\"red\"}]}";
 
     @Path("command.invalid")
-    private String command_invalid = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Ungültiger Befehl\",color:\"red\"}]}";
+    private String command_invalid = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Ungültiger Befehl\",\"color\":\"red\"}]}";
 
     @Path("must_be_player")
-    private String must_be_player = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Um diesen Befehl zu verwenden musst Du im Spiel sein\",color:\"red\"}]}";
+    private String must_be_player = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Um diesen Befehl zu verwenden musst Du im Spiel sein\",\"color\":\"red\"}]}";
 
     @Path("no_such_setting")
-    private String no_such_setting = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Einstellungen für \",color:\"red\"},{text:\"%key% \",color:\"&SECONDARY&\"},{text:\"wurden nicht gefunden\",color:\"red\"}]}";
+    private String no_such_setting = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Einstellungen für \",\"color\":\"red\"},{\"text\":\"%key% \",\"color\":\"&SECONDARY&\"},{\"text\":\"wurden nicht gefunden\",\"color\":\"red\"}]}";
 
 
     @Path("no_such_player.specific")
-    private String no_such_player_specific = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler \",color:\"red\"},{text:\"%player% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
+    private String no_such_player_specific = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Spieler \",\"color\":\"red\"},{\"text\":\"%player% \",\"color\":\"&SECONDARY&\"},{\"text\":\"wurde nicht gefunden\",\"color\":\"red\"}]}";
 
     @Path("no_such_player.default")
-    private String no_such_player_default = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Spieler wurde nicht gefunden\",color:\"red\"}]}";
+    private String no_such_player_default = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Spieler wurde nicht gefunden\",\"color\":\"red\"}]}";
 
     @Path("no_such_world")
-    private String no_such_world = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Welt \",color:\"red\"},{text:\"%world% \",color:\"&SECONDARY&\"},{text:\"wurde nicht gefunden\",color:\"red\"}]}";
+    private String no_such_world = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Welt \",\"color\":\"red\"},{\"text\":\"%world%\",\"color\":\"&SECONDARY&\"},{\"text\":\"wurde nicht gefunden\",\"color\":\"red\"}]}";
 
     @Path("no_such_world_empty")
-    private String no_such_world_empty = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Die Welt wurde nicht gefunden\",color:\"red\"}]}";
+    private String no_such_world_empty = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Die Welt wurde nicht gefunden\",\"color\":\"red\"}]}";
 
 
     /*
