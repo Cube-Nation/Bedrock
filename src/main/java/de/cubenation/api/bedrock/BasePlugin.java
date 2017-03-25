@@ -1,11 +1,9 @@
 package de.cubenation.api.bedrock;
 
-import de.cubenation.api.bedrock.exception.UnknownServiceException;
-import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
-import de.cubenation.api.bedrock.service.settings.CustomSettingsFile;
 import de.cubenation.api.bedrock.exception.DependencyException;
 import de.cubenation.api.bedrock.exception.NoSuchPluginException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
+import de.cubenation.api.bedrock.exception.UnknownServiceException;
 import de.cubenation.api.bedrock.helper.version.VersionComparator;
 import de.cubenation.api.bedrock.reloadable.Reloadable;
 import de.cubenation.api.bedrock.service.ServiceInterface;
@@ -13,10 +11,13 @@ import de.cubenation.api.bedrock.service.ServiceManager;
 import de.cubenation.api.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.api.bedrock.service.command.CommandService;
 import de.cubenation.api.bedrock.service.config.ConfigService;
+import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.api.bedrock.service.inventory.InventoryService;
 import de.cubenation.api.bedrock.service.localization.LocalizationService;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
+import de.cubenation.api.bedrock.service.settings.CustomSettingsFile;
 import de.cubenation.api.bedrock.service.settings.SettingsService;
+import de.cubenation.api.bedrock.service.stats.MetricsLite;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -48,6 +49,8 @@ public abstract class BasePlugin extends JavaPlugin {
 
     /** The ServiceManager object */
     private ServiceManager serviceManager;
+
+    private MetricsLite metrics;
 
     /**
      * BasePlugin constructor
@@ -114,6 +117,8 @@ public abstract class BasePlugin extends JavaPlugin {
             this.disable(e);
             return;
         }
+
+        metrics = new MetricsLite(this);
 
         // call onPostEnable after we've set everything up
         try {
