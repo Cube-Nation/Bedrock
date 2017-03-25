@@ -175,6 +175,18 @@ public abstract class AbstractCommand {
      */
     public abstract boolean isValidTrigger(String[] args);
 
+    public boolean isValidHelpTrigger(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            for (String cmd : getSubcommands().get(i)) {
+                if (cmd.startsWith(args[i])) {
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
     public JsonMessage getJsonHelp(CommandSender sender) {
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }

@@ -60,7 +60,7 @@ public class HelpCommand extends Command {
             // Send help for special command
             ArrayList<AbstractCommand> helpList = new ArrayList<>();
             for (AbstractCommand command : getCommandManager().getHelpCommands()) {
-                if (!(command instanceof HelpCommand) && isValidHelpTrigger(command, args)) {
+                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
                     helpList.add(command);
                 }
             }
@@ -86,7 +86,7 @@ public class HelpCommand extends Command {
         return getHelpJsonMessages(sender, commands);
     }
 
-    private ArrayList<JsonMessage> getHelpJsonMessages(CommandSender sender, ArrayList<AbstractCommand> helpList) {
+    public ArrayList<JsonMessage> getHelpJsonMessages(CommandSender sender, ArrayList<AbstractCommand> helpList) {
         ArrayList<JsonMessage> jsonList = new ArrayList<>();
 
         for (AbstractCommand abstractCommand : helpList) {
@@ -98,7 +98,7 @@ public class HelpCommand extends Command {
         return jsonList;
     }
 
-    private void printHelp(CommandSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
+    public void printHelp(CommandSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
         HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
 
         // Preparation for Pagination
@@ -124,18 +124,6 @@ public class HelpCommand extends Command {
                 "help.header",
                 new String[]{"plugin", commandHeaderName}
         ).getTranslation();
-    }
-
-    private boolean isValidHelpTrigger(AbstractCommand command, String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            for (String cmd : command.getSubcommands().get(i)) {
-                if (cmd.startsWith(args[i])) {
-                    continue;
-                }
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override

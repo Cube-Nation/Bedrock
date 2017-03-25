@@ -98,8 +98,20 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
         }
 
-        // unknown command
-        MessageHelper.invalidCommand(this.plugin, commandSender);
+        ArrayList<AbstractCommand> helpList = new ArrayList<>();
+        for (AbstractCommand possibleHelpCommand : getHelpCommands()) {
+            if (!(possibleHelpCommand instanceof HelpCommand) && possibleHelpCommand.isValidHelpTrigger(args)) {
+                helpList.add(possibleHelpCommand);
+            }
+        }
+
+        if (helpList.isEmpty()) {
+            // unknown command
+            MessageHelper.invalidCommand(this.plugin, commandSender);
+            return true;
+        }
+
+        helpCommand.printHelp(commandSender, args, helpCommand.getHelpJsonMessages(commandSender, helpList));
         return true;
     }
 
