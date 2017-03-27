@@ -91,9 +91,17 @@ public class BedrockJson extends JSONObject {
         return this;
     }
 
+    public boolean containsClickAction() {
+        return this.containsKey(CLICKEVENT);
+    }
+
     public BedrockJson hoverAction(BedrockHoverEvent.Action action, BedrockJson value) {
         this.put(HOVEREVENT, new BedrockHoverEvent(action, value).toJson());
         return this;
+    }
+
+    public boolean containsHoverAction() {
+        return this.containsKey(HOVEREVENT);
     }
 
     public BedrockJson extra(ArrayList<BedrockJson> extra) {
