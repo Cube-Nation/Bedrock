@@ -28,7 +28,7 @@ public class CommandListCommand extends Command {
     }
 
     @CommandDescription(Ident = "command.bedrock.cmd.list.desc")
-    //@CommandPermission(Name = "command.list", Role = CommandRole.USER)
+    @CommandPermission(Name = "command.list", Role = CommandRole.USER)
     @CommandSubCommands(SubCommands = {
             @CommandSubCommand(Commands = { "command", "cmd" }),
             @CommandSubCommand(Commands = { "list", "l" })
