@@ -1,13 +1,13 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.CommandDescription;
+import de.cubenation.api.bedrock.annotation.CommandSubCommand;
 import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.Command;
-import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.helper.HelpPageableListService;
-import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.pageablelist.PageableListStorable;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.Translation;
@@ -30,24 +30,8 @@ public class HelpCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
-    public void setPermissions(ArrayList<Permission> permissions) {
-    }
-
-    @Override
-    public void setSubCommands(ArrayList<String[]> subcommands) {
-        subcommands.add(new String[]{"help"});
-    }
-
-    @Override
-    public void setDescription(StringBuilder description) {
-        description.append("command.bedrock.help.desc");
-    }
-
-    @Override
-    public void setArguments(ArrayList<Argument> arguments) {
-    }
-
+    @CommandDescription(Ident = "command.bedrock.help.desc")
+    @CommandSubCommand(Commands = { "help" })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {

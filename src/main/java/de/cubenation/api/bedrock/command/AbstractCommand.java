@@ -1,6 +1,7 @@
 package de.cubenation.api.bedrock.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -16,8 +17,10 @@ import de.cubenation.api.bedrock.translation.parts.JsonColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.logging.Level;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -25,56 +28,121 @@ import java.util.Arrays;
  */
 public abstract class AbstractCommand {
 
-    protected StringBuilder description = new StringBuilder();
-
-    protected ArrayList<String[]> subcommands = new ArrayList<>();
-
-    protected ArrayList<Argument> arguments = new ArrayList<>();
-
-    private ArrayList<Permission> runtimePermissions = new ArrayList<>();
-
     protected BasePlugin plugin;
 
     protected CommandManager commandManager;
 
+    private String description = "";
 
-    public AbstractCommand(BasePlugin plugin, CommandManager commandManager) {
+    private  ArrayList<String[]> subcommands = new ArrayList<>();
+
+    private ArrayList<Argument> arguments = new ArrayList<>();
+
+    private ArrayList<Permission> runtimePermissions = new ArrayList<>();
+
+    AbstractCommand(BasePlugin plugin, CommandManager commandManager) {
         this.plugin = plugin;
         this.commandManager = commandManager;
 
-        setDescription(this.description);
-        setSubCommands(this.subcommands);
+        // read annotations
+        try {
+            Method method = this.getClass().getMethod("execute", CommandSender.class, String[].class);
 
-        setPermissions(this.runtimePermissions);
-        for (Permission permission : this.runtimePermissions) {
-            permission.setPlugin(plugin);
-        }
+            // Description
+            if (method.isAnnotationPresent(CommandDescription.class)) {
+                this.setDescription(method.getAnnotation(CommandDescription.class).Ident());
+            }
 
-        setArguments(this.arguments);
-        for (Argument argument : this.arguments) {
-            argument.setPlugin(plugin);
+            // SubCommand/s
+            if (method.isAnnotationPresent(CommandSubCommands.class)) {
+                for (CommandSubCommand commandSubCommand : method.getAnnotation(CommandSubCommands.class).SubCommands()) {
+                    this.addSubCommand(commandSubCommand.Commands());
+                }
+            }
+
+            if (method.isAnnotationPresent(CommandSubCommand.class)) {
+                this.addSubCommand(method.getAnnotation(CommandSubCommand.class).Commands());
+            }
+
+            // Permission/s
+            if (method.isAnnotationPresent(CommandPermissions.class)) {
+                for (CommandPermission commandPermission : method.getAnnotation(CommandPermissions.class).Permissions()) {
+                    this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
+                }
+            }
+
+            if (method.isAnnotationPresent(CommandPermission.class)) {
+                CommandPermission commandPermission = method.getAnnotation(CommandPermission.class);
+                this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
+            }
+
+            // Argument/s
+            if (method.isAnnotationPresent(CommandArguments.class)) {
+                for (CommandArgument commandArgument : method.getAnnotation(CommandArguments.class).Arguments()) {
+                    this.processArgumentAnnotation(commandArgument);
+                }
+            }
+
+            if (method.isAnnotationPresent(CommandArgument.class)) {
+                this.processArgumentAnnotation(method.getAnnotation(CommandArgument.class));
+            }
+
+        } catch (NoSuchMethodException e) {
+            plugin.log(Level.SEVERE, "Abstract method execute() is not implemented in class " + this.getClass().toString() + ". This should never happen.");
+            plugin.disable(e);
         }
     }
 
-    /**
-     * @param permissions ArrayList of permission strings
-     */
-    public abstract void setPermissions(ArrayList<Permission> permissions);
+    public BasePlugin getPlugin() {
+        return this.plugin;
+    }
 
-    /**
-     * @param subcommands ArrayList with subcommand string arrays
-     */
-    public abstract void setSubCommands(ArrayList<String[]> subcommands);
+    public CommandManager getCommandManager() {
+        return this.commandManager;
+    }
 
-    /**
-     * @param description Locale identifier string
-     */
-    public abstract void setDescription(StringBuilder description);
+    public String getDescription() {
+        return description;
+    }
 
-    /**
-     * @param arguments ArrayList of Argument objects
-     */
-    public abstract void setArguments(ArrayList<Argument> arguments);
+    private void setDescription(String description) {
+        this.description = description;
+    }
+
+    public ArrayList<String[]> getSubcommands() {
+        return subcommands;
+    }
+
+    private void addSubCommand(String[] subCommands) {
+        this.subcommands.add(subCommands);
+    }
+
+    public ArrayList<Permission> getRuntimePermissions() {
+        return this.runtimePermissions;
+    }
+
+    private void addRuntimePermission(Permission permission) {
+        permission.setPlugin(plugin);
+        this.runtimePermissions.add(permission);
+    }
+
+    public ArrayList<Argument> getArguments() {
+        return arguments;
+    }
+
+    private void processArgumentAnnotation(CommandArgument commandArgument) {
+        Argument argument = new Argument(commandArgument.Description(), commandArgument.Placeholder(), commandArgument.Optional());
+        if (!commandArgument.Permission().equals("")) {
+            argument.setPermission(new Permission(commandArgument.Permission(), commandArgument.Role()));
+        }
+
+        argument.setPlugin(plugin);
+        this.addArgument(argument);
+    }
+
+    private void addArgument(Argument argument) {
+        this.arguments.add(argument);
+    }
 
     public void preExecute(CommandSender commandSender, String[] args)  throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         if (performPreArgumentCheck()) {
@@ -91,7 +159,7 @@ public abstract class AbstractCommand {
 
     /**
      * @param sender      the sender of the command
-     * @param args        the list of arguments
+     * @param args        the list of Arguments
      * @throws CommandException
      * @throws IllegalCommandArgumentException
      */
@@ -241,7 +309,7 @@ public abstract class AbstractCommand {
         }
 
         if (argPlaceholderEnabled) {
-            // process all arguments
+            // process all Arguments
             for (Argument argument : getArguments()) {
 
 
@@ -309,36 +377,12 @@ public abstract class AbstractCommand {
         return false;
     }
 
-    public ArrayList<Permission> getRuntimePermissions() {
-        return this.runtimePermissions;
-    }
-
-    public CommandManager getCommandManager() {
-        return this.commandManager;
-    }
-
-    public BasePlugin getPlugin() {
-        return this.plugin;
-    }
-
-    public ArrayList<String[]> getSubcommands() {
-        return subcommands;
-    }
-
-    public ArrayList<Argument> getArguments() {
-        return arguments;
-    }
-
-    public String getDescription() {
-        return description.toString();
-    }
-
     @Override
     public String toString() {
         return "AbstractCommand{" +
                 "description=" + description +
                 ", subcommands=" + subcommands +
-                ", arguments=" + arguments +
+                ", Arguments=" + arguments +
                 ", runtimePermissions=" + runtimePermissions +
                 ", plugin=" + plugin +
                 ", commandManager=" + commandManager +

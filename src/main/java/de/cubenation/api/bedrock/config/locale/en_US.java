@@ -174,6 +174,8 @@ public class en_US extends CustomConfigurationFile {
     @Path("command.bedrock.regeneratelocale.desc")
     private String help_regenerate_locale = "Recreate the file for the current locale";
 
+    @Path("command.bedrock.playerinfo.desc")
+    private String help_playerinfo_desc = "Shows information about one or more Bedrock players";
 
 
     /**

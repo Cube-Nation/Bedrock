@@ -1,13 +1,12 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.NoSuchPlayerException;
-import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.settings.SettingsManager;
-import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
@@ -27,28 +26,23 @@ public class SettingsInfoCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
-    public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("settings.list", CommandRole.ADMIN));
-    }
-
-    @Override
-    public void setSubCommands(ArrayList<String[]> subcommands) {
-        subcommands.add(new String[]{"settings"});
-        subcommands.add(new String[]{"info", "i"});
-    }
-
-    @Override
-    public void setDescription(StringBuilder description) {
-        description.append("command.bedrock.settings.info.desc");
-    }
-
-    @Override
-    public void setArguments(ArrayList<Argument> arguments) {
-        arguments.add(new Argument("command.bedrock.key.desc", "command.bedrock.key.ph"));
-        arguments.add(new Argument("command.bedrock.username_uuid.desc", "command.bedrock.username_uuid.ph", true));
-    }
-
+    @CommandDescription(Ident = "command.bedrock.info.desc")
+    @CommandPermission(Name = "settings.list", Role = CommandRole.ADMIN)
+    @CommandSubCommands(SubCommands = {
+            @CommandSubCommand(Commands = { "settings" }),
+            @CommandSubCommand(Commands = { "info", "i" })
+    })
+    @CommandArguments(Arguments = {
+            @CommandArgument(
+                    Description = "command.bedrock.key.desc",
+                    Placeholder = "command.bedrock.key.ph"
+            ),
+            @CommandArgument(
+                    Description = "command.bedrock.username_uuid.desc",
+                    Placeholder = "command.bedrock.username_uuid.ph",
+                    Optional = true
+            )
+    })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 

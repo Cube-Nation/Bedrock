@@ -271,7 +271,7 @@ public class MessageHelper {
         Boolean hasOptional = false;
         Boolean hasRequired = false;
 
-        // process all arguments
+        // process all Arguments
         for (Argument argument : command.getArguments()) {
 
             if (!argument.userHasPermission(sender)) {

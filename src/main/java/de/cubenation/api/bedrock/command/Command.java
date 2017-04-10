@@ -21,8 +21,8 @@ public abstract class Command extends AbstractCommand {
     public ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
         ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
         if (isValidTrigger(args)) {
-            if (args != null && subcommands != null) {
-                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - subcommands.size() - 1, Arrays.copyOfRange(args, subcommands.size(), args.length));
+            if (args != null && this.getSubcommands()!= null) {
+                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - this.getSubcommands().size() - 1, Arrays.copyOfRange(args, this.getSubcommands().size(), args.length));
                 if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
                     if (tabCompletionFromCommands == null) {
                         tabCompletionFromCommands = new ArrayList<>();
@@ -60,12 +60,12 @@ public abstract class Command extends AbstractCommand {
     @Override
     public boolean isValidTrigger(String[] args) {
 
-        if (args.length >= this.subcommands.size()) {
+        if (args.length >= this.getSubcommands().size()) {
             // Check previous Arguments
             boolean prevResult = true;
-            for (int i = 0; i < this.subcommands.size(); i++) {
+            for (int i = 0; i < this.getSubcommands().size(); i++) {
                 boolean res = false;
-                for (String com : this.subcommands.get(i)) {
+                for (String com : this.getSubcommands().get(i)) {
                     if (args[i].equalsIgnoreCase(com)) {
                         res = true;
                     }
@@ -76,8 +76,8 @@ public abstract class Command extends AbstractCommand {
             }
             return prevResult;
         }
-        // Not enough arguments
-        // TODO: Should display if not enough arguments available!
+        // Not enough Arguments
+        // TODO: Should display if not enough Arguments available!
         return false;
     }
 

@@ -7,6 +7,7 @@ package de.cubenation.api.bedrock.command;
 
 @SuppressWarnings("unused")
 public enum CommandRole {
+    NO_ROLE("no_role"),
     GUEST("guest"),
     USER("user"),
     SUPPORTER("supporter"),
