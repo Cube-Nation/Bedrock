@@ -18,9 +18,9 @@ public class VersionCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.version.desc")
+    @CommandDescription("command.bedrock.version.desc")
     @CommandPermission(Name = "version", Role = CommandRole.MODERATOR)
-    @CommandSubCommand(Commands = { "version", "v" })
+    @CommandSubCommand({ "version", "v" })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         MessageHelper.version(this.getCommandManager().getPlugin(), sender);

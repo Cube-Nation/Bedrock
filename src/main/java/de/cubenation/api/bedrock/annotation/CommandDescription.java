@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface CommandDescription {
 
-    String Ident();
+    String value() default "";
 
 }

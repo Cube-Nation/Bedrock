@@ -30,12 +30,12 @@ public class PermissionOtherCommand extends Command {
     }
 
     @Override
-    @CommandDescription(Ident = "command.bedrock.permissions.desc")
+    @CommandDescription("command.bedrock.permissions.desc")
     @CommandPermissions(Permissions = {
             @CommandPermission(Name = "permissions.other", Role = CommandRole.MODERATOR),
             @CommandPermission(Name = "permissions.self", Role = CommandRole.USER)
     })
-    @CommandSubCommand(Commands = { "permissions", "perms" })
+    @CommandSubCommand({ "permissions", "perms" })
     @CommandArgument(
         Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true,
         Permission = "permissions.other", Role = CommandRole.MODERATOR

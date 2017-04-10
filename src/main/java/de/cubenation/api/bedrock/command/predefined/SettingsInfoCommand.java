@@ -4,14 +4,14 @@ import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
-import de.cubenation.api.bedrock.exception.NoSuchPlayerException;
-import de.cubenation.api.bedrock.service.settings.SettingsManager;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
+import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
+import de.cubenation.api.bedrock.exception.NoSuchPlayerException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.service.settings.CustomSettingsFile;
+import de.cubenation.api.bedrock.service.settings.SettingsManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -26,11 +26,11 @@ public class SettingsInfoCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.info.desc")
+    @CommandDescription("command.bedrock.info.desc")
     @CommandPermission(Name = "settings.list", Role = CommandRole.ADMIN)
     @CommandSubCommands(SubCommands = {
-            @CommandSubCommand(Commands = { "settings" }),
-            @CommandSubCommand(Commands = { "info", "i" })
+            @CommandSubCommand({ "settings" }),
+            @CommandSubCommand({ "info", "i" })
     })
     @CommandArguments(Arguments = {
             @CommandArgument(

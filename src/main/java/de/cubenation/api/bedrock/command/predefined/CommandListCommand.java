@@ -27,13 +27,13 @@ public class CommandListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.cmd.list.desc")
+    @Override
+    @CommandDescription("command.bedrock.cmd.list.desc")
     @CommandPermission(Name = "command.list", Role = CommandRole.USER)
     @CommandSubCommands(SubCommands = {
-            @CommandSubCommand(Commands = { "command", "cmd" }),
-            @CommandSubCommand(Commands = { "list", "l" })
+            @CommandSubCommand({ "command", "cmd" }),
+            @CommandSubCommand({ "list", "l" })
     })
-    @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();

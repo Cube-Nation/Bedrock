@@ -30,8 +30,8 @@ public class HelpCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.help.desc")
-    @CommandSubCommand(Commands = { "help" })
+    @CommandDescription("command.bedrock.help.desc")
+    @CommandSubCommand({ "help" })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {

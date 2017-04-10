@@ -18,8 +18,6 @@ import de.cubenation.api.bedrock.helper.UUIDUtil;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
-import java.util.ArrayList;
-
 /**
  * Created by BenediktHr on 17.08.16.
  * Project: Bedrock
@@ -30,10 +28,14 @@ public class BedrockPlayerInfoCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.playerinfo.desc")
+    @CommandDescription("command.bedrock.playerinfo.desc")
     @CommandPermission(Name = "info.other", Role = CommandRole.ADMIN)
-    @CommandSubCommand(Commands = { "info", "i" })
-    @CommandArgument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
+    @CommandSubCommand({ "info", "i" })
+    @CommandArgument(
+            Description = "command.bedrock.username_uuid.desc",
+            Placeholder = "command.bedrock.username_uuid.ph",
+            Optional = true
+    )
     @Override
     public void execute(final CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 

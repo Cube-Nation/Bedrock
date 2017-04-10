@@ -22,9 +22,9 @@ public class ReloadCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.reload.desc")
+    @CommandDescription("command.bedrock.reload.desc")
     @CommandPermission(Name = "reload", Role = CommandRole.ADMIN)
-    @CommandSubCommand(Commands = { "reload", "r" })
+    @CommandSubCommand({ "reload", "r" })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {

@@ -1,7 +1,9 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.*;
+import de.cubenation.api.bedrock.annotation.CommandDescription;
+import de.cubenation.api.bedrock.annotation.CommandPermission;
+import de.cubenation.api.bedrock.annotation.CommandSubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -24,8 +26,8 @@ public class PermissionListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident="command.bedrock.permissions.list.desc")
-    @CommandSubCommand(Commands = { "pl", "permslist", "permissionslist" })
+    @CommandDescription("command.bedrock.permissions.list.desc")
+    @CommandSubCommand({ "pl", "permslist", "permissionslist" })
     @CommandPermission(Name = "permission.list", Role = CommandRole.MODERATOR)
     @Override
     @SuppressWarnings("unchecked")

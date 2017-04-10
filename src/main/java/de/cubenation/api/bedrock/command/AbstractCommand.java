@@ -50,18 +50,18 @@ public abstract class AbstractCommand {
 
             // Description
             if (method.isAnnotationPresent(CommandDescription.class)) {
-                this.setDescription(method.getAnnotation(CommandDescription.class).Ident());
+                this.setDescription(method.getAnnotation(CommandDescription.class).value());
             }
 
             // SubCommand/s
             if (method.isAnnotationPresent(CommandSubCommands.class)) {
                 for (CommandSubCommand commandSubCommand : method.getAnnotation(CommandSubCommands.class).SubCommands()) {
-                    this.addSubCommand(commandSubCommand.Commands());
+                    this.addSubCommand(commandSubCommand.value());
                 }
             }
 
             if (method.isAnnotationPresent(CommandSubCommand.class)) {
-                this.addSubCommand(method.getAnnotation(CommandSubCommand.class).Commands());
+                this.addSubCommand(method.getAnnotation(CommandSubCommand.class).value());
             }
 
             // Permission/s
@@ -162,19 +162,17 @@ public abstract class AbstractCommand {
      *
      * For a full working command you need to define at least these annotations:
      * <ul>
-     *     <li>@CommandDescription(Ident = "locale.identifier") - required
-     *     <li>@CommandSubCommand() - required (OR)
-     *     <li>@CommandSubCommands(SubCommands = {})
+     *     <li>@CommandDescription(String)
+     *     <li>@CommandSubCommand(String[]) (OR)
+     *     <li>@CommandSubCommands(SubCommands = { @CommandSubCommand(), ... } )
      * </ul>
      * <p>
      * These annotations are optional:
      * <ul>
      *     <li>@CommandPermission(Name = "permission.name"[, Role = CommandRole.TYPE]) - optional
-     *     <li>@CommandPermissions(Permissions = { }) - optional
-     *     <li>@CommandArgument(
-     *          String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role
-     *          )
-     *     <li>@CommandArguments(Arguments = {})
+     *     <li>@CommandPermissions(Permissions = { @CommandPermission() } )
+     *     <li>@CommandArgument( String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role )
+     *     <li>@CommandArguments(Arguments = { @CommandArgument() } )
      * </ul>
      *
      * @param sender      The sender of the command

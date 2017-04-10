@@ -25,11 +25,11 @@ public class RegenerateLocaleCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @CommandDescription(Ident = "command.bedrock.regeneratelocale.desc")
+    @CommandDescription("command.bedrock.regeneratelocale.desc")
     @CommandPermission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
     @CommandSubCommands(SubCommands = {
-            @CommandSubCommand(Commands = { "regenerate" }),
-            @CommandSubCommand(Commands = { "locale" })
+            @CommandSubCommand({ "regenerate" }),
+            @CommandSubCommand({ "locale" })
     })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
