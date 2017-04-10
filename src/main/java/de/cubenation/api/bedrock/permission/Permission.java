@@ -37,7 +37,6 @@ public class Permission {
 
     public boolean userHasPermission(CommandSender sender) {
         if (getPlugin() == null) {
-            System.out.println("plugin is null!?");
             // Error -> no Permission
             return false;
         }
