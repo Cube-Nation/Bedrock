@@ -1,9 +1,9 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
@@ -30,29 +30,16 @@ public class PermissionOtherCommand extends Command {
     }
 
     @Override
-    public void setPermissions(ArrayList<Permission> permissions) {
-        PERMISSIONS_OTHER = new Permission("permissions.other", CommandRole.MODERATOR);
-
-        permissions.add(PERMISSIONS_OTHER);
-        permissions.add(new Permission("permissions.self", CommandRole.USER));
-    }
-
-    @Override
-    public void setSubCommands(ArrayList<String[]> subcommands) {
-        subcommands.add(new String[]{"permissions", "perms"});
-    }
-
-    @Override
-    public void setDescription(StringBuilder description) {
-        description.append("command.bedrock.permissions.desc");
-    }
-
-    @Override
-    public void setArguments(ArrayList<Argument> arguments) {
-        arguments.add(new Argument("command.bedrock.username_uuid.desc", "command.bedrock.username_uuid.ph", true, PERMISSIONS_OTHER));
-    }
-
-    @Override
+    @CommandDescription(Ident = "command.bedrock.permissions.desc")
+    @CommandPermissions(Permissions = {
+            @CommandPermission(Name = "permissions.other", Role = CommandRole.MODERATOR),
+            @CommandPermission(Name = "permissions.self", Role = CommandRole.USER)
+    })
+    @CommandSubCommand(Commands = { "permissions", "perms" })
+    @CommandArgument(
+        Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true,
+        Permission = "permissions.other", Role = CommandRole.MODERATOR
+    )
     @SuppressWarnings("unchecked")
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
 

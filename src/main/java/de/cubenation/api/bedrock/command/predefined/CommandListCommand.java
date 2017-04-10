@@ -1,18 +1,19 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.CommandDescription;
+import de.cubenation.api.bedrock.annotation.CommandPermission;
+import de.cubenation.api.bedrock.annotation.CommandSubCommand;
+import de.cubenation.api.bedrock.annotation.CommandSubCommands;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
-import de.cubenation.api.bedrock.permission.Permission;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,27 +27,12 @@ public class CommandListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
-    public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("command.list", CommandRole.USER));
-    }
-
-    @Override
-    public void setSubCommands(ArrayList<String[]> subcommands) {
-        subcommands.add(new String[]{"command", "cmd"});
-        subcommands.add(new String[]{"list", "l"});
-    }
-
-    @Override
-    public void setDescription(StringBuilder description) {
-        description.append("command.bedrock.cmd.list.desc");
-    }
-
-    @Override
-    public void setArguments(ArrayList<Argument> arguments) {
-
-    }
-
+    @CommandDescription(Ident = "command.bedrock.cmd.list.desc")
+    @CommandPermission(Name = "command.list", Role = CommandRole.USER)
+    @CommandSubCommands(SubCommands = {
+            @CommandSubCommand(Commands = { "command", "cmd" }),
+            @CommandSubCommand(Commands = { "list", "l" })
+    })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 

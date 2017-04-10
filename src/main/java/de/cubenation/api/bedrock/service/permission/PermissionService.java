@@ -39,7 +39,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     private HashMap<String, ArrayList<String>> externalPermissions = new HashMap<>();
 
-    public final static String no_role = "no_role";
+    public final static String no_role = CommandRole.NO_ROLE.getType();
 
 
     public PermissionService(BasePlugin plugin) {

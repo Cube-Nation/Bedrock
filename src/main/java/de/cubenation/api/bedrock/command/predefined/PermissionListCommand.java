@@ -1,14 +1,13 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
-import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
@@ -25,26 +24,9 @@ public class PermissionListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
-    public void setPermissions(ArrayList<Permission> permissions) {
-        permissions.add(new Permission("permission.list", CommandRole.MODERATOR));
-    }
-
-    @Override
-    public void setSubCommands(ArrayList<String[]> subcommands) {
-        subcommands.add(new String[] { "pl", "permslist", "permissionslist" } );
-    }
-
-    @Override
-    public void setDescription(StringBuilder description) {
-        description.append("command.bedrock.permissions.list.desc");
-    }
-
-    @Override
-    public void setArguments(ArrayList<Argument> arguments) {
-
-    }
-
+    @CommandDescription(Ident="command.bedrock.permissions.list.desc")
+    @CommandSubCommand(Commands = { "pl", "permslist", "permissionslist" })
+    @CommandPermission(Name = "permission.list", Role = CommandRole.MODERATOR)
     @Override
     @SuppressWarnings("unchecked")
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {

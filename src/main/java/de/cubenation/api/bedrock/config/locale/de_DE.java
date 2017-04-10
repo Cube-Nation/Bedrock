@@ -218,6 +218,8 @@ public class de_DE extends CustomConfigurationFile {
     @Path("command.bedrock.regeneratelocale.desc")
     private String help_regenerate_locale = "Erstellt die Datei für das aktuelle Locale neu";
 
+    @Path("command.bedrock.playerinfo.desc")
+    private String help_playerinfo_desc = "Zeigt Bedrock-Informationen zu einem oder mehreren Spielern an";
 
     /**
      * Args

@@ -75,9 +75,9 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
     @Override
     public final ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
-        if (this.subcommands.size() >= args.length) {
+        if (this.getSubcommands().size() >= args.length) {
             return getTabCompletionFromCommands(args);
-        } else if (args.length > this.subcommands.size()) {
+        } else if (args.length > this.getSubcommands().size()) {
             return getTabCompletionFromArguments(args);
         }
         return null;
@@ -90,7 +90,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
         //Check if last command is equal, not startswith
         if (getSubcommands() != null && !getSubcommands().isEmpty()) {
-            int index = this.subcommands.size() - 1;
+            int index = this.getSubcommands().size() - 1;
             for (String com : getSubcommands().get(index)) {
                 if (com.equalsIgnoreCase(args[index])) {
                     break;
@@ -107,7 +107,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
             }
         }
 
-        ArrayList<KeyValueArgument> recursive = getPossibleArguments(cmdArgs, args, this.subcommands.size());
+        ArrayList<KeyValueArgument> recursive = getPossibleArguments(cmdArgs, args, this.getSubcommands().size());
 
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
@@ -155,15 +155,15 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
     private boolean checkCommands(String[] args) {
 
-        if (args.length < this.subcommands.size()) {
+        if (args.length < this.getSubcommands().size()) {
             return false;
         }
 
-        for (int i = 0; i < this.subcommands.size(); i++) {
+        for (int i = 0; i < this.getSubcommands().size(); i++) {
 
             boolean validCommand = false;
             for (String com : getSubcommands().get(i)) {
-                if (i < this.subcommands.size() - 1) {
+                if (i < this.getSubcommands().size() - 1) {
                     if (com.equalsIgnoreCase(args[i])) {
                         validCommand = true;
                     }
@@ -197,6 +197,9 @@ public abstract class KeyValueCommand extends AbstractCommand {
             return false;
         }
 
+        // TODO: why is this called twice?
+        // TODO: use intelliJ simplify?
+
         return true;
     }
 
@@ -213,7 +216,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
             }
         }
 
-        if (args.length < (this.subcommands.size() + commandArgumentSize)) {
+        if (args.length < (this.getSubcommands().size() + commandArgumentSize)) {
             return false;
         }
 
@@ -225,7 +228,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
             }
         }
 
-        for (int i = this.subcommands.size(); i < args.length; i++) {
+        for (int i = this.getSubcommands().size(); i < args.length; i++) {
             KeyValueArgument argument = containsKey(cmdArgs, args[i]);
             if (argument != null) {
                 cmdArgs.remove(argument);
