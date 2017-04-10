@@ -158,10 +158,30 @@ public abstract class AbstractCommand {
     }
 
     /**
-     * @param sender      the sender of the command
-     * @param args        the list of Arguments
-     * @throws CommandException
-     * @throws IllegalCommandArgumentException
+     * Executor for this command class.
+     *
+     * For a full working command you need to define at least these annotations:
+     * <ul>
+     *     <li>@CommandDescription(Ident = "locale.identifier") - required
+     *     <li>@CommandSubCommand() - required (OR)
+     *     <li>@CommandSubCommands(SubCommands = {})
+     * </ul>
+     * <p>
+     * These annotations are optional:
+     * <ul>
+     *     <li>@CommandPermission(Name = "permission.name"[, Role = CommandRole.TYPE]) - optional
+     *     <li>@CommandPermissions(Permissions = { }) - optional
+     *     <li>@CommandArgument(
+     *          String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role
+     *          )
+     *     <li>@CommandArguments(Arguments = {})
+     * </ul>
+     *
+     * @param sender      The sender of the command
+     * @param args        The list of Arguments
+     * @throws CommandException                 Thrown by yourself (e.g. when an error occurs)
+     * @throws IllegalCommandArgumentException  Thrown when the arguments did not match the predefined ones
+     * @throws InsufficientPermissionException  Thrown when the command issuer does not have enough permissions for this command
      */
     public abstract void execute(CommandSender sender, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
