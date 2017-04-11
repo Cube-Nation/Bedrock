@@ -2,6 +2,7 @@ package de.cubenation.api.bedrock.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.*;
+import de.cubenation.api.bedrock.annotation.condition.AnnotationCondition;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -11,16 +12,19 @@ import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.LengthComparator;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.permission.Permission;
+import de.cubenation.api.bedrock.service.permission.PermissionService;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import de.cubenation.api.bedrock.translation.parts.JsonColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
+import java.util.HashMap;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -34,67 +38,38 @@ public abstract class AbstractCommand {
 
     private String description = "";
 
-    private  ArrayList<String[]> subcommands = new ArrayList<>();
+    private ArrayList<String[]> subcommands = new ArrayList<>();
 
     private ArrayList<Argument> arguments = new ArrayList<>();
 
     private ArrayList<Permission> runtimePermissions = new ArrayList<>();
 
+    /**
+     * The class constructor for all Bedrock commands.
+     *
+     * Reads all annotations from #execute() and enables features
+     * TBD
+     *
+     * @param plugin            A Bedrock-compatible plugin
+     * @param commandManager    The Bedrock command manager
+     */
     AbstractCommand(BasePlugin plugin, CommandManager commandManager) {
         this.plugin = plugin;
         this.commandManager = commandManager;
 
-        // read annotations
+        // read annotations from execute methods
         try {
-            Method method = this.getClass().getMethod("execute", CommandSender.class, String[].class);
+            this.parseMethodAnnotations(
+                    this.getClass().getMethod("execute", CommandSender.class, String[].class)
+            );
+        } catch (NoSuchMethodException ignore) {
+        }
 
-            // Description
-            if (method.isAnnotationPresent(CommandDescription.class)) {
-                this.setDescription(method.getAnnotation(CommandDescription.class).value());
-            }
-
-            // SubCommand/s
-            if (method.isAnnotationPresent(CommandSubCommands.class)) {
-                for (CommandSubCommand commandSubCommand : method.getAnnotation(CommandSubCommands.class).SubCommands()) {
-                    this.addSubCommand(commandSubCommand.value());
-                }
-            } else if (method.isAnnotationPresent(CommandSubCommand.class)) {
-                this.addSubCommand(method.getAnnotation(CommandSubCommand.class).value());
-            }
-
-            // Permission/s
-            if (method.isAnnotationPresent(CommandPermissions.class)) {
-                for (CommandPermission commandPermission : method.getAnnotation(CommandPermissions.class).Permissions()) {
-                    Permission permission = new Permission(commandPermission.Name());
-                    if (!commandPermission.RoleName().equals("NO_ROLE")) {
-                        permission.setRoleName(commandPermission.RoleName());
-                    }
-
-                    if (!commandPermission.Role().equals(CommandRole.NO_ROLE)) {
-                        permission.setRole(commandPermission.Role());
-                    }
-
-                    this.addRuntimePermission(permission);
-                }
-            } else if (method.isAnnotationPresent(CommandPermission.class)) {
-                CommandPermission commandPermission = method.getAnnotation(CommandPermission.class);
-                this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
-            }
-
-            // Argument/s
-            if (method.isAnnotationPresent(CommandArguments.class)) {
-                for (CommandArgument commandArgument : method.getAnnotation(CommandArguments.class).Arguments()) {
-                    this.processArgumentAnnotation(commandArgument);
-                }
-            }
-
-            if (method.isAnnotationPresent(CommandArgument.class)) {
-                this.processArgumentAnnotation(method.getAnnotation(CommandArgument.class));
-            }
-
-        } catch (NoSuchMethodException e) {
-            plugin.log(Level.SEVERE, "Abstract method execute() is not implemented in class " + this.getClass().toString() + ". This should never happen.");
-            plugin.disable(e);
+        try {
+            this.parseMethodAnnotations(
+                    this.getClass().getMethod("execute", CommandSender.class, HashMap.class)
+            );
+        } catch (NoSuchMethodException ignore) {
         }
     }
 
@@ -104,6 +79,53 @@ public abstract class AbstractCommand {
 
     public CommandManager getCommandManager() {
         return this.commandManager;
+    }
+
+    private void parseMethodAnnotations(Method method) {
+        // Description
+        if (method.isAnnotationPresent(CommandDescription.class)) {
+            this.setDescription(method.getAnnotation(CommandDescription.class).value());
+        }
+
+        // SubCommand/s
+        if (method.isAnnotationPresent(CommandSubCommands.class)) {
+            for (CommandSubCommand commandSubCommand : method.getAnnotation(CommandSubCommands.class).SubCommands()) {
+                this.addSubCommand(commandSubCommand.value());
+            }
+        } else if (method.isAnnotationPresent(CommandSubCommand.class)) {
+            this.addSubCommand(method.getAnnotation(CommandSubCommand.class).value());
+        }
+
+        // Argument/s
+        if (method.isAnnotationPresent(CommandArguments.class)) {
+            for (CommandArgument commandArgument : method.getAnnotation(CommandArguments.class).Arguments()) {
+                this.processArgumentAnnotation(commandArgument);
+            }
+        } else if (method.isAnnotationPresent(CommandArgument.class)) {
+            this.processArgumentAnnotation(method.getAnnotation(CommandArgument.class));
+        }
+
+        // Key-Value Argument/s
+        if (method.isAnnotationPresent(CommandKeyValueArguments.class)) {
+            for (CommandKeyValueArgument commandKeyValueArgument : method.getAnnotation(CommandKeyValueArguments.class).Arguments()) {
+                this.processKeyValueArgumentAnnotation(commandKeyValueArgument);
+            }
+        } else if (method.isAnnotationPresent(CommandKeyValueArgument.class)) {
+            this.processKeyValueArgumentAnnotation(method.getAnnotation(CommandKeyValueArgument.class));
+        }
+
+        // Permission/s
+        if (method.isAnnotationPresent(CommandPermissions.class)) {
+            for (CommandPermission commandPermission : method.getAnnotation(CommandPermissions.class).Permissions()) {
+                this.addRuntimePermission(
+                        this.createPermission(commandPermission.Name(), commandPermission.Role(), commandPermission.RoleName())
+                );
+            }
+        } else if (method.isAnnotationPresent(CommandPermission.class)) {
+            CommandPermission commandPermission = method.getAnnotation(CommandPermission.class);
+            this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
+        }
+
     }
 
     public String getDescription() {
@@ -126,7 +148,7 @@ public abstract class AbstractCommand {
         return this.runtimePermissions;
     }
 
-    private void addRuntimePermission(Permission permission) {
+    protected void addRuntimePermission(Permission permission) {
         permission.setPlugin(plugin);
         this.runtimePermissions.add(permission);
     }
@@ -135,23 +157,74 @@ public abstract class AbstractCommand {
         return arguments;
     }
 
+    private Permission createPermission(String name, CommandRole role, String roleName) {
+        Permission permission = new Permission(name);
+
+        if (!roleName.isEmpty() && !roleName.equals("NO_ROLE")) {
+            permission.setRoleName(roleName);
+        }
+
+        if (role != null && !role.equals(CommandRole.NO_ROLE)) {
+            permission.setRole(role);
+        }
+
+        return permission;
+    }
+
+    private boolean checkArgumentCondition(CommandArgument argument) {
+        Class<?> clazz = argument.Condition();
+        try {
+            Constructor<?> constructor = clazz.getConstructor(clazz);
+            AnnotationCondition condition = (AnnotationCondition) constructor.newInstance();
+            if (!condition.isValid()) {
+                return false;
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            return false;
+        }
+
+        return true;
+    }
+
     private void processArgumentAnnotation(CommandArgument commandArgument) {
+        if (!this.checkArgumentCondition(commandArgument)) {
+            return;
+        }
+
         Argument argument = new Argument(commandArgument.Description(), commandArgument.Placeholder(), commandArgument.Optional());
-
-        if (!commandArgument.Permission().equals("")) {
-            Permission permission = new Permission(commandArgument.Permission());
-            if (!commandArgument.RoleName().equals("NO_ROLE")) {
-                permission.setRoleName(commandArgument.RoleName());
-            }
-            if (!commandArgument.Role().equals(CommandRole.NO_ROLE)) {
-                permission.setRole(commandArgument.Role());
-            }
-
-            argument.setPermission(permission);
+        if (!commandArgument.Permission().isEmpty()) {
+            argument.setPermission(
+                    this.createPermission(commandArgument.Permission(), commandArgument.Role(), commandArgument.RoleName())
+            );
         }
 
         argument.setPlugin(plugin);
         this.addArgument(argument);
+    }
+
+    private void processKeyValueArgumentAnnotation(CommandKeyValueArgument commandKeyValueArgument) {
+        if (!this.checkArgumentCondition((CommandArgument) commandKeyValueArgument)) {
+            return;
+        }
+
+        KeyValueArgument keyValueArgument = new KeyValueArgument.Builder(
+                commandKeyValueArgument.Key(),
+                commandKeyValueArgument.Description(),
+                commandKeyValueArgument.Placeholder()
+        ).build();
+
+        if (!commandKeyValueArgument.Permission().isEmpty()) {
+            keyValueArgument.setPermission(
+                    this.createPermission(
+                            commandKeyValueArgument.Permission(),
+                            commandKeyValueArgument.Role(),
+                            commandKeyValueArgument.RoleName()
+                    )
+            );
+        }
+
+        keyValueArgument.setPlugin(plugin);
+        this.addArgument(keyValueArgument);
     }
 
     private void addArgument(Argument argument) {
@@ -187,6 +260,8 @@ public abstract class AbstractCommand {
      *     <li>@CommandPermissions(Permissions = { @CommandPermission() } )
      *     <li>@CommandArgument( String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role )
      *     <li>@CommandArguments(Arguments = { @CommandArgument() } )
+     *     <li>@CommandKeyValueArgument( String Key, String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role, String RoleName )
+     *     <li>@CommandKeyValueArguments(Arguments = { @CommandKeyValueArgument() } )
      * </ul>
      *
      * @param sender      The sender of the command
