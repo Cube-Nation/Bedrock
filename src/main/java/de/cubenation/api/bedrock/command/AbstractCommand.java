@@ -12,7 +12,6 @@ import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.LengthComparator;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.permission.Permission;
-import de.cubenation.api.bedrock.service.permission.PermissionService;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import de.cubenation.api.bedrock.translation.parts.JsonColor;
@@ -25,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -107,6 +107,7 @@ public abstract class AbstractCommand {
 
         // Key-Value Argument/s
         if (method.isAnnotationPresent(CommandKeyValueArguments.class)) {
+            System.out.println("has commendKeyValueArguments");
             for (CommandKeyValueArgument commandKeyValueArgument : method.getAnnotation(CommandKeyValueArguments.class).Arguments()) {
                 this.processKeyValueArgumentAnnotation(commandKeyValueArgument);
             }
@@ -171,23 +172,24 @@ public abstract class AbstractCommand {
         return permission;
     }
 
-    private boolean checkArgumentCondition(CommandArgument argument) {
-        Class<?> clazz = argument.Condition();
+    private boolean checkArgumentCondition(Class<AnnotationCondition> clazz) {
         try {
-            Constructor<?> constructor = clazz.getConstructor(clazz);
-            AnnotationCondition condition = (AnnotationCondition) constructor.newInstance();
+            Constructor<AnnotationCondition> constructor = clazz.getConstructor();
+            AnnotationCondition condition = constructor.newInstance();
             if (!condition.isValid()) {
                 return false;
             }
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            plugin.log(Level.SEVERE, "checkArgumentCondition failed", e);
             return false;
         }
 
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private void processArgumentAnnotation(CommandArgument commandArgument) {
-        if (!this.checkArgumentCondition(commandArgument)) {
+        if (!this.checkArgumentCondition(commandArgument.Condition())) {
             return;
         }
 
@@ -202,8 +204,9 @@ public abstract class AbstractCommand {
         this.addArgument(argument);
     }
 
+    @SuppressWarnings("unchecked")
     private void processKeyValueArgumentAnnotation(CommandKeyValueArgument commandKeyValueArgument) {
-        if (!this.checkArgumentCondition((CommandArgument) commandKeyValueArgument)) {
+        if (!this.checkArgumentCondition(commandKeyValueArgument.Condition())) {
             return;
         }
 
