@@ -21,4 +21,6 @@ public @interface CommandArgument {
 
     CommandRole Role() default CommandRole.NO_ROLE;
 
+    String RoleName() default "NO_ROLE";
+
 }

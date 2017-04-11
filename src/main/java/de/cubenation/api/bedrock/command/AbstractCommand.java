@@ -58,9 +58,7 @@ public abstract class AbstractCommand {
                 for (CommandSubCommand commandSubCommand : method.getAnnotation(CommandSubCommands.class).SubCommands()) {
                     this.addSubCommand(commandSubCommand.value());
                 }
-            }
-
-            if (method.isAnnotationPresent(CommandSubCommand.class)) {
+            } else if (method.isAnnotationPresent(CommandSubCommand.class)) {
                 this.addSubCommand(method.getAnnotation(CommandSubCommand.class).value());
             }
 
@@ -78,9 +76,7 @@ public abstract class AbstractCommand {
 
                     this.addRuntimePermission(permission);
                 }
-            }
-
-            if (method.isAnnotationPresent(CommandPermission.class)) {
+            } else if (method.isAnnotationPresent(CommandPermission.class)) {
                 CommandPermission commandPermission = method.getAnnotation(CommandPermission.class);
                 this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
             }
@@ -141,8 +137,17 @@ public abstract class AbstractCommand {
 
     private void processArgumentAnnotation(CommandArgument commandArgument) {
         Argument argument = new Argument(commandArgument.Description(), commandArgument.Placeholder(), commandArgument.Optional());
+
         if (!commandArgument.Permission().equals("")) {
-            argument.setPermission(new Permission(commandArgument.Permission(), commandArgument.Role()));
+            Permission permission = new Permission(commandArgument.Permission());
+            if (!commandArgument.RoleName().equals("NO_ROLE")) {
+                permission.setRoleName(commandArgument.RoleName());
+            }
+            if (!commandArgument.Role().equals(CommandRole.NO_ROLE)) {
+                permission.setRole(commandArgument.Role());
+            }
+
+            argument.setPermission(permission);
         }
 
         argument.setPlugin(plugin);
