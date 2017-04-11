@@ -67,7 +67,16 @@ public abstract class AbstractCommand {
             // Permission/s
             if (method.isAnnotationPresent(CommandPermissions.class)) {
                 for (CommandPermission commandPermission : method.getAnnotation(CommandPermissions.class).Permissions()) {
-                    this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
+                    Permission permission = new Permission(commandPermission.Name());
+                    if (!commandPermission.RoleName().equals("NO_ROLE")) {
+                        permission.setRoleName(commandPermission.RoleName());
+                    }
+
+                    if (!commandPermission.Role().equals(CommandRole.NO_ROLE)) {
+                        permission.setRole(commandPermission.Role());
+                    }
+
+                    this.addRuntimePermission(permission);
                 }
             }
 
