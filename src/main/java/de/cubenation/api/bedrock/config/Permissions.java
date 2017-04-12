@@ -1,6 +1,8 @@
 package de.cubenation.api.bedrock.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.command.CommandRole;
+import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Path;
 
@@ -10,8 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Permissions extends CustomConfigurationFile {
 
     public static String getFilename() {
@@ -30,33 +33,45 @@ public class Permissions extends CustomConfigurationFile {
      * roles
      */
 
-    public HashMap<String, List<String>> getAll() {
-        return this.permissions;
+    public HashMap<CommandRole, ArrayList<String>> getAll() {
+        HashMap<CommandRole, ArrayList<String>> map = new HashMap<>();
+
+        this.permissions.forEach((role, permissions) -> {
+            CommandRole commandRole;
+            try {
+                commandRole = CommandRole.valueOf(role.toUpperCase());
+            } catch (NullPointerException e) {
+                System.out.println("Could not convert " + role + " to CommandRole equivalent, using NO_ROLE");
+                commandRole = CommandRole.NO_ROLE;
+            }
+
+            map.put(commandRole, (ArrayList<String>) permissions);
+        });
+
+        return map;
     }
 
     public boolean hasRoles() {
         return (this.permissions.size() != 0);
     }
 
-    public Set<String> getRoles() {
-        return this.permissions.keySet();
+    private boolean roleExists(CommandRole role) {
+        return this.permissions.containsKey(role.getType().toLowerCase());
     }
 
-    private boolean roleExists(String role) {
-        return this.permissions.containsKey(role);
+    private void createRole(CommandRole role) {
+        if (!this.roleExists(role)) this.permissions.put(role.getType().toLowerCase(), new ArrayList<>());
     }
 
-    private void createRole(String role) {
-        if (this.roleExists(role))
-            return;
-
-        this.permissions.put(role, new ArrayList<>());
+    public void removeRole(CommandRole role) {
+        if (this.roleExists(role)) this.permissions.remove(role.getType());
     }
 
-    public void removeRole(String role) {
-        if (!this.roleExists(role))
-            return;
-        this.permissions.remove(role);
+    public Set<CommandRole> getRoles() {
+        return this.permissions.keySet().stream()
+                .map(String::toUpperCase)
+                .map(CommandRole::valueOf)
+                .collect(Collectors.toSet());
     }
 
 
@@ -64,68 +79,64 @@ public class Permissions extends CustomConfigurationFile {
      * permissions (role based)
      */
 
-    public void addPermission(String role, String permission) {
-        if (permission == null) {
-            return;
-        }
+    public void addPermission(String permission, CommandRole role) {
+        if (permission == null) return;
+        if (!this.roleExists(role)) this.createRole(role);
+        if (this.getPermissionsFor(role).contains(permission)) return;
 
-        if (!this.roleExists(role)) {
-            this.createRole(role);
-        }
-
-        if (this.getPermissionsFor(role).contains(permission)) {
-            return;
-        }
-
-        this.permissions.get(role).add(permission);
+        this.permissions.get(role.getType().toLowerCase()).add(permission);
     }
 
-    public void addPermissions(String role, List<String> permissions) {
-        if (permissions == null)
-            return;
-
-        for (String permission : permissions)
-            this.addPermission(role, permission);
+    public void addPermission(String permission) {
+        this.addPermission(permission, CommandRole.NO_ROLE);
     }
 
-
-    public void removePermission(String role, String permission) {
-        if (!this.roleExists(role))
-            return;
-
-        this.permissions.get(role).remove(permission);
+    public void addPermission(Permission permission) {
+        this.addPermission(permission.getName(), permission.getRole());
     }
 
-    public void removePermissions(String role, List<String> permissions) {
-        if (permissions == null)
-            return;
-
-        for (String permission : permissions)
-            this.removePermission(role, permission);
+    public void addPermissions(List<String> permissions, CommandRole role) {
+        if (permissions == null) return;
+        permissions.forEach(permission -> this.addPermission(permission, role));
     }
 
-
-    public boolean PermissionExists(String role, String permission) {
-        return this.roleExists(role) && this.permissions.get(role).contains(permission);
+    public void addPermissions(List<Permission> permissions) {
+        if (permissions == null) return;
+        permissions.forEach(permission -> this.addPermission(permission.getName(), permission.getRole()));
     }
 
-    public String getRoleForPermission(String permission) {
-        if (!this.hasRoles())
-            return null;
+    public void removePermission(String permission, CommandRole role) {
+        if (!this.roleExists(role)) return;
+        this.permissions.get(role.getType().toLowerCase()).remove(permission);
+    }
 
-        for (String role : this.getRoles()) {
-            if (this.permissions.get(role).contains(permission))
-                return role;
+    public void removePermissions(List<String> permissions, CommandRole role) {
+        if (permissions == null) return;
+        permissions.forEach(permission -> this.removePermission(permission, role));
+    }
+
+    public void removePermissions(List<Permission> permissions) {
+        if (permissions == null) return;
+        permissions.forEach(permission -> this.removePermission(permission.getName(), permission.getRole()));
+    }
+
+    public boolean permissionExists(String permission, CommandRole role) {
+        return this.roleExists(role) && this.permissions.get(role.getType().toLowerCase()).contains(permission);
+    }
+
+    public CommandRole getRoleForPermission(String permission) {
+        if (!this.hasRoles()) return null;
+
+        for (CommandRole role : this.getRoles()) {
+            if (this.permissions.get(role.getType().toLowerCase()).contains(permission)) return role;
         }
 
         return null;
     }
 
-    public List<String> getPermissionsFor(String role) {
-        if (!this.roleExists(role))
-            return new ArrayList<>();
-
-        return this.permissions.get(role);
+    public List<String> getPermissionsFor(CommandRole role) {
+        if (!this.roleExists(role)) return new ArrayList<>();
+        return this.permissions.get(role.getType().toLowerCase());
     }
 
 }

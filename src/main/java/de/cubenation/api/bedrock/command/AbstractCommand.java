@@ -161,10 +161,12 @@ public abstract class AbstractCommand {
     private Permission createPermission(String name, CommandRole role, String roleName) {
         Permission permission = new Permission(name);
 
-        if (!roleName.isEmpty() && !roleName.equals("NO_ROLE")) {
+        // ignore NO_ROLE names -> Permission objects always have CommandRole.NO_ROLE as default role
+        if (!roleName.isEmpty() && !roleName.toUpperCase().equals("NO_ROLE")) {
             permission.setRoleName(roleName);
         }
 
+        // CommandRole enums always win (in case a role String is defined)
         if (role != null && !role.equals(CommandRole.NO_ROLE)) {
             permission.setRole(role);
         }

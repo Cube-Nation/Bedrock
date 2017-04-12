@@ -2,7 +2,6 @@ package de.cubenation.api.bedrock.permission;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -14,36 +13,31 @@ public class Permission {
     private BasePlugin plugin;
 
     private String name;
-    private String roleName;
-    private CommandRole role;
 
+    private CommandRole role = CommandRole.NO_ROLE;
+
+    private String roleName;
 
     public Permission(String name) {
-        this(name, PermissionService.no_role);
+        this(name, CommandRole.NO_ROLE);
     }
 
+    @Deprecated
     public Permission(String name, String role) {
         this.name = name;
+        this.role = CommandRole.valueOf(role.toUpperCase());
         this.roleName = role;
-        this.role = null;
     }
 
     public Permission(String name, CommandRole role) {
         this.name = name;
-        this.roleName = role.getType();
         this.role = role;
-
+        this.roleName = role.getType();
     }
 
     public boolean userHasPermission(CommandSender sender) {
-        if (getPlugin() == null) {
-            // Error -> no Permission
-            return false;
-        }
-
-        return plugin.getPermissionService().hasPermission(sender, this.getName());
+        return getPlugin() != null && plugin.getPermissionService().hasPermission(sender, this.getName());
     }
-
 
     public BasePlugin getPlugin() {
         return plugin;
@@ -61,6 +55,15 @@ public class Permission {
         this.name = name;
     }
 
+    public CommandRole getRole() {
+        return role;
+    }
+
+    public void setRole(CommandRole role) {
+        this.role = role;
+    }
+
+    @SuppressWarnings("unused")
     public String getRoleName() {
         return roleName;
     }
@@ -69,11 +72,12 @@ public class Permission {
         this.roleName = role;
     }
 
-    public CommandRole getRole() {
-        return role;
-    }
-
-    public void setRole(CommandRole role) {
-        this.role = role;
+    @Override
+    public String toString() {
+        return "Permission{" +
+                "name='" + name + '\'' +
+                ", role=" + role +
+                ", roleName='" + roleName + '\'' +
+                '}';
     }
 }

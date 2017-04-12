@@ -1,10 +1,7 @@
 package de.cubenation.api.bedrock.service.permission;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.command.argument.Argument;
-import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.config.Permissions;
 import de.cubenation.api.bedrock.exception.PlayerNotFoundException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
@@ -22,32 +19,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Created by B1acksheep on 25.04.15.
  * Project: Bedrock
  */
+@SuppressWarnings("unused")
 public class PermissionService extends AbstractService implements ServiceInterface {
 
     private ConfigService configService;
 
-    private ArrayList<Permission> unregisteredPermissions = new ArrayList<>();
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+    private ArrayList<Permission> externalPermissions = new ArrayList<>();
+
+    private ArrayList<Permission> localPermissionCache = new ArrayList<>();
 
     private HashMap<String, String> activePermissions = new HashMap<>();
 
     private HashMap<String, ArrayList<String>> permissionDump = new HashMap<>();
-
-    private HashMap<String, ArrayList<String>> externalPermissions = new HashMap<>();
-
-    public final static String no_role = CommandRole.NO_ROLE.getType();
-
 
     public PermissionService(BasePlugin plugin) {
         super(plugin);
         this.configService = plugin.getConfigService();
     }
 
-    protected String getPermissionPrefix() {
+    private String getPermissionPrefix() {
         return (String) this.getConfigurationValue(
                 "service.permission.prefix",
                 this.getPlugin().getDescription().getName().toLowerCase()
@@ -67,125 +64,100 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             throw new ServiceInitException(e.getMessage());
         }
 
-        this.initializeCommandPermissions();
+        this.initializePermissions();
     }
 
     @Override
     public void reload() throws ServiceReloadException {
-        this.initializeCommandPermissions();
-    }
-
-    private void initializeCommandPermissions() {
-        this.unregisteredPermissions = new ArrayList<>();
-
-        for (CommandManager manager : this.getPlugin().getCommandService().getCommandManagers()) {
-            for (AbstractCommand command : manager.getCommands()) {
-
-                for (Permission permission : command.getRuntimePermissions()) {
-                    String stringPermission = permission.getName();
-                    if (stringPermission == null) {
-                        continue;
-                    }
-
-                    this.unregisteredPermissions.add(permission);
-                }
-
-                for (Argument argument : command.getArguments()) {
-                    if (argument.getPermission() != null) {
-                        String stringPermission = argument.getPermission().getName();
-                        if (stringPermission == null) {
-                            continue;
-                        }
-
-                        this.unregisteredPermissions.add(argument.getPermission());
-                    }
-                }
-            }
-        }
-
-        this.fixPermissions((Permissions) this.configService.getConfig(Permissions.class));
-    }
-
-
-    @SuppressWarnings("unused")
-    public void registerPermission(String permission) {
-        this.registerPermission(PermissionService.no_role, permission);
-    }
-
-    @SuppressWarnings("unused")
-    public void registerPermission(String permission, CommandRole role) {
-        registerPermission(role.getType(), permission);
+        this.initializePermissions();
     }
 
     @Deprecated
-    public void registerPermission(String role, String permission) {
-        //this.getPlugin().log(Level.INFO, "Registering permission " + permission + " in role " + role);
+    public void registerPermission(String role, String permission) throws NullPointerException {
+        this.registerPermission(permission, CommandRole.valueOf(role));
+    }
 
-        // save for later in fixPermissions()
-        if (!this.externalPermissions.containsKey(role))
-            this.externalPermissions.put(role, new ArrayList<>());
+    public void registerPermission(String permission) {
+        this.registerPermission(new Permission(permission));
+    }
 
-        if (!this.externalPermissions.get(role).contains(permission))
-            this.externalPermissions.get(role).add(permission);
+    @SuppressWarnings("WeakerAccess")
+    public void registerPermission(String permission, CommandRole role) {
+        this.registerPermission(new Permission(permission, role));
+    }
 
+    @SuppressWarnings("WeakerAccess")
+    public void registerPermission(Permission permission) {
+        List<Permission> exists = this.externalPermissions.stream()
+                .filter(permissionObject ->
+                        permissionObject.getName().equals(permission.getName()) && permissionObject.getRole().equals(permission.getRole()))
+                .collect(Collectors.toList());
+
+        if (exists.size() == 0) {
+            this.externalPermissions.add(permission);
+            this.initializePermissions();
+        }
+    }
+
+    private void initializePermissions() {
+        /*
+        We need to reload the permission file first to make sure the Permissions class knows its current
+        content.
+        This must be done for the case a permission has been moved to another role or removed from a role.
+        The YamlConfiguration object would not know about the move/remove and would still have the permission
+        in it's cache, so the move/remove would not be recognized.
+        */
         Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
-        String saved_role = permissions.getRoleForPermission(permission);
-
-        // permission is not assigned to any role -> save permission in given role
-        if (saved_role == null) {
-            permissions.addPermission(role, permission);
-
-            // permission is already assigned to a role -> leave as is
-        } else {
+        try {
+            permissions.reload();
+        } catch (InvalidConfigurationException e) {
+            plugin.log(Level.SEVERE, "While reloading permissions: " + e.getCause(), e);
             return;
         }
 
-        this.savePermissions(permissions);
-    }
+        // re-initialize local permission cache
+        this.localPermissionCache = new ArrayList<>();
 
-    private void fixPermissions(Permissions permissions) {
-        if (permissions == null)
-            permissions = (Permissions) this.configService.getConfig(Permissions.class);
+        // collect permissions from commands (and arguments)
+        this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
+                commandManager.getCommands().forEach(abstractCommand -> {
 
-        // clean up default role - will be restored if necessary
-        permissions.removeRole(PermissionService.no_role);
-
-
-        // 1) create all permissions from scratch in default role if
-        //   - the current permission file has no roles       (AND)
-        //   - plugin commands use permissions
-        if (permissions.getRoles().size() == 0 && this.unregisteredPermissions.size() != 0) {
-            // no roles -> create all permissions in the default role
-
-            for (Permission permission : this.unregisteredPermissions) {
-                permissions.addPermission(permission.getRoleName(), permission.getName());
-            }
-        }
-
-        // 2) check external permissions
-        // if they have no role assigned, save them in the desired role
-        for (String role : this.externalPermissions.keySet()) {
-            for (String permission : this.externalPermissions.get(role)) {
-                if (permissions.getRoleForPermission(permission) == null)
-                    permissions.addPermission(role, permission);
-            }
-        }
-
-        // 3) there is at least one role in the file available.
-        // check if all permissions are assigned to a role and add missing roles to the default role
-        if (permissions.getRoles().size() > 0) {
-            for (Permission permission : this.unregisteredPermissions) {
-                if (permissions.getRoleForPermission(permission.getName()) == null) {
-                    permissions.addPermission(PermissionService.no_role, permission.getName());
+            abstractCommand.getRuntimePermissions().forEach(permission -> {
+                if (permission.getName() != null) {
+                    this.localPermissionCache.add(permission);
                 }
+            });
+
+            abstractCommand.getArguments().forEach(argument -> {
+                if (argument.getPermission() != null && argument.getPermission().getName() != null) {
+                    this.localPermissionCache.add(argument.getPermission());
+                }
+            });
+
+        }));
+
+        // collect externally registered permissions from userland
+        this.externalPermissions.forEach(permission -> {
+            if (permission.getName() != null) {
+                this.localPermissionCache.add(permission);
             }
-        }
+        });
 
         this.savePermissions(permissions);
     }
 
     private void savePermissions(Permissions permissions) {
-        // save all changes
+        // clean up default role - will be restored if necessary
+        permissions.removeRole(CommandRole.NO_ROLE);
+
+        // restore missing permissions
+        this.localPermissionCache.forEach(permission -> {
+            if (permissions.getRoleForPermission(permission.getName()) == null) {
+                permissions.addPermission(permission);
+            }
+        });
+
+        // save
         try {
             //this.getPlugin().log(Level.INFO, "  permission service: saving permissions");
             permissions.save();
@@ -201,25 +173,24 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     private void loadPermissions() {
 
         Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
-        HashMap<String, List<String>> roled_permissions = permissions.getAll();
+        HashMap<CommandRole, ArrayList<String>> configuredPermissions = permissions.getAll();
 
         this.permissionDump = new HashMap<>();
         this.activePermissions = new HashMap<>();
 
-        for (final String role : roled_permissions.keySet()) {
-
-            String formaatted_role = (role.equals(PermissionService.no_role))
-                    ? role
-                    : String.format("%s.%s", this.getPermissionPrefix(), role);
+        for (final CommandRole role : configuredPermissions.keySet()) {
+            String roleName = role.getType().toLowerCase();
+            String formaatted_role = (role.equals(CommandRole.NO_ROLE))
+                    ? roleName
+                    : String.format("%s.%s", this.getPermissionPrefix(), roleName);
 
             for (String permission : permissions.getPermissionsFor(role)) {
 
-                String formatted_permission = (role.equals(PermissionService.no_role))
+                String formatted_permission = (role.equals(CommandRole.NO_ROLE))
                         ? String.format("%s.%s", this.getPermissionPrefix(), permission)
-                        : String.format("%s.%s.%s", this.getPermissionPrefix(), role, permission);
+                        : String.format("%s.%s.%s", this.getPermissionPrefix(), roleName, permission);
 
                 this.activePermissions.put(permission, formatted_permission);
-
 
                 if (!this.permissionDump.containsKey(formaatted_role))
                     this.permissionDump.put(formaatted_role, new ArrayList<>());
@@ -230,10 +201,13 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     }
 
+    public boolean hasPermission(CommandSender sender, Permission permission) {
+        return this.hasPermission(sender, permission.getName());
+    }
+
     @SuppressWarnings("unchecked")
     public boolean hasPermission(CommandSender sender, String permission) {
         Boolean op_has_permission = (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true);
-
         return (sender.isOp() && op_has_permission) ||
                 permission == null ||
                 permission.isEmpty() ||
@@ -281,7 +255,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public String toString() {
         return "PermissionService{" +
                 "configService=" + configService +
-                ", unregisteredPermissions=" + unregisteredPermissions +
+                ", localPermissionCache=" + localPermissionCache +
                 ", activePermissions=" + activePermissions +
                 ", permissionDump=" + permissionDump +
                 ", externalPermissions=" + externalPermissions +

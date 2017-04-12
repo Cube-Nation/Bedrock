@@ -22,16 +22,12 @@ public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;
 
-    public static void setInstance(BedrockPlugin plugin) {
-        instance = plugin;
-    }
-
     public static BedrockPlugin getInstance() {
         return instance;
     }
 
     public void onPreEnable() throws Exception {
-        setInstance(this);
+        instance = this;
         this.assertPluginDependency("Yamler", "2.3.1");
     }
 
