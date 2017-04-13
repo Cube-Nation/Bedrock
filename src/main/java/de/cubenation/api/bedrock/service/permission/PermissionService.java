@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -97,15 +98,18 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
         List<Permission> exists = this.localPermissionCache.stream()
                 .filter(cachedPermission ->
-                        cachedPermission.getName().equals(permission.getName()) &&
-                                cachedPermission.getRole().equals(permission.getRole())
+                        cachedPermission.getName().equals(permission.getName())
                 ).collect(Collectors.toList());
 
-        if (exists.size() == 0)
+        if (exists.size() == 0) {
             this.localPermissionCache.add(permission);
+        }
     }
 
     private void initializePermissions() {
+        // re-initialize local permission cache
+        this.localPermissionCache = new ArrayList<>();
+
         /*
         We need to reload the permission file first to make sure the Permissions class knows its current
         content.
@@ -116,13 +120,24 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
         try {
             permissions.reload();
+
+            HashMap<CommandRole, ArrayList<String>> foo = permissions.getAll();
+            permissions.getAll().forEach((commandRole, permissionList) -> {
+                permissionList.forEach(permission -> {
+
+                    // To self-repair NO_ROLE permissions we ignore them here.
+                    // They will be added later to their approriate role (or NO_ROLE) again
+                    if (commandRole.equals(CommandRole.NO_ROLE)) {
+                        return;
+                    }
+
+                    this.addPermission(new Permission(permission, commandRole));
+                });
+            });
         } catch (InvalidConfigurationException e) {
             plugin.log(Level.SEVERE, "While reloading permissions: " + e.getCause(), e);
             return;
         }
-
-        // re-initialize local permission cache
-        this.localPermissionCache = new ArrayList<>();
 
         // collect permissions from commands (and arguments)
         this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
@@ -204,8 +219,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     public String toString() {
         return "PermissionService{" +
                 "configService=" + configService +
-                ", localPermissionCache=" + localPermissionCache +
-                ", externalPermissions=" + externalPermissions +
+                ", localPermissionCache=" + localPermissionCache.stream().map(Permission::toString) +
+                ", externalPermissions=" + externalPermissions.stream().map(Permission::toString) +
                 '}';
     }
 }
