@@ -39,7 +39,7 @@ public class Permission {
         CommandRole role = CommandRole.NO_ROLE;
 
         for (CommandRole commandRole : CommandRole.values()) {
-            if (commandRole.getType().equals(roleName.toUpperCase())) {
+            if (commandRole.getType().toLowerCase().equals(roleName.toLowerCase())) {
                 role = CommandRole.valueOf(roleName.toUpperCase());
             }
         }
