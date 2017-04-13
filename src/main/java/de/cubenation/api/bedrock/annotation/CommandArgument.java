@@ -19,12 +19,14 @@ public @interface CommandArgument {
 
     boolean Optional() default false;
 
+    Class Condition() default DefaultCondition.class;
+
     String Permission() default "";
 
     CommandRole Role() default CommandRole.NO_ROLE;
 
     String RoleName() default "NO_ROLE";
 
-    Class Condition() default DefaultCondition.class;
+    String RoleDescription() default "";
 
 }

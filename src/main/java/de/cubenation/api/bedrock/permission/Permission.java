@@ -5,9 +5,12 @@ import de.cubenation.api.bedrock.command.CommandRole;
 import org.bukkit.command.CommandSender;
 
 /**
- * Created by B1acksheep on 04.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
+ *
+ * The Permission class
  */
+@SuppressWarnings("unused")
 public class Permission {
 
     private BasePlugin plugin;
@@ -16,27 +19,39 @@ public class Permission {
 
     private CommandRole role = CommandRole.NO_ROLE;
 
-    private String roleName;
+    private String descriptionLocaleIdent;
 
     public Permission(String name) {
-        this(name, CommandRole.NO_ROLE);
-    }
-
-    @Deprecated
-    public Permission(String name, String role) {
-        this.name = name;
-        this.role = CommandRole.valueOf(role.toUpperCase());
-        this.roleName = role;
+        this(name, CommandRole.NO_ROLE, null);
     }
 
     public Permission(String name, CommandRole role) {
-        this.name = name;
-        this.role = role;
-        this.roleName = role.getType();
+        this(name, role, null);
+    }
+
+    public Permission(String name, CommandRole role, String descriptionLocaleIdent) {
+        this.setName(name);
+        this.setRole(role);
+        this.setDescriptionLocaleIdent(descriptionLocaleIdent);
+    }
+
+    public static CommandRole getCommandRole(String roleName) {
+        CommandRole role = CommandRole.NO_ROLE;
+
+        for (CommandRole commandRole : CommandRole.values()) {
+            if (commandRole.getType().equals(roleName.toUpperCase())) {
+                role = CommandRole.valueOf(roleName.toUpperCase());
+            }
+        }
+
+        return role;
     }
 
     public boolean userHasPermission(CommandSender sender) {
-        return getPlugin() != null && plugin.getPermissionService().hasPermission(sender, this.getName());
+        return
+                getPlugin() != null &&
+                sender != null &&
+                plugin.getPermissionService().hasPermission(sender, this);
     }
 
     public BasePlugin getPlugin() {
@@ -63,13 +78,43 @@ public class Permission {
         this.role = role;
     }
 
-    @SuppressWarnings("unused")
-    public String getRoleName() {
-        return roleName;
+    public String getDescriptionLocaleIdent() {
+        // By default the descriptive locale ident is null and will be auto-generated.
+        // In case it's not null return it's value.
+        if (this.descriptionLocaleIdent != null) {
+            return this.descriptionLocaleIdent;
+        }
+
+        // auto-generate
+        return String.format("help.permission.%s", this.getName());
     }
 
-    public void setRoleName(String role) {
-        this.roleName = role;
+    public void setDescriptionLocaleIdent(String descriptionLocaleIdent) {
+        this.descriptionLocaleIdent = descriptionLocaleIdent;
+    }
+
+    public String getPermissionNode() {
+        if (this.getPlugin() == null) {
+            if (this.getRole().equals(CommandRole.NO_ROLE)) {
+                return this.getName();
+            } else {
+                return String.format("%s.%s",
+                        this.getRole().getType().toLowerCase(),
+                        this.getName()
+                );
+            }
+        }
+
+        String permissionPrefix = this.getPlugin().getPermissionService().getPermissionPrefix();
+        if (this.getRole().equals(CommandRole.NO_ROLE)) {
+            return String.format("%s.%s", permissionPrefix, this.getName());
+        }
+
+        return String.format("%s.%s.%s",
+                permissionPrefix,
+                this.getRole().getType().toLowerCase(),
+                this.getName()
+        );
     }
 
     @Override
@@ -77,7 +122,8 @@ public class Permission {
         return "Permission{" +
                 "name='" + name + '\'' +
                 ", role=" + role +
-                ", roleName='" + roleName + '\'' +
+                ", descriptionLocaleIdent='" + descriptionLocaleIdent + '\'' +
                 '}';
     }
+
 }

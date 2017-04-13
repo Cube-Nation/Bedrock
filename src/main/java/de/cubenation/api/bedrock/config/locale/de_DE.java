@@ -5,6 +5,7 @@ import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
+import java.util.HashMap;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class de_DE extends CustomConfigurationFile {
@@ -45,7 +46,7 @@ public class de_DE extends CustomConfigurationFile {
     private String permission_list_role = "{\"text\":\"%role%\",\"color\":\"&PRIMARY&\",\"extra\":[{\"text\":\":\",\"color\":\"white\"}]}";
 
     @Path("permission.list.permission")
-    private String permission_list_permission = "{\"text\":\" - \",\"color\":\"&FLAG&\",\"extra\":[{\"text\":\"%permission%\",\"color\":\"&SECONDARY&\"}]}";
+    private String permission_list_permission = "{\"text\":\" - \",\"color\":\"&FLAG&\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"%description%\"},\"extra\":[{\"text\":\"<?> \",\"color\":\"&DARK_GRAY&\"},{\"text\":\"%permission%\",\"color\":\"&SECONDARY&\"}]}";
 
     @Path("permission.insufficient")
     private String permission_insufficient = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Für diesen Befehl hast Du keine Berechtigung!\",\"color\":\"red\"}]}";
@@ -76,6 +77,17 @@ public class de_DE extends CustomConfigurationFile {
     /*
      * Help messages
      */
+    @Path("help.permission")
+    private HashMap<String, String> help_permission = new HashMap<String, String>() {{
+        put("version", "Die Version des Plugins anzeigen");
+        put("reload", "Das Plugin neu laden");
+        put("regeneratelocale", "Die Locale-Dateien des Plugins neu erzeugen");
+        put("command.list", "Alle Befehle anzeigen, die dieses Plugin unterstützt");
+        put("permissions.self", "Eigene Berechtigungen anzeigen");
+        put("permissions.other", "Berechtigungen eines Spielers anzeigen");
+        put("permission.list", "Alle Berechtigungen anzeigen");
+        put("info.other", "Bedrock-Spielerinformationen anzeigen");
+    }};
 
     @Path("help.header")
     private String help_header = "%plugin% Hilfe";

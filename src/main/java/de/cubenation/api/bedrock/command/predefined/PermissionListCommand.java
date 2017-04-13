@@ -29,15 +29,21 @@ public class PermissionListCommand extends Command {
     @CommandDescription("command.bedrock.permissions.list.desc")
     @CommandSubCommand({ "pl", "permslist", "permissionslist" })
     @CommandPermission(Name = "permission.list", Role = CommandRole.MODERATOR)
-    @Override
-    @SuppressWarnings("unchecked")
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
-        PermissionService permissionService = getCommandManager().getPlugin().getPermissionService();
+        PermissionService permissionService = this.getPlugin().getPermissionService();
+
         if (permissionService != null) {
-            HashMap<String, ArrayList<String>> permissionDump = permissionService.getPermissionRoleDump();
-            MessageHelper.displayPermissions(plugin, sender, permissionDump);
+            MessageHelper.displayPermissions(
+                    plugin,
+                    sender,
+                    permissionService.getPermissions()
+            );
+
         } else {
-            MessageHelper.noPermission(this.getCommandManager().getPlugin(), sender);
+            MessageHelper.noPermission(
+                    this.getCommandManager().getPlugin(),
+                    sender
+            );
         }
     }
 

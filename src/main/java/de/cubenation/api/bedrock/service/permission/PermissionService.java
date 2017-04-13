@@ -15,9 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -25,26 +23,20 @@ import java.util.stream.Collectors;
  * Created by B1acksheep on 25.04.15.
  * Project: Bedrock
  */
-@SuppressWarnings("unused")
 public class PermissionService extends AbstractService implements ServiceInterface {
 
     private ConfigService configService;
 
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private ArrayList<Permission> externalPermissions = new ArrayList<>();
 
     private ArrayList<Permission> localPermissionCache = new ArrayList<>();
-
-    private HashMap<String, String> activePermissions = new HashMap<>();
-
-    private HashMap<String, ArrayList<String>> permissionDump = new HashMap<>();
 
     public PermissionService(BasePlugin plugin) {
         super(plugin);
         this.configService = plugin.getConfigService();
     }
 
-    private String getPermissionPrefix() {
+    public String getPermissionPrefix() {
         return (String) this.getConfigurationValue(
                 "service.permission.prefix",
                 this.getPlugin().getDescription().getName().toLowerCase()
@@ -77,6 +69,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         this.registerPermission(permission, CommandRole.valueOf(role));
     }
 
+    @SuppressWarnings("unused")
     public void registerPermission(String permission) {
         this.registerPermission(new Permission(permission));
     }
@@ -97,6 +90,19 @@ public class PermissionService extends AbstractService implements ServiceInterfa
             this.externalPermissions.add(permission);
             this.initializePermissions();
         }
+    }
+
+    private void addPermission(Permission permission) {
+        if (permission.getName() == null) return;
+
+        List<Permission> exists = this.localPermissionCache.stream()
+                .filter(cachedPermission ->
+                        cachedPermission.getName().equals(permission.getName()) &&
+                                cachedPermission.getRole().equals(permission.getRole())
+                ).collect(Collectors.toList());
+
+        if (exists.size() == 0)
+            this.localPermissionCache.add(permission);
     }
 
     private void initializePermissions() {
@@ -122,26 +128,18 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
                 commandManager.getCommands().forEach(abstractCommand -> {
 
-            abstractCommand.getRuntimePermissions().forEach(permission -> {
-                if (permission.getName() != null) {
-                    this.localPermissionCache.add(permission);
-                }
-            });
+            abstractCommand.getRuntimePermissions().forEach(this::addPermission);
 
             abstractCommand.getArguments().forEach(argument -> {
-                if (argument.getPermission() != null && argument.getPermission().getName() != null) {
-                    this.localPermissionCache.add(argument.getPermission());
+                if (argument.getPermission() != null) {
+                    this.addPermission(argument.getPermission());
                 }
             });
 
         }));
 
         // collect externally registered permissions from userland
-        this.externalPermissions.forEach(permission -> {
-            if (permission.getName() != null) {
-                this.localPermissionCache.add(permission);
-            }
-        });
+        this.externalPermissions.forEach(this::addPermission);
 
         this.savePermissions(permissions);
     }
@@ -165,90 +163,41 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         } catch (InvalidConfigurationException e) {
             this.getPlugin().log(Level.SEVERE, "  permission service: Could not save permission file", e);
         }
-
-        this.loadPermissions();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void loadPermissions() {
-
-        Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
-        HashMap<CommandRole, ArrayList<String>> configuredPermissions = permissions.getAll();
-
-        this.permissionDump = new HashMap<>();
-        this.activePermissions = new HashMap<>();
-
-        for (final CommandRole role : configuredPermissions.keySet()) {
-            String roleName = role.getType().toLowerCase();
-            String formaatted_role = (role.equals(CommandRole.NO_ROLE))
-                    ? roleName
-                    : String.format("%s.%s", this.getPermissionPrefix(), roleName);
-
-            for (String permission : permissions.getPermissionsFor(role)) {
-
-                String formatted_permission = (role.equals(CommandRole.NO_ROLE))
-                        ? String.format("%s.%s", this.getPermissionPrefix(), permission)
-                        : String.format("%s.%s.%s", this.getPermissionPrefix(), roleName, permission);
-
-                this.activePermissions.put(permission, formatted_permission);
-
-                if (!this.permissionDump.containsKey(formaatted_role))
-                    this.permissionDump.put(formaatted_role, new ArrayList<>());
-
-                this.permissionDump.get(formaatted_role).add(formatted_permission);
-            } // for permission
-        } // for role
-
     }
 
     public boolean hasPermission(CommandSender sender, Permission permission) {
-        return this.hasPermission(sender, permission.getName());
-    }
-
-    @SuppressWarnings("unchecked")
-    public boolean hasPermission(CommandSender sender, String permission) {
         Boolean op_has_permission = (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true);
         return (sender.isOp() && op_has_permission) ||
-                permission == null ||
-                permission.isEmpty() ||
-                (this.activePermissions.containsKey(permission) && sender.hasPermission(this.activePermissions.get(permission)));
+                sender.hasPermission(permission.getPermissionNode());
     }
 
-    @SuppressWarnings("unchecked")
-    public HashMap<String, ArrayList<String>> getPermissionRoleDump() {
-        return this.permissionDump;
+    @Deprecated
+    public boolean hasPermission(CommandSender sender, String permission) {
+        List<Permission> filtered = this.localPermissionCache.stream()
+                .filter(cachedPermission -> cachedPermission.getName().equals(permission))
+                .collect(Collectors.toList());
+
+        if (filtered.size() == 0) return false;
+
+        for (Permission filteredPermission : filtered) {
+            if (this.hasPermission(sender, filteredPermission))
+                return true;
+        }
+
+        return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public HashMap<String, ArrayList<String>> getPermissionRoleDump(Player player) throws PlayerNotFoundException {
+    public List<Permission> getPermissions() {
+        return this.localPermissionCache;
+    }
 
-        // NOTE: Most permissions plugins using Bukkit Superperm register the permissions when a player joins
-        //       and remove the permissions when they leave.
-        //       So it is technically not possible to require permissions for an offline player without hooking
-        //       into the plugins that handles permissions
-        //       For that reason we only accept not null Player objects and throw a PlayerNotFoundException if null
-        //       is given.
+    public List<Permission> getPermissions(Player player) throws PlayerNotFoundException {
         if (player == null)
             throw new PlayerNotFoundException();
 
-        HashMap<String, ArrayList<String>> dump = new HashMap<>();
-
-        for (Object o : this.permissionDump.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-            String role = (String) pair.getKey();
-
-            for (String permission : (ArrayList<String>) pair.getValue()) {
-                if (!player.hasPermission(permission)) {
-                    continue;
-                }
-
-                if (!dump.containsKey(role))
-                    dump.put(role, new ArrayList<>());
-
-                dump.get(role).add(permission);
-            }
-        }
-        return dump;
+        return this.localPermissionCache.stream()
+                .filter(permission -> permission.userHasPermission(player))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -256,8 +205,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         return "PermissionService{" +
                 "configService=" + configService +
                 ", localPermissionCache=" + localPermissionCache +
-                ", activePermissions=" + activePermissions +
-                ", permissionDump=" + permissionDump +
                 ", externalPermissions=" + externalPermissions +
                 '}';
     }

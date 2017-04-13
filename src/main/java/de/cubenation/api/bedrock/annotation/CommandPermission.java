@@ -17,4 +17,6 @@ public @interface CommandPermission {
 
     String RoleName() default "NO_ROLE";
 
+    String Description() default "";
+
 }

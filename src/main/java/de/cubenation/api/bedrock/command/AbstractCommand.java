@@ -27,8 +27,12 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 /**
- * Created by BenediktHr on 27.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
+ *
+ * Abstract class for command executor classes
+ *
+ * TBD
  */
 public abstract class AbstractCommand {
 
@@ -119,7 +123,12 @@ public abstract class AbstractCommand {
         if (method.isAnnotationPresent(CommandPermissions.class)) {
             for (CommandPermission commandPermission : method.getAnnotation(CommandPermissions.class).Permissions()) {
                 this.addRuntimePermission(
-                        this.createPermission(commandPermission.Name(), commandPermission.Role(), commandPermission.RoleName())
+                        this.createPermission(
+                                commandPermission.Name(),
+                                commandPermission.Role(),
+                                commandPermission.RoleName(),
+                                commandPermission.Description()
+                        )
                 );
             }
         } else if (method.isAnnotationPresent(CommandPermission.class)) {
@@ -158,17 +167,21 @@ public abstract class AbstractCommand {
         return arguments;
     }
 
-    private Permission createPermission(String name, CommandRole role, String roleName) {
+    private Permission createPermission(String name, CommandRole role, String roleName, String description) {
         Permission permission = new Permission(name);
 
-        // ignore NO_ROLE names -> Permission objects always have CommandRole.NO_ROLE as default role
-        if (!roleName.isEmpty() && !roleName.toUpperCase().equals("NO_ROLE")) {
-            permission.setRoleName(roleName);
+
+        if (roleName != null && !roleName.isEmpty()) {
+            permission.setRole(Permission.getCommandRole(roleName));
         }
 
         // CommandRole enums always win (in case a role String is defined)
         if (role != null && !role.equals(CommandRole.NO_ROLE)) {
             permission.setRole(role);
+        }
+
+        if (description != null && !description.isEmpty()) {
+            permission.setDescriptionLocaleIdent(description);
         }
 
         return permission;
@@ -195,10 +208,20 @@ public abstract class AbstractCommand {
             return;
         }
 
-        Argument argument = new Argument(commandArgument.Description(), commandArgument.Placeholder(), commandArgument.Optional());
+        Argument argument = new Argument(
+                commandArgument.Description(),
+                commandArgument.Placeholder(),
+                commandArgument.Optional()
+        );
+
         if (!commandArgument.Permission().isEmpty()) {
             argument.setPermission(
-                    this.createPermission(commandArgument.Permission(), commandArgument.Role(), commandArgument.RoleName())
+                    this.createPermission(
+                            commandArgument.Permission(),
+                            commandArgument.Role(),
+                            commandArgument.RoleName(),
+                            commandArgument.RoleDescription()
+                    )
             );
         }
 
@@ -223,6 +246,7 @@ public abstract class AbstractCommand {
                     this.createPermission(
                             commandKeyValueArgument.Permission(),
                             commandKeyValueArgument.Role(),
+                            commandKeyValueArgument.RoleName(),
                             commandKeyValueArgument.RoleName()
                     )
             );

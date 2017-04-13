@@ -50,19 +50,22 @@ public class PermissionOtherCommand extends Command {
         String player = (args.length == 0) ? sender.getName() : args[0];
 
         PermissionService permissionService = getPlugin().getPermissionService();
-        if (permissionService != null) {
-
-            HashMap<String, ArrayList<String>> permissionDump;
-            try {
-                permissionDump = permissionService.getPermissionRoleDump(Bukkit.getPlayer(player));
-            } catch (PlayerNotFoundException e) {
-                MessageHelper.noSuchPlayer(this.plugin, sender, player);
-                return;
-            }
-
-            MessageHelper.displayPermissions(plugin, sender, permissionDump);
-        } else {
+        if (permissionService == null) {
             MessageHelper.noPermission(this.getCommandManager().getPlugin(), sender);
+            return;
+        }
+
+        try {
+            MessageHelper.displayPermissions(
+                    plugin,
+                    sender,
+                    permissionService.getPermissions(
+                            Bukkit.getPlayer(player)
+                    )
+            );
+
+        } catch (PlayerNotFoundException e) {
+            MessageHelper.noSuchPlayer(this.plugin, sender, player);
         }
     }
 

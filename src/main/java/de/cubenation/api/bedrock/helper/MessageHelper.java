@@ -3,9 +3,11 @@ package de.cubenation.api.bedrock.helper;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.command.AbstractCommand;
+import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
+import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.Translation;
@@ -22,10 +24,9 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class MessageHelper {
@@ -467,17 +468,32 @@ public class MessageHelper {
         }
     }
 
-    public static void displayPermissions(BasePlugin plugin, CommandSender sender, HashMap<String, ArrayList<String>> permissionDump) {
+    public static void displayPermissions(BasePlugin plugin, CommandSender sender, List<Permission> permissions) {
         new JsonMessage(plugin, "permission.list.header").send(sender);
 
-        for (Map.Entry<String, ArrayList<String>> entry : permissionDump.entrySet()) {
-            // send role
-            new JsonMessage(plugin, "permission.list.role", "role", entry.getKey()).send(sender);
+        permissions.stream()
+                .map(Permission::getRole)
+                .distinct()
+                .collect(Collectors.toList())
+                .forEach(commandRole -> {
+            new JsonMessage(plugin, "permission.list.role",
+                    "role", commandRole.getType().toLowerCase()
+            ).send(sender);
 
-            for (String perm : entry.getValue()) {
-                new JsonMessage(plugin, "permission.list.permission", "permission", perm).send(sender);
-            }
-        }
+            permissions.stream()
+                    .filter(permission -> permission.getRole().equals(commandRole))
+                    .collect(Collectors.toList()).forEach(permission -> {
+
+                // avoid empty description message
+                String description = new Translation(plugin, permission.getDescriptionLocaleIdent()).getTranslation();
+                if (description.isEmpty()) description = "No permission help available for " + permission.getDescriptionLocaleIdent();
+
+                new JsonMessage(plugin, "permission.list.permission",
+                        "permission", permission.getPermissionNode(),
+                        "description", description
+                ).send(sender);
+            });
+        });
     }
 
     public static class Bypass {

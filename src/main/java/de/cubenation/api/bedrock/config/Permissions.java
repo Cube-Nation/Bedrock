@@ -36,17 +36,9 @@ public class Permissions extends CustomConfigurationFile {
     public HashMap<CommandRole, ArrayList<String>> getAll() {
         HashMap<CommandRole, ArrayList<String>> map = new HashMap<>();
 
-        this.permissions.forEach((role, permissions) -> {
-            CommandRole commandRole;
-            try {
-                commandRole = CommandRole.valueOf(role.toUpperCase());
-            } catch (NullPointerException e) {
-                System.out.println("Could not convert " + role + " to CommandRole equivalent, using NO_ROLE");
-                commandRole = CommandRole.NO_ROLE;
-            }
-
-            map.put(commandRole, (ArrayList<String>) permissions);
-        });
+        this.permissions.forEach((role, permissions) ->
+                map.put(Permission.getCommandRole(role), (ArrayList<String>) permissions)
+        );
 
         return map;
     }
