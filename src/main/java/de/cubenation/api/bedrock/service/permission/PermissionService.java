@@ -15,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -121,19 +120,17 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         try {
             permissions.reload();
 
-            HashMap<CommandRole, ArrayList<String>> foo = permissions.getAll();
-            permissions.getAll().forEach((commandRole, permissionList) -> {
-                permissionList.forEach(permission -> {
+            permissions.getAll().forEach(
+                    (commandRole, permissionList) -> permissionList.forEach(permission -> {
 
-                    // To self-repair NO_ROLE permissions we ignore them here.
-                    // They will be added later to their approriate role (or NO_ROLE) again
-                    if (commandRole.equals(CommandRole.NO_ROLE)) {
-                        return;
-                    }
+                // To self-repair NO_ROLE permissions we ignore them here.
+                // They will be added later to their approriate role (or NO_ROLE) again
+                if (commandRole.equals(CommandRole.NO_ROLE)) {
+                    return;
+                }
 
-                    this.addPermission(new Permission(permission, commandRole));
-                });
-            });
+                this.addPermission(new Permission(permission, commandRole));
+            }));
         } catch (InvalidConfigurationException e) {
             plugin.log(Level.SEVERE, "While reloading permissions: " + e.getCause(), e);
             return;
@@ -191,8 +188,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         List<Permission> filtered = this.localPermissionCache.stream()
                 .filter(cachedPermission -> cachedPermission.getName().equals(permission))
                 .collect(Collectors.toList());
-
-        if (filtered.size() == 0) return false;
 
         for (Permission filteredPermission : filtered) {
             if (this.hasPermission(sender, filteredPermission))
