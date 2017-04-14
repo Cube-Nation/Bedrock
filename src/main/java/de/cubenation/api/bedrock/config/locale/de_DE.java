@@ -43,10 +43,10 @@ public class de_DE extends CustomConfigurationFile {
     private String permission_list_header = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Alle Berechtigungen:\",\"color\":\"&SECONDARY&\"}]}";
 
     @Path("permission.list.role")
-    private String permission_list_role = "{\"text\":\"%role%\",\"color\":\"&PRIMARY&\",\"extra\":[{\"text\":\":\",\"color\":\"white\"}]}";
+    private String permission_list_role = "{\"text\":\"<?> \",\"color\":\"&GRAY&\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"%role%.*\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"Klicken um diese diese Rolle in den Chat zu kopieren\"},\"extra\":[{\"text\":\"%role%\",\"color\":\"&PRIMARY&\"},{\"text\":\":\",\"color\":\"&TEXT&\"}]}";
 
     @Path("permission.list.permission")
-    private String permission_list_permission = "{\"text\":\" - \",\"color\":\"&FLAG&\",\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"%description%\"},\"extra\":[{\"text\":\"<?> \",\"color\":\"&DARK_GRAY&\"},{\"text\":\"%permission%\",\"color\":\"&SECONDARY&\"}]}";
+    private String permission_list_permission = "{\"text\":\"<?> \",\"color\":\"&GRAY&\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"%permission%\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":\"%description%\n\nKlicken um dieses Recht in den Chat zu kopieren\"},\"extra\":[{\"text\":\"  %permission%\",\"color\":\"&SECONDARY&\"}]}";
 
     @Path("permission.insufficient")
     private String permission_insufficient = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Für diesen Befehl hast Du keine Berechtigung!\",\"color\":\"red\"}]}";
