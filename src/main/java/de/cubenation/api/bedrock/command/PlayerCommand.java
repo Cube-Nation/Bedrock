@@ -1,11 +1,11 @@
 package de.cubenation.api.bedrock.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
-import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
+import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
+import de.cubenation.api.bedrock.helper.MessageHelper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
  * Project: Bedrock
  */
 
+@Deprecated
+// apply annotation @IngameCommand to execute() method instead
 public abstract class PlayerCommand extends Command {
 
     public PlayerCommand(BasePlugin plugin, CommandManager commandManager) {
