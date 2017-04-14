@@ -95,6 +95,8 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     private void addPermission(Permission permission) {
         if (permission.getName() == null) return;
 
+        permission.setPlugin(this.plugin);
+
         List<Permission> exists = this.localPermissionCache.stream()
                 .filter(cachedPermission ->
                         cachedPermission.getName().equals(permission.getName())
@@ -178,9 +180,26 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     }
 
     public boolean hasPermission(CommandSender sender, Permission permission) {
-        Boolean op_has_permission = (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true);
-        return (sender.isOp() && op_has_permission) ||
-                sender.hasPermission(permission.getPermissionNode());
+        // op check
+        if (sender.isOp() && (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {
+            return true;
+        }
+
+        // let the Permission object do the decision
+        // this can fail in case a permission is in the NO_ROLE role by default or the plugin is not known yet
+        if (sender.hasPermission(permission.getPermissionNode())) {
+            return true;
+        }
+
+        // check again with full permission node (including permission prefix for role)
+        CommandRole role = ((Permissions) plugin.getConfigService().getConfig(Permissions.class)).getRoleForPermission(permission.getName());
+        if (role != null) {
+            if (sender.hasPermission(String.format("%s.%s.%s", this.getPermissionPrefix(), role.getType().toLowerCase(), permission.getName()))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Deprecated
