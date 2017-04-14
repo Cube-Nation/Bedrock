@@ -3,7 +3,6 @@ package de.cubenation.api.bedrock.helper;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.command.AbstractCommand;
-import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
@@ -26,7 +25,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 public class MessageHelper {
@@ -469,15 +467,16 @@ public class MessageHelper {
     }
 
     public static void displayPermissions(BasePlugin plugin, CommandSender sender, List<Permission> permissions) {
-        new JsonMessage(plugin, "permission.list.header").send(sender);
+        String permission_prefix = plugin.getPermissionService().getPermissionPrefix();
 
+        new JsonMessage(plugin, "permission.list.header").send(sender);
         permissions.stream()
                 .map(Permission::getRole)
                 .distinct()
                 .collect(Collectors.toList())
                 .forEach(commandRole -> {
             new JsonMessage(plugin, "permission.list.role",
-                    "role", commandRole.getType().toLowerCase()
+                    "role", String.format("%s.%s", permission_prefix, commandRole.getType().toLowerCase())
             ).send(sender);
 
             permissions.stream()
