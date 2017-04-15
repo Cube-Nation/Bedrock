@@ -11,7 +11,6 @@ import de.cubenation.api.bedrock.service.ServiceManager;
 import de.cubenation.api.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.api.bedrock.service.command.CommandService;
 import de.cubenation.api.bedrock.service.config.ConfigService;
-import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.api.bedrock.service.inventory.InventoryService;
 import de.cubenation.api.bedrock.service.localization.LocalizationService;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
@@ -25,7 +24,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -273,8 +272,12 @@ public abstract class BasePlugin extends JavaPlugin {
         try {
             return this.serviceManager.getService(name);
         } catch (UnknownServiceException e) {
-            if (this.intentionally_ready)
-                this.getLogger().log(Level.SEVERE, "[" + this.getDescription().getName() + "] Could not retrieve service: " + name);
+            if (this.intentionally_ready) {
+                this.log(Level.SEVERE, "Could not retrieve service: " + name + ":");
+                Arrays.stream(Thread.currentThread().getStackTrace()).forEach(stackTraceElement -> {
+                    this.log(Level.SEVERE, stackTraceElement.toString());
+                });
+            }
         }
         return null;
     }
@@ -357,22 +360,6 @@ public abstract class BasePlugin extends JavaPlugin {
     public SettingsService getSettingService() {
         return (SettingsService) this.getService(SERVICE_SETTINGS);
     }
-
-    /**
-     * Set the commands that are handled by this plugin
-     *
-     * @param commands  A HashMap that contains Strings as keys (the command itself)
-     *                  and an ArrayList of Classes that handle this command as HashMap values.
-     */
-    public abstract void setCommands(HashMap<String,ArrayList<Class<?>>> commands);
-
-    /**
-     * Returns a list of CustomConfigurationFiles classes
-     *
-     * @return  An ArrayList of classes
-     * @see     CustomConfigurationFile
-     */
-    public abstract ArrayList<Class<?>> getCustomConfigurationFiles();
 
     /**
      * Returns a list of CustomSettingsFile classes
