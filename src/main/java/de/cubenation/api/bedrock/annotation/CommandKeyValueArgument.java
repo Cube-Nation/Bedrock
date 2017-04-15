@@ -14,6 +14,8 @@ public @interface CommandKeyValueArgument {
 
     String Key();
 
+    boolean KeyOnly() default false;
+
     String Description();
 
     String Placeholder();
