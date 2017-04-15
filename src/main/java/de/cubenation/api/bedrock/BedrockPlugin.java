@@ -1,5 +1,7 @@
 package de.cubenation.api.bedrock;
 
+import de.cubenation.api.bedrock.annotation.CommandHandler;
+import de.cubenation.api.bedrock.annotation.ConfigurationFile;
 import de.cubenation.api.bedrock.command.player.BedrockPlayerInfoCommand;
 import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.config.locale.de_DE;
@@ -10,14 +12,20 @@ import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import javax.persistence.PersistenceException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Created by B1acksheep on 25.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version {$project.version}
+ *
+ * This is the Bedrock main plugin class
  */
+@ConfigurationFile(de_DE.class)
+//@ConfigurationFile(en_US.class)
+@CommandHandler(Command = "bp", Handlers = {
+        BedrockPlayerInfoCommand.class
+})
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;
@@ -54,21 +62,6 @@ public class BedrockPlugin extends BasePlugin {
         //  - a BedrockPlayer - fired when a player joins the server
         //  - a Bedrockorld - fired when a world is loaded
         this.getServer().getPluginManager().registerEvents(new EbeanListener(), this);
-    }
-
-    @Override
-    public ArrayList<Class<?>> getCustomConfigurationFiles() {
-        return new ArrayList<Class<?>>() {{
-            add(de_DE.class);
-//            add(en_US.class);
-        }};
-    }
-
-    @Override
-    public void setCommands(HashMap<String, ArrayList<Class<?>>> commands) {
-        commands.put("bp", new ArrayList<Class<?>>() {{
-            add(BedrockPlayerInfoCommand.class);
-        }});
     }
 
     /**
