@@ -26,6 +26,8 @@ public @interface KeyValueArgument {
 
     String RoleName() default "NO_ROLE";
 
+    String PermissionDescription() default "";
+
     Class Condition() default DefaultCondition.class;
 
 }
