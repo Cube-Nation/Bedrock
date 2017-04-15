@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.helper.design;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.translation.Translation;
 import de.cubenation.api.bedrock.helper.MessageHelper;
+import de.cubenation.api.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /**

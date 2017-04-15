@@ -1,9 +1,9 @@
 package de.cubenation.api.bedrock.listener;
 
 import de.cubenation.api.bedrock.BedrockPlugin;
+import de.cubenation.api.bedrock.ebean.BedrockPlayer;
 import de.cubenation.api.bedrock.event.PlayerChangesNameEvent;
 import de.cubenation.api.bedrock.helper.BedrockEbeanHelper;
-import de.cubenation.api.bedrock.ebean.BedrockPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

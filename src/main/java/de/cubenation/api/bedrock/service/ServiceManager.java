@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.service;
 
+import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.exception.UnknownServiceException;
-import de.cubenation.api.bedrock.exception.ServiceInitException;
 
 import java.util.HashMap;
 

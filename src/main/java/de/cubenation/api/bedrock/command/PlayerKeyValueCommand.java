@@ -2,10 +2,10 @@ package de.cubenation.api.bedrock.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
+import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
-import de.cubenation.api.bedrock.exception.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

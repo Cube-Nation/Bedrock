@@ -2,10 +2,10 @@ package de.cubenation.api.bedrock.service.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.config.BedrockDefaults;
-import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
+import de.cubenation.api.bedrock.service.AbstractService;
+import de.cubenation.api.bedrock.service.ServiceInterface;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 

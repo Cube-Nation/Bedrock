@@ -1,6 +1,5 @@
 package de.cubenation.api.bedrock.annotation;
 
-import de.cubenation.api.bedrock.annotation.condition.AnnotationCondition;
 import de.cubenation.api.bedrock.annotation.condition.DefaultCondition;
 import de.cubenation.api.bedrock.command.CommandRole;
 
