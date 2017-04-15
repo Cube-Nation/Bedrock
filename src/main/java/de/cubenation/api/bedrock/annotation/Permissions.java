@@ -6,9 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface CommandKeyValueArguments {
+@Target(ElementType.TYPE)
+public @interface Permissions {
 
-    CommandKeyValueArgument[] Arguments();
+    Permission[] value();
 
 }

@@ -6,9 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface CommandPermissions {
+@Target(ElementType.TYPE)
+public @interface Arguments {
 
-    CommandPermission[] Permissions();
+    Argument[] value();
 
 }
