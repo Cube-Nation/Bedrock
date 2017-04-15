@@ -1,7 +1,10 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.*;
+import de.cubenation.api.bedrock.annotation.Argument;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.Permission;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -20,29 +23,18 @@ import java.util.ArrayList;
  * Created by BenediktHr on 15.11.15.
  * Project: Bedrock
  */
+@Description("command.bedrock.info.desc")
+@Permission(Name = "settings.list", Role = CommandRole.ADMIN)
+@SubCommand({ "settings" })
+@SubCommand({ "info", "i" })
+@Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
+@Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
 public class SettingsInfoCommand extends Command {
 
     public SettingsInfoCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @CommandDescription("command.bedrock.info.desc")
-    @CommandPermission(Name = "settings.list", Role = CommandRole.ADMIN)
-    @CommandSubCommands(SubCommands = {
-            @CommandSubCommand({ "settings" }),
-            @CommandSubCommand({ "info", "i" })
-    })
-    @CommandArguments(Arguments = {
-            @CommandArgument(
-                    Description = "command.bedrock.key.desc",
-                    Placeholder = "command.bedrock.key.ph"
-            ),
-            @CommandArgument(
-                    Description = "command.bedrock.username_uuid.desc",
-                    Placeholder = "command.bedrock.username_uuid.ph",
-                    Optional = true
-            )
-    })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 

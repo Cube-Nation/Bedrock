@@ -1,9 +1,9 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandDescription;
-import de.cubenation.api.bedrock.annotation.CommandPermission;
-import de.cubenation.api.bedrock.annotation.CommandSubCommand;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.Permission;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -17,15 +17,15 @@ import org.bukkit.command.CommandSender;
  * Created by B1acksheep on 28.04.15.
  * Project: Bedrock
  */
+@Description("command.bedrock.permissions.list.desc")
+@SubCommand({ "pl", "permslist", "permissionslist" })
+@Permission(Name = "permission.list", Role = CommandRole.MODERATOR)
 public class PermissionListCommand extends Command {
 
     public PermissionListCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @CommandDescription("command.bedrock.permissions.list.desc")
-    @CommandSubCommand({ "pl", "permslist", "permissionslist" })
-    @CommandPermission(Name = "permission.list", Role = CommandRole.MODERATOR)
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = this.getPlugin().getPermissionService();
 

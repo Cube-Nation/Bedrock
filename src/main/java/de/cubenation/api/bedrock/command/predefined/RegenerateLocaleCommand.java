@@ -1,10 +1,9 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandDescription;
-import de.cubenation.api.bedrock.annotation.CommandPermission;
-import de.cubenation.api.bedrock.annotation.CommandSubCommand;
-import de.cubenation.api.bedrock.annotation.CommandSubCommands;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.Permission;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -19,18 +18,16 @@ import org.bukkit.command.CommandSender;
 import java.io.File;
 import java.util.logging.Level;
 
+@Description("command.bedrock.regeneratelocale.desc")
+@Permission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
+@SubCommand({ "regenerate" })
+@SubCommand({ "locale" })
 public class RegenerateLocaleCommand extends Command {
 
     public RegenerateLocaleCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @CommandDescription("command.bedrock.regeneratelocale.desc")
-    @CommandPermission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
-    @CommandSubCommands(SubCommands = {
-            @CommandSubCommand({ "regenerate" }),
-            @CommandSubCommand({ "locale" })
-    })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         BasePlugin pluginInstance = this.getPlugin();

@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandDescription;
-import de.cubenation.api.bedrock.annotation.CommandSubCommand;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -24,14 +24,14 @@ import java.util.Set;
  * Created by B1acksheep on 02.04.15.
  * Project: Bedrock
  */
+@Description("command.bedrock.help.desc")
+@SubCommand({ "help" })
 public class HelpCommand extends Command {
 
     public HelpCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @CommandDescription("command.bedrock.help.desc")
-    @CommandSubCommand({ "help" })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {

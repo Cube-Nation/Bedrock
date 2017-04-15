@@ -1,9 +1,9 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandDescription;
-import de.cubenation.api.bedrock.annotation.CommandPermission;
-import de.cubenation.api.bedrock.annotation.CommandSubCommand;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.Permission;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -16,15 +16,15 @@ import org.bukkit.command.CommandSender;
 
 import java.util.logging.Level;
 
+@Description("command.bedrock.reload.desc")
+@Permission(Name = "reload", Role = CommandRole.ADMIN)
+@SubCommand({ "reload", "r" })
 public class ReloadCommand extends Command {
 
     public ReloadCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @CommandDescription("command.bedrock.reload.desc")
-    @CommandPermission(Name = "reload", Role = CommandRole.ADMIN)
-    @CommandSubCommand({ "reload", "r" })
     @Override
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {

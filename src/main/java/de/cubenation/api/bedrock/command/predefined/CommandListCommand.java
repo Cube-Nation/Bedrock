@@ -1,10 +1,9 @@
 package de.cubenation.api.bedrock.command.predefined;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandDescription;
-import de.cubenation.api.bedrock.annotation.CommandPermission;
-import de.cubenation.api.bedrock.annotation.CommandSubCommand;
-import de.cubenation.api.bedrock.annotation.CommandSubCommands;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.Permission;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -21,6 +20,10 @@ import java.util.Map;
  * Created by BenediktHr on 15.11.15.
  * Project: Bedrock
  */
+@Description("command.bedrock.cmd.list.desc")
+@Permission(Name = "command.list", Role = CommandRole.USER)
+@SubCommand({ "command", "cmd" })
+@SubCommand({ "list", "l" })
 public class CommandListCommand extends Command {
 
     public CommandListCommand(BasePlugin plugin, CommandManager commandManager) {
@@ -28,12 +31,6 @@ public class CommandListCommand extends Command {
     }
 
     @Override
-    @CommandDescription("command.bedrock.cmd.list.desc")
-    @CommandPermission(Name = "command.list", Role = CommandRole.USER)
-    @CommandSubCommands(SubCommands = {
-            @CommandSubCommand({ "command", "cmd" }),
-            @CommandSubCommand({ "list", "l" })
-    })
     public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();

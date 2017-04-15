@@ -1,10 +1,10 @@
 package de.cubenation.api.bedrock.command.player;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandArgument;
-import de.cubenation.api.bedrock.annotation.CommandDescription;
-import de.cubenation.api.bedrock.annotation.CommandPermission;
-import de.cubenation.api.bedrock.annotation.CommandSubCommand;
+import de.cubenation.api.bedrock.annotation.Argument;
+import de.cubenation.api.bedrock.annotation.Description;
+import de.cubenation.api.bedrock.annotation.Permission;
+import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
@@ -22,20 +22,20 @@ import org.bukkit.command.ConsoleCommandSender;
  * Created by BenediktHr on 17.08.16.
  * Project: Bedrock
  */
+@Description("command.bedrock.playerinfo.desc")
+@Permission(Name = "info.other", Role = CommandRole.ADMIN)
+@SubCommand({ "info", "i" })
+@Argument(
+        Description = "command.bedrock.username_uuid.desc",
+        Placeholder = "command.bedrock.username_uuid.ph",
+        Optional = true
+)
 public class BedrockPlayerInfoCommand extends Command {
 
     public BedrockPlayerInfoCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @CommandDescription("command.bedrock.playerinfo.desc")
-    @CommandPermission(Name = "info.other", Role = CommandRole.ADMIN)
-    @CommandSubCommand({ "info", "i" })
-    @CommandArgument(
-            Description = "command.bedrock.username_uuid.desc",
-            Placeholder = "command.bedrock.username_uuid.ph",
-            Optional = true
-    )
     @Override
     public void execute(final CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
