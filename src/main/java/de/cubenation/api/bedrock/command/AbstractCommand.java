@@ -3,15 +3,12 @@ package de.cubenation.api.bedrock.command;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.annotation.condition.AnnotationCondition;
-import de.cubenation.api.bedrock.command.argument.Argument;
-import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.LengthComparator;
 import de.cubenation.api.bedrock.helper.MessageHelper;
-import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import de.cubenation.api.bedrock.translation.parts.JsonColor;
@@ -21,10 +18,8 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.logging.Level;
 
 /**
@@ -45,9 +40,9 @@ public abstract class AbstractCommand {
 
     private ArrayList<String[]> subcommands = new ArrayList<>();
 
-    private ArrayList<Argument> arguments = new ArrayList<>();
+    private ArrayList<de.cubenation.api.bedrock.command.argument.Argument> arguments = new ArrayList<>();
 
-    private ArrayList<Permission> runtimePermissions = new ArrayList<>();
+    private ArrayList<de.cubenation.api.bedrock.permission.Permission> runtimePermissions = new ArrayList<>();
 
     private boolean isIngameCommandOnly = false;
 
@@ -65,19 +60,7 @@ public abstract class AbstractCommand {
         this.commandManager = commandManager;
 
         // read annotations from execute methods
-        try {
-            this.parseMethodAnnotations(
-                    this.getClass().getMethod("execute", CommandSender.class, String[].class)
-            );
-        } catch (NoSuchMethodException ignore) {
-        }
-
-        try {
-            this.parseMethodAnnotations(
-                    this.getClass().getMethod("execute", CommandSender.class, HashMap.class)
-            );
-        } catch (NoSuchMethodException ignore) {
-        }
+        this.parseMethodAnnotations(this.getClass());
     }
 
     public BasePlugin getPlugin() {
@@ -88,61 +71,42 @@ public abstract class AbstractCommand {
         return this.commandManager;
     }
 
-    private void parseMethodAnnotations(Method method) {
+    private void parseMethodAnnotations(Class<? extends AbstractCommand> clazz) {
         // Description
-        if (method.isAnnotationPresent(CommandDescription.class)) {
-            this.setDescription(method.getAnnotation(CommandDescription.class).value());
+        Description description = clazz.getAnnotation(Description.class);
+        if (description != null) {
+            this.setDescription(description.value());
         }
 
         // SubCommand/s
-        if (method.isAnnotationPresent(CommandSubCommands.class)) {
-            for (CommandSubCommand commandSubCommand : method.getAnnotation(CommandSubCommands.class).SubCommands()) {
-                this.addSubCommand(commandSubCommand.value());
-            }
-        } else if (method.isAnnotationPresent(CommandSubCommand.class)) {
-            this.addSubCommand(method.getAnnotation(CommandSubCommand.class).value());
-        }
+        Arrays.stream(clazz.getAnnotationsByType(SubCommand.class)).forEach(
+                subCommand -> this.addSubCommand(subCommand.value())
+        );
 
         // Argument/s
-        if (method.isAnnotationPresent(CommandArguments.class)) {
-            for (CommandArgument commandArgument : method.getAnnotation(CommandArguments.class).Arguments()) {
-                this.processArgumentAnnotation(commandArgument);
-            }
-        } else if (method.isAnnotationPresent(CommandArgument.class)) {
-            this.processArgumentAnnotation(method.getAnnotation(CommandArgument.class));
-        }
+        Arrays.stream(clazz.getAnnotationsByType(Argument.class)).forEach(
+                this::processArgumentAnnotation
+        );
 
         // Key-Value Argument/s
-        if (method.isAnnotationPresent(CommandKeyValueArguments.class)) {
-            for (CommandKeyValueArgument commandKeyValueArgument : method.getAnnotation(CommandKeyValueArguments.class).Arguments()) {
-                this.processKeyValueArgumentAnnotation(commandKeyValueArgument);
-            }
-        } else if (method.isAnnotationPresent(CommandKeyValueArgument.class)) {
-            this.processKeyValueArgumentAnnotation(method.getAnnotation(CommandKeyValueArgument.class));
-        }
+        Arrays.stream(clazz.getAnnotationsByType(KeyValueArgument.class)).forEach(
+                this::processKeyValueArgumentAnnotation
+        );
 
         // Permission/s
-        if (method.isAnnotationPresent(CommandPermissions.class)) {
-            for (CommandPermission commandPermission : method.getAnnotation(CommandPermissions.class).Permissions()) {
-                this.addRuntimePermission(
-                        this.createPermission(
-                                commandPermission.Name(),
-                                commandPermission.Role(),
-                                commandPermission.RoleName(),
-                                commandPermission.Description()
-                        )
-                );
-            }
-        } else if (method.isAnnotationPresent(CommandPermission.class)) {
-            CommandPermission commandPermission = method.getAnnotation(CommandPermission.class);
-            this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
-        }
+        Arrays.stream(clazz.getAnnotationsByType(Permission.class)).forEach(permission -> this.addRuntimePermission(
+                this.createPermission(
+                        permission.Name(),
+                        permission.Role(),
+                        permission.RoleName(),
+                        permission.Description()
+                )
+        ));
 
-        // Ingame Command only?
-        if (method.isAnnotationPresent(IngameCommand.class)) {
+        // In-game Command only?
+        if (clazz.isAnnotationPresent(IngameCommand.class)) {
             this.isIngameCommandOnly = true;
         }
-
     }
 
     public String getDescription() {
@@ -161,24 +125,24 @@ public abstract class AbstractCommand {
         this.subcommands.add(subCommands);
     }
 
-    public ArrayList<Permission> getRuntimePermissions() {
+    public ArrayList<de.cubenation.api.bedrock.permission.Permission> getRuntimePermissions() {
         return this.runtimePermissions;
     }
 
-    protected void addRuntimePermission(Permission permission) {
+    private void addRuntimePermission(de.cubenation.api.bedrock.permission.Permission permission) {
         permission.setPlugin(plugin);
         this.runtimePermissions.add(permission);
     }
 
-    public ArrayList<Argument> getArguments() {
+    public ArrayList<de.cubenation.api.bedrock.command.argument.Argument> getArguments() {
         return this.arguments;
     }
 
-    private Permission createPermission(String name, CommandRole role, String roleName, String description) {
-        Permission permission = new Permission(name);
+    private de.cubenation.api.bedrock.permission.Permission createPermission(String name, CommandRole role, String roleName, String description) {
+        de.cubenation.api.bedrock.permission.Permission permission = new de.cubenation.api.bedrock.permission.Permission(name);
 
         if (roleName != null && !roleName.isEmpty()) {
-            permission.setRole(Permission.getCommandRole(roleName));
+            permission.setRole(de.cubenation.api.bedrock.permission.Permission.getCommandRole(roleName));
         }
 
         // CommandRole enums always win (in case a role String is defined)
@@ -209,12 +173,12 @@ public abstract class AbstractCommand {
     }
 
     @SuppressWarnings("unchecked")
-    private void processArgumentAnnotation(CommandArgument commandArgument) {
+    private void processArgumentAnnotation(Argument commandArgument) {
         if (!this.checkArgumentCondition(commandArgument.Condition())) {
             return;
         }
 
-        Argument argument = new Argument(
+        de.cubenation.api.bedrock.command.argument.Argument argument = new de.cubenation.api.bedrock.command.argument.Argument(
                 this.getPlugin(),
                 commandArgument.Description(),
                 commandArgument.Placeholder(),
@@ -228,7 +192,7 @@ public abstract class AbstractCommand {
                             commandArgument.Permission(),
                             commandArgument.Role(),
                             commandArgument.RoleName(),
-                            commandArgument.RoleDescription()
+                            commandArgument.PermissionDescription()
                     )
             );
         }
@@ -237,12 +201,12 @@ public abstract class AbstractCommand {
     }
 
     @SuppressWarnings("unchecked")
-    private void processKeyValueArgumentAnnotation(CommandKeyValueArgument commandKeyValueArgument) {
+    private void processKeyValueArgumentAnnotation(KeyValueArgument commandKeyValueArgument) {
         if (!this.checkArgumentCondition(commandKeyValueArgument.Condition())) {
             return;
         }
 
-        KeyValueArgument keyValueArgument = new KeyValueArgument(
+        de.cubenation.api.bedrock.command.argument.KeyValueArgument keyValueArgument = new de.cubenation.api.bedrock.command.argument.KeyValueArgument(
                 this.getPlugin(),
                 commandKeyValueArgument.Key(),
                 commandKeyValueArgument.Description(),
@@ -259,7 +223,7 @@ public abstract class AbstractCommand {
                             commandKeyValueArgument.Permission(),
                             commandKeyValueArgument.Role(),
                             commandKeyValueArgument.RoleName(),
-                            commandKeyValueArgument.RoleName()
+                            commandKeyValueArgument.PermissionDescription()
                     )
             );
         }
@@ -267,7 +231,7 @@ public abstract class AbstractCommand {
         this.addArgument(keyValueArgument);
     }
 
-    private void addArgument(Argument argument) {
+    private void addArgument(de.cubenation.api.bedrock.command.argument.Argument argument) {
         this.arguments.add(argument);
     }
 
@@ -299,19 +263,19 @@ public abstract class AbstractCommand {
      *
      * For a full working command you need to define at least these annotations:
      * <ul>
-     *     <li>@CommandDescription(String)
-     *     <li>@CommandSubCommand(String[]) (OR)
-     *     <li>@CommandSubCommands(SubCommands = { @CommandSubCommand(), ... } )
+     *     <li>@Description(String)
+     *     <li>@SubCommand(String[]) (OR)
+     *     <li>@SubCommands(SubCommands = { @SubCommand(), ... } )
      * </ul>
      * <p>
      * These annotations are optional:
      * <ul>
-     *     <li>@CommandPermission(Name = "permission.name"[, Role = CommandRole.TYPE]) - optional
-     *     <li>@CommandPermissions(Permissions = { @CommandPermission() } )
-     *     <li>@CommandArgument( String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role )
-     *     <li>@CommandArguments(Arguments = { @CommandArgument() } )
-     *     <li>@CommandKeyValueArgument( String Key, String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role, String RoleName )
-     *     <li>@CommandKeyValueArguments(Arguments = { @CommandKeyValueArgument() } )
+     *     <li>@Permission(Name = "permission.name"[, Role = CommandRole.TYPE]) - optional
+     *     <li>@Permissions(Permissions = { @Permission() } )
+     *     <li>@Argument( String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role )
+     *     <li>@Arguments(Arguments = { @Argument() } )
+     *     <li>@KeyValueArgument( String Key, String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role, String RoleName )
+     *     <li>@KeyValueArguments(Arguments = { @KeyValueArgument() } )
      * </ul>
      *
      * @param sender      The sender of the command
@@ -392,13 +356,14 @@ public abstract class AbstractCommand {
         }};
     }
 
-    protected boolean isMatchingSubCommands(String[] args) {
+    boolean isMatchingSubCommands(String[] args) {
         if (args.length < this.getSubcommands().size())
             return false;
 
         // return true immediately if no subcommands are defined
-        if (this.getSubcommands().size() == 0)
+        if (this.getSubcommands().size() == 0) {
             return true;
+        }
 
         boolean allSubCommandsMatched = false;
         for (int i = 0; i < this.getSubcommands().size(); i++) {
@@ -464,7 +429,7 @@ public abstract class AbstractCommand {
 
     private int getRequiredArgumentsSize() {
         int requiredArguments = 0;
-        for (Argument argument : arguments) {
+        for (de.cubenation.api.bedrock.command.argument.Argument argument : arguments) {
             if (!argument.isOptional()) {
                 requiredArguments++;
             }
@@ -473,7 +438,7 @@ public abstract class AbstractCommand {
         return requiredArguments;
     }
 
-    public ArrayList<BedrockJson> getColoredSuggestion(Boolean argPlaceholderEnabled) {
+    public ArrayList<BedrockJson> getColoredSuggestion(@SuppressWarnings("SameParameterValue") Boolean argPlaceholderEnabled) {
         ArrayList<BedrockJson> result = new ArrayList<>();
         String commandHeadline = "/" + getCommandManager().getPluginCommand().getLabel();
         result.add(BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY));
@@ -494,7 +459,7 @@ public abstract class AbstractCommand {
 
         if (argPlaceholderEnabled) {
             // process all Arguments
-            for (Argument argument : getArguments()) {
+            for (de.cubenation.api.bedrock.command.argument.Argument argument : getArguments()) {
 
 
                 /*
@@ -503,8 +468,8 @@ public abstract class AbstractCommand {
                  * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
                  * key-value command) we need to prepend the key
                  */
-                if (argument instanceof KeyValueArgument) {
-                    KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
+                if (argument instanceof de.cubenation.api.bedrock.command.argument.KeyValueArgument) {
+                    de.cubenation.api.bedrock.command.argument.KeyValueArgument keyValueArgument = (de.cubenation.api.bedrock.command.argument.KeyValueArgument) argument;
 
                     result.add(BedrockJson.JsonWithText(keyValueArgument.getKey()).color(JsonColor.SECONDARY));
                     result.add(BedrockJson.Space());
@@ -514,8 +479,8 @@ public abstract class AbstractCommand {
                  * Argument placeholder
                  */
 
-                if (!(argument instanceof KeyValueArgument)
-                        || !((KeyValueArgument) argument).getKeyOnly()) {
+                if (!(argument instanceof de.cubenation.api.bedrock.command.argument.KeyValueArgument)
+                        || !((de.cubenation.api.bedrock.command.argument.KeyValueArgument) argument).getKeyOnly()) {
                     BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
                             .color(JsonColor.GRAY)
                             .italic(argument.isOptional());
@@ -552,7 +517,7 @@ public abstract class AbstractCommand {
         if (getRuntimePermissions().isEmpty())
             return true;
 
-        for (Permission permission : getRuntimePermissions()) {
+        for (de.cubenation.api.bedrock.permission.Permission permission : getRuntimePermissions()) {
             if (permission.userHasPermission(sender)) {
                 return true;
             }

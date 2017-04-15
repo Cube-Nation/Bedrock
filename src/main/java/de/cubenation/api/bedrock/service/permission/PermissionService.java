@@ -202,7 +202,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         return false;
     }
 
-    @Deprecated
+    @SuppressWarnings("unused")
     public boolean hasPermission(CommandSender sender, String permission) {
         List<Permission> filtered = this.localPermissionCache.stream()
                 .filter(cachedPermission -> cachedPermission.getName().equals(permission))

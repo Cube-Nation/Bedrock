@@ -37,6 +37,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.pluginCommand = pluginCommand;
 
         // !? Add doubles?
+        // TODO: @blacksheep92 warum!? zu dem zeitpunkt ist das ding eh leer (sollte es sein) - oder überseh ich was?
         this.commands.addAll(commands);
         this.helpCommand = new HelpCommand(plugin, this);
         this.commands.add(helpCommand);
@@ -49,7 +50,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
-        if (args.length <= 0) {
+        if (args.length == 0) {
             try {
                 helpCommand.preExecute(commandSender, args);
             } catch (Exception e) {
@@ -73,8 +74,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             // try commands without subcommands
             if (this.tryCommand(
                     this.commands.stream()
-                    .filter(abstractCommand -> abstractCommand.getSubcommands().size() == 0)
-                    .collect(Collectors.toList()),
+                            .filter(abstractCommand -> abstractCommand.getSubcommands().size() == 0)
+                            .collect(Collectors.toList()),
                     commandSender,
                     args
             )) {

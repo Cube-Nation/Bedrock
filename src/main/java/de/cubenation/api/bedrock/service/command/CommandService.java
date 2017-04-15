@@ -1,6 +1,7 @@
 package de.cubenation.api.bedrock.service.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.CommandHandler;
 import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.command.predefined.*;
@@ -13,8 +14,7 @@ import de.cubenation.api.bedrock.service.settings.SettingsService;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 public class CommandService extends AbstractService implements ServiceInterface {
@@ -26,48 +26,15 @@ public class CommandService extends AbstractService implements ServiceInterface 
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void init() throws ServiceInitException {
-
-        HashMap<String, ArrayList<Class<?>>> commands = new HashMap<>();
-        this.getPlugin().setCommands(commands);
-
-        for (Object o : commands.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-
-            String command = (String) pair.getKey();
-            ArrayList<Class<?>> classNames = (ArrayList<Class<?>>) pair.getValue();
-
-            if (classNames.size() == 0) {
-                this.getPlugin().log(Level.WARNING, "  command service: Not registering command " + command + " (no CommandManagers assigned)");
-                continue;
-            }
-
-            //this.getPlugin().log(Level.INFO, "  command service: Registering command " + command + " with " + value.size() + " CommandManager(s)");
-
-            CommandManager manager = new CommandManager(
-                    this.getPlugin(),
-                    this.getPlugin().getCommand(command),
-                    this.getPlugin().getDescription().getName()
-            );
-
-            for (Class<?> className : classNames) {
-                Constructor<?> constructor;
-                try {
-                    constructor = className.getConstructor(BasePlugin.class, CommandManager.class);
-                    manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                    e.printStackTrace();
+        // get all commands and their handles from CommandHandler annotations
+        Arrays.stream(this.getPlugin().getClass().getAnnotationsByType(CommandHandler.class)).forEach(
+                commandHandler -> {
+                    this.addCommandManager(commandHandler.Command(), commandHandler.Handlers());
                 }
-            }
+        );
 
-            manager.getPluginCommand().setExecutor(manager);
-            manager.getPluginCommand().setTabCompleter(manager);
-
-            this.addCommandManager(manager);
-        }
-
-
+        // TODO: doc
         CommandManager pluginCommandManager = null;
         for (CommandManager commandManager : this.getCommandManagers()) {
             if (commandManager.getPluginCommand().getLabel().equalsIgnoreCase(getPlugin().getDescription().getName())) {
@@ -107,12 +74,43 @@ public class CommandService extends AbstractService implements ServiceInterface 
         }
     }
 
+    private void addCommandManager(String command, Class<? extends AbstractCommand>[] handlers) {
+        if (handlers.length == 0) {
+                this.getPlugin().log(
+                        Level.WARNING,
+                        "CommandService: Not registering command " + command + " (no handlers assigned)"
+                );
+                return;
+        }
+
+        CommandManager manager = new CommandManager(
+                this.getPlugin(),
+                this.getPlugin().getCommand(command),
+                this.getPlugin().getDescription().getName()
+        );
+
+        for (Class<?> handler : handlers) {
+            Constructor<?> constructor;
+            try {
+                constructor = handler.getConstructor(BasePlugin.class, CommandManager.class);
+                manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                e.printStackTrace();
+            }
+        }
+
+        manager.getPluginCommand().setExecutor(manager);
+        manager.getPluginCommand().setTabCompleter(manager);
+
+        this.addCommandManager(manager);
+    }
+
     @Override
     public void reload() throws ServiceReloadException {
         // no reloading of commands supported
     }
 
-    public void addCommandManager(CommandManager manager) {
+    private void addCommandManager(CommandManager manager) {
         this.command_manager.add(manager);
     }
 

@@ -11,7 +11,7 @@ import java.util.HashMap;
  */
 public class KeyValueArgument extends Argument {
 
-    private String key;
+    private String key = "";
 
     private Boolean keyOnly = false;
 

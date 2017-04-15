@@ -1,6 +1,7 @@
 package de.cubenation.api.bedrock.service.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.annotation.ConfigurationFile;
 import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
@@ -11,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -49,17 +51,14 @@ public class ConfigService extends AbstractService implements ServiceInterface {
             }
         }
 
-        // next, add all custom files
-        if (this.getPlugin().getCustomConfigurationFiles() != null) {
-            for (Class<?> className : this.getPlugin().getCustomConfigurationFiles()) {
-                try {
-                    this.registerFile(className, this.createPluginConfig(this.getPlugin(), className));
-
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                }
+        // add all custom configuration files by their annotation
+        Arrays.stream(this.getPlugin().getClass().getAnnotationsByType(ConfigurationFile.class)).forEach(configurationFile -> {
+            try {
+                this.registerFile(configurationFile.value(), this.createPluginConfig(this.getPlugin(), configurationFile.value()));
+            } catch (InstantiationException e) {
+                e.printStackTrace();
             }
-        }
+        });
 
         /*
          * now try reading the service.config.do_not_delete_me value. If it does not exist, is empty or has been changed
