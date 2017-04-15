@@ -17,6 +17,7 @@ import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import de.cubenation.api.bedrock.translation.parts.JsonColor;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -47,6 +48,8 @@ public abstract class AbstractCommand {
     private ArrayList<Argument> arguments = new ArrayList<>();
 
     private ArrayList<Permission> runtimePermissions = new ArrayList<>();
+
+    private boolean isIngameCommandOnly = false;
 
     /**
      * The class constructor for all Bedrock commands.
@@ -111,7 +114,6 @@ public abstract class AbstractCommand {
 
         // Key-Value Argument/s
         if (method.isAnnotationPresent(CommandKeyValueArguments.class)) {
-            System.out.println("has commendKeyValueArguments");
             for (CommandKeyValueArgument commandKeyValueArgument : method.getAnnotation(CommandKeyValueArguments.class).Arguments()) {
                 this.processKeyValueArgumentAnnotation(commandKeyValueArgument);
             }
@@ -136,6 +138,11 @@ public abstract class AbstractCommand {
             this.addRuntimePermission(new Permission(commandPermission.Name(), commandPermission.Role()));
         }
 
+        // Ingame Command only?
+        if (method.isAnnotationPresent(IngameCommand.class)) {
+            this.isIngameCommandOnly = true;
+        }
+
     }
 
     public String getDescription() {
@@ -147,7 +154,7 @@ public abstract class AbstractCommand {
     }
 
     public ArrayList<String[]> getSubcommands() {
-        return subcommands;
+        return this.subcommands;
     }
 
     private void addSubCommand(String[] subCommands) {
@@ -164,12 +171,11 @@ public abstract class AbstractCommand {
     }
 
     public ArrayList<Argument> getArguments() {
-        return arguments;
+        return this.arguments;
     }
 
     private Permission createPermission(String name, CommandRole role, String roleName, String description) {
         Permission permission = new Permission(name);
-
 
         if (roleName != null && !roleName.isEmpty()) {
             permission.setRole(Permission.getCommandRole(roleName));
@@ -209,10 +215,12 @@ public abstract class AbstractCommand {
         }
 
         Argument argument = new Argument(
+                this.getPlugin(),
                 commandArgument.Description(),
                 commandArgument.Placeholder(),
-                commandArgument.Optional()
-        );
+                commandArgument.Optional(),
+                null
+                );
 
         if (!commandArgument.Permission().isEmpty()) {
             argument.setPermission(
@@ -225,7 +233,6 @@ public abstract class AbstractCommand {
             );
         }
 
-        argument.setPlugin(plugin);
         this.addArgument(argument);
     }
 
@@ -235,11 +242,16 @@ public abstract class AbstractCommand {
             return;
         }
 
-        KeyValueArgument keyValueArgument = new KeyValueArgument.Builder(
+        KeyValueArgument keyValueArgument = new KeyValueArgument(
+                this.getPlugin(),
                 commandKeyValueArgument.Key(),
                 commandKeyValueArgument.Description(),
-                commandKeyValueArgument.Placeholder()
-        ).build();
+                commandKeyValueArgument.Placeholder(),
+                commandKeyValueArgument.Optional(),
+                null
+                );
+
+        keyValueArgument.setKeyOnly(commandKeyValueArgument.KeyOnly());
 
         if (!commandKeyValueArgument.Permission().isEmpty()) {
             keyValueArgument.setPermission(
@@ -252,7 +264,6 @@ public abstract class AbstractCommand {
             );
         }
 
-        keyValueArgument.setPlugin(plugin);
         this.addArgument(keyValueArgument);
     }
 
@@ -261,6 +272,12 @@ public abstract class AbstractCommand {
     }
 
     public void preExecute(CommandSender commandSender, String[] args)  throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+
+        if (this.isIngameCommandOnly() && !(commandSender instanceof Player)) {
+            MessageHelper.mustBePlayer(plugin, commandSender);
+            return;
+        }
+
         if (performPreArgumentCheck()) {
             int requiredArgumentsSize = getRequiredArgumentsSize();
             if (requiredArgumentsSize > 0) {
@@ -271,6 +288,10 @@ public abstract class AbstractCommand {
         }
 
         execute(commandSender, args);
+    }
+
+    private boolean isIngameCommandOnly() {
+        return this.isIngameCommandOnly;
     }
 
     /**
@@ -371,6 +392,31 @@ public abstract class AbstractCommand {
         }};
     }
 
+    protected boolean isMatchingSubCommands(String[] args) {
+        if (args.length < this.getSubcommands().size())
+            return false;
+
+        // return true immediately if no subcommands are defined
+        if (this.getSubcommands().size() == 0)
+            return true;
+
+        boolean allSubCommandsMatched = false;
+        for (int i = 0; i < this.getSubcommands().size(); i++) {
+            boolean subCommandMatched = false;
+            for (String subCommand : this.getSubcommands().get(i)) {
+                if (args[i].equalsIgnoreCase(subCommand)) {
+                    subCommandMatched = true;
+                    break;
+                }
+            }
+
+            allSubCommandsMatched = subCommandMatched;
+        }
+
+        return allSubCommandsMatched;
+    }
+
+
     /**
      * Returns if the subcommand is a valid trigger for the asking command.
      *
@@ -380,6 +426,8 @@ public abstract class AbstractCommand {
     public abstract boolean isValidTrigger(String[] args);
 
     public boolean isValidHelpTrigger(String[] args) {
+
+
         for (int i = 0; i < args.length; i++) {
             for (String cmd : getSubcommands().get(i)) {
                 if (cmd.startsWith(args[i])) {
@@ -458,7 +506,7 @@ public abstract class AbstractCommand {
                 if (argument instanceof KeyValueArgument) {
                     KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
-                    result.add(BedrockJson.JsonWithText(keyValueArgument.getRuntimeKey()).color(JsonColor.SECONDARY));
+                    result.add(BedrockJson.JsonWithText(keyValueArgument.getKey()).color(JsonColor.SECONDARY));
                     result.add(BedrockJson.Space());
                 }
 
@@ -500,10 +548,9 @@ public abstract class AbstractCommand {
      * @return true, if the sender has Permissions, else false.
      */
     public final boolean hasPermission(CommandSender sender) {
-        if (getRuntimePermissions().isEmpty()) {
-            // No Permission defined -> sender has permission
+        // No permission defined -> sender has permission
+        if (getRuntimePermissions().isEmpty())
             return true;
-        }
 
         for (Permission permission : getRuntimePermissions()) {
             if (permission.userHasPermission(sender)) {

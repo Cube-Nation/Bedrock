@@ -11,89 +11,97 @@ import org.bukkit.command.CommandSender;
  */
 public class Argument {
 
-    private final String description;
-    private final String placeholder;
-    private boolean optional = false;
-    private Permission permission = null;
-
-    private String runtimeDescription = null;
-    private String runtimePlaceholder = null;
     private BasePlugin plugin;
 
-    @SuppressWarnings(value = "unused")
-    public Argument(String description, String placeholder, boolean optional, Permission permission) {
-        this.description = description;
-        this.placeholder = placeholder;
-        this.optional = optional;
-        this.permission = permission;
+    private String description;
+
+    private String placeholder;
+
+    private boolean optional = false;
+
+    private Permission permission = null;
+
+    public Argument(BasePlugin plugin, String description, String placeholder, boolean optional, Permission permission) {
+        this.setPlugin(plugin);
+        this.setDescription(description);
+        this.setPlaceholder(placeholder);
+        this.setOptional(optional);
+        this.setPermission(permission);
     }
 
-    @SuppressWarnings(value = "unused")
-    public Argument(String description, String placeholder, boolean optional) {
-        this(description, placeholder, optional, null);
-    }
-
-    @SuppressWarnings(value = "unused")
-    public Argument(String description, String placeholder, Permission permission) {
-        this(description, placeholder, false, permission);
-    }
-
-    @SuppressWarnings(value = "unused")
-    public Argument(String description, String placeholder) {
-        this.description = description;
-        this.placeholder = placeholder;
-    }
-
-    public String getRuntimeDescription() {
-        return new Translation(this.plugin, this.description).getTranslation();
-    }
-
-    public String getRuntimePlaceholder() {
-        return new Translation(this.plugin, this.placeholder).getTranslation();
-    }
-
-    public String getPlaceholder() {
-        return placeholder;
-    }
-
-    public Permission getPermission() {
-        return permission;
+    // plugin
+    public void setPlugin(BasePlugin plugin) {
+        this.plugin = plugin;
     }
 
     public BasePlugin getPlugin() {
         return plugin;
     }
 
-    public boolean isOptional() {
-        return optional;
+    // description
+    public void setDescription(String description) {
+        this.description = description;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
+    public String getRuntimeDescription() {
+        return new Translation(this.plugin, this.description).getTranslation();
+    }
+
+    // placeholder
+    public void setPlaceholder(String placeholder) {
+        this.placeholder = placeholder;
+    }
+
+    public String getPlaceholder() {
+        return placeholder;
+    }
+
+    public String getRuntimePlaceholder() {
+        if (this.placeholder == null)
+            return null;
+
+        return new Translation(this.plugin, this.placeholder).getTranslation();
+    }
+
+    // optional
     public void setOptional(boolean optional) {
         this.optional = optional;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
+
+    // permission
     public void setPermission(Permission permission) {
+        if (this.permission != null) {
+            permission.setPlugin(this.plugin);
+        }
         this.permission = permission;
     }
 
-    public void setPlugin(BasePlugin plugin) {
-        this.plugin = plugin;
-        if (permission != null) {
-            permission.setPlugin(plugin);
-        }
+    public Permission getPermission() {
+        return permission;
+    }
+
+    public boolean userHasPermission(CommandSender sender) {
+        return this.permission == null || this.permission.userHasPermission(sender);
     }
 
     @Override
     public String toString() {
         return "Argument{" +
-                "description='" + runtimeDescription + '\'' +
-                ", placeholder=" + runtimePlaceholder +
+                "description='" + description + '\'' +
+                ", runTimeDescription='" + this.getRuntimeDescription() + '\'' +
+                ", placeholder='" + placeholder + '\'' +
+                ", runTimePlaceholder='" + this.getRuntimePlaceholder() + '\'' +
                 ", optional=" + optional +
+                ", permission=" + permission.toString() +
                 '}';
     }
 
-    public boolean userHasPermission(CommandSender sender) {
-        return permission == null || permission.userHasPermission(sender);
-
-    }
 }

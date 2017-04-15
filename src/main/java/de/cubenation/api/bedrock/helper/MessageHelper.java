@@ -299,7 +299,7 @@ public class MessageHelper {
             if (argument instanceof KeyValueArgument) {
                 KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
-                String keyString = "[" + keyValueArgument.getRuntimeKey() + (keyValueArgument.getKeyOnly() ? "]" : "");
+                String keyString = "[" + keyValueArgument.getKey() + (keyValueArgument.getKeyOnly() ? "]" : "");
 
                 helpJson.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
                 helpJson.addExtra(BedrockJson.Space());

@@ -1,19 +1,20 @@
 package de.cubenation.api.bedrock.command.manager;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.command.AbstractCommand;
+import de.cubenation.api.bedrock.command.predefined.HelpCommand;
+import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.translation.JsonMessage;
-import de.cubenation.api.bedrock.command.AbstractCommand;
-import de.cubenation.api.bedrock.command.predefined.HelpCommand;
-import de.cubenation.api.bedrock.exception.CommandException;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabCompleter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by B1acksheep on 02.04.15.
@@ -48,8 +49,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
-        AbstractCommand commandToExecute = null;
-//        try {
         if (args.length <= 0) {
             try {
                 helpCommand.preExecute(commandSender, args);
@@ -59,45 +58,31 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
             return true;
         } else {
-            for (AbstractCommand cmd : commands) {
-                if (cmd.isValidTrigger(args)) {
-                    commandToExecute = cmd;
 
-                    if (!commandToExecute.hasPermission(commandSender)) {
-                        MessageHelper.insufficientPermission(plugin, commandSender);
-                        return true;
-                    }
+            // try commands with subcommands
+            if (this.tryCommand(
+                    this.commands.stream()
+                            .filter(abstractCommand -> abstractCommand.getSubcommands().size() != 0)
+                            .collect(Collectors.toList()),
+                    commandSender,
+                    args
+            )) {
+                return true;
+            }
 
-                    // If the execution fails with an exception, the manager will search for another command to execute!
-                    try {
-                        commandToExecute.preExecute(
-                                commandSender,
-                                Arrays.copyOfRange(args, commandToExecute.getSubcommands().size(), args.length));
-
-                    } catch (CommandException e) {
-                        MessageHelper.commandExecutionError(this.plugin, commandSender, e);
-                        e.printStackTrace();
-
-                    } catch (IllegalCommandArgumentException e) {
-                        MessageHelper.invalidCommand(this.plugin, commandSender);
-
-                        JsonMessage jsonHelp = commandToExecute.getJsonHelp(commandSender);
-                        if (jsonHelp == null) {
-                            MessageHelper.insufficientPermission(this.plugin, commandSender);
-                        } else {
-                            jsonHelp.send(commandSender);
-                        }
-
-                        return true;
-                    } catch (InsufficientPermissionException e) {
-                        MessageHelper.insufficientPermission(this.plugin, commandSender);
-                        return true;
-                    }
-                    return true;
-                }
+            // try commands without subcommands
+            if (this.tryCommand(
+                    this.commands.stream()
+                    .filter(abstractCommand -> abstractCommand.getSubcommands().size() == 0)
+                    .collect(Collectors.toList()),
+                    commandSender,
+                    args
+            )) {
+                return true;
             }
         }
 
+        // display help
         ArrayList<AbstractCommand> helpList = new ArrayList<>();
         for (AbstractCommand possibleHelpCommand : getHelpCommands()) {
             if (!(possibleHelpCommand instanceof HelpCommand) && possibleHelpCommand.isValidHelpTrigger(args)) {
@@ -113,6 +98,52 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         helpCommand.printHelp(commandSender, args, helpCommand.getHelpJsonMessages(commandSender, helpList));
         return true;
+    }
+
+    private boolean tryCommand(List<AbstractCommand> abstractCommands, CommandSender commandSender, String[] args) {
+        for (AbstractCommand abstractCommand : abstractCommands) {
+
+            // check if provided arguments are a valid trigger for the subcommands and arguments
+            // defined in the command
+            if (!abstractCommand.isValidTrigger(args))
+                continue;
+
+            if (!abstractCommand.hasPermission(commandSender)) {
+                MessageHelper.insufficientPermission(plugin, commandSender);
+                return true;
+            }
+
+            // If the execution fails with an exception, the manager will search for another command to execute!
+            // TODO: really?!
+            try {
+                abstractCommand.preExecute(
+                        commandSender,
+                        Arrays.copyOfRange(args, abstractCommand.getSubcommands().size(), args.length));
+                return true;
+
+            } catch (CommandException e) {
+                MessageHelper.commandExecutionError(this.plugin, commandSender, e);
+                e.printStackTrace();
+                return true;
+
+            } catch (IllegalCommandArgumentException e) {
+                MessageHelper.invalidCommand(this.plugin, commandSender);
+
+                JsonMessage jsonHelp = abstractCommand.getJsonHelp(commandSender);
+                if (jsonHelp == null) {
+                    MessageHelper.insufficientPermission(this.plugin, commandSender);
+                } else {
+                    jsonHelp.send(commandSender);
+                }
+                return true;
+
+            } catch (InsufficientPermissionException e) {
+                MessageHelper.insufficientPermission(this.plugin, commandSender);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

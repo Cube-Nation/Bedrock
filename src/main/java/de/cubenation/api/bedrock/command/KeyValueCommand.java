@@ -1,11 +1,11 @@
 package de.cubenation.api.bedrock.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
+import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.IgnoreCaseArrayList;
 import org.bukkit.command.CommandSender;
@@ -13,6 +13,8 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by BenediktHr on 27.07.15.
@@ -21,9 +23,35 @@ import java.util.HashMap;
 @SuppressWarnings("unused")
 public abstract class KeyValueCommand extends AbstractCommand {
 
+    @SuppressWarnings("WeakerAccess")
     public KeyValueCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
+
+    @SuppressWarnings("WeakerAccess")
+    protected List<KeyValueArgument> getKeyValueArguments() {
+        return this.getArguments().stream()
+                .filter(argument -> argument instanceof KeyValueArgument)
+                .map(argument -> (KeyValueArgument) argument)
+                .collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    protected KeyValueArgument getKeyValueArgument(String key) {
+        List<KeyValueArgument> keyValueArguments = this.getKeyValueArguments().stream()
+                .filter(keyValueArgument -> keyValueArgument.getKey().equals(key))
+                .collect(Collectors.toList());
+
+        return (keyValueArguments.size() == 1)
+                ? keyValueArguments.get(0)
+                : null;
+    }
+
+    protected boolean hasKeyValueArgument(String key, HashMap<String, String> args) {
+        KeyValueArgument argument = this.getKeyValueArgument(key);
+        return argument != null && args.keySet().stream().filter(arg -> arg.equals(key)).collect(Collectors.toList()).size() != 0;
+    }
+
 
     @Override
     public final void execute(CommandSender sender, String[] args)
@@ -36,11 +64,12 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
         for (Argument argument : getArguments()) {
             if (argument instanceof KeyValueArgument) {
+
                 KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
 
-                if (arrayList.contains(keyValueArgument.getRuntimeKey())) {
+                if (arrayList.contains(keyValueArgument.getKey())) {
 
-                    int index = arrayList.indexOf(keyValueArgument.getRuntimeKey());
+                    int index = arrayList.indexOf(keyValueArgument.getKey());
 
                     if (index == -1) {
                         throw new IllegalCommandArgumentException();
@@ -112,8 +141,8 @@ public abstract class KeyValueCommand extends AbstractCommand {
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
             for (KeyValueArgument argument : recursive) {
-                if (argument.getRuntimeKey().startsWith(args[args.length - 1])) {
-                    arrayList.add(argument.getRuntimeKey());
+                if (argument.getKey().startsWith(args[args.length - 1])) {
+                    arrayList.add(argument.getKey());
                 }
             }
         }
@@ -145,7 +174,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
     private KeyValueArgument containsKey(ArrayList<KeyValueArgument> list, String key) {
         for (KeyValueArgument argument : list) {
-            if (argument.getRuntimeKey().startsWith(key)) {
+            if (argument.getKey().startsWith(key)) {
                 return argument;
             }
         }
@@ -157,6 +186,12 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
         if (args.length < this.getSubcommands().size()) {
             return false;
+        }
+
+        boolean allSubCommandsMatched = false;
+        for (int i = 0; i < this.getSubcommands().size(); i++) {
+            boolean subCommandMatched = false;
+
         }
 
         for (int i = 0; i < this.getSubcommands().size(); i++) {
@@ -189,22 +224,10 @@ public abstract class KeyValueCommand extends AbstractCommand {
      */
     @Override
     public final boolean isValidTrigger(String[] args) {
-        if (!checkCommands(args)) {
+        if (!this.isMatchingSubCommands(args))
             return false;
-        }
 
-        if (!checkArguments(args)) {
-            return false;
-        }
-
-        // TODO: why is this called twice?
-        // TODO: use intelliJ simplify?
-
-        return true;
-    }
-
-    private boolean checkArguments(String[] args) {
-
+        // check arguments
         int commandArgumentSize = 0;
         for (Argument argument : getArguments()) {
             // Ignore Optional Commands, this can handle the parse method

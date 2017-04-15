@@ -55,30 +55,11 @@ public abstract class Command extends AbstractCommand {
      * Returns if the subcommand is a valid trigger.
      *
      * @param args the args
-     * @return true if it is a valid trigger, else false
+     * @return true if it is a valid trigger, false otherwise
      */
     @Override
     public boolean isValidTrigger(String[] args) {
-
-        if (args.length >= this.getSubcommands().size()) {
-            // Check previous Arguments
-            boolean prevResult = true;
-            for (int i = 0; i < this.getSubcommands().size(); i++) {
-                boolean res = false;
-                for (String com : this.getSubcommands().get(i)) {
-                    if (args[i].equalsIgnoreCase(com)) {
-                        res = true;
-                    }
-                }
-                if (!res) {
-                    prevResult = false;
-                }
-            }
-            return prevResult;
-        }
-        // Not enough Arguments
-        // TODO: Should display if not enough Arguments available!
-        return false;
+        return this.isMatchingSubCommands(args);
     }
 
     public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
