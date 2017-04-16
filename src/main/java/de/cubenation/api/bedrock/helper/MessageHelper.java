@@ -198,7 +198,7 @@ public class MessageHelper {
         String commandHeadline = "/" + command.getCommandManager().getPluginCommand().getLabel();
 
         BedrockJson helpJson = BedrockJson.JsonWithText("");
-        BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.DARK_GRAY);
+        BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.GRAY);
         BedrockJson questionSpace = BedrockJson.Space();
         BedrockJson commandHead = BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY);
 
