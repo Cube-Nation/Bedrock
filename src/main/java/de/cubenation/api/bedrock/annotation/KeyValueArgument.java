@@ -5,6 +5,7 @@ import de.cubenation.api.bedrock.command.CommandRole;
 
 import java.lang.annotation.*;
 
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Repeatable(KeyValueArguments.class)

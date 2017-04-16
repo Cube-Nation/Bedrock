@@ -4,6 +4,7 @@ import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 
 import java.lang.annotation.*;
 
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Repeatable(ConfigurationFiles.class)

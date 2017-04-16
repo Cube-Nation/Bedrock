@@ -14,7 +14,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Date;
 
 /**
- * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
+ * @author Cube-Nation
+ * @version {$project.version}
  */
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 public class EbeanListener implements Listener {

@@ -31,7 +31,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     /**
      * Initialize the Config Service
      *
-     * @throws ServiceInitException
+     * @throws ServiceInitException if the initialization fails.
      */
     @Override
     public void init() throws ServiceInitException {
@@ -77,7 +77,7 @@ public class ConfigService extends AbstractService implements ServiceInterface {
     /**
      * Reload the Config Service
      *
-     * @throws ServiceReloadException
+     * @throws ServiceReloadException if the reload failed.
      */
     @Override
     public void reload() throws ServiceReloadException {

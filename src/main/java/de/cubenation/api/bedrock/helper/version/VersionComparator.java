@@ -7,13 +7,6 @@ import java.util.Comparator;
  */
 public class VersionComparator implements Comparator {
 
-    /**
-     *
-     * @param o1
-     * @param o2
-     * @return
-     */
-    @SuppressWarnings("unused")
     public boolean equals(Object o1, Object o2) {
         return compare(o1, o2) == 0;
     }

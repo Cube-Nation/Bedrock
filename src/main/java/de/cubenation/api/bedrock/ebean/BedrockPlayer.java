@@ -11,7 +11,10 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
+ * Represents a BedrockPlayer instance.
+ *
+ * @author Cube-Nation
+ * @version {$project.version}
  */
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 @Entity()

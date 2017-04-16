@@ -33,7 +33,7 @@ public class SettingsService extends AbstractService implements ServiceInterface
     /**
      * Initialize the Config Service
      *
-     * @throws ServiceInitException
+     * @throws ServiceInitException if the initialization fails.
      */
     @Override
     public void init() throws ServiceInitException {

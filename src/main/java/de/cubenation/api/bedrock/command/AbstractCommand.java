@@ -301,6 +301,7 @@ public abstract class AbstractCommand {
      * Gets tab completion for argument.
      *
      * @param args the args of the asking command
+     * @param sender the sender of the requested tab completion.
      * @return the tab completion for argument
      */
     public abstract ArrayList<String> getTabCompletion(String[] args, CommandSender sender);

@@ -30,8 +30,10 @@ import java.util.logging.Logger;
 
 
 /**
- * Created by B1acksheep on 30.03.15.
- * Project: Bedrock
+ * Represents a Bedrock-based plugin.
+ *
+ * @author Cube-Nation
+ * @version {$project.version}
  */
 public abstract class BasePlugin extends JavaPlugin {
 
@@ -59,9 +61,11 @@ public abstract class BasePlugin extends JavaPlugin {
         super();
     }
 
+
     /**
+     * Throw an Exception to disable the plugin.
      *
-     * @throws Exception
+     * @throws Exception if any error occurs.
      */
     protected void onPreEnable() throws Exception { }
 
@@ -125,6 +129,11 @@ public abstract class BasePlugin extends JavaPlugin {
         }
     }
 
+    /**
+     * Throw an Exception to disable the plugin.
+     *
+     * @throws Exception if any error occurs.
+     */
     protected void onPostEnable() throws Exception { }
 
     /**
@@ -132,7 +141,7 @@ public abstract class BasePlugin extends JavaPlugin {
      *
      * @param name  The plugin name
      * @return      The requested plugin object
-     * @throws      NoSuchPluginException
+     * @throws      NoSuchPluginException if a Plugin is missing.
      */
     @SuppressWarnings("unused")
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
@@ -404,10 +413,10 @@ public abstract class BasePlugin extends JavaPlugin {
      * If the plugin could not be found a NoSuchPluginException is thrown.
      * If the plugin version dependency is not met, a DependencyException is thrown.
      *
-     * @param name      The plugin name
-     * @param version   The plugin version
-     * @throws          DependencyException
-     * @throws          NoSuchPluginException
+     * @param name    The plugin name
+     * @param version The plugin version
+     * @throws DependencyException   if a specific version is not installed.
+     * @throws NoSuchPluginException if a plugin is missing.
      */
     protected void assertPluginDependency(String name, String version) throws DependencyException, NoSuchPluginException {
 
