@@ -179,6 +179,13 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
     }
 
+    public Permission getPermission(String rawPermission) {
+        if (rawPermission == null) {
+            return null;
+        }
+        return getPermissions().stream().filter(permission -> permission.getName().equalsIgnoreCase(rawPermission)).findFirst().orElse(null);
+    }
+
     public boolean hasPermission(CommandSender sender, Permission permission) {
         // op check
         if (sender.isOp() && (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {
