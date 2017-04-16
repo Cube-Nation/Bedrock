@@ -19,7 +19,8 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 /**
- * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
+ * @author Cube-Nation
+ * @version {$project.version}
  */
 @SuppressWarnings("ALL")
 public class BedrockEbeanHelper {
@@ -38,7 +39,7 @@ public class BedrockEbeanHelper {
     /**
      * Request a list of BedrockPlayer for a list of players.
      *
-     * @param uuids           Player of the BedrockPlayers to request.
+     * @param players           Player of the BedrockPlayers to request.
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */
@@ -418,8 +419,10 @@ public class BedrockEbeanHelper {
      * CAUTION!
      * Use this method only to add players, who played on the server before installing Bedrock!
      *
-     * @param uuid       The unique id of the player
-     * @param playername The name of the player
+     * @param uuid          The unique id of the player
+     * @param playername    The name of the player
+     * @return the new BedrockPlayer instance.
+     * @throws BedrockEbeanEntityAlreadyExistsException if the player already exists.
      */
     public static BedrockPlayer createBedrockPlayer(UUID uuid, String playername) throws BedrockEbeanEntityAlreadyExistsException {
         BedrockPlayer player = BedrockPlugin.getInstance().getDatabase()
@@ -463,7 +466,7 @@ public class BedrockEbeanHelper {
     /**
      * Returns a BedrockWorld for the given uuid String.
      *
-     * @param uuid            A list of UUIDs.
+     * @param uuids           A list of UUIDs.
      * @param successCallback The success callback for the result of the request.
      * @param failureCallback The failure callback for the result of the request.
      */

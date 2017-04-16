@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
+ * This is the Bedrock main plugin class
+ *
  * @author Cube-Nation
  * @version {$project.version}
- *
- * This is the Bedrock main plugin class
  */
 @ConfigurationFile(de_DE.class)
 //@ConfigurationFile(en_US.class)
@@ -67,7 +67,7 @@ public class BedrockPlugin extends BasePlugin {
     /**
      * Returns the database class that handles player mapping
      *
-     * @return List<Class<?>> database classes
+     * @return A list of database classes.
      */
     @Override
     public List<Class<?>> getDatabaseClasses() {

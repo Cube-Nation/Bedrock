@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Created by Tristan Cebulla <equinox@lichtspiele.org> on 03.08.2015.
+ * @author Cube-Nation
+ * @version {$project.version}
  */
 @SuppressWarnings("DefaultFileTemplate")
 public class BedrockEbeanEntityNotFoundException extends IOException {

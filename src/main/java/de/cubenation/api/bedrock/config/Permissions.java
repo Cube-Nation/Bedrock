@@ -29,10 +29,14 @@ public class Permissions extends CustomConfigurationFile {
     private HashMap<String, List<String>> permissions = new HashMap<String, List<String>>() {{
     }};
 
-    /**
-     * roles
-     */
 
+    // Roles
+
+    /**
+     * Get a map of all permissions per role
+     *
+     * @return A map of all permissions per role
+     */
     public HashMap<CommandRole, ArrayList<String>> getAll() {
         HashMap<CommandRole, ArrayList<String>> map = new HashMap<>();
 
@@ -67,9 +71,7 @@ public class Permissions extends CustomConfigurationFile {
     }
 
 
-    /**
-     * permissions (role based)
-     */
+    // Permissions (role based)
 
     public void addPermission(String permission, CommandRole role) {
         if (permission == null) return;

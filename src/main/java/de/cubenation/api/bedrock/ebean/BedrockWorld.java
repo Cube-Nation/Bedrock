@@ -8,7 +8,10 @@ import javax.persistence.*;
 import java.util.UUID;
 
 /**
- * Created by Tristan Cebulla <equinox@lichtspiele.org> on 04.08.2015.
+ * Represents a BedrockWorld instance.
+ *
+ * @author Cube-Nation
+ * @version {$project.version}
  */
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 @Entity()

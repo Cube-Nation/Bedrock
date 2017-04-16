@@ -134,8 +134,10 @@ public class SettingsManager {
 
     /**
      * Register a CustomConfigurationFile object
-     *  @param clazz     class name
-     * @param file      CustomConfigurationFile object
+     *
+     * @param clazz class name
+     * @param file  CustomConfigurationFile object
+     * @return The registered file.
      */
     public CustomSettingsFile registerFile(Class<?> clazz, CustomSettingsFile file) {
         if (file == null) {

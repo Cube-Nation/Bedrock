@@ -32,7 +32,7 @@ public class InventoryService extends AbstractService implements ServiceInterfac
     /**
      * Initialize the Config Service
      *
-     * @throws ServiceInitException
+     * @throws ServiceInitException if the initialization fails.
      */
     @Override
     public void init() throws ServiceInitException {
