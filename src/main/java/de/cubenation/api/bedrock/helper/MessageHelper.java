@@ -1,19 +1,19 @@
 package de.cubenation.api.bedrock.helper;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.argument.Argument;
 import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
-import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.colorscheme.ColorScheme;
+import de.cubenation.api.bedrock.service.permission.Permission;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.Translation;
 import de.cubenation.api.bedrock.translation.parts.BedrockClickEvent;
 import de.cubenation.api.bedrock.translation.parts.BedrockHoverEvent;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import de.cubenation.api.bedrock.translation.parts.JsonColor;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -198,7 +198,7 @@ public class MessageHelper {
         String commandHeadline = "/" + command.getCommandManager().getPluginCommand().getLabel();
 
         BedrockJson helpJson = BedrockJson.JsonWithText("");
-        BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.DARK_GRAY);
+        BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.GRAY);
         BedrockJson questionSpace = BedrockJson.Space();
         BedrockJson commandHead = BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY);
 
