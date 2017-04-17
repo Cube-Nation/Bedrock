@@ -152,6 +152,14 @@ public abstract class BasePlugin extends JavaPlugin {
         return plugin;
     }
 
+    /**
+     * Returns a ServiceManager to register own services.
+     *
+     * @return The ServiceManager instance.
+     */
+    public ServiceManager getServiceManager() {
+        return serviceManager;
+    }
 
     /**
      * Returns a colored string of the current plugin, known as the message prefix.
