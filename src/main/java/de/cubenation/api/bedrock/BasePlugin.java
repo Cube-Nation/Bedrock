@@ -116,15 +116,6 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     /**
-     * Returns a ServiceManager to register own services.
-     *
-     * @return The ServiceManager instance.
-     */
-    public ServiceManager getServiceManager() {
-        return serviceManager;
-    }
-
-    /**
      * Access to the ServiceManager instance and it's functions
      *
      * @return The ServiceManager instance
