@@ -1,4 +1,4 @@
-package de.cubenation.api.bedrock.command.manager;
+package de.cubenation.api.bedrock.service.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.AbstractCommand;

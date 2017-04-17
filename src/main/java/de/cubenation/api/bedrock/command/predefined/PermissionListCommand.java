@@ -6,10 +6,10 @@ import de.cubenation.api.bedrock.annotation.Permission;
 import de.cubenation.api.bedrock.annotation.SubCommand;
 import de.cubenation.api.bedrock.command.Command;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
+import de.cubenation.api.bedrock.service.command.CommandManager;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
