@@ -1,4 +1,4 @@
-package de.cubenation.api.bedrock.permission;
+package de.cubenation.api.bedrock.service.permission;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.CommandRole;

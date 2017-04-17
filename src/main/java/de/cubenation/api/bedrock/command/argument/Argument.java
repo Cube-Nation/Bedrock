@@ -1,7 +1,7 @@
 package de.cubenation.api.bedrock.command.argument;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.permission.Permission;
+import de.cubenation.api.bedrock.service.permission.Permission;
 import de.cubenation.api.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 

@@ -1,7 +1,7 @@
 package de.cubenation.api.bedrock.command;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.command.manager.CommandManager;
+import de.cubenation.api.bedrock.service.command.CommandManager;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;

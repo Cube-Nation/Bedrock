@@ -3,12 +3,12 @@ package de.cubenation.api.bedrock.command;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.*;
 import de.cubenation.api.bedrock.annotation.condition.AnnotationCondition;
-import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.LengthComparator;
 import de.cubenation.api.bedrock.helper.MessageHelper;
+import de.cubenation.api.bedrock.service.command.CommandManager;
 import de.cubenation.api.bedrock.translation.JsonMessage;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import de.cubenation.api.bedrock.translation.parts.JsonColor;
@@ -42,7 +42,7 @@ public abstract class AbstractCommand {
 
     private ArrayList<de.cubenation.api.bedrock.command.argument.Argument> arguments = new ArrayList<>();
 
-    private ArrayList<de.cubenation.api.bedrock.permission.Permission> runtimePermissions = new ArrayList<>();
+    private ArrayList<de.cubenation.api.bedrock.service.permission.Permission> runtimePermissions = new ArrayList<>();
 
     private boolean isIngameCommandOnly = false;
 
@@ -125,11 +125,11 @@ public abstract class AbstractCommand {
         this.subcommands.add(subCommands);
     }
 
-    public ArrayList<de.cubenation.api.bedrock.permission.Permission> getRuntimePermissions() {
+    public ArrayList<de.cubenation.api.bedrock.service.permission.Permission> getRuntimePermissions() {
         return this.runtimePermissions;
     }
 
-    private void addRuntimePermission(de.cubenation.api.bedrock.permission.Permission permission) {
+    private void addRuntimePermission(de.cubenation.api.bedrock.service.permission.Permission permission) {
         permission.setPlugin(plugin);
         this.runtimePermissions.add(permission);
     }
@@ -138,11 +138,11 @@ public abstract class AbstractCommand {
         return this.arguments;
     }
 
-    private de.cubenation.api.bedrock.permission.Permission createPermission(String name, CommandRole role, String roleName, String description) {
-        de.cubenation.api.bedrock.permission.Permission permission = new de.cubenation.api.bedrock.permission.Permission(name);
+    private de.cubenation.api.bedrock.service.permission.Permission createPermission(String name, CommandRole role, String roleName, String description) {
+        de.cubenation.api.bedrock.service.permission.Permission permission = new de.cubenation.api.bedrock.service.permission.Permission(name);
 
         if (roleName != null && !roleName.isEmpty()) {
-            permission.setRole(de.cubenation.api.bedrock.permission.Permission.getCommandRole(roleName));
+            permission.setRole(de.cubenation.api.bedrock.service.permission.Permission.getCommandRole(roleName));
         }
 
         // CommandRole enums always win (in case a role String is defined)
@@ -518,7 +518,7 @@ public abstract class AbstractCommand {
         if (getRuntimePermissions().isEmpty())
             return true;
 
-        for (de.cubenation.api.bedrock.permission.Permission permission : getRuntimePermissions()) {
+        for (de.cubenation.api.bedrock.service.permission.Permission permission : getRuntimePermissions()) {
             if (permission.userHasPermission(sender)) {
                 return true;
             }
