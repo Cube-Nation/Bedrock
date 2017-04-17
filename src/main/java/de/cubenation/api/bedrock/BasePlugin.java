@@ -3,10 +3,7 @@ package de.cubenation.api.bedrock;
 import de.cubenation.api.bedrock.exception.DependencyException;
 import de.cubenation.api.bedrock.exception.NoSuchPluginException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
-import de.cubenation.api.bedrock.exception.UnknownServiceException;
 import de.cubenation.api.bedrock.helper.version.VersionComparator;
-import de.cubenation.api.bedrock.reloadable.Reloadable;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.service.ServiceManager;
 import de.cubenation.api.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.api.bedrock.service.command.CommandService;
@@ -24,10 +21,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  * Represents a Bedrock-based plugin.
@@ -37,18 +32,9 @@ import java.util.logging.Logger;
  */
 public abstract class BasePlugin extends JavaPlugin {
 
-    private static final String SERVICE_CONFIG = "config";
-    private static final String SERVICE_COLORSCHEME = "colorscheme";
-    private static final String SERVICE_LOCALIZATION = "localization";
-    private static final String SERVICE_COMMAND = "command";
-    private static final String SERVICE_PERMISSION = "permission";
-    private static final String SERVICE_INVENTORY = "inventory";
-    private static final String SERVICE_SETTINGS = "settings";
-
-    /** tbd */
-    private boolean intentionally_ready = false;
-
-    /** The ServiceManager object */
+    /**
+     * The ServiceManager object
+     */
     private ServiceManager serviceManager;
 
     /**
@@ -67,18 +53,17 @@ public abstract class BasePlugin extends JavaPlugin {
      *
      * @throws Exception if any error occurs.
      */
-    protected void onPreEnable() throws Exception { }
+    protected void onPreEnable() throws Exception {
+    }
 
     /**
      * This method is executed when Bukkit enables this plugin.
      * <p>
      * For custom pre- and post-enabling functions use
-     *
-     *
+     * @see ServiceManager
      */
     @Override
     public final void onEnable() {
-
         try {
             this.onPreEnable();
         } catch (Exception e) {
@@ -86,39 +71,16 @@ public abstract class BasePlugin extends JavaPlugin {
             return;
         }
 
-        // initialize service manager
-        this.serviceManager = new ServiceManager();
-
-        // DO NOT MODIFY THIS ORDER!
+        // initialize ServiceManager
+        this.serviceManager = new ServiceManager(this);
         try {
-            // register config service
-            this.serviceManager.registerService(SERVICE_CONFIG, new ConfigService(this));
-
-            // register color scheme service
-            this.serviceManager.registerService(SERVICE_COLORSCHEME, new ColorSchemeService(this));
-
-            this.intentionally_ready = true;
-
-            // register localization service
-            this.serviceManager.registerService(SERVICE_LOCALIZATION, new LocalizationService(this));
-
-            // register settings service
-            this.serviceManager.registerService(SERVICE_SETTINGS, new SettingsService(this));
-
-            // register command service
-            this.serviceManager.registerService(SERVICE_COMMAND, new CommandService(this));
-
-            // register permission service
-            this.serviceManager.registerService(SERVICE_PERMISSION, new PermissionService(this));
-
-            // register inventory service
-            this.serviceManager.registerService(SERVICE_INVENTORY, new InventoryService(this));
-
+            this.serviceManager.registerServices();
         } catch (ServiceInitException e) {
+            this.log(Level.SEVERE, "Loading services failed");
             this.disable(e);
-            return;
         }
 
+        // enable bStats metrics
         new MetricsLite(this);
 
         // call onPostEnable after we've set everything up
@@ -134,14 +96,15 @@ public abstract class BasePlugin extends JavaPlugin {
      *
      * @throws Exception if any error occurs.
      */
-    protected void onPostEnable() throws Exception { }
+    protected void onPostEnable() throws Exception {
+    }
 
     /**
      * Returns a Bukkit plugin object
      *
-     * @param name  The plugin name
-     * @return      The requested plugin object
-     * @throws      NoSuchPluginException if a Plugin is missing.
+     * @param name The plugin name
+     * @return The requested plugin object
+     * @throws NoSuchPluginException if a Plugin is missing.
      */
     @SuppressWarnings("unused")
     public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
@@ -154,13 +117,23 @@ public abstract class BasePlugin extends JavaPlugin {
 
 
     /**
+     * Access to the ServiceManager instance and it's functions
+     *
+     * @return The ServiceManager instance
+     */
+    public ServiceManager getServiceManager() {
+        return this.serviceManager;
+    }
+
+
+    /**
      * Returns a colored string of the current plugin, known as the message prefix.
      * The message prefix is colored using the flag and primary colors from the current
      * ColorScheme that the plugin uses.
      * <p>
      * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
      *
-     * @return          The message prefix
+     * @return The message prefix
      */
     public String getMessagePrefix() {
         return this.getMessagePrefix(this);
@@ -174,9 +147,10 @@ public abstract class BasePlugin extends JavaPlugin {
      * <p>
      * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
      *
-     * @param plugin    The plugin
-     * @return          The message prefix
+     * @param plugin The plugin
+     * @return The message prefix
      */
+    @SuppressWarnings("WeakerAccess")
     public String getMessagePrefix(BasePlugin plugin) {
         return this.getMessagePrefix(plugin.getDescription().getName());
     }
@@ -188,9 +162,10 @@ public abstract class BasePlugin extends JavaPlugin {
      * <p>
      * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
      *
-     * @param plugin    The plugin name
-     * @return          The message prefix
+     * @param plugin The plugin name
+     * @return The message prefix
      */
+    @SuppressWarnings("WeakerAccess")
     public String getMessagePrefix(String plugin) {
         try {
             if (this.getColorSchemeService() == null)
@@ -201,17 +176,17 @@ public abstract class BasePlugin extends JavaPlugin {
 
         return
                 this.getColorSchemeService().getColorScheme().getFlag() + "[" +
-                this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
-                this.getColorSchemeService().getColorScheme().getFlag() + "]" +
-                ChatColor.RESET;
+                        this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
+                        this.getColorSchemeService().getColorScheme().getFlag() + "]" +
+                        ChatColor.RESET;
     }
 
     /**
      * Log a message with a given log level to the Minecraft logfile
      *
-     * @param level     The Log4J log level
-     * @param message   The message to log
-     * @see             Level
+     * @param level   The Log4J log level
+     * @param message The message to log
+     * @see Level
      */
     public void log(Level level, String message) {
         Logger.getLogger("Minecraft").log(
@@ -224,10 +199,10 @@ public abstract class BasePlugin extends JavaPlugin {
      * Log a message with a given log level to the Minecraft logfile.
      * The stacktrace of the Throwable object is printed to STDOUT.
      *
-     * @param level     The Log4J log level
-     * @param message   The message to log
-     * @param t         The throwable object
-     * @see             Level
+     * @param level   The Log4J log level
+     * @param message The message to log
+     * @param t       The throwable object
+     * @see Level
      */
     @SuppressWarnings("unused")
     public void log(Level level, String message, Throwable t) {
@@ -240,8 +215,9 @@ public abstract class BasePlugin extends JavaPlugin {
      * The exception message is being logged to the Minecraft logfile and the stacktrace
      * is printed to STDOUT.
      *
-     * @param e     The exception that lead to disabling the plugin
+     * @param e The exception that lead to disabling the plugin
      */
+    @SuppressWarnings("WeakerAccess")
     public void disable(Exception e) {
         log(Level.SEVERE, String.format("Unrecoverable error: %s",
                 (e.getMessage() == null)
@@ -260,8 +236,8 @@ public abstract class BasePlugin extends JavaPlugin {
      * <p>
      * A given sender will be informed, that the plugin is being disabled.
      *
-     * @param e         The exception that lead to disabling this plugin
-     * @param sender    The CommandSender that needs to be informed
+     * @param e      The exception that lead to disabling this plugin
+     * @param sender The CommandSender that needs to be informed
      */
     @SuppressWarnings("unused")
     public void disable(Exception e, CommandSender sender) {
@@ -270,122 +246,90 @@ public abstract class BasePlugin extends JavaPlugin {
     }
 
     /**
-     * Returns a Bedrock Service.
-     * If the service is not enabled yet, <code>null</code> is returned
-     *
-     * @param   name                The service name
-     * @return  ServiceInterface
-     * @see     ServiceManager
-     */
-    public ServiceInterface getService(String name) {
-        try {
-            return this.serviceManager.getService(name);
-        } catch (UnknownServiceException e) {
-            if (this.intentionally_ready) {
-                this.log(Level.SEVERE, "Could not retrieve service: " + name + ":");
-                Arrays.stream(Thread.currentThread().getStackTrace()).forEach(stackTraceElement -> {
-                    this.log(Level.SEVERE, stackTraceElement.toString());
-                });
-            }
-        }
-        return null;
-    }
-
-    /**
-     *
      * Returns the Bedrock ConfigService object instance.
      * If the ConfigService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock ConfigService
-     * @see         ConfigService
+     * @return The Bedrock ConfigService
+     * @see ConfigService
      */
     public ConfigService getConfigService() {
-        return (ConfigService) this.getService(SERVICE_CONFIG);
+        return (ConfigService) this.getServiceManager().getService(ConfigService.class);
     }
 
     /**
-     *
      * Returns the Bedrock ColorSchemeService object instance.
      * If the ColorSchemeService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock ColorSchemeService
-     * @see         ColorSchemeService
+     * @return The Bedrock ColorSchemeService
+     * @see ColorSchemeService
      */
     public ColorSchemeService getColorSchemeService() {
-        return (ColorSchemeService) this.getService(SERVICE_COLORSCHEME);
+        return (ColorSchemeService) this.getServiceManager().getService(ColorSchemeService.class);
     }
 
     /**
      * Returns the Bedrock CommandService object instance.
      * If the CommandService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock CommandService
-     * @see         CommandService
+     * @return The Bedrock CommandService
+     * @see CommandService
      */
     public CommandService getCommandService() {
-        return (CommandService) this.getService(SERVICE_COMMAND);
+        return (CommandService) this.getServiceManager().getService(CommandService.class);
     }
 
     /**
      * Returns the Bedrock PermissionService object instance.
      * If the PermissionService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock PermissionService
-     * @see         PermissionService
+     * @return The Bedrock PermissionService
+     * @see PermissionService
      */
     public PermissionService getPermissionService() {
-        return (PermissionService) this.getService(SERVICE_PERMISSION);
+        return (PermissionService) this.getServiceManager().getService(PermissionService.class);
     }
 
     /**
      * Returns the Bedrock LocalizationService object instance.
      * If the LocalizationService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock LocalizationService
-     * @see         LocalizationService
+     * @return The Bedrock LocalizationService
+     * @see LocalizationService
      */
     public LocalizationService getLocalizationService() {
-        return (LocalizationService) this.getService(SERVICE_LOCALIZATION);
+        return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
     }
 
     /**
      * Returns the Bedrock InventoryService object instance.
      * If the InventoryService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock InventoryService
-     * @see         InventoryService
+     * @return The Bedrock InventoryService
+     * @see InventoryService
      */
+    @SuppressWarnings("unused")
     public InventoryService getInventoryService() {
-        return (InventoryService) this.getService(SERVICE_INVENTORY);
+        return (InventoryService) this.getServiceManager().getService(InventoryService.class);
     }
 
     /**
      * Returns the Bedrock SettingsService object instance.
      * If the InventoryService is not ready, <code>null</code> is returned.
      *
-     * @return      The Bedrock SettingsService
-     * @see         SettingsService
+     * @return The Bedrock SettingsService
+     * @see SettingsService
      */
     public SettingsService getSettingService() {
-        return (SettingsService) this.getService(SERVICE_SETTINGS);
+        return (SettingsService) this.getServiceManager().getService(SettingsService.class);
     }
 
     /**
      * Returns a list of CustomSettingsFile classes
      *
-     * @return  An ArrayList of classes
-     * @see     CustomSettingsFile
+     * @return An ArrayList of classes
+     * @see CustomSettingsFile
      */
     public ArrayList<Class<?>> getCustomSettingsFiles() {
-        return null;
-    }
-
-    /**
-     * Returns a list of Reloadable classes
-     *
-     * @return An ArrayList of classes
-     */
-    public ArrayList<Reloadable> getReloadable() {
         return null;
     }
 
@@ -394,18 +338,25 @@ public abstract class BasePlugin extends JavaPlugin {
      */
     @Override
     public final FileConfiguration getConfig() {
-        this.log(Level.SEVERE, "Access to Bukkit getConfig() is prohibited. GTFO!");
+        this.logProhibitedAccess("JavaPlugin#getConfig()", "ConfigurationService / CustomConfigurationFile");
         return null;
     }
 
     @Override
     public final void saveConfig() {
-        this.log(Level.SEVERE, "Access to Bukkit saveConfig() is prohibited. GTFO!");
+        this.logProhibitedAccess("JavaPlugin#saveConfig()", "ConfigurationService / CustomConfigurationFile");
     }
 
     @Override
     public final void reloadConfig() {
-        this.log(Level.SEVERE, "Access to Bukkit reloadConfig() is prohibited. GTFO!");
+        this.logProhibitedAccess("JavaPlugin#reloadConfig()", "ConfigurationService / CustomConfigurationFile");
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private void logProhibitedAccess(String prohibited, String replacement) {
+        this.log(Level.SEVERE, String.format("Access to %s is prohibited. Please use %s instead",
+                prohibited, replacement
+        ));
     }
 
     /**
@@ -418,6 +369,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * @throws DependencyException   if a specific version is not installed.
      * @throws NoSuchPluginException if a plugin is missing.
      */
+    @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     protected void assertPluginDependency(String name, String version) throws DependencyException, NoSuchPluginException {
 
         JavaPlugin plugin = this.getPlugin(name);

@@ -1,10 +1,9 @@
 package de.cubenation.api.bedrock.service.confirm;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.exception.TimeoutException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -13,7 +12,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractConfirmService extends AbstractService implements ServiceInterface, ConfirmInterface {
+public abstract class AbstractConfirmService extends AbstractService implements ConfirmInterface {
 
     private int timeout;
 
@@ -80,6 +79,7 @@ public abstract class AbstractConfirmService extends AbstractService implements 
         this.timeout = timeout;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public int getTimeout() {
         return this.timeout;
     }

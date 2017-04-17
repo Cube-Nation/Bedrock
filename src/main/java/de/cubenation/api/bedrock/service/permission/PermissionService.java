@@ -2,14 +2,12 @@ package de.cubenation.api.bedrock.service.permission;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.config.Permissions;
 import de.cubenation.api.bedrock.exception.PlayerNotFoundException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
-import de.cubenation.api.bedrock.permission.Permission;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.service.config.ConfigService;
+import de.cubenation.plugin.bedrock.config.Permissions;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
  * Created by B1acksheep on 25.04.15.
  * Project: Bedrock
  */
-public class PermissionService extends AbstractService implements ServiceInterface {
+public class PermissionService extends AbstractService {
 
     private ConfigService configService;
 
@@ -33,7 +31,6 @@ public class PermissionService extends AbstractService implements ServiceInterfa
 
     public PermissionService(BasePlugin plugin) {
         super(plugin);
-        this.configService = plugin.getConfigService();
     }
 
     public String getPermissionPrefix() {
@@ -46,6 +43,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
     @Override
     public void init() throws ServiceInitException {
         //this.getPlugin().log(Level.INFO, "  permission service: setting up " + this.toString());
+        this.configService = plugin.getConfigService();
 
         try {
             this.configService.registerFile(
@@ -105,6 +103,17 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         if (exists.size() == 0) {
             this.localPermissionCache.add(permission);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public Permission getPermission(String rawPermission) {
+        if (rawPermission == null)
+            return null;
+
+        return getPermissions().stream()
+                .filter(permission -> permission.getName().equalsIgnoreCase(rawPermission))
+                .findFirst()
+                .orElse(null);
     }
 
     private void initializePermissions() {
@@ -179,6 +188,7 @@ public class PermissionService extends AbstractService implements ServiceInterfa
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     public boolean hasPermission(CommandSender sender, Permission permission) {
         // op check
         if (sender.isOp() && (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {

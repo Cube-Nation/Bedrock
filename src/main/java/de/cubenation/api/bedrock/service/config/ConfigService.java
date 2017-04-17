@@ -2,11 +2,10 @@ package de.cubenation.api.bedrock.service.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.ConfigurationFile;
-import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
+import de.cubenation.plugin.bedrock.config.BedrockDefaults;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class ConfigService extends AbstractService implements ServiceInterface {
+public class ConfigService extends AbstractService {
 
     private HashMap<Class<?>, CustomConfigurationFile> configuration_files = new HashMap<>();
 

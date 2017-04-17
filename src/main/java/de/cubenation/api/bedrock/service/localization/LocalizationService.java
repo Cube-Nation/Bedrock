@@ -1,12 +1,11 @@
 package de.cubenation.api.bedrock.service.localization;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.logging.Level;
  *
  * @author Cube-Nation
  */
-public final class LocalizationService extends AbstractService implements ServiceInterface {
+public class LocalizationService extends AbstractService {
 
     private String locale;
 

@@ -4,9 +4,8 @@ import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 
-public class ColorSchemeService extends AbstractService implements ServiceInterface {
+public class ColorSchemeService extends AbstractService {
 
     private ColorScheme scheme;
 

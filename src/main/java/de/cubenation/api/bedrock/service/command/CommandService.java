@@ -3,12 +3,10 @@ package de.cubenation.api.bedrock.service.command;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.CommandHandler;
 import de.cubenation.api.bedrock.command.AbstractCommand;
-import de.cubenation.api.bedrock.command.manager.CommandManager;
 import de.cubenation.api.bedrock.command.predefined.*;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.service.settings.SettingsService;
 
 import java.lang.reflect.Constructor;
@@ -17,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
-public class CommandService extends AbstractService implements ServiceInterface {
+public class CommandService extends AbstractService {
 
     private ArrayList<CommandManager> command_manager = new ArrayList<>();
 
@@ -29,9 +27,7 @@ public class CommandService extends AbstractService implements ServiceInterface 
     public void init() throws ServiceInitException {
         // get all commands and their handles from CommandHandler annotations
         Arrays.stream(this.getPlugin().getClass().getAnnotationsByType(CommandHandler.class)).forEach(
-                commandHandler -> {
-                    this.addCommandManager(commandHandler.Command(), commandHandler.Handlers());
-                }
+                commandHandler -> this.addCommandManager(commandHandler.Command(), commandHandler.Handlers())
         );
 
         // TODO: doc

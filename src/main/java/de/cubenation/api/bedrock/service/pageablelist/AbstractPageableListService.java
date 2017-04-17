@@ -4,7 +4,6 @@ import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.helper.design.PageableMessageHelper;
 import de.cubenation.api.bedrock.registry.Registerable;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
 import org.bukkit.command.CommandSender;
 
@@ -14,7 +13,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 @SuppressWarnings("unused")
-public abstract class AbstractPageableListService extends AbstractService implements ServiceInterface, Registerable {
+public abstract class AbstractPageableListService extends AbstractService implements Registerable {
 
     private Integer generalPageSize = 10;
 
@@ -85,7 +84,8 @@ public abstract class AbstractPageableListService extends AbstractService implem
         return (int) Math.round(storage.size() / generalPageSize + factor);
     }
 
-    public int getPageSize(int page) throws IndexOutOfBoundsException {
+    @SuppressWarnings("WeakerAccess")
+    protected int getPageSize(int page) throws IndexOutOfBoundsException {
         if (page > this.getPages()) {
             throw new IndexOutOfBoundsException("page " + page + " is greater than " + this.getPages());
         } else if (page < this.getPages()) {
@@ -95,7 +95,8 @@ public abstract class AbstractPageableListService extends AbstractService implem
         }
     }
 
-    public List<PageableListStorable> getPage(int next, int page) {
+    @SuppressWarnings("WeakerAccess")
+    protected List<PageableListStorable> getPage(int next, int page) {
         List<PageableListStorable> list = new ArrayList<>();
 
         int start = (page - 1) * next;

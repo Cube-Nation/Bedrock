@@ -5,7 +5,6 @@ import de.cubenation.api.bedrock.exception.NoSuchPlayerException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -14,10 +13,10 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by bhruschka on 10.11.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version ${project.version}
  */
-public class SettingsService extends AbstractService implements ServiceInterface {
+public class SettingsService extends AbstractService {
 
     public static final String SETTINGSDIR = "settings";
     private File settingsDirectory;
@@ -44,6 +43,19 @@ public class SettingsService extends AbstractService implements ServiceInterface
         }
     }
 
+    /**
+     * Reload the settings service
+     *
+     * @throws ServiceReloadException if reloading fails
+     * TODO: entry.getValue.reload() never throws an exception
+     */
+    @Override
+    public void reload() throws ServiceReloadException {
+        for (Map.Entry<String, SettingsManager> entry : settingsMap.entrySet()) {
+            entry.getValue().reload();
+        }
+    }
+
     private void loadSettings() {
         settingsMap = new HashMap<>();
         settingsClassMap = new HashMap<>();
@@ -64,19 +76,11 @@ public class SettingsService extends AbstractService implements ServiceInterface
     /**
      * create plugin settings folder
      *
-     * @throws ServiceInitException
+     * @throws ServiceInitException if the directory could not be created
      */
     private void createDataFolder() throws ServiceInitException {
         if (!this.settingsDirectory.exists() && !this.settingsDirectory.mkdirs())
             throw new ServiceInitException("Could not create folder " + this.settingsDirectory.getName());
-    }
-
-
-    @Override
-    public void reload() throws ServiceReloadException {
-        for (Map.Entry<String, SettingsManager> entry : settingsMap.entrySet()) {
-            entry.getValue().reload();
-        }
     }
 
     public HashMap<String, SettingsManager> getSettingsMap() {

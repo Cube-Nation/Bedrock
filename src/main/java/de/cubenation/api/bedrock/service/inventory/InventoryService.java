@@ -5,7 +5,6 @@ import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.helper.MapUtil;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.ServiceInterface;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InventoryService extends AbstractService implements ServiceInterface {
+public class InventoryService extends AbstractService {
 
     private File inventoryDirectory;
 
@@ -135,6 +134,7 @@ public class InventoryService extends AbstractService implements ServiceInterfac
         return ((List<ItemStack>) c.get("inventory")).toArray(new ItemStack[((List<ItemStack>) c.get("inventory")).size()]);
     }
 
+    @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
     public boolean delete(String identifier) {
         return new File(this.inventoryDirectory, identifier + ".yaml").delete();
     }
