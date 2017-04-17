@@ -1,4 +1,4 @@
-package de.cubenation.api.bedrock.event;
+package de.cubenation.plugin.bedrock.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

@@ -1,7 +1,6 @@
 package de.cubenation.api.bedrock.service.settings;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.cubespace.Yamler.Config.YamlConfig;
 
 import java.io.File;
@@ -46,9 +45,4 @@ public abstract class CustomSettingsFile extends YamlConfig {
 
     public abstract String info();
 
-
-    @Override
-    public void reload() throws InvalidConfigurationException {
-        super.reload();
-    }
 }

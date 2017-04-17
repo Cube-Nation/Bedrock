@@ -16,8 +16,8 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 /**
- * Created by bhruschka on 25.12.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class SettingsManager {
 
@@ -65,10 +65,7 @@ public class SettingsManager {
     private String initDefault() {
         try {
             CustomSettingsFile settings = createSettings(plugin, className, null);
-
-
             this.defaultFile = this.registerFile(className, settings);
-
             return settings.getSettingsName();
         } catch (InstantiationException e) {
             e.printStackTrace();

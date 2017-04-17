@@ -1,13 +1,14 @@
-package de.cubenation.api.bedrock;
+package de.cubenation.plugin.bedrock;
 
+import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.annotation.CommandHandler;
 import de.cubenation.api.bedrock.annotation.ConfigurationFile;
-import de.cubenation.api.bedrock.command.player.BedrockPlayerInfoCommand;
-import de.cubenation.api.bedrock.config.BedrockDefaults;
-import de.cubenation.api.bedrock.config.locale.de_DE;
 import de.cubenation.api.bedrock.ebean.BedrockPlayer;
 import de.cubenation.api.bedrock.ebean.BedrockWorld;
-import de.cubenation.api.bedrock.listener.EbeanListener;
+import de.cubenation.plugin.bedrock.command.BedrockPlayerInfoCommand;
+import de.cubenation.plugin.bedrock.config.BedrockDefaults;
+import de.cubenation.plugin.bedrock.config.locale.de_DE;
+import de.cubenation.plugin.bedrock.listener.EbeanListener;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import javax.persistence.PersistenceException;

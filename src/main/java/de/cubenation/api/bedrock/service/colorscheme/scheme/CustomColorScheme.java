@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.service.colorscheme.scheme;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.service.colorscheme.ColorScheme;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import net.md_5.bungee.api.ChatColor;
 
 @SuppressWarnings("unused")

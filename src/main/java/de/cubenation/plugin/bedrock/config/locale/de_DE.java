@@ -1,4 +1,4 @@
-package de.cubenation.api.bedrock.config.locale;
+package de.cubenation.plugin.bedrock.config.locale;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;

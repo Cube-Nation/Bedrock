@@ -1,6 +1,6 @@
 author: Cube-Nation, B1acksheep, d1rty
 description: Comprehensive Plugin API
-main: de.cubenation.api.bedrock.BedrockPlugin
+main: de.cubenation.plugin.bedrock.BedrockPlugin
 database: true
 load: startup
 name: Bedrock

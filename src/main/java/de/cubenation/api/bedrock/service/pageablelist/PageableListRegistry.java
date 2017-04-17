@@ -1,10 +1,10 @@
 package de.cubenation.api.bedrock.service.pageablelist;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.BedrockPlugin;
 import de.cubenation.api.bedrock.exception.NoSuchRegisterableException;
 import de.cubenation.api.bedrock.registry.AbstractRegistry;
 import de.cubenation.api.bedrock.registry.RegistryInterface;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 

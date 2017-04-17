@@ -1,7 +1,7 @@
 package de.cubenation.api.bedrock.ebean;
 
 import com.avaje.ebean.validation.NotNull;
-import de.cubenation.api.bedrock.BedrockPlugin;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;

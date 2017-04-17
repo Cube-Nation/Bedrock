@@ -1,6 +1,6 @@
 package de.cubenation.api.bedrock.ebean;
 
-import de.cubenation.api.bedrock.BedrockPlugin;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
