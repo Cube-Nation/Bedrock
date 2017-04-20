@@ -5,8 +5,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /**
- * Created by BenediktHr on 30.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class TextHolder {
 

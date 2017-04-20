@@ -1,5 +1,9 @@
 package de.cubenation.api.bedrock.helper;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class GenericStorable<T> {
 
     private T object;

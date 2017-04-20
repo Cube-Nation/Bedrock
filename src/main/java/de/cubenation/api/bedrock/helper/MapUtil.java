@@ -3,8 +3,8 @@ package de.cubenation.api.bedrock.helper;
 import java.util.*;
 
 /**
- * Created by BenediktHr on 21.10.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class MapUtil {
 

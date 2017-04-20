@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by BenediktHr on 28.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class IgnoreCaseArrayList extends ArrayList<String> {
 

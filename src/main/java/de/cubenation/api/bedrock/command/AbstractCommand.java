@@ -23,12 +23,10 @@ import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
- * @author Cube-Nation
- * @version 1.0
- *
  * Abstract class for command executor classes
  *
- * TBD
+ * @author Cube-Nation
+ * @version 1.0
  */
 public abstract class AbstractCommand {
 

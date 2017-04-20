@@ -20,7 +20,7 @@ import java.util.logging.Level;
  * This is the Bedrock main plugin class
  *
  * @author Cube-Nation
- * @version {$project.version}
+ * @version 1.0
  */
 @ConfigurationFile(de_DE.class)
 @CommandHandler(Command = "bp", Handlers = {

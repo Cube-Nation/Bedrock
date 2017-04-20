@@ -26,6 +26,10 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public class MessageHelper {
 

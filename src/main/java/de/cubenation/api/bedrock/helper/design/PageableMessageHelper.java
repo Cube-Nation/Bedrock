@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Created by BenediktHr on 04.03.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 
 public class PageableMessageHelper {

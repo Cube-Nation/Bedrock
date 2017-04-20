@@ -5,8 +5,8 @@ import de.cubenation.api.bedrock.BasePlugin;
 import java.io.File;
 
 /**
- * Created by bhruschka on 20.04.17.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class BedrockDefaults extends de.cubenation.api.bedrock.config.BedrockDefaults {
 

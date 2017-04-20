@@ -6,8 +6,8 @@ import de.cubenation.api.bedrock.translation.Translation;
 import org.bukkit.command.CommandSender;
 
 /**
- * Created by BenediktHr on 27.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class Argument {
 

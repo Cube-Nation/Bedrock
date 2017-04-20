@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public abstract class AbstractPageableListService extends AbstractService implements Registerable {
 

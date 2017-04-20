@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class InventoryService extends AbstractService {
 
     private File inventoryDirectory;

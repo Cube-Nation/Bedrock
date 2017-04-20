@@ -20,6 +20,10 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class ServiceManager {
 
     private BasePlugin plugin;

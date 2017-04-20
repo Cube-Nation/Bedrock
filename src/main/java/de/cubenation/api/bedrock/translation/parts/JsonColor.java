@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.translation.parts;
 
 /**
- * Created by BenediktHr on 04.03.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @SuppressWarnings("unused")
 public enum JsonColor {

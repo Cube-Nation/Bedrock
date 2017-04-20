@@ -15,7 +15,7 @@ import java.util.Date;
 
 /**
  * @author Cube-Nation
- * @version {$project.version}
+ * @version 1.0
  */
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 public class EbeanListener implements Listener {

@@ -4,6 +4,10 @@ import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.exception.NoSuchRegisterableException;
 import org.bukkit.command.CommandSender;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public interface RegistryInterface {
 
     @SuppressWarnings("unused")

@@ -4,6 +4,10 @@ import org.bukkit.command.CommandSender;
 
 import java.util.HashMap;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class ConfirmRegistry {
 
     /*

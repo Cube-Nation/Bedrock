@@ -7,6 +7,10 @@ import de.cubenation.plugin.bedrock.BedrockPlugin;
 
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public abstract class AbstractService {
 
     protected BasePlugin plugin;

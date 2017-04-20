@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public abstract class AbstractConfirmService extends AbstractService implements ConfirmInterface {
 

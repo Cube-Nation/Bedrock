@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version {$project.version}
+ * @version 1.0
  */
 @SuppressWarnings("ALL")
 public class BedrockEbeanHelper {

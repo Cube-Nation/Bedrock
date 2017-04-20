@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by BenediktHr on 27.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @SuppressWarnings("unused")
 public abstract class KeyValueCommand extends AbstractCommand {

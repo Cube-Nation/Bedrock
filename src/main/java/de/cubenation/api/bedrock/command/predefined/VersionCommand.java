@@ -12,6 +12,10 @@ import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.service.command.CommandManager;
 import org.bukkit.command.CommandSender;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @Description("command.bedrock.version.desc")
 @Permission(Name = "version", Role = CommandRole.MODERATOR)
 @SubCommand({ "version", "v" })

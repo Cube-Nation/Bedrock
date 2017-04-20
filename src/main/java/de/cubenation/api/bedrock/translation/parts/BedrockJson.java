@@ -5,8 +5,8 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 
 /**
- * Created by BenediktHr on 04.03.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 
 @SuppressWarnings({"WeakerAccess", "unchecked", "UnusedReturnValue", "unused", "SameParameterValue"})

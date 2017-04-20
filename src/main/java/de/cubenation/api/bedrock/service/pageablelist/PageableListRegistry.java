@@ -8,6 +8,10 @@ import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public class PageableListRegistry extends AbstractRegistry implements RegistryInterface {
 

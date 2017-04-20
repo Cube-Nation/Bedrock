@@ -14,7 +14,7 @@ import java.util.UUID;
  * Represents a BedrockPlayer instance.
  *
  * @author Cube-Nation
- * @version {$project.version}
+ * @version 1.0
  */
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 @Entity()

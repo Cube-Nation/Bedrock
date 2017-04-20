@@ -17,8 +17,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by BenediktHr on 15.11.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @Description("command.bedrock.cmd.list.desc")
 @Permission(Name = "command.list", Role = CommandRole.USER)

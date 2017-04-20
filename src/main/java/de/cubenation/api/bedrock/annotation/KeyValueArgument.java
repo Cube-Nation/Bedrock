@@ -5,6 +5,10 @@ import de.cubenation.api.bedrock.command.CommandRole;
 
 import java.lang.annotation.*;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

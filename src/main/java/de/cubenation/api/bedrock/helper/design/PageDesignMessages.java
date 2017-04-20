@@ -6,8 +6,8 @@ import de.cubenation.api.bedrock.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
 
 /**
- * Created by BenediktHr on 30.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class PageDesignMessages extends MessageHelper{
 

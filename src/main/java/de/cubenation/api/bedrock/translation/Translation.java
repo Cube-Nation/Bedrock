@@ -14,6 +14,10 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class Translation {
 
     private BasePlugin plugin;

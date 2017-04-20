@@ -1,10 +1,9 @@
 package de.cubenation.api.bedrock.command;
 
 /**
- * Created by BenediktHr on 27.01.16.
- * Project: CNPlots
+ * @author Cube-Nation
+ * @version 1.0
  */
-
 @SuppressWarnings("unused")
 public enum CommandRole {
     // all permissions with no role are in this role by default

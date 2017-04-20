@@ -18,6 +18,10 @@ import org.bukkit.command.CommandSender;
 import java.io.File;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @Description("command.bedrock.regeneratelocale.desc")
 @Permission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
 @SubCommand({ "regenerate" })

@@ -14,8 +14,8 @@ import de.cubenation.api.bedrock.service.permission.PermissionService;
 import org.bukkit.command.CommandSender;
 
 /**
- * Created by B1acksheep on 28.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @Description("command.bedrock.permissions.list.desc")
 @SubCommand({ "pl", "permslist", "permissionslist" })

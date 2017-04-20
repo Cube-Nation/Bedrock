@@ -3,8 +3,8 @@ package de.cubenation.api.bedrock.exception;
 import java.io.IOException;
 
 /**
- * Created by BenediktHr on 30.11.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class BedrockEbeanEntityAlreadyExistsException extends IOException {
 

@@ -21,8 +21,8 @@ import java.util.Set;
 
 
 /**
- * Created by B1acksheep on 02.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @Description("command.bedrock.help.desc")
 @SubCommand({ "help" })

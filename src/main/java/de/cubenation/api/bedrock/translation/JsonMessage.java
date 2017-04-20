@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by BenediktHr on 19.02.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 
 @SuppressWarnings("unused")

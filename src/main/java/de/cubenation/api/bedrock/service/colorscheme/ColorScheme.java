@@ -13,6 +13,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class ColorScheme {
 
     private ColorSchemeName name;

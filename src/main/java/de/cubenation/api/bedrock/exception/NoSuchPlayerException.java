@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.exception;
 
 /**
- * Created by bhruschka on 30.12.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class NoSuchPlayerException extends Exception {
 

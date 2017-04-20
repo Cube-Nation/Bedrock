@@ -6,8 +6,8 @@ import net.cubespace.Yamler.Config.YamlConfig;
 import java.io.File;
 
 /**
- * Created by bhruschka on 25.12.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored", "unused"})
 public abstract class CustomSettingsFile extends YamlConfig {

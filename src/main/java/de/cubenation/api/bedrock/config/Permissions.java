@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Permissions extends CustomConfigurationFile {
 

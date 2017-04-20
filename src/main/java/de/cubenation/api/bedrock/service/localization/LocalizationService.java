@@ -16,6 +16,7 @@ import java.util.logging.Level;
  * The Localization Service
  *
  * @author Cube-Nation
+ * @version 1.0
  */
 public class LocalizationService extends AbstractService {
 

@@ -7,6 +7,10 @@ import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public class en_US extends CustomConfigurationFile {
 

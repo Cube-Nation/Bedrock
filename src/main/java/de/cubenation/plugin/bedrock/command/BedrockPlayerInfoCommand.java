@@ -19,8 +19,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 /**
- * Created by BenediktHr on 17.08.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @Description("command.bedrock.playerinfo.desc")
 @Permission(Name = "info.other", Role = CommandRole.ADMIN)

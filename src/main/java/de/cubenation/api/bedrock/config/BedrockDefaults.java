@@ -9,6 +9,10 @@ import net.md_5.bungee.api.ChatColor;
 
 import java.io.File;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
 public class BedrockDefaults extends CustomConfigurationFile {
 

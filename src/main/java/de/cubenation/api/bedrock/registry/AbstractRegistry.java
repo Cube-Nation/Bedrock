@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public abstract class AbstractRegistry {
 
     protected static HashMap<String, Registerable> registry;

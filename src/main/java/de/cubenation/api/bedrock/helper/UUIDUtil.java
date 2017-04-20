@@ -3,8 +3,8 @@ package de.cubenation.api.bedrock.helper;
 import java.util.UUID;
 
 /**
- * Created by BenediktHr on 26.01.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 
 public class UUIDUtil {

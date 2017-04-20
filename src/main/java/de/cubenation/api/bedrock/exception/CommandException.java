@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.exception;
 
 /**
- * Created by B1acksheep on 02.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 
 public class CommandException extends Exception {

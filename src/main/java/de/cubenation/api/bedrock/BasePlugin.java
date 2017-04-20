@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * Represents a Bedrock-based plugin.
  *
  * @author Cube-Nation
- * @version {$project.version}
+ * @version 1.0
  */
 public abstract class BasePlugin extends JavaPlugin {
 

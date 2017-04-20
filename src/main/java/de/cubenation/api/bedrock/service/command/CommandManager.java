@@ -17,8 +17,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by B1acksheep on 02.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class CommandManager implements CommandExecutor, TabCompleter {
 

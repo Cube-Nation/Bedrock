@@ -5,10 +5,10 @@ import de.cubenation.api.bedrock.command.CommandRole;
 import org.bukkit.command.CommandSender;
 
 /**
+ * The Permission class
+ *
  * @author Cube-Nation
  * @version 1.0
- *
- * The Permission class
  */
 @SuppressWarnings("unused")
 public class Permission {

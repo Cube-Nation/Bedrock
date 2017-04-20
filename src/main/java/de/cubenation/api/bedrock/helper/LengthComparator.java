@@ -3,8 +3,8 @@ package de.cubenation.api.bedrock.helper;
 import java.util.Comparator;
 
 /**
- * Created by B1acksheep on 28.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class LengthComparator implements Comparator<String> {
 

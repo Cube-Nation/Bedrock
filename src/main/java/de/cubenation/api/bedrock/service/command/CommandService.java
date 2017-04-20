@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class CommandService extends AbstractService {
 
     private ArrayList<CommandManager> command_manager = new ArrayList<>();

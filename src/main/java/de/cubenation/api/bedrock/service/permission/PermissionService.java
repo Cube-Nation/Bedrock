@@ -18,8 +18,8 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
- * Created by B1acksheep on 25.04.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class PermissionService extends AbstractService {
 

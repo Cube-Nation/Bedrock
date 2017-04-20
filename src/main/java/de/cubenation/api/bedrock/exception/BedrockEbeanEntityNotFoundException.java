@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 /**
  * @author Cube-Nation
- * @version {$project.version}
+ * @version 1.0
  */
 @SuppressWarnings("DefaultFileTemplate")
 public class BedrockEbeanEntityNotFoundException extends IOException {

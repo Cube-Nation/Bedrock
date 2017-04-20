@@ -20,8 +20,8 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 
 /**
- * Created by BenediktHr on 15.11.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 @Description("command.bedrock.info.desc")
 @Permission(Name = "settings.list", Role = CommandRole.ADMIN)

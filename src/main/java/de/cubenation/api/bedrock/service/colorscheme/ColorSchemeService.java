@@ -5,6 +5,10 @@ import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class ColorSchemeService extends AbstractService {
 
     private ColorScheme scheme;

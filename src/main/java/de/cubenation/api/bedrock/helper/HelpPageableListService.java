@@ -4,8 +4,8 @@ import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.service.pageablelist.AbstractPageableListService;
 
 /**
- * Created by BenediktHr on 11.10.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class HelpPageableListService extends AbstractPageableListService {
 

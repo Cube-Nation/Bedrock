@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Created by BenediktHr on 27.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public abstract class Command extends AbstractCommand {
 

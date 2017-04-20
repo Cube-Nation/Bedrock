@@ -3,7 +3,8 @@ package de.cubenation.api.bedrock.helper.version;
 import java.util.Comparator;
 
 /**
- *
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class VersionComparator implements Comparator {
 

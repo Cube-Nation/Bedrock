@@ -6,8 +6,8 @@ import de.cubenation.api.bedrock.service.permission.Permission;
 import java.util.HashMap;
 
 /**
- * Created by BenediktHr on 27.07.15.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public class KeyValueArgument extends Argument {
 

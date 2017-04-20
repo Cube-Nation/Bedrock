@@ -1,5 +1,9 @@
 package de.cubenation.api.bedrock.helper.version;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class VersionTokenizer {
     private final String _versionString;
     private final int _length;

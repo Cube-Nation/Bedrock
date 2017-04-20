@@ -7,6 +7,10 @@ import net.cubespace.Yamler.Config.Path;
 import java.io.File;
 import java.util.HashMap;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class de_DE extends CustomConfigurationFile {
 

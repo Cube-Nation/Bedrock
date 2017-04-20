@@ -3,8 +3,8 @@ package de.cubenation.api.bedrock.helper;
 import org.bukkit.Location;
 
 /**
- * Created by BenediktHr on 28.01.16.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 
 @SuppressWarnings("unused")

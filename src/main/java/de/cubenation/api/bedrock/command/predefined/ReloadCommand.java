@@ -13,6 +13,10 @@ import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.service.command.CommandManager;
 import org.bukkit.command.CommandSender;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @Description("command.bedrock.reload.desc")
 @Permission(Name = "reload", Role = CommandRole.ADMIN)
 @SubCommand({ "reload", "r" })

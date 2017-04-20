@@ -1,8 +1,8 @@
 package de.cubenation.api.bedrock.callback;
 
 /**
- * Created by bhruschka on 12.02.17.
- * Project: Bedrock
+ * @author Cube-Nation
+ * @version 1.0
  */
 public interface FailureCallback<T> {
     void didFailed(T object);

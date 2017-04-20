@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class ConfigService extends AbstractService {
 
     private HashMap<Class<?>, CustomConfigurationFile> configuration_files = new HashMap<>();
