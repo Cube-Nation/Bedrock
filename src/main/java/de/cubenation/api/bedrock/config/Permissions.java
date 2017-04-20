@@ -1,4 +1,4 @@
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.api.bedrock.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.CommandRole;

@@ -7,7 +7,7 @@ import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
 import de.cubenation.api.bedrock.service.config.ConfigService;
-import de.cubenation.plugin.bedrock.config.Permissions;
+import de.cubenation.api.bedrock.config.Permissions;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

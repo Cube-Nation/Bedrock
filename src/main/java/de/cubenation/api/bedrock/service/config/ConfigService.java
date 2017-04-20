@@ -5,7 +5,7 @@ import de.cubenation.api.bedrock.annotation.ConfigurationFile;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
 import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.plugin.bedrock.config.BedrockDefaults;
+import de.cubenation.api.bedrock.config.BedrockDefaults;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 

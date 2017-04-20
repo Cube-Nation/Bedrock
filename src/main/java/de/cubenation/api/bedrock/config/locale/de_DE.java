@@ -1,4 +1,4 @@
-package de.cubenation.plugin.bedrock.config.locale;
+package de.cubenation.api.bedrock.config.locale;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
@@ -114,7 +114,6 @@ public class de_DE extends CustomConfigurationFile {
     private String help_command_args_description = "&TEXT& - %description%&RESET&";
 
 
-
     @Path("help.subcommand.alias.desc")
     private String help_subcommand_alias_desc = "Alternativ kannst du folgendes nutzen:";
 
@@ -202,9 +201,7 @@ public class de_DE extends CustomConfigurationFile {
     @Path("namechange.toggle.disabled")
     private String namechange_toggle_off = "deaktiviert";
 
-    /**
-     * Commands
-     */
+    // Commands
 
     @Path("command.bedrock.help.desc")
     private String help_plugin = "Hilfe zu allen Plugin Befehlen";
@@ -230,19 +227,8 @@ public class de_DE extends CustomConfigurationFile {
     @Path("command.bedrock.regeneratelocale.desc")
     private String help_regenerate_locale = "Erstellt die Datei für das aktuelle Locale neu";
 
-    @Path("command.bedrock.playerinfo.desc")
-    private String help_playerinfo_desc = "Zeigt Bedrock-Informationen zu einem oder mehreren Spielern an";
 
-    /**
-     * Args
-     */
-
-
-    @Path("command.bedrock.username_uuid.desc")
-    private String help_args_username_uuid_description = "Username/UUID eines Spielers";
-
-    @Path("command.bedrock.username_uuid.ph")
-    private String help_args_username_uuid_placeholder = "Username/UUID";
+    // Args
 
     @Path("command.bedrock.key.desc")
     private String help_args_key_description = "Eindeutiger Key";
@@ -258,5 +244,16 @@ public class de_DE extends CustomConfigurationFile {
     @Path("plugin.command.list.entry")
     private String plugin_command_list = "{\"text\":\"[\",\"color\":\"dark_gray\",\"extra\":[{\"text\":\"Bedrock\",\"color\":\"gold\"},{\"text\":\"]\",\"color\":\"dark_gray\"},{\"text\":\" \",\"color\":\"white\"},{\"text\":\"*\",\"color\":\"&PRIMARY&\"},{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%command%\",\"color\":\"&SECONDARY&\"},{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%description%\",\"color\":\"&TEXT&\"}]}";
 
+
+    // Bedrock Plugin
+
+    @Path("command.bedrock.playerinfo.desc")
+    private String help_playerinfo_desc = "Zeigt Bedrock-Informationen zu einem oder mehreren Spielern an";
+
+    @Path("command.bedrock.username_uuid")
+    private HashMap<String, String> command_bedrock_username_uuid = new HashMap<String, String>() {{
+        put("ph", "Username/UUID");
+        put("desc", "Username/UUID eines Spielers");
+    }};
 
 }
