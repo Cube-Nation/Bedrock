@@ -23,6 +23,7 @@
 package de.cubenation.plugin.bedrock;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.DatabasePlugin;
 import de.cubenation.api.bedrock.annotation.CommandHandler;
 import de.cubenation.api.bedrock.annotation.ConfigurationFile;
 import de.cubenation.api.bedrock.config.BedrockDefaults;

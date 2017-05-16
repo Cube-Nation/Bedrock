@@ -22,6 +22,7 @@
 
 package de.cubenation.api.bedrock;
 
+import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.exception.DependencyException;
 import de.cubenation.api.bedrock.exception.NoSuchPluginException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
@@ -52,7 +53,7 @@ import java.util.logging.Logger;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class BasePlugin extends JavaPlugin {
+public abstract class BasePlugin extends DatabasePlugin {
 
     /**
      * The ServiceManager object
@@ -102,6 +103,14 @@ public abstract class BasePlugin extends JavaPlugin {
             this.disable(e);
         }
 
+        try {
+            BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
+            setupDatabase(bedrockDefaults);
+        } catch (Exception e) {
+            this.disable(e);
+            return;
+        }
+
         // enable bStats metrics
         new MetricsLite(this);
 
@@ -111,6 +120,11 @@ public abstract class BasePlugin extends JavaPlugin {
         } catch (Exception e) {
             this.disable(e);
         }
+    }
+
+    @Override
+    public Boolean isDatabaseEnabled() {
+        return true;
     }
 
     /**

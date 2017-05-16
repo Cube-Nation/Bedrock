@@ -250,7 +250,44 @@ public class BedrockDefaults extends CustomConfigurationFile {
         this.metrics_use = metrics_use;
     }
 
+    /**
+     * Database
+     */
 
+    @Path("database.username")
+    private String username = "username";
+
+    public String getDatabaseUsername() {
+        return username;
+    }
+
+    @Path("database.isolation")
+    private String isolation = "SERIALIZABLE";
+
+    public String getDatabaseIsolation() {
+        return isolation;
+    }
+
+    @Path("database.driver")
+    private String driver = "com.mysql.jdbc.Driver";
+
+    public String getDatabaseDriver() {
+        return driver;
+    }
+
+    @Path("database.password")
+    private String password = "password";
+
+    public String getDatabasePassword() {
+        return password;
+    }
+
+    @Path("database.url")
+    private String url = "url";
+
+    public String getDatabaseUrl() {
+        return url;
+    }
 
     /**
      * Config Service
