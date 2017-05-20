@@ -7,14 +7,18 @@ import com.avaje.ebean.config.ServerConfig;
 import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.api.SpiEbeanServer;
 import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
-import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 import com.google.common.base.Preconditions;
 import de.cubenation.api.bedrock.config.BedrockDefaults;
+import de.cubenation.api.bedrock.database.DatabaseConfiguration;
+import de.cubenation.api.bedrock.exception.DatabaseSetupException;
+import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by benedikthruschka on 16.05.17.
@@ -83,16 +87,27 @@ public abstract class DatabasePlugin extends JavaPlugin {
         gen.runScript(true, gen.generateDropDdl());
     }
 
-    public void configureDbConfig(ServerConfig config, BedrockDefaults bedrockDefaults) {
+    public void configureDbConfig(ServerConfig config, BedrockDefaults bedrockDefaults) throws DatabaseSetupException {
         Validate.notNull(config, "Config cannot be null");
 
-        // TODO
+        DatabaseConfiguration configuration = bedrockDefaults.getDatabaseConfiguration();
+
+        // If this configuration is null, try to get the Bedrocks one
+        if (configuration == null) {
+            BedrockPlugin plugin = (BedrockPlugin) Bukkit.getServer().getPluginManager().getPlugin("Bedrock");
+            if (plugin != null) {
+                configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
+                getLogger().log(Level.INFO, "Will use default Bedrock database configuration.");
+            }
+        }
+
+        // If this configuration is still null, throw
+        if (configuration == null) {
+            throw new DatabaseSetupException();
+        }
+
         DataSourceConfig ds = new DataSourceConfig();
-        ds.setDriver(bedrockDefaults.getDatabaseDriver());
-        ds.setUrl(bedrockDefaults.getDatabaseUrl());
-        ds.setUsername(bedrockDefaults.getDatabaseUsername());
-        ds.setPassword(bedrockDefaults.getDatabasePassword());
-        ds.setIsolationLevel(TransactionIsolation.getLevel(bedrockDefaults.getDatabaseIsolation()));
+        ds = configuration.configure(ds);
 
         if (ds.getDriver().contains("sqlite")) {
             config.setDatabasePlatform(new SQLitePlatform());

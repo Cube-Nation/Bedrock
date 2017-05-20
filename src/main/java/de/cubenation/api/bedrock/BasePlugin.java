@@ -31,6 +31,7 @@ import de.cubenation.api.bedrock.service.ServiceManager;
 import de.cubenation.api.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.api.bedrock.service.command.CommandService;
 import de.cubenation.api.bedrock.service.config.ConfigService;
+import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.api.bedrock.service.inventory.InventoryService;
 import de.cubenation.api.bedrock.service.localization.LocalizationService;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
@@ -83,6 +84,7 @@ public abstract class BasePlugin extends DatabasePlugin {
      * This method is executed when Bukkit enables this plugin.
      * <p>
      * For custom pre- and post-enabling functions use
+     *
      * @see ServiceManager
      */
     @Override
@@ -214,6 +216,14 @@ public abstract class BasePlugin extends DatabasePlugin {
                         this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
                         this.getColorSchemeService().getColorScheme().getFlag() + "]" +
                         ChatColor.RESET;
+    }
+
+    public BedrockDefaults getBedrockDefaults() {
+        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
+        if (config instanceof BedrockDefaults) {
+            return (BedrockDefaults) config;
+        }
+        return null;
     }
 
     /**

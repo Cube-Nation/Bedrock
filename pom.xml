@@ -5,7 +5,7 @@
 
     <groupId>de.cubenation.api</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>0.14-SNAPSHOT</version>
+    <version>0.14.1-SNAPSHOT</version>
     <name>Bedrock</name>
 
     <repositories>
@@ -116,7 +116,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12-pre2-SNAPSHOT</version>
+            <version>1.12-pre5-SNAPSHOT</version>
         </dependency>
 
         <!-- Yamler API -->

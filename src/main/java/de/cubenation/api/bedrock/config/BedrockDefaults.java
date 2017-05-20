@@ -23,6 +23,7 @@
 package de.cubenation.api.bedrock.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.database.DatabaseConfiguration;
 import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
@@ -255,38 +256,29 @@ public class BedrockDefaults extends CustomConfigurationFile {
      */
 
     @Path("database.username")
-    private String username = "username";
+    private String username = "";
 
-    public String getDatabaseUsername() {
-        return username;
-    }
-
-    @Path("database.isolation")
-    private String isolation = "SERIALIZABLE";
-
-    public String getDatabaseIsolation() {
-        return isolation;
-    }
+    @Path("database.password")
+    private String password = "";
 
     @Path("database.driver")
     private String driver = "com.mysql.jdbc.Driver";
 
-    public String getDatabaseDriver() {
-        return driver;
-    }
-
-    @Path("database.password")
-    private String password = "password";
-
-    public String getDatabasePassword() {
-        return password;
-    }
-
     @Path("database.url")
-    private String url = "url";
+    private String url = "";
 
-    public String getDatabaseUrl() {
-        return url;
+    @Path("database.isolation")
+    private String isolation = "SERIALIZABLE";
+
+    public DatabaseConfiguration getDatabaseConfiguration() {
+        if (username == null || username.isEmpty() ||
+                password == null || password.isEmpty() ||
+                driver == null || driver.isEmpty() ||
+                url == null || url.isEmpty() ||
+                isolation == null || isolation.isEmpty()) {
+            return null;
+        }
+        return new DatabaseConfiguration(username, password, url, driver, isolation);
     }
 
     /**
