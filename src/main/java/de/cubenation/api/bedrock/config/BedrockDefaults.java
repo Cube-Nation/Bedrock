@@ -23,6 +23,7 @@
 package de.cubenation.api.bedrock.config;
 
 import de.cubenation.api.bedrock.BasePlugin;
+import de.cubenation.api.bedrock.database.DatabaseConfiguration;
 import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
@@ -250,7 +251,35 @@ public class BedrockDefaults extends CustomConfigurationFile {
         this.metrics_use = metrics_use;
     }
 
+    /**
+     * Database
+     */
 
+    @Path("database.username")
+    private String username = "";
+
+    @Path("database.password")
+    private String password = "";
+
+    @Path("database.driver")
+    private String driver = "com.mysql.jdbc.Driver";
+
+    @Path("database.url")
+    private String url = "";
+
+    @Path("database.isolation")
+    private String isolation = "SERIALIZABLE";
+
+    public DatabaseConfiguration getDatabaseConfiguration() {
+        if (username == null || username.isEmpty() ||
+                password == null || password.isEmpty() ||
+                driver == null || driver.isEmpty() ||
+                url == null || url.isEmpty() ||
+                isolation == null || isolation.isEmpty()) {
+            return null;
+        }
+        return new DatabaseConfiguration(username, password, url, driver, isolation);
+    }
 
     /**
      * Config Service

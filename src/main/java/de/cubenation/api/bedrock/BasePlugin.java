@@ -22,6 +22,7 @@
 
 package de.cubenation.api.bedrock;
 
+import de.cubenation.api.bedrock.config.BedrockDefaults;
 import de.cubenation.api.bedrock.exception.DependencyException;
 import de.cubenation.api.bedrock.exception.NoSuchPluginException;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
@@ -30,6 +31,7 @@ import de.cubenation.api.bedrock.service.ServiceManager;
 import de.cubenation.api.bedrock.service.colorscheme.ColorSchemeService;
 import de.cubenation.api.bedrock.service.command.CommandService;
 import de.cubenation.api.bedrock.service.config.ConfigService;
+import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.api.bedrock.service.inventory.InventoryService;
 import de.cubenation.api.bedrock.service.localization.LocalizationService;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
@@ -52,7 +54,7 @@ import java.util.logging.Logger;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class BasePlugin extends JavaPlugin {
+public abstract class BasePlugin extends DatabasePlugin {
 
     /**
      * The ServiceManager object
@@ -82,6 +84,7 @@ public abstract class BasePlugin extends JavaPlugin {
      * This method is executed when Bukkit enables this plugin.
      * <p>
      * For custom pre- and post-enabling functions use
+     *
      * @see ServiceManager
      */
     @Override
@@ -102,6 +105,14 @@ public abstract class BasePlugin extends JavaPlugin {
             this.disable(e);
         }
 
+        try {
+            BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
+            setupDatabase(bedrockDefaults);
+        } catch (Exception e) {
+            this.disable(e);
+            return;
+        }
+
         // enable bStats metrics
         new MetricsLite(this);
 
@@ -111,6 +122,11 @@ public abstract class BasePlugin extends JavaPlugin {
         } catch (Exception e) {
             this.disable(e);
         }
+    }
+
+    @Override
+    public Boolean isDatabaseEnabled() {
+        return true;
     }
 
     /**
@@ -200,6 +216,14 @@ public abstract class BasePlugin extends JavaPlugin {
                         this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
                         this.getColorSchemeService().getColorScheme().getFlag() + "]" +
                         ChatColor.RESET;
+    }
+
+    public BedrockDefaults getBedrockDefaults() {
+        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
+        if (config instanceof BedrockDefaults) {
+            return (BedrockDefaults) config;
+        }
+        return null;
     }
 
     /**
