@@ -1,0 +1,4 @@
+author: Cube-Nation, B1acksheep, d1rty
+name: BungeeBedrock
+main: de.cubenation.bedrock.bungee.plugin.BedrockPlugin
+version: "${project.version}"

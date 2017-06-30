@@ -1,8 +1,10 @@
 package de.cubenation.bedrock.core;
 
+import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.config.ConfigService;
 
+import java.io.File;
 import java.util.logging.Level;
 
 public interface FoundationPlugin {
@@ -56,5 +58,9 @@ public interface FoundationPlugin {
      * @see ConfigService
      */
     ConfigService getConfigService();
+
+    File getDataFolder();
+
+    PluginDescription getPluginDescription();
 
 }

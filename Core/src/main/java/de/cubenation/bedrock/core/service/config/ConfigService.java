@@ -1,12 +1,14 @@
 package de.cubenation.bedrock.core.service.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.ConfigurationFile;
+import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.configuration.BedrockYaml;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +19,7 @@ import java.util.logging.Level;
  * @author Cube-Nation
  * @version 1.0
  */
-public class ConfigService extends AbstractService {
+public abstract class ConfigService extends AbstractService {
 
     private HashMap<Class<?>, CustomConfigurationFile> configuration_files = new HashMap<>();
 
@@ -131,7 +133,7 @@ public class ConfigService extends AbstractService {
         } catch (ClassNotFoundException e) {
             throw new InstantiationException(String.format("Could not find class %s in plugin %s",
                     class_name,
-                    this.getPlugin().getDescription().getName())
+                    this.getPlugin().getPluginDescription().getName())
             );
         }
 
@@ -209,6 +211,10 @@ public class ConfigService extends AbstractService {
 
         return this.configuration_files.get(clazz);
     }
+
+    public abstract BedrockYaml getReadOnlyConfig();
+
+    public abstract BedrockYaml getReadOnlyConfig(String name);
 
     private boolean isValidPluginConfiguration() {
         try {

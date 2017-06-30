@@ -3,7 +3,7 @@ description: Comprehensive Plugin API
 main: de.cubenation.plugin.bedrock.BedrockPlugin
 database: true
 load: startup
-name: Bedrock
+name: BukkitBedrock
 version: "${project.version}"
 
 depend:

@@ -1,16 +1,18 @@
-package de.cubenation.bedrock.core.bungee.api;
+package de.cubenation.bedrock.bungee.api;
 
+import de.cubenation.bedrock.bungee.api.service.config.BungeeConfigService;
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
+import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
-import de.cubenation.bedrock.core.service.config.ConfigService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class BasePlugin extends Plugin implements FoundationPlugin {
+public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
 
     /**
      * The ServiceManager object
@@ -47,10 +49,19 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
         // initialize ServiceManager
         this.serviceManager = new ServiceManager(this);
         try {
+            serviceManager.registerService(BungeeConfigService.class);
             this.serviceManager.registerServices();
-        } catch (ServiceInitException e) {
+        } catch (ServiceInitException | ServiceAlreadyExistsException e) {
             this.log(Level.SEVERE, "Loading services failed");
             this.disable(e);
+        }
+
+        try {
+            BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
+            setupDatabase(bedrockDefaults.getDatabaseConfiguration());
+        } catch (Exception e) {
+            this.disable(e);
+            return;
         }
 
         // call onPostEnable after we've set everything up
@@ -67,6 +78,11 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
      * @throws Exception if any error occurs.
      */
     public void onPostEnable() throws Exception {
+    }
+
+    @Override
+    public Boolean isDatabaseEnabled() {
+        return true;
     }
 
 
@@ -98,8 +114,7 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
      * @see Level
      */
     public void log(Level level, String message) {
-        // TODO: tbd
-        Logger.getLogger("Minecraft").log(
+        getLogger().log(
                 level,
                 ChatColor.stripColor(String.format("%s %s", "BedrockPlugin TDB"/*this.getMessagePrefix()*/, message))
         );
@@ -129,14 +144,27 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     }
 
     /**
-     * Returns the Bedrock ConfigService object instance.
-     * If the ConfigService is not ready, <code>null</code> is returned.
+     * Returns the Bedrock BungeeConfigService object instance.
+     * If the BungeeConfigService is not ready, <code>null</code> is returned.
      *
      * @return The Bedrock ConfigService
-     * @see ConfigService
+     * @see BungeeConfigService
      */
-    public ConfigService getConfigService() {
-        return (ConfigService) this.getServiceManager().getService(ConfigService.class);
+    public BungeeConfigService getConfigService() {
+        return (BungeeConfigService) this.getServiceManager().getService(BungeeConfigService.class);
     }
+
+    @Override
+    public PluginDescription getPluginDescription() {
+        return new PluginDescription(getDescription().getName(),
+                getDescription().getMain(),
+                getDescription().getVersion(),
+                getDescription().getAuthor(),
+                getDescription().getDepends(),
+                getDescription().getSoftDepends(),
+                getDescription().getFile(),
+                getDescription().getDescription());
+    }
+
 
 }

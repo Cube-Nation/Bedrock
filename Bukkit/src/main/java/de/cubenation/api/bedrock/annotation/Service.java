@@ -30,6 +30,7 @@ import java.lang.annotation.*;
  * @author Cube-Nation
  * @version 1.0
  */
+@Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

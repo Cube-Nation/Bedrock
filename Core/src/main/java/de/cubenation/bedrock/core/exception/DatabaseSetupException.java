@@ -1,4 +1,4 @@
-package de.cubenation.api.bedrock.exception;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation

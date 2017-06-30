@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.core.database;
 
+
 import com.avaje.ebean.config.DataSourceConfig;
 import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
 

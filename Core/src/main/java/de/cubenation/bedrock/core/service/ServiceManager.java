@@ -5,7 +5,6 @@ import de.cubenation.bedrock.core.annotation.Service;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.service.config.ConfigService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -37,9 +36,8 @@ public class ServiceManager {
 
     public void registerServices() throws ServiceInitException {
         try {
-            // DO NOT MODIFY THIS ORDER!
-            this.registerService(ConfigService.class);
             // TODO: tbd
+            // DO NOT MODIFY THIS ORDER!
 //            this.registerService(ColorSchemeService.class);
             this.intentionally_ready = true;
 //            this.registerService(LocalizationService.class);
@@ -59,7 +57,7 @@ public class ServiceManager {
         }
     }
 
-    private void registerService(Class<? extends AbstractService> clazz) throws ServiceAlreadyExistsException, ServiceInitException {
+    public void registerService(Class<? extends AbstractService> clazz) throws ServiceAlreadyExistsException, ServiceInitException {
         if (this.exists(clazz))
             throw new ServiceAlreadyExistsException(clazz.toString());
 

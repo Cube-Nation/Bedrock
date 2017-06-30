@@ -41,15 +41,16 @@ public abstract class AbstractService {
             this.plugin.log(Level.FINER, "Could not fetch path from plugin configuration");
         }
 
-        try {
-            value = BedrockPlugin.getInstance().getConfigService().getReadOnlyConfig().get(path);
-            if (value == null || value.toString().isEmpty())
-                throw new NullPointerException();
-
-            return value;
-        } catch (NullPointerException e) {
-            this.plugin.log(Level.FINER, "Could not fetch path from Bedrock plugin configuration");
-        }
+        // TODO: tdb
+//        try {
+//            value = BedrockPlugin.getInstance().getConfigService().getReadOnlyConfig().get(path);
+//            if (value == null || value.toString().isEmpty())
+//                throw new NullPointerException();
+//
+//            return value;
+//        } catch (NullPointerException e) {
+//            this.plugin.log(Level.FINER, "Could not fetch path from Bedrock plugin configuration");
+//        }
 
         return def;
     }
