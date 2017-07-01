@@ -30,6 +30,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class BukkitConfigService extends ConfigService {
 
     public BukkitConfigService(FoundationPlugin plugin) {

@@ -29,6 +29,10 @@ import de.cubenation.bedrock.core.exception.DatabaseSetupException;
 
 import java.util.List;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public interface DatabasePlugin extends FoundationPlugin {
 
     /**

@@ -23,10 +23,12 @@
 package de.cubenation.bedrock.core.configuration;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public interface BedrockYaml {
 
     Set<String> getKeys(boolean var1);

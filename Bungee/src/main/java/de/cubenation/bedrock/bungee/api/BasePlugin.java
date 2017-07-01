@@ -39,6 +39,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
     /**

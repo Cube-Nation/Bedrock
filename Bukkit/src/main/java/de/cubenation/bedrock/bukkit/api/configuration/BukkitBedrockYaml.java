@@ -28,6 +28,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class BukkitBedrockYaml implements BedrockYaml {
 
     private YamlConfiguration configuration;

@@ -24,6 +24,10 @@ package de.cubenation.bedrock.bungee.plugin;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class BedrockPlugin extends BasePlugin {
 
     public static BedrockPlugin instance;

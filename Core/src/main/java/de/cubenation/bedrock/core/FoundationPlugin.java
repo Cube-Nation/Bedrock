@@ -34,6 +34,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public interface FoundationPlugin {
 
     /**

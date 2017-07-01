@@ -22,6 +22,10 @@
 
 package de.cubenation.bedrock.core.exception;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class EqualFallbackPluginException extends Exception {
 
     public EqualFallbackPluginException() {

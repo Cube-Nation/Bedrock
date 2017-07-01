@@ -26,6 +26,10 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import net.md_5.bungee.api.ChatColor;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 @SuppressWarnings("unused")
 public class GreenColorScheme extends ColorScheme {
 

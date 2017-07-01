@@ -27,6 +27,10 @@ import net.md_5.bungee.config.Configuration;
 
 import java.util.*;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class BungeeBedrockYaml implements BedrockYaml {
 
     private Configuration configuration;

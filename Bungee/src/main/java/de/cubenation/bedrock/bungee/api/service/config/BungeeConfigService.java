@@ -33,6 +33,10 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class BungeeConfigService extends ConfigService {
 
     public BungeeConfigService(FoundationPlugin plugin) {

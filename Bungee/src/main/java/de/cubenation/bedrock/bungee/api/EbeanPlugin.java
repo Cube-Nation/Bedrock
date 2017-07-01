@@ -42,7 +42,8 @@ import java.util.List;
 import java.util.logging.Level;
 
 /**
- * Created by benedikthruschka on 16.05.17.
+ * @author Cube-Nation
+ * @version 1.0
  */
 public abstract class EbeanPlugin extends Plugin implements DatabasePlugin {
 

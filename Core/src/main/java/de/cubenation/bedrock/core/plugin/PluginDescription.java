@@ -27,6 +27,10 @@ import java.beans.ConstructorProperties;
 import java.io.File;
 import java.util.Set;
 
+/**
+ * @author Cube-Nation
+ * @version 1.0
+ */
 public class PluginDescription {
 
     private String name;
