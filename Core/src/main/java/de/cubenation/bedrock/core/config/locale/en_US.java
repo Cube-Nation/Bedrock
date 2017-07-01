@@ -20,9 +20,9 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.config.locale;
+package de.cubenation.bedrock.core.config.locale;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Path;
@@ -40,7 +40,7 @@ public class en_US extends CustomConfigurationFile {
         return "locale" + File.separator + "en_US.yml";
     }
 
-    public en_US(BasePlugin plugin) {
+    public en_US(FoundationPlugin plugin) {
         CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
 

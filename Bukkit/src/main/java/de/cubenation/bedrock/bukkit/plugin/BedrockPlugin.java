@@ -24,7 +24,7 @@ package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.api.annotation.CommandHandler;
-import de.cubenation.bedrock.bukkit.api.config.locale.de_DE;
+import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockWorld;
 import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
