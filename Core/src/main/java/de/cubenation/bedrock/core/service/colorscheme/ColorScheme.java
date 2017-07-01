@@ -68,8 +68,9 @@ public class ColorScheme {
             return new DefaultColorScheme(plugin);
 
         try {
+            // TODO: Refactor!
             Class cls = Class.forName(
-                    "de.cubenation.api.bedrock.service.colorscheme.scheme." +
+                    "de.cubenation.bedrock.core.service.colorscheme.scheme." +
                             name.toString().substring(0, 1).toUpperCase() + name.toString().substring(1).toLowerCase() +
                             "ColorScheme"
             );
