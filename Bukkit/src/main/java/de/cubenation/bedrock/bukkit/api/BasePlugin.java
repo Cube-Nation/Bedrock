@@ -121,7 +121,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
 
         try {
             BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
-            setupDatabase(bedrockDefaults);
+            setupDatabase(bedrockDefaults.getDatabaseConfiguration());
         } catch (Exception e) {
             this.disable(e);
             return;
