@@ -34,12 +34,16 @@ import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.exception.NoSuchPlayerException;
 import de.cubenation.api.bedrock.helper.MessageHelper;
+import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.api.bedrock.service.command.CommandManager;
-import de.cubenation.api.bedrock.service.settings.CustomSettingsFile;
-import de.cubenation.api.bedrock.service.settings.SettingsManager;
+import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
+import de.cubenation.bedrock.core.service.settings.SettingsManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * @author Cube-Nation
@@ -71,7 +75,23 @@ public class SettingsInfoCommand extends Command {
         if (args.length > 1) {
             String user = args[1];
             try {
-                CustomSettingsFile settings = settingsManager.getSettings(user);
+
+                UUID uuid = null;
+                if (UUIDUtil.isUUID(user)) {
+                    uuid = UUID.fromString(user);
+                } else {
+                    Player player = Bukkit.getPlayer(user);
+                    if (player == null) {
+                        throw new NoSuchPlayerException(user);
+                    }
+                    uuid = player.getUniqueId();
+                }
+
+                if (uuid == null) {
+                    throw new NoSuchPlayerException(user);
+                }
+
+                CustomSettingsFile settings = settingsManager.getSettings(uuid);
                 if (settings != null) {
                     sender.sendMessage(settings.info());
                 } else {

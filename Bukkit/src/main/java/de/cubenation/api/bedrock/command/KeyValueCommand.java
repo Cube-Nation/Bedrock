@@ -28,7 +28,7 @@ import de.cubenation.api.bedrock.command.argument.KeyValueArgument;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
-import de.cubenation.api.bedrock.helper.IgnoreCaseArrayList;
+import de.cubenation.bedrock.core.helper.IgnoreCaseArrayList;
 import de.cubenation.api.bedrock.service.command.CommandManager;
 import org.bukkit.command.CommandSender;
 

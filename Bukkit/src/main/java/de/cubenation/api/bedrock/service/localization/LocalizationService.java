@@ -24,11 +24,11 @@ package de.cubenation.api.bedrock.service.localization;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.configuration.BedrockYaml;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.api.bedrock.service.AbstractService;
+import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.plugin.bedrock.BedrockPlugin;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +46,9 @@ public class LocalizationService extends AbstractService {
 
     private String relative_locale_file;
 
-    private YamlConfiguration plugin_data;
+    private BedrockYaml plugin_data;
 
-    private YamlConfiguration bedrock_data;
+    private BedrockYaml bedrock_data;
 
     public LocalizationService(BasePlugin plugin) {
         super(plugin);
@@ -72,6 +72,11 @@ public class LocalizationService extends AbstractService {
         } catch (ServiceInitException e) {
             throw new ServiceReloadException(e.getMessage());
         }
+    }
+
+    @Override
+    protected BasePlugin getPlugin() {
+        return (BasePlugin) super.getPlugin();
     }
 
     public void setLocale() {

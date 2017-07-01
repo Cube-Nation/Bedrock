@@ -28,8 +28,8 @@ import de.cubenation.api.bedrock.command.AbstractCommand;
 import de.cubenation.api.bedrock.command.predefined.*;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.settings.SettingsService;
+import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.service.settings.SettingsService;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -130,6 +130,11 @@ public class CommandService extends AbstractService {
     @Override
     public void reload() throws ServiceReloadException {
         // no reloading of commands supported
+    }
+
+    @Override
+    protected BasePlugin getPlugin() {
+        return (BasePlugin) super.getPlugin();
     }
 
     private void addCommandManager(CommandManager manager) {

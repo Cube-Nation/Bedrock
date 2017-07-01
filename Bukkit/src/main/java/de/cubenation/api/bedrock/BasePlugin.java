@@ -22,29 +22,35 @@
 
 package de.cubenation.api.bedrock;
 
-import de.cubenation.api.bedrock.config.BedrockDefaults;
-import de.cubenation.api.bedrock.exception.DependencyException;
-import de.cubenation.api.bedrock.exception.NoSuchPluginException;
-import de.cubenation.bedrock.core.exception.ServiceInitException;
-import de.cubenation.api.bedrock.helper.version.VersionComparator;
-import de.cubenation.api.bedrock.service.ServiceManager;
-import de.cubenation.api.bedrock.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.exception.DependencyException;
+import de.cubenation.bedrock.core.exception.NoSuchPluginException;
+import de.cubenation.bedrock.core.helper.version.VersionComparator;
 import de.cubenation.api.bedrock.service.command.CommandService;
-import de.cubenation.api.bedrock.service.config.ConfigService;
-import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
+import de.cubenation.api.bedrock.service.config.BukkitConfigService;
 import de.cubenation.api.bedrock.service.inventory.InventoryService;
 import de.cubenation.api.bedrock.service.localization.LocalizationService;
 import de.cubenation.api.bedrock.service.permission.PermissionService;
-import de.cubenation.api.bedrock.service.settings.CustomSettingsFile;
-import de.cubenation.api.bedrock.service.settings.SettingsService;
 import de.cubenation.api.bedrock.service.stats.MetricsLite;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
+import de.cubenation.bedrock.core.exception.ServiceInitException;
+import de.cubenation.bedrock.core.plugin.PluginDescription;
+import de.cubenation.bedrock.core.service.ServiceManager;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.config.ConfigService;
+import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
+import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,7 +60,7 @@ import java.util.logging.Logger;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class BasePlugin extends DatabasePlugin {
+public abstract class BasePlugin extends DatabasePlugin implements FoundationPlugin {
 
     /**
      * The ServiceManager object
@@ -77,7 +83,7 @@ public abstract class BasePlugin extends DatabasePlugin {
      *
      * @throws Exception if any error occurs.
      */
-    protected void onPreEnable() throws Exception {
+    public void onPreEnable() throws Exception {
     }
 
     /**
@@ -99,8 +105,19 @@ public abstract class BasePlugin extends DatabasePlugin {
         // initialize ServiceManager
         this.serviceManager = new ServiceManager(this);
         try {
+            // TODO: tbd
+            // DO NOT MODIFY THIS ORDER!
+            serviceManager.registerService(BukkitConfigService.class);
+            serviceManager.registerService(ColorSchemeService.class);
+            serviceManager.setIntentionallyReady(true);
+//            this.registerService(LocalizationService.class);
+            serviceManager.registerService(SettingsService.class);
+//            this.registerService(CommandService.class);
+//            this.registerService(PermissionService.class);
+//            this.registerService(InventoryService.class);
+
             this.serviceManager.registerServices();
-        } catch (ServiceInitException e) {
+        } catch (ServiceInitException | ServiceAlreadyExistsException e) {
             this.log(Level.SEVERE, "Loading services failed");
             this.disable(e);
         }
@@ -134,7 +151,7 @@ public abstract class BasePlugin extends DatabasePlugin {
      *
      * @throws Exception if any error occurs.
      */
-    protected void onPostEnable() throws Exception {
+    public void onPostEnable() throws Exception {
     }
 
     /**
@@ -437,4 +454,17 @@ public abstract class BasePlugin extends DatabasePlugin {
             ));
     }
 
+    @Override
+    public PluginDescription getPluginDescription() {
+
+        return new PluginDescription(getDescription().getName(),
+                getDescription().getMain(),
+                getDescription().getVersion(),
+                StringUtils.join(getDescription().getAuthors(), ""),
+                new HashSet<String>(){{ addAll(getDescription().getDepend());}} ,
+                new HashSet<String>(){{ addAll(getDescription().getSoftDepend());}} ,
+                null,
+                getDescription().getDescription()
+        );
+    }
 }

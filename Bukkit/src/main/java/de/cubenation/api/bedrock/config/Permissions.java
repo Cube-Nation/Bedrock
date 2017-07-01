@@ -22,10 +22,10 @@
 
 package de.cubenation.api.bedrock.config;
 
-import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.CommandRole;
-import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
 import de.cubenation.api.bedrock.service.permission.Permission;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
@@ -47,7 +47,7 @@ public class Permissions extends CustomConfigurationFile {
         return "permissions.yaml";
     }
 
-    public Permissions(BasePlugin plugin) throws IOException {
+    public Permissions(FoundationPlugin plugin) throws IOException {
         CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
 

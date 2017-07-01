@@ -23,8 +23,8 @@
 package de.cubenation.api.bedrock.service.confirm;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.exception.TimeoutException;
-import de.cubenation.api.bedrock.service.AbstractService;
+import de.cubenation.bedrock.core.exception.TimeoutException;
+import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;

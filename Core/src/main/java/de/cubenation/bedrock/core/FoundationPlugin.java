@@ -3,8 +3,10 @@ package de.cubenation.bedrock.core;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.config.ConfigService;
+import de.cubenation.bedrock.core.service.settings.SettingsService;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public interface FoundationPlugin {
@@ -58,6 +60,17 @@ public interface FoundationPlugin {
      * @see ConfigService
      */
     ConfigService getConfigService();
+
+    /**
+     * Returns the Bedrock SettingsService object instance.
+     * If the InventoryService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock SettingsService
+     * @see SettingsService
+     */
+    SettingsService getSettingService();
+
+    ArrayList<Class<?>> getCustomSettingsFiles();
 
     File getDataFolder();
 

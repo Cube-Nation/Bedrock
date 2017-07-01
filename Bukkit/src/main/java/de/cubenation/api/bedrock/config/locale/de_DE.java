@@ -22,8 +22,8 @@
 
 package de.cubenation.api.bedrock.config.locale;
 
-import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class de_DE extends CustomConfigurationFile {
         return "locale" + File.separator + "de_DE.yml";
     }
 
-    public de_DE(BasePlugin plugin) {
+    public de_DE(FoundationPlugin plugin) {
         CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
 

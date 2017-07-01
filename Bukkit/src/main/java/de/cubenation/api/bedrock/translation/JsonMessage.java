@@ -24,8 +24,8 @@ package de.cubenation.api.bedrock.translation;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.exception.LocalizationNotFoundException;
-import de.cubenation.api.bedrock.service.colorscheme.ColorScheme;
 import de.cubenation.api.bedrock.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.plugin.bedrock.BedrockPlugin;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;

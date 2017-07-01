@@ -7,9 +7,12 @@ import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
@@ -49,7 +52,17 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
         // initialize ServiceManager
         this.serviceManager = new ServiceManager(this);
         try {
+            // TODO: tbd
+            // DO NOT MODIFY THIS ORDER!
             serviceManager.registerService(BungeeConfigService.class);
+            serviceManager.registerService(ColorSchemeService.class);
+            serviceManager.setIntentionallyReady(true);
+//            this.registerService(LocalizationService.class);
+            serviceManager.registerService(SettingsService.class);
+//            this.registerService(CommandService.class);
+//            this.registerService(PermissionService.class);
+//            this.registerService(InventoryService.class);
+
             this.serviceManager.registerServices();
         } catch (ServiceInitException | ServiceAlreadyExistsException e) {
             this.log(Level.SEVERE, "Loading services failed");
@@ -103,16 +116,10 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
         e.printStackTrace();
         log(Level.SEVERE, "Disabling plugin");
 
-        // TODO: tbd
+        // TODO: tbd disable
     }
 
-    /**
-     * Log a message with a given log level to the Minecraft logfile
-     *
-     * @param level   The Log4J log level
-     * @param message The message to log
-     * @see Level
-     */
+    @Override
     public void log(Level level, String message) {
         getLogger().log(
                 level,
@@ -120,38 +127,31 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
         );
     }
 
-    /**
-     * Log a message with a given log level to the Minecraft logfile.
-     * The stacktrace of the Throwable object is printed to STDOUT.
-     *
-     * @param level   The Log4J log level
-     * @param message The message to log
-     * @param t       The throwable object
-     * @see Level
-     */
+    @Override
     public void log(Level level, String message, Throwable t) {
         this.log(level, message);
         t.printStackTrace();
     }
 
-    /**
-     * Access to the ServiceManager instance and it's functions
-     *
-     * @return The ServiceManager instance
-     */
+
+    @Override
+    public ArrayList<Class<?>> getCustomSettingsFiles() {
+        return null;
+    }
+
+    @Override
     public ServiceManager getServiceManager() {
         return this.serviceManager;
     }
 
-    /**
-     * Returns the Bedrock BungeeConfigService object instance.
-     * If the BungeeConfigService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ConfigService
-     * @see BungeeConfigService
-     */
+    @Override
     public BungeeConfigService getConfigService() {
         return (BungeeConfigService) this.getServiceManager().getService(BungeeConfigService.class);
+    }
+
+    @Override
+    public SettingsService getSettingService() {
+        return (SettingsService) this.getServiceManager().getService(SettingsService.class);
     }
 
     @Override

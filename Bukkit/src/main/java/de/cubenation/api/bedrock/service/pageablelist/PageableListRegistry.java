@@ -23,7 +23,7 @@
 package de.cubenation.api.bedrock.service.pageablelist;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.exception.NoSuchRegisterableException;
+import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import de.cubenation.api.bedrock.registry.AbstractRegistry;
 import de.cubenation.api.bedrock.registry.RegistryInterface;
 import de.cubenation.plugin.bedrock.BedrockPlugin;

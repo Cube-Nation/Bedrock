@@ -36,15 +36,6 @@ public class ServiceManager {
 
     public void registerServices() throws ServiceInitException {
         try {
-            // TODO: tbd
-            // DO NOT MODIFY THIS ORDER!
-//            this.registerService(ColorSchemeService.class);
-            this.intentionally_ready = true;
-//            this.registerService(LocalizationService.class);
-//            this.registerService(SettingsService.class);
-//            this.registerService(CommandService.class);
-//            this.registerService(PermissionService.class);
-//            this.registerService(InventoryService.class);
 
             // find and register custom Service annotations
             for (Service service : this.getPlugin().getClass().getAnnotationsByType(Service.class)) {
@@ -99,5 +90,8 @@ public class ServiceManager {
         }
     }
 
+    public void setIntentionallyReady(boolean intentionally_ready) {
+        this.intentionally_ready = intentionally_ready;
+    }
 }
 

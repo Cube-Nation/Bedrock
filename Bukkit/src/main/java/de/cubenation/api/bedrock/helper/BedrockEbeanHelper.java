@@ -30,6 +30,7 @@ import de.cubenation.api.bedrock.ebean.BedrockPlayer;
 import de.cubenation.api.bedrock.ebean.BedrockWorld;
 import de.cubenation.api.bedrock.exception.BedrockEbeanEntityAlreadyExistsException;
 import de.cubenation.api.bedrock.exception.BedrockEbeanEntityNotFoundException;
+import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.plugin.bedrock.BedrockPlugin;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;

@@ -25,8 +25,8 @@ package de.cubenation.api.bedrock.service.pageablelist;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.helper.design.PageableMessageHelper;
 import de.cubenation.api.bedrock.registry.Registerable;
-import de.cubenation.api.bedrock.service.AbstractService;
 import de.cubenation.api.bedrock.translation.parts.BedrockJson;
+import de.cubenation.bedrock.core.service.AbstractService;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -68,6 +68,11 @@ public abstract class AbstractPageableListService extends AbstractService implem
     @Override
     public void reload() {
         this.getPlugin().log(Level.WARNING, "Reloading of service pageablelist not supported");
+    }
+
+    @Override
+    protected BasePlugin getPlugin() {
+        return (BasePlugin) super.getPlugin();
     }
 
     public void store(PageableListStorable<?> cs) {

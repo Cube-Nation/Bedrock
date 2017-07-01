@@ -28,7 +28,7 @@ import de.cubenation.api.bedrock.annotation.condition.AnnotationCondition;
 import de.cubenation.api.bedrock.exception.CommandException;
 import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
-import de.cubenation.api.bedrock.helper.LengthComparator;
+import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.api.bedrock.helper.MessageHelper;
 import de.cubenation.api.bedrock.service.command.CommandManager;
 import de.cubenation.api.bedrock.translation.JsonMessage;

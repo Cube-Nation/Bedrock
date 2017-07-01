@@ -22,7 +22,7 @@
 
 package de.cubenation.api.bedrock.service.confirm;
 
-import de.cubenation.api.bedrock.helper.GenericStorable;
+import de.cubenation.bedrock.core.helper.GenericStorable;
 
 /**
  * @author Cube-Nation

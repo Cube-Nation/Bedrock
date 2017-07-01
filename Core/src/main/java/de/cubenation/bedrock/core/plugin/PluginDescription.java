@@ -3,18 +3,30 @@ package de.cubenation.bedrock.core.plugin;
 
 import java.beans.ConstructorProperties;
 import java.io.File;
-import java.util.HashSet;
 import java.util.Set;
 
 public class PluginDescription {
+
     private String name;
     private String main;
     private String version;
     private String author;
-    private Set<String> depends = new HashSet();
-    private Set<String> softDepends = new HashSet();
+    private Set<String> depends = null;
+    private Set<String> softDepends = null;
     private File file = null;
     private String description = null;
+
+    @ConstructorProperties({"name", "main", "version", "author", "depends", "softDepends", "file", "description"})
+    public PluginDescription(String name, String main, String version, String author, Set<String> depends, Set<String> softDepends, File file, String description) {
+        this.name = name;
+        this.main = main;
+        this.version = version;
+        this.author = author;
+        this.depends = depends;
+        this.softDepends = softDepends;
+        this.file = file;
+        this.description = description;
+    }
 
     public String getName() {
         return this.name;
@@ -110,22 +122,17 @@ public class PluginDescription {
         return result;
     }
 
+    @Override
     public String toString() {
-        return "PluginDescription(name=" + this.getName() + ", main=" + this.getMain() + ", version=" + this.getVersion() + ", author=" + this.getAuthor() + ", depends=" + this.getDepends() + ", softDepends=" + this.getSoftDepends() + ", file=" + this.getFile() + ", description=" + this.getDescription() + ")";
-    }
-
-    public PluginDescription() {
-    }
-
-    @ConstructorProperties({"name", "main", "version", "author", "depends", "softDepends", "file", "description"})
-    public PluginDescription(String name, String main, String version, String author, Set<String> depends, Set<String> softDepends, File file, String description) {
-        this.name = name;
-        this.main = main;
-        this.version = version;
-        this.author = author;
-        this.depends = depends;
-        this.softDepends = softDepends;
-        this.file = file;
-        this.description = description;
+        return "PluginDescription{" +
+                "name='" + name + '\'' +
+                ", main='" + main + '\'' +
+                ", version='" + version + '\'' +
+                ", author='" + author + '\'' +
+                ", depends=" + depends +
+                ", softDepends=" + softDepends +
+                ", file=" + file +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

@@ -23,7 +23,7 @@
 package de.cubenation.api.bedrock.config.locale;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Path;
 

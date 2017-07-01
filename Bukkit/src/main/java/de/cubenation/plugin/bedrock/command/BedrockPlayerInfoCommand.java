@@ -35,7 +35,7 @@ import de.cubenation.api.bedrock.exception.IllegalCommandArgumentException;
 import de.cubenation.api.bedrock.exception.InsufficientPermissionException;
 import de.cubenation.api.bedrock.helper.BedrockEbeanHelper;
 import de.cubenation.api.bedrock.helper.MessageHelper;
-import de.cubenation.api.bedrock.helper.UUIDUtil;
+import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.api.bedrock.service.command.CommandManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;

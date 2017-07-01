@@ -24,12 +24,12 @@ package de.cubenation.api.bedrock.service.permission;
 
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.command.CommandRole;
+import de.cubenation.api.bedrock.config.Permissions;
 import de.cubenation.api.bedrock.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.api.bedrock.service.AbstractService;
-import de.cubenation.api.bedrock.service.config.ConfigService;
-import de.cubenation.api.bedrock.config.Permissions;
+import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -115,7 +115,7 @@ public class PermissionService extends AbstractService {
     private void addPermission(Permission permission) {
         if (permission.getName() == null) return;
 
-        permission.setPlugin(this.plugin);
+        permission.setPlugin(getPlugin());
 
         List<Permission> exists = this.localPermissionCache.stream()
                 .filter(cachedPermission ->
@@ -259,6 +259,11 @@ public class PermissionService extends AbstractService {
         return this.localPermissionCache.stream()
                 .filter(permission -> permission.userHasPermission(player))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    protected BasePlugin getPlugin() {
+        return (BasePlugin) super.getPlugin();
     }
 
     @Override

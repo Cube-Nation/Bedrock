@@ -8,7 +8,7 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.api.SpiEbeanServer;
 import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.google.common.base.Preconditions;
-import de.cubenation.api.bedrock.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
 import de.cubenation.bedrock.core.exception.DatabaseSetupException;
 import de.cubenation.plugin.bedrock.BedrockPlugin;

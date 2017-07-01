@@ -23,7 +23,7 @@
 package de.cubenation.api.bedrock.registry;
 
 import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.exception.NoSuchRegisterableException;
+import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import org.bukkit.command.CommandSender;
 
 /**
