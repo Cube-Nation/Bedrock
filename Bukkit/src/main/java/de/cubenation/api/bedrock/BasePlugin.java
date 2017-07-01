@@ -110,11 +110,11 @@ public abstract class BasePlugin extends DatabasePlugin implements FoundationPlu
             serviceManager.registerService(BukkitConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.setIntentionallyReady(true);
-//            this.registerService(LocalizationService.class);
+            serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
-//            this.registerService(CommandService.class);
-//            this.registerService(PermissionService.class);
-//            this.registerService(InventoryService.class);
+            serviceManager.registerService(CommandService.class);
+            serviceManager.registerService(PermissionService.class);
+            serviceManager.registerService(InventoryService.class);
 
             this.serviceManager.registerServices();
         } catch (ServiceInitException | ServiceAlreadyExistsException e) {
