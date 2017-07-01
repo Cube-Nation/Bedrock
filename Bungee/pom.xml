@@ -40,7 +40,7 @@
         <!-- Bedrock Core -->
         <dependency>
             <artifactId>Core</artifactId>
-            <groupId>de.cubenation.api.bedrock</groupId>
+            <groupId>de.cubenation.bedrock</groupId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>

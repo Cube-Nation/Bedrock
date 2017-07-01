@@ -40,7 +40,7 @@
         <!-- Bedrock Core -->
         <dependency>
             <artifactId>Core</artifactId>
-            <groupId>de.cubenation.api.bedrock</groupId>
+            <groupId>de.cubenation.bedrock</groupId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>
         </dependency>
@@ -51,12 +51,6 @@
             <artifactId>spigot-api</artifactId>
             <version>${spigot-api.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.md-5</groupId>
-                    <artifactId>bungeecord-chat</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
     </dependencies>
