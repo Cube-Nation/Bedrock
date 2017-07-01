@@ -26,7 +26,7 @@ import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.api.command.AbstractCommand;
 import de.cubenation.bedrock.bukkit.api.command.argument.Argument;
 import de.cubenation.bedrock.bukkit.api.command.argument.KeyValueArgument;
-import de.cubenation.bedrock.bukkit.api.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.bukkit.api.service.permission.Permission;
 import de.cubenation.bedrock.bukkit.api.translation.JsonMessage;
 import de.cubenation.bedrock.bukkit.api.translation.Translation;

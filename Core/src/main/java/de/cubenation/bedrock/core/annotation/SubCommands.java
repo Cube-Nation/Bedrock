@@ -20,7 +20,7 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.annotation;
+package de.cubenation.bedrock.core.annotation;
 
 import java.lang.annotation.*;
 
@@ -31,8 +31,8 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Description {
+public @interface SubCommands {
 
-    String value() default "";
+    SubCommand[] value();
 
 }

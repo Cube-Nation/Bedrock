@@ -20,17 +20,16 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.annotation;
-
-import java.lang.annotation.*;
+package de.cubenation.bedrock.core.annotation.condition;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@SuppressWarnings("unused")
-public @interface IngameCommand {
+public class DefaultCondition extends AnnotationCondition {
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 }

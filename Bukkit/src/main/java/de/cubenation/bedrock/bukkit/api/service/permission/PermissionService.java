@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.bukkit.api.service.permission;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.command.CommandRole;
+import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.bukkit.api.config.Permissions;
 import de.cubenation.bedrock.bukkit.api.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;

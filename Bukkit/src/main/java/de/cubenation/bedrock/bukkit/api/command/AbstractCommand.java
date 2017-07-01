@@ -24,10 +24,14 @@ package de.cubenation.bedrock.bukkit.api.command;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.api.annotation.*;
-import de.cubenation.bedrock.bukkit.api.annotation.condition.AnnotationCondition;
+import de.cubenation.bedrock.core.annotation.IngameCommand;
+import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.bukkit.api.exception.CommandException;
 import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.bukkit.api.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.annotation.Description;
+import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;

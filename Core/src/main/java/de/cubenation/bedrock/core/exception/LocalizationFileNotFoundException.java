@@ -20,11 +20,19 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.registry;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public interface Registerable {
+@SuppressWarnings("unused")
+public class LocalizationFileNotFoundException extends Exception {
+
+    private static final long serialVersionUID = 7143550159081144119L;
+
+    public LocalizationFileNotFoundException(String message) {
+        super(message);
+    }
+
 }

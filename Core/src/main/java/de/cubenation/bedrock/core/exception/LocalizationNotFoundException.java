@@ -20,18 +20,18 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.annotation.condition;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class AnnotationCondition {
+public class LocalizationNotFoundException extends Exception {
 
-    @SuppressWarnings("WeakerAccess")
-    public AnnotationCondition() {
-    }
+	private static final long serialVersionUID = 7143550159081144119L;
 
-    public abstract boolean isValid();
-
+	public LocalizationNotFoundException(String message) {
+		super(message);
+	}
+	
 }

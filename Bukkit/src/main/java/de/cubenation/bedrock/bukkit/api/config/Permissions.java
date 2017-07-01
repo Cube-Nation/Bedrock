@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.api.config;
 
-import de.cubenation.bedrock.bukkit.api.command.CommandRole;
+import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.bukkit.api.service.permission.Permission;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;

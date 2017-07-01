@@ -23,8 +23,8 @@
 package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.SubCommand;
+import de.cubenation.bedrock.core.annotation.Description;
+import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.bukkit.api.command.AbstractCommand;
 import de.cubenation.bedrock.bukkit.api.command.Command;
 import de.cubenation.bedrock.bukkit.api.exception.CommandException;

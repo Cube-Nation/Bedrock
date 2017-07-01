@@ -24,6 +24,7 @@ package de.cubenation.bedrock.bukkit.api.registry;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
+import de.cubenation.bedrock.core.registry.Registerable;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 

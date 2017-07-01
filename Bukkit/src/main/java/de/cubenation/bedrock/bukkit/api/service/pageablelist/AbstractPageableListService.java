@@ -24,7 +24,7 @@ package de.cubenation.bedrock.bukkit.api.service.pageablelist;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.api.helper.design.PageableMessageHelper;
-import de.cubenation.bedrock.bukkit.api.registry.Registerable;
+import de.cubenation.bedrock.core.registry.Registerable;
 import de.cubenation.bedrock.bukkit.api.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.service.AbstractService;
 import org.bukkit.command.CommandSender;

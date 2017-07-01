@@ -23,8 +23,8 @@
 package de.cubenation.bedrock.bukkit.api.translation;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.exception.LocalizationNotFoundException;
-import de.cubenation.bedrock.bukkit.api.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
 import net.md_5.bungee.api.chat.BaseComponent;

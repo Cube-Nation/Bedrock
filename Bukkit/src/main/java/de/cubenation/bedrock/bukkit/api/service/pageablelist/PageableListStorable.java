@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.bukkit.api.service.pageablelist;
 
 import de.cubenation.bedrock.core.helper.GenericStorable;
-import de.cubenation.bedrock.bukkit.api.registry.Registerable;
+import de.cubenation.bedrock.core.registry.Registerable;
 
 /**
  * @author Cube-Nation

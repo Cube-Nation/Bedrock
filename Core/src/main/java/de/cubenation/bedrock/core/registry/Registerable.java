@@ -20,16 +20,11 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.annotation.condition;
+package de.cubenation.bedrock.core.registry;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class DefaultCondition extends AnnotationCondition {
-
-    @Override
-    public boolean isValid() {
-        return true;
-    }
+public interface Registerable {
 }

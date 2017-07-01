@@ -25,7 +25,7 @@ package de.cubenation.bedrock.bukkit.api;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.BukkitConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
-import de.cubenation.bedrock.bukkit.api.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.bukkit.api.service.permission.PermissionService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
 import de.cubenation.bedrock.core.FoundationPlugin;

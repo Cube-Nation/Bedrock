@@ -20,15 +20,15 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.service.localization;
+package de.cubenation.bedrock.core.service.localization;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.configuration.BedrockYaml;
+import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
+import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
-import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +50,7 @@ public class LocalizationService extends AbstractService {
 
     private BedrockYaml bedrock_data;
 
-    public LocalizationService(BasePlugin plugin) {
+    public LocalizationService(FoundationPlugin plugin) {
         super(plugin);
     }
 
@@ -75,8 +75,8 @@ public class LocalizationService extends AbstractService {
     }
 
     @Override
-    protected BasePlugin getPlugin() {
-        return (BasePlugin) super.getPlugin();
+    protected FoundationPlugin getPlugin() {
+        return super.getPlugin();
     }
 
     public void setLocale() {
@@ -112,7 +112,7 @@ public class LocalizationService extends AbstractService {
             this.getPlugin().log(Level.SEVERE, String.format(
                     "  localization service: Could not find locale file %s in plugin %s",
                     this.getRelativeLocaleFile(),
-                    this.getPlugin().getDescription().getName()
+                    this.getPlugin().getPluginDescription().getName()
             ));
     }
 
@@ -127,7 +127,11 @@ public class LocalizationService extends AbstractService {
      * In the future there will be an abstract LocalizationConfig class that can manage this stuff
      */
     private void loadBedrockLocaleFile() throws ServiceInitException {
-        this.bedrock_data = BedrockPlugin.getInstance().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
+        try {
+            this.bedrock_data = plugin.getFallbackBedrockPlugin().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
+        } catch (EqualFallbackPluginException e) {
+            throw new ServiceInitException(e.getLocalizedMessage());
+        }
 
         if (this.bedrock_data == null)
             throw new ServiceInitException(String.format(

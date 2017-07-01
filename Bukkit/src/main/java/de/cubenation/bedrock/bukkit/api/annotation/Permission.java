@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.api.annotation;
 
-import de.cubenation.bedrock.bukkit.api.command.CommandRole;
+import de.cubenation.bedrock.core.command.CommandRole;
 
 import java.lang.annotation.*;
 
