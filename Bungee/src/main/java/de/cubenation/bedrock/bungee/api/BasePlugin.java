@@ -17,7 +17,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
+public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
     /**
      * The ServiceManager object

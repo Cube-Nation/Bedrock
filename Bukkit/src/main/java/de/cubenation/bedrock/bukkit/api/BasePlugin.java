@@ -57,7 +57,7 @@ import java.util.logging.Logger;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class BasePlugin extends DatabasePlugin implements FoundationPlugin {
+public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
     /**
      * The ServiceManager object

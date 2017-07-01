@@ -8,12 +8,11 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.api.SpiEbeanServer;
 import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.google.common.base.Preconditions;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
 import de.cubenation.bedrock.core.exception.DatabaseSetupException;
-import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
+import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
+import de.cubenation.bedrock.core.plugin.DatabasePlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -23,11 +22,11 @@ import java.util.logging.Level;
 /**
  * Created by benedikthruschka on 16.05.17.
  */
-public abstract class DatabasePlugin extends JavaPlugin {
+public abstract class EbeanPlugin extends JavaPlugin implements DatabasePlugin {
 
     private EbeanServer ebean = null;
 
-    protected void setupDatabase(BedrockDefaults bedrockDefaults) throws Exception {
+    public void setupDatabase(DatabaseConfiguration configuration) throws Exception {
         if (isDatabaseEnabled()) {
             ServerConfig db = new ServerConfig();
 
@@ -35,7 +34,7 @@ public abstract class DatabasePlugin extends JavaPlugin {
             db.setRegister(false);
             db.setClasses(getDatabaseClasses());
             db.setName(getDescription().getName());
-            configureDbConfig(db, bedrockDefaults);
+            configureDbConfig(db, configuration);
 
             DataSourceConfig ds = db.getDataSourceConfig();
 
@@ -43,8 +42,7 @@ public abstract class DatabasePlugin extends JavaPlugin {
             getDataFolder().mkdirs();
 
             ClassLoader previous = Thread.currentThread().getContextClassLoader();
-
-            Thread.currentThread().setContextClassLoader(getClassLoader());
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             ebean = EbeanServerFactory.create(db);
             Thread.currentThread().setContextClassLoader(previous);
         }
@@ -61,7 +59,7 @@ public abstract class DatabasePlugin extends JavaPlugin {
         return new ArrayList<Class<?>>();
     }
 
-    private String replaceDatabaseString(String input) {
+    public String replaceDatabaseString(String input) {
         input = input.replaceAll("\\{DIR\\}", getDataFolder().getPath().replaceAll("\\\\", "/") + "/");
         input = input.replaceAll("\\{NAME\\}", getDescription().getName().replaceAll("[^\\w_-]", ""));
         return input;
@@ -73,31 +71,35 @@ public abstract class DatabasePlugin extends JavaPlugin {
         return ebean;
     }
 
-    protected void installDDL() {
+    public void installDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
         gen.runScript(false, gen.generateCreateDdl());
     }
 
-    protected void removeDDL() {
+    public void removeDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
         gen.runScript(true, gen.generateDropDdl());
     }
 
-    public void configureDbConfig(ServerConfig config, BedrockDefaults bedrockDefaults) throws DatabaseSetupException {
-        Validate.notNull(config, "Config cannot be null");
+    public void configureDbConfig(ServerConfig config, DatabaseConfiguration configuration) throws DatabaseSetupException {
 
-        DatabaseConfiguration configuration = bedrockDefaults.getDatabaseConfiguration();
-
-        // If this configuration is null, try to get the Bedrocks one
-        if (configuration == null) {
-            BedrockPlugin plugin = (BedrockPlugin) Bukkit.getServer().getPluginManager().getPlugin("Bedrock");
-            if (plugin != null) {
-                configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
-                getLogger().log(Level.INFO, "Will use default Bedrock database configuration.");
+        // Don't do this for Bedrock Plugin Instance
+        if (!isFallbackBedrockPlugin()) {
+            try {
+                // If this configuration is null, try to get the Bedrocks one
+                if (configuration == null) {
+                    FoundationPlugin plugin = getFallbackBedrockPlugin();
+                    if (plugin != null) {
+                        configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
+                        log(Level.INFO, "Will use default Bedrock database configuration.");
+                    }
+                }
+            } catch (EqualFallbackPluginException e) {
+                log(Level.FINER, "Fallback Plugin is equal to this plugin.");
             }
         }
 

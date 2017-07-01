@@ -12,6 +12,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
 import de.cubenation.bedrock.core.exception.DatabaseSetupException;
 import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
+import de.cubenation.bedrock.core.plugin.DatabasePlugin;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ import java.util.logging.Level;
 /**
  * Created by benedikthruschka on 16.05.17.
  */
-public abstract class DatabasePlugin extends Plugin implements FoundationPlugin {
+public abstract class EbeanPlugin extends Plugin implements DatabasePlugin {
 
     private EbeanServer ebean = null;
 
-    protected void setupDatabase(DatabaseConfiguration configuration) throws Exception {
+    public void setupDatabase(DatabaseConfiguration configuration) throws Exception {
         if (isDatabaseEnabled()) {
             ServerConfig db = new ServerConfig();
 
@@ -58,7 +59,7 @@ public abstract class DatabasePlugin extends Plugin implements FoundationPlugin 
         return new ArrayList<Class<?>>();
     }
 
-    private String replaceDatabaseString(String input) {
+    public String replaceDatabaseString(String input) {
         input = input.replaceAll("\\{DIR\\}", getDataFolder().getPath().replaceAll("\\\\", "/") + "/");
         input = input.replaceAll("\\{NAME\\}", getDescription().getName().replaceAll("[^\\w_-]", ""));
         return input;
@@ -70,14 +71,14 @@ public abstract class DatabasePlugin extends Plugin implements FoundationPlugin 
         return ebean;
     }
 
-    protected void installDDL() {
+    public void installDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
         gen.runScript(false, gen.generateCreateDdl());
     }
 
-    protected void removeDDL() {
+    public void removeDDL() {
         SpiEbeanServer serv = (SpiEbeanServer) getDatabase();
         DdlGenerator gen = serv.getDdlGenerator();
 
