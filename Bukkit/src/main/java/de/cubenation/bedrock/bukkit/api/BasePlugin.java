@@ -22,9 +22,6 @@
 
 package de.cubenation.bedrock.bukkit.api;
 
-import de.cubenation.bedrock.core.exception.DependencyException;
-import de.cubenation.bedrock.core.exception.NoSuchPluginException;
-import de.cubenation.bedrock.core.helper.version.VersionComparator;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.BukkitConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
@@ -33,8 +30,8 @@ import de.cubenation.bedrock.bukkit.api.service.permission.PermissionService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
-import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
-import de.cubenation.bedrock.core.exception.ServiceInitException;
+import de.cubenation.bedrock.core.exception.*;
+import de.cubenation.bedrock.core.helper.version.VersionComparator;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
@@ -189,6 +186,7 @@ public abstract class BasePlugin extends DatabasePlugin implements FoundationPlu
      *
      * @return The message prefix
      */
+    @Override
     public String getMessagePrefix() {
         return this.getMessagePrefix(this);
     }
@@ -205,8 +203,9 @@ public abstract class BasePlugin extends DatabasePlugin implements FoundationPlu
      * @return The message prefix
      */
     @SuppressWarnings("WeakerAccess")
-    public String getMessagePrefix(BasePlugin plugin) {
-        return this.getMessagePrefix(plugin.getDescription().getName());
+    @Override
+    public String getMessagePrefix(FoundationPlugin plugin) {
+        return this.getMessagePrefix(plugin.getPluginDescription().getName());
     }
 
     /**
@@ -220,6 +219,7 @@ public abstract class BasePlugin extends DatabasePlugin implements FoundationPlu
      * @return The message prefix
      */
     @SuppressWarnings("WeakerAccess")
+    @Override
     public String getMessagePrefix(String plugin) {
         try {
             if (this.getColorSchemeService() == null)
@@ -466,5 +466,30 @@ public abstract class BasePlugin extends DatabasePlugin implements FoundationPlu
                 null,
                 getDescription().getDescription()
         );
+    }
+
+    @Override
+    public FoundationPlugin getFallbackBedrockPlugin() throws EqualFallbackPluginException {
+        String bedrockPluginName = "BukkitBedrock";
+
+        if (getName().equalsIgnoreCase(bedrockPluginName)) {
+            throw new EqualFallbackPluginException();
+        }
+
+        try {
+            return (FoundationPlugin) getPlugin(bedrockPluginName);
+        } catch (NoSuchPluginException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isFallbackBedrockPlugin() {
+        try {
+            getFallbackBedrockPlugin();
+        } catch (EqualFallbackPluginException e) {
+            return true;
+        }
+        return false;
     }
 }

@@ -8,17 +8,20 @@ import com.avaje.ebean.config.dbplatform.SQLitePlatform;
 import com.avaje.ebeaninternal.api.SpiEbeanServer;
 import com.avaje.ebeaninternal.server.ddl.DdlGenerator;
 import com.google.common.base.Preconditions;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
 import de.cubenation.bedrock.core.exception.DatabaseSetupException;
+import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /**
  * Created by benedikthruschka on 16.05.17.
  */
-public abstract class DatabasePlugin extends Plugin {
+public abstract class DatabasePlugin extends Plugin implements FoundationPlugin {
 
     private EbeanServer ebean = null;
 
@@ -83,15 +86,21 @@ public abstract class DatabasePlugin extends Plugin {
 
     public void configureDbConfig(ServerConfig config, DatabaseConfiguration configuration) throws DatabaseSetupException {
 
-        // TODO: tdb
-//        // If this configuration is null, try to get the Bedrocks one
-//        if (configuration == null) {
-//            BedrockPlugin plugin = (BedrockPlugin) Bukkit.getServer().getPluginManager().getPlugin("Bedrock");
-//            if (plugin != null) {
-//                configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
-//                getLogger().log(Level.INFO, "Will use default Bedrock database configuration.");
-//            }
-//        }
+        // Don't do this for Bedrock Plugin Instance
+        if (!isFallbackBedrockPlugin()) {
+            try {
+                // If this configuration is null, try to get the Bedrocks one
+                if (configuration == null) {
+                    FoundationPlugin plugin = getFallbackBedrockPlugin();
+                    if (plugin != null) {
+                        configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
+                        log(Level.INFO, "Will use default Bedrock database configuration.");
+                    }
+                }
+            } catch (EqualFallbackPluginException e) {
+                log(Level.FINER, "Fallback Plugin is equal to this plugin.");
+            }
+        }
 
         // If this configuration is still null, throw
         if (configuration == null) {

@@ -1,7 +1,10 @@
 package de.cubenation.bedrock.core;
 
+import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 
@@ -62,6 +65,15 @@ public interface FoundationPlugin {
     ConfigService getConfigService();
 
     /**
+     * Returns the Bedrock ColorSchemeService object instance.
+     * If the ColorSchemeService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock ColorSchemeService
+     * @see ColorSchemeService
+     */
+    ColorSchemeService getColorSchemeService();
+
+    /**
      * Returns the Bedrock SettingsService object instance.
      * If the InventoryService is not ready, <code>null</code> is returned.
      *
@@ -72,8 +84,50 @@ public interface FoundationPlugin {
 
     ArrayList<Class<?>> getCustomSettingsFiles();
 
+    /**
+     * Returns a colored string of the current plugin, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @return The message prefix
+     */
+    String getMessagePrefix();
+
+
+    /**
+     * Returns a colored string of a given plugin, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @param plugin The plugin
+     * @return The message prefix
+     */
+    String getMessagePrefix(FoundationPlugin plugin);
+
+    /**
+     * Returns a colored string with the plugin name, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @param plugin The plugin name
+     * @return The message prefix
+     */
+    String getMessagePrefix(String plugin);
+
     File getDataFolder();
 
     PluginDescription getPluginDescription();
+
+    FoundationPlugin getFallbackBedrockPlugin() throws EqualFallbackPluginException;
+
+    boolean isFallbackBedrockPlugin();
+
+    BedrockDefaults getBedrockDefaults();
 
 }

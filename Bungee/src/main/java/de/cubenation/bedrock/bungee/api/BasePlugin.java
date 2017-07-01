@@ -3,11 +3,13 @@ package de.cubenation.bedrock.bungee.api;
 import de.cubenation.bedrock.bungee.api.service.config.BungeeConfigService;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -70,7 +72,8 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
         }
 
         try {
-            BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
+            BedrockDefaults bedrockDefaults = getBedrockDefaults();
+            log(Level.INFO, bedrockDefaults.toString());
             setupDatabase(bedrockDefaults.getDatabaseConfiguration());
         } catch (Exception e) {
             this.disable(e);
@@ -123,7 +126,7 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
     public void log(Level level, String message) {
         getLogger().log(
                 level,
-                ChatColor.stripColor(String.format("%s %s", "BedrockPlugin TDB"/*this.getMessagePrefix()*/, message))
+                ChatColor.stripColor(String.format("%s %s", this.getMessagePrefix(), message))
         );
     }
 
@@ -150,8 +153,68 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
     }
 
     @Override
+    public ColorSchemeService getColorSchemeService() {
+        return (ColorSchemeService) this.getServiceManager().getService(ColorSchemeService.class);
+    }
+
+    @Override
     public SettingsService getSettingService() {
         return (SettingsService) this.getServiceManager().getService(SettingsService.class);
+    }
+
+    /**
+     * Returns a colored string of the current plugin, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @return The message prefix
+     */
+    public String getMessagePrefix() {
+        return this.getMessagePrefix(this);
+    }
+
+
+    /**
+     * Returns a colored string of a given plugin, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @param plugin The plugin
+     * @return The message prefix
+     */
+    @SuppressWarnings("WeakerAccess")
+    public String getMessagePrefix(FoundationPlugin plugin) {
+        return this.getMessagePrefix(plugin.getPluginDescription().getName());
+    }
+
+    /**
+     * Returns a colored string with the plugin name, known as the message prefix.
+     * The message prefix is colored using the flag and primary colors from the current
+     * ColorScheme that the plugin uses.
+     * <p>
+     * If the ColorSchemeService is not ready yet, the simple plugin name is returned.
+     *
+     * @param plugin The plugin name
+     * @return The message prefix
+     */
+    @SuppressWarnings("WeakerAccess")
+    public String getMessagePrefix(String plugin) {
+        try {
+            if (this.getColorSchemeService() == null)
+                return "[" + plugin + "]";
+        } catch (NullPointerException e) {
+            return "[" + plugin + "]";
+        }
+
+        return
+                this.getColorSchemeService().getColorScheme().getFlag() + "[" +
+                        this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
+                        this.getColorSchemeService().getColorScheme().getFlag() + "]" +
+                        ChatColor.RESET;
     }
 
     @Override
@@ -164,6 +227,33 @@ public class BasePlugin extends DatabasePlugin implements FoundationPlugin {
                 getDescription().getSoftDepends(),
                 getDescription().getFile(),
                 getDescription().getDescription());
+    }
+
+    @Override
+    public FoundationPlugin getFallbackBedrockPlugin() throws EqualFallbackPluginException {
+        String bedrockPluginName = "BungeeBedrock";
+        if (getDescription().getName().equalsIgnoreCase(bedrockPluginName)) {
+            throw new EqualFallbackPluginException();
+        }
+        return (FoundationPlugin) getProxy().getPluginManager().getPlugin(bedrockPluginName);
+    }
+
+    @Override
+    public boolean isFallbackBedrockPlugin() {
+        try {
+            getFallbackBedrockPlugin();
+        } catch (EqualFallbackPluginException e) {
+            return true;
+        }
+        return false;
+    }
+
+    public BedrockDefaults getBedrockDefaults() {
+        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
+        if (config instanceof BedrockDefaults) {
+            return (BedrockDefaults) config;
+        }
+        return null;
     }
 
 
