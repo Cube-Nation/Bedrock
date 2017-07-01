@@ -13,5 +13,13 @@ pipelines:
           - mvn clean install -V -B -s settings.xml deploy
     develop:
       - step:
+          caches:
+          - maven
           script:
           - mvn clean install -V -B -s settings.xml deploy
+    feature/*:
+      - step:
+          caches:
+          - maven
+          script:
+          - mvn clean install
