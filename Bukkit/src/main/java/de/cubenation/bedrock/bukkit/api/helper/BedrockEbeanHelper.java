@@ -24,8 +24,8 @@ package de.cubenation.bedrock.bukkit.api.helper;
 
 import com.avaje.ebean.RawSql;
 import com.avaje.ebean.RawSqlBuilder;
-import de.cubenation.bedrock.bukkit.api.callback.FailureCallback;
-import de.cubenation.bedrock.bukkit.api.callback.SuccessCallback;
+import de.cubenation.bedrock.core.callback.FailureCallback;
+import de.cubenation.bedrock.core.callback.SuccessCallback;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockWorld;
 import de.cubenation.bedrock.bukkit.api.exception.BedrockEbeanEntityAlreadyExistsException;
