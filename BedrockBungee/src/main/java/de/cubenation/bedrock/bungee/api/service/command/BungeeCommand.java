@@ -58,11 +58,6 @@ public class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        plugin.log(Level.INFO, "OnTabComplete");
-        Iterable<String> strings = commandManager.onTabComplete(sender, args);
-        plugin.log(Level.INFO, "OnTabComplete args: " + args);
-        plugin.log(Level.INFO, "OnTabComplete result: " + strings.toString());
-
-        return strings;
+        return commandManager.onTabComplete(sender, args);
     }
 }

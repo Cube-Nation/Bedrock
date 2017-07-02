@@ -70,8 +70,7 @@ public class Permission {
     }
 
     public boolean userHasPermission(BedrockCommandSender sender) {
-        return
-                getPlugin() != null &&
+        return getPlugin() != null &&
                         sender != null &&
                         plugin.getPermissionService().hasPermission(sender, this);
     }
