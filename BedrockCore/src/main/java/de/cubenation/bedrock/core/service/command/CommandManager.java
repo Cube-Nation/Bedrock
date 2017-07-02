@@ -133,7 +133,6 @@ public abstract class CommandManager implements CommandExecutor, TabExecutor {
             }
 
             // If the execution fails with an exception, the manager will search for another command to execute!
-            // TODO: really?!
             try {
                 abstractCommand.preExecute(
                         commandSender,
@@ -218,7 +217,6 @@ public abstract class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     public String getLabel() {
-        // TODO: tbd
         return label;
     }
 

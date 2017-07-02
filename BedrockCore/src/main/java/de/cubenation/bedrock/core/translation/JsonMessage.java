@@ -94,25 +94,25 @@ public class JsonMessage {
         broadcast(ChatMessageType.CHAT);
     }
 
-    // TODO: tbd
+    @SuppressWarnings("WeakerAccess")
     public void broadcast(ChatMessageType chatMessageType) {
-//        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-//            send(player, chatMessageType);
-//        }
+        for (BedrockPlayerCommandSender player : plugin.getOnlinePlayers()) {
+            send(player, chatMessageType);
+        }
     }
 
     public void broadcast(ArrayList<BedrockPlayerCommandSender> withoutPlayer) {
         broadcast(withoutPlayer, ChatMessageType.CHAT);
     }
 
-    // TODO: tbd
+    @SuppressWarnings("WeakerAccess")
     public void broadcast(ArrayList<BedrockPlayerCommandSender> withoutPlayer, ChatMessageType chatMessageType) {
-//        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-//            if (withoutPlayer.contains(player)) {
-//                continue;
-//            }
-//            send(player, chatMessageType);
-//        }
+        for (BedrockPlayerCommandSender player : plugin.getOnlinePlayers()) {
+            if (withoutPlayer.contains(player)) {
+                continue;
+            }
+            send(player, chatMessageType);
+        }
     }
 
     private void sendPlayer(BedrockPlayerCommandSender player, BaseComponent[] components, ChatMessageType chatMessageType) {

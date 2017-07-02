@@ -168,7 +168,6 @@ public class PermissionService extends AbstractService {
             return;
         }
 
-        // TODO: tbd
         // collect permissions from commands (and arguments)
         this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
                 commandManager.getCommands().forEach(abstractCommand -> {

@@ -22,11 +22,13 @@
 
 package de.cubenation.bedrock.bukkit.api;
 
+import de.cubenation.bedrock.bukkit.api.command.sender.PlayerSender;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.*;
 import de.cubenation.bedrock.core.helper.version.VersionComparator;
@@ -47,9 +49,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Represents a Bedrock-based plugin.
@@ -491,5 +495,10 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
     @Override
     public boolean isFallbackBedrockPlugin() {
         return getName().equalsIgnoreCase(PLUGIN_NAME);
+    }
+
+    @Override
+    public Collection<? extends BedrockPlayerCommandSender> getOnlinePlayers() {
+        return Bukkit.getServer().getOnlinePlayers().stream().map(o -> new PlayerSender(o)).collect(Collectors.toList());
     }
 }

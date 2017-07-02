@@ -96,12 +96,11 @@ public class Translation {
         }
     }
 
-    // TODO: tbd
-//    public void broadcast() {
-//        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-//            send(player);
-//        }
-//    }
+    public void broadcast() {
+        for (BedrockPlayerCommandSender player : plugin.getOnlinePlayers()) {
+            send(player);
+        }
+    }
 
     private void sendPlayer(BedrockPlayerCommandSender player, TextComponent components) {
         player.sendMessage(components);

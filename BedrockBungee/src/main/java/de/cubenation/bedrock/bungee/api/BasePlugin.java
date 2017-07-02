@@ -22,10 +22,12 @@
 
 package de.cubenation.bedrock.bungee.api;
 
+import de.cubenation.bedrock.bungee.api.command.sender.PlayerSender;
 import de.cubenation.bedrock.bungee.api.message.Messages;
 import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
@@ -40,7 +42,9 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
@@ -303,6 +307,11 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
             return (BedrockDefaults) config;
         }
         return null;
+    }
+
+    @Override
+    public Collection<? extends BedrockPlayerCommandSender> getOnlinePlayers() {
+        return getProxy().getPlayers().stream().map(o -> new PlayerSender(o)).collect(Collectors.toList());
     }
 
 }
