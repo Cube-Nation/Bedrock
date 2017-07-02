@@ -20,9 +20,9 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.predefined;
+package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
@@ -31,30 +31,51 @@ import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.command.CommandManager;
-import de.cubenation.bedrock.core.service.permission.PermissionService;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
+
+import java.io.File;
+import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-@Description("command.bedrock.permissions.list.desc")
-@SubCommand({"pl", "permslist", "permissionslist"})
-@Permission(Name = "permission.list", Role = CommandRole.MODERATOR)
-public class PermissionListCommand extends Command {
+@Description("command.bedrock.regeneratelocale.desc")
+@Permission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
+@SubCommand({"regenerate"})
+@SubCommand({"locale"})
+public class RegenerateLocaleCommand extends Command {
 
-    public PermissionListCommand(BasePlugin plugin, CommandManager commandManager) {
+    public RegenerateLocaleCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
-        PermissionService permissionService = this.getPlugin().getPermissionService();
+    @Override
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+        LocalizationService localizationService = getPlugin().getLocalizationService();
 
-        if (permissionService != null) {
-            plugin.messages().displayPermissions(sender, permissionService.getPermissions());
+        File localeFile = new File(
+                getPlugin().getDataFolder().getAbsolutePath(),
+                localizationService.getRelativeLocaleFile()
+        );
+        if (localeFile.exists() && !localeFile.delete()) {
+            plugin.messages().reloadFailed(sender);
+            return;
+        }
 
-        } else {
-            plugin.messages().noPermission(sender);
+        try {
+            localizationService.reload();
+            plugin.messages().reloadComplete(sender);
+        } catch (ServiceReloadException e) {
+            this.getPlugin().log(
+                    Level.SEVERE,
+                    String.format("Error while reloading LocalizationService for locale %s", localizationService.getLocale()),
+                    e
+            );
+            plugin.messages().reloadFailed(sender);
         }
     }
 

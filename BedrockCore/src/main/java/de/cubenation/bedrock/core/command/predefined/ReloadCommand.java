@@ -20,9 +20,9 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.predefined;
+package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
@@ -31,52 +31,32 @@ import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.command.CommandManager;
-import de.cubenation.bedrock.core.service.localization.LocalizationService;
-
-import java.io.File;
-import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-@Description("command.bedrock.regeneratelocale.desc")
-@Permission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
-@SubCommand({"regenerate"})
-@SubCommand({"locale"})
-public class RegenerateLocaleCommand extends Command {
+@Description("command.bedrock.reload.desc")
+@Permission(Name = "reload", Role = CommandRole.ADMIN)
+@SubCommand({"reload", "r"})
+public class ReloadCommand extends Command {
 
-    public RegenerateLocaleCommand(BasePlugin plugin, CommandManager commandManager) {
+    public ReloadCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-        BasePlugin pluginInstance = (BasePlugin) this.getPlugin();
-        LocalizationService localizationService = pluginInstance.getLocalizationService();
-
-        File localeFile = new File(
-                pluginInstance.getDataFolder().getAbsolutePath(),
-                localizationService.getRelativeLocaleFile()
-        );
-        if (localeFile.exists() && !localeFile.delete()) {
-            plugin.messages().reloadFailed(sender);
-            return;
-        }
-
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
-            localizationService.reload();
-            plugin.messages().reloadComplete(sender);
+            this.getPlugin().getServiceManager().reload();
+            getPlugin().messages().reloadComplete(sender);
+
         } catch (ServiceReloadException e) {
-            this.getPlugin().log(
-                    Level.SEVERE,
-                    String.format("Error while reloading LocalizationService for locale %s", localizationService.getLocale()),
-                    e
-            );
-            plugin.messages().reloadFailed(sender);
+            getPlugin().messages().reloadFailed(sender);
+            e.printStackTrace();
+
         }
     }
 

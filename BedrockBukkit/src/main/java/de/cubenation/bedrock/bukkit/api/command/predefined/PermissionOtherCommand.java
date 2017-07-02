@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.api.command.predefined;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
@@ -51,7 +51,7 @@ import org.bukkit.Bukkit;
 )
 public class PermissionOtherCommand extends Command {
 
-    public PermissionOtherCommand(BasePlugin plugin, CommandManager commandManager) {
+    public PermissionOtherCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 

@@ -26,6 +26,9 @@ import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.predefined.PermissionListCommand;
+import de.cubenation.bedrock.core.command.predefined.RegenerateLocaleCommand;
+import de.cubenation.bedrock.core.command.predefined.ReloadCommand;
 import de.cubenation.bedrock.core.command.predefined.VersionCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 
@@ -74,18 +77,14 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
                     this.getPlugin().getPluginDescription().getName()
             );
 
-//            // add default commands that all plugins are capable of
-//            pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
-//            pluginCommandManager.addCommand(new ReloadCommand(getPlugin(), pluginCommandManager));
-            pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
-//            pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
-//            pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
-//            pluginCommandManager.addCommand(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
-//
-//            SettingsService settingService = plugin.getSettingService();
-//            if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
-//                pluginCommandManager.addCommand(new SettingsInfoCommand(getPlugin(), pluginCommandManager));
-//            }
+            // Add default commands that all plugins are capable of
+            for (AbstractCommand predefinedCommand : getPredefinedCommands(pluginCommandManager)) {
+                pluginCommandManager.addCommand(predefinedCommand);
+            }
+
+            // Add bungee exclusive commands
+            // Todo:
+
             try {
                 BungeeCommand bungeeCommand = new BungeeCommand(getPlugin(), pluginCommandManager, commandName);
 

@@ -20,9 +20,9 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.predefined;
+package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
@@ -31,32 +31,30 @@ import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-@Description("command.bedrock.reload.desc")
-@Permission(Name = "reload", Role = CommandRole.ADMIN)
-@SubCommand({"reload", "r"})
-public class ReloadCommand extends Command {
+@Description("command.bedrock.permissions.list.desc")
+@SubCommand({"pl", "permslist", "permissionslist"})
+@Permission(Name = "permission.list", Role = CommandRole.MODERATOR)
+public class PermissionListCommand extends Command {
 
-    public ReloadCommand(BasePlugin plugin, CommandManager commandManager) {
+    public PermissionListCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @Override
     public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
-        try {
-            this.getPlugin().getServiceManager().reload();
-            getPlugin().messages().reloadComplete(sender);
+        PermissionService permissionService = this.getPlugin().getPermissionService();
 
-        } catch (ServiceReloadException e) {
-            getPlugin().messages().reloadFailed(sender);
-            e.printStackTrace();
+        if (permissionService != null) {
+            plugin.messages().displayPermissions(sender, permissionService.getPermissions());
 
+        } else {
+            plugin.messages().noPermission(sender);
         }
     }
 

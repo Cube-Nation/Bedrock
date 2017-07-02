@@ -23,6 +23,11 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.predefined.PermissionListCommand;
+import de.cubenation.bedrock.core.command.predefined.RegenerateLocaleCommand;
+import de.cubenation.bedrock.core.command.predefined.ReloadCommand;
+import de.cubenation.bedrock.core.command.predefined.VersionCommand;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 
@@ -41,6 +46,16 @@ public abstract class CommandService extends AbstractService {
     @Override
     public void reload() throws ServiceReloadException {
         // no reloading of commands supported
+    }
+
+
+    protected ArrayList<AbstractCommand> getPredefinedCommands(CommandManager pluginCommandManager) {
+        ArrayList<AbstractCommand> predefinedCommands = new ArrayList<>();
+        predefinedCommands.add(new ReloadCommand(getPlugin(), pluginCommandManager));
+        predefinedCommands.add(new VersionCommand(getPlugin(), pluginCommandManager));
+        predefinedCommands.add(new PermissionListCommand(getPlugin(), pluginCommandManager));
+        predefinedCommands.add(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
+        return predefinedCommands;
     }
 
     public abstract ArrayList<? extends CommandManager> getCommandManagers();

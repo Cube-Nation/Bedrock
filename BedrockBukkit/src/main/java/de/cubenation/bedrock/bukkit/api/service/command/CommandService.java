@@ -27,6 +27,9 @@ import de.cubenation.bedrock.bukkit.api.command.predefined.*;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.predefined.PermissionListCommand;
+import de.cubenation.bedrock.core.command.predefined.RegenerateLocaleCommand;
+import de.cubenation.bedrock.core.command.predefined.ReloadCommand;
 import de.cubenation.bedrock.core.command.predefined.VersionCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
@@ -86,13 +89,14 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             }
         }
 
-        // add default commands that all plugins are capable of
+        // Add default commands that all plugins are capable of
+        for (AbstractCommand predefinedCommand : getPredefinedCommands(pluginCommandManager)) {
+            pluginCommandManager.addCommand(predefinedCommand);
+        }
+
+        // Add bukkit exclusive commands
         pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new ReloadCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
 
         SettingsService settingService = plugin.getSettingService();
         if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
