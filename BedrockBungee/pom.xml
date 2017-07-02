@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Bungee</artifactId>
+    <artifactId>BedrockBungee</artifactId>
 
     <build>
-        <finalName>${project.parent.name}-${project.artifactId}-${project.version}</finalName>
+        <finalName>BungeeBedrock-${project.version}</finalName>
 
         <plugins>
             <plugin>
@@ -39,7 +39,7 @@
 
         <!-- Bedrock Core -->
         <dependency>
-            <artifactId>Core</artifactId>
+            <artifactId>BedrockCore</artifactId>
             <groupId>de.cubenation.bedrock</groupId>
             <version>${project.parent.version}</version>
             <scope>compile</scope>

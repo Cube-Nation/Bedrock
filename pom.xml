@@ -11,9 +11,9 @@
     <name>Bedrock</name>
 
     <modules>
-        <module>Core</module>
-        <module>Bukkit</module>
-        <module>Bungee</module>
+        <module>BedrockCore</module>
+        <module>BedrockBukkit</module>
+        <module>BedrockBungee</module>
     </modules>
 
     <properties>
