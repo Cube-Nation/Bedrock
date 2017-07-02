@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.bungee.api.command.sender;
 
 import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 /**
  * @author Cube-Nation
@@ -56,8 +57,23 @@ public class CommandSender implements BedrockCommandSender {
     }
 
     @Override
+    public void sendMessage(String[] messages) {
+        commandSender.sendMessages(messages);
+    }
+
+    @Override
     public String getName() {
         return commandSender.getName();
+    }
+
+    @Override
+    public void sendMessage(BaseComponent component) {
+        commandSender.sendMessage(component);
+    }
+
+    @Override
+    public void sendMessage(BaseComponent... components) {
+        commandSender.sendMessage(components);
     }
 }
 

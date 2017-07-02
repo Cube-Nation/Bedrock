@@ -46,18 +46,28 @@ public class PlayerSender extends CommandSender implements BedrockPlayerCommandS
     }
 
     @Override
-    public void sendMessage(TextComponent components) {
-        player.sendMessage(components);
+    public String getDisplayName() {
+        return player.getDisplayName();
     }
 
     @Override
-    public void sendMessage(ChatMessageType chatMessageType, BaseComponent[] components) {
-        player.sendMessage(chatMessageType, components);
+    public void setDisplayName(String name) {
+        player.setDisplayName(name);
     }
 
     @Override
-    public void sendMessage(BaseComponent[] baseComponents) {
-        player.sendMessage(baseComponents);
+    public void chat(String msg) {
+        player.chat(msg);
+    }
+
+    @Override
+    public void sendMessage(ChatMessageType position, BaseComponent component) {
+        player.sendMessage(position, component);
+    }
+
+    @Override
+    public void sendMessage(ChatMessageType position, BaseComponent... components) {
+        player.sendMessage(position, components);
     }
 }
 

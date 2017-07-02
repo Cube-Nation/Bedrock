@@ -46,8 +46,23 @@ public class PlayerSender extends CommandSender implements BedrockPlayerCommandS
     }
 
     @Override
-    public void sendMessage(TextComponent components) {
-        player.spigot().sendMessage(components);
+    public String getDisplayName() {
+        return player.getDisplayName();
+    }
+
+    @Override
+    public void setDisplayName(String name) {
+        player.setDisplayName(name);
+    }
+
+    @Override
+    public void chat(String msg) {
+        player.chat(msg);
+    }
+
+    @Override
+    public void sendMessage(ChatMessageType position, BaseComponent component) {
+        player.spigot().sendMessage(position, component);
     }
 
     @Override
@@ -55,8 +70,4 @@ public class PlayerSender extends CommandSender implements BedrockPlayerCommandS
         player.spigot().sendMessage(chatMessageType, components);
     }
 
-    @Override
-    public void sendMessage(BaseComponent[] baseComponents) {
-        player.spigot().sendMessage(baseComponents);
-    }
 }

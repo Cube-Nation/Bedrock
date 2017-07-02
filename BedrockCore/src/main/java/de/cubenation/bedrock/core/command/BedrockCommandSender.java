@@ -28,11 +28,57 @@ package de.cubenation.bedrock.core.command;
  */
 public interface BedrockCommandSender {
 
+    /**
+     * Checks if this object is a server operator
+     *
+     * @return true if this is an operator, otherwise false
+     */
     boolean isOp();
 
+    /**
+     * Gets the value of the specified permission, if set.
+     * <p>
+     * If a permission override is not set on this object, the default value
+     * of the permission will be returned.
+     *
+     * @param permission Name of the permission
+     * @return Value of the permission
+     */
     boolean hasPermission(String permission);
 
-    void sendMessage(String legacyText);
+    /**
+     * Sends this sender a message
+     *
+     * @param message Message to be displayed
+     */
+    void sendMessage(String message);
 
+    /**
+     * Sends this sender multiple messages
+     *
+     * @param messages An array of messages to be displayed
+     */
+    void sendMessage(String[] messages);
+
+    /**
+     * Gets the name of this command sender
+     *
+     * @return Name of the sender
+     */
     String getName();
+
+    /**
+     * Sends this sender a chat component.
+     *
+     * @param component the components to send
+     */
+    void sendMessage(net.md_5.bungee.api.chat.BaseComponent component);
+
+    /**
+     * Sends an array of components as a single message to the sender.
+     *
+     * @param components the components to send
+     */
+    void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components);
+
 }

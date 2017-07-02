@@ -32,9 +32,49 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public interface BedrockPlayerCommandSender extends BedrockCommandSender {
 
-    void sendMessage(TextComponent components);
+    /**
+     * Gets the "friendly" name to display of this player. This may include
+     * color.
+     * <p>
+     * Note that this name will not be displayed in game, only in chat and
+     * places defined by plugins.
+     *
+     * @return the friendly name
+     */
+    String getDisplayName();
 
-    void sendMessage(ChatMessageType chatMessageType, BaseComponent[] components);
+    /**
+     * Sets the "friendly" name to display of this player. This may include
+     * color.
+     * <p>
+     * Note that this name will not be displayed in game, only in chat and
+     * places defined by plugins.
+     *
+     * @param name The new display name.
+     */
+    void setDisplayName(String name);
 
-    void sendMessage(BaseComponent[] baseComponents);
+    /**
+     * Says a message (or runs a command).
+     *
+     * @param msg message to print
+     */
+    void chat(String msg);
+
+    /**
+     * Sends the component to the specified screen position of this player
+     *
+     * @param position  the screen position
+     * @param component the components to send
+     */
+    void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent component);
+
+    /**
+     * Sends an array of components as a single message to the specified screen position of this player
+     *
+     * @param position   the screen position
+     * @param components the components to send
+     */
+    void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components);
+
 }
