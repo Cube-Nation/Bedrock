@@ -23,14 +23,14 @@
 package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.annotation.CommandHandler;
-import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockWorld;
 import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
+import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.locale.de_DE;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import javax.persistence.PersistenceException;

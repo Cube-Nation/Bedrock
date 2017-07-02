@@ -23,11 +23,13 @@
 package de.cubenation.bedrock.core;
 
 import de.cubenation.bedrock.core.config.BedrockDefaults;
-import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
+import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 
 import java.io.File;
@@ -100,6 +102,24 @@ public interface FoundationPlugin {
     ColorSchemeService getColorSchemeService();
 
     /**
+     * Returns the Bedrock PermissionService object instance.
+     * If the PermissionService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock PermissionService
+     * @see PermissionService
+     */
+    PermissionService getPermissionService();
+
+    /**
+     * Returns the Bedrock LocalizationService object instance.
+     * If the LocalizationService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock LocalizationService
+     * @see LocalizationService
+     */
+    LocalizationService getLocalizationService();
+
+    /**
      * Returns the Bedrock SettingsService object instance.
      * If the InventoryService is not ready, <code>null</code> is returned.
      *
@@ -146,11 +166,13 @@ public interface FoundationPlugin {
      */
     String getMessagePrefix(String plugin);
 
+    Messages messages();
+
     File getDataFolder();
 
     PluginDescription getPluginDescription();
 
-    FoundationPlugin getFallbackBedrockPlugin() throws EqualFallbackPluginException;
+    FoundationPlugin getFallbackBedrockPlugin();
 
     boolean isFallbackBedrockPlugin();
 

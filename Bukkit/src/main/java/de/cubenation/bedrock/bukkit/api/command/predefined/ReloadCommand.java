@@ -24,16 +24,15 @@ package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.bukkit.api.command.Command;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
-import de.cubenation.bedrock.bukkit.api.exception.CommandException;
-import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
-import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.service.command.CommandManager;
 
 /**
  * @author Cube-Nation
@@ -41,7 +40,7 @@ import org.bukkit.command.CommandSender;
  */
 @Description("command.bedrock.reload.desc")
 @Permission(Name = "reload", Role = CommandRole.ADMIN)
-@SubCommand({ "reload", "r" })
+@SubCommand({"reload", "r"})
 public class ReloadCommand extends Command {
 
     public ReloadCommand(BasePlugin plugin, CommandManager commandManager) {
@@ -49,13 +48,13 @@ public class ReloadCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
             this.getPlugin().getServiceManager().reload();
-            MessageHelper.reloadComplete(this.getCommandManager().getPlugin(),sender);
+            getPlugin().messages().reloadComplete(sender);
 
         } catch (ServiceReloadException e) {
-            MessageHelper.reloadFailed(this.getCommandManager().getPlugin(),sender);
+            getPlugin().messages().reloadFailed(sender);
             e.printStackTrace();
 
         }

@@ -24,7 +24,6 @@ package de.cubenation.bedrock.core.service.localization;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.configuration.BedrockYaml;
-import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -127,11 +126,7 @@ public class LocalizationService extends AbstractService {
      * In the future there will be an abstract LocalizationConfig class that can manage this stuff
      */
     private void loadBedrockLocaleFile() throws ServiceInitException {
-        try {
-            this.bedrock_data = plugin.getFallbackBedrockPlugin().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
-        } catch (EqualFallbackPluginException e) {
-            throw new ServiceInitException(e.getLocalizedMessage());
-        }
+        this.bedrock_data = plugin.getFallbackBedrockPlugin().getConfigService().getReadOnlyConfig(this.getRelativeLocaleFile());
 
         if (this.bedrock_data == null)
             throw new ServiceInitException(String.format(

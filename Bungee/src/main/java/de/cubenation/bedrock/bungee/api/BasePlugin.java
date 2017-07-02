@@ -22,16 +22,18 @@
 
 package de.cubenation.bedrock.bungee.api;
 
-import de.cubenation.bedrock.bungee.api.service.config.BungeeConfigService;
+import de.cubenation.bedrock.bungee.api.message.Messages;
+import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
-import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -45,10 +47,17 @@ import java.util.logging.Level;
  */
 public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
+    public static final String PLUGIN_NAME = "BungeeBedrock";
+
     /**
      * The ServiceManager object
      */
     private ServiceManager serviceManager;
+
+    /**
+     * The messages instance
+     */
+    private Messages messages;
 
     /**
      * BasePlugin constructor
@@ -82,13 +91,13 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
         try {
             // TODO: tbd
             // DO NOT MODIFY THIS ORDER!
-            serviceManager.registerService(BungeeConfigService.class);
+            serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.setIntentionallyReady(true);
-//            this.registerService(LocalizationService.class);
+            serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
 //            this.registerService(CommandService.class);
-//            this.registerService(PermissionService.class);
+            serviceManager.registerService(PermissionService.class);
 //            this.registerService(InventoryService.class);
 
             this.serviceManager.registerServices();
@@ -96,6 +105,8 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
             this.log(Level.SEVERE, "Loading services failed");
             this.disable(e);
         }
+
+        this.messages = new Messages(this);
 
         try {
             BedrockDefaults bedrockDefaults = getBedrockDefaults();
@@ -152,7 +163,7 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     public void log(Level level, String message) {
         getLogger().log(
                 level,
-                ChatColor.stripColor(String.format("%s %s", this.getMessagePrefix(), message))
+                ChatColor.stripColor(String.format("%s", message))
         );
     }
 
@@ -174,13 +185,23 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
-    public BungeeConfigService getConfigService() {
-        return (BungeeConfigService) this.getServiceManager().getService(BungeeConfigService.class);
+    public ConfigService getConfigService() {
+        return (ConfigService) this.getServiceManager().getService(ConfigService.class);
     }
 
     @Override
     public ColorSchemeService getColorSchemeService() {
         return (ColorSchemeService) this.getServiceManager().getService(ColorSchemeService.class);
+    }
+
+    @Override
+    public PermissionService getPermissionService() {
+        return (PermissionService) this.getServiceManager().getService(PermissionService.class);
+    }
+
+    @Override
+    public LocalizationService getLocalizationService() {
+        return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
     }
 
     @Override
@@ -244,6 +265,11 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
+    public Messages messages() {
+        return messages;
+    }
+
+    @Override
     public PluginDescription getPluginDescription() {
         return new PluginDescription(getDescription().getName(),
                 getDescription().getMain(),
@@ -256,24 +282,16 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
-    public FoundationPlugin getFallbackBedrockPlugin() throws EqualFallbackPluginException {
-        String bedrockPluginName = "BungeeBedrock";
-        if (getDescription().getName().equalsIgnoreCase(bedrockPluginName)) {
-            throw new EqualFallbackPluginException();
-        }
-        return (FoundationPlugin) getProxy().getPluginManager().getPlugin(bedrockPluginName);
+    public FoundationPlugin getFallbackBedrockPlugin(){
+        return (FoundationPlugin) getProxy().getPluginManager().getPlugin(PLUGIN_NAME);
     }
 
     @Override
     public boolean isFallbackBedrockPlugin() {
-        try {
-            getFallbackBedrockPlugin();
-        } catch (EqualFallbackPluginException e) {
-            return true;
-        }
-        return false;
+        return getDescription().getName().equalsIgnoreCase(PLUGIN_NAME);
     }
 
+    @Override
     public BedrockDefaults getBedrockDefaults() {
         CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
         if (config instanceof BedrockDefaults) {
@@ -281,6 +299,5 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
         }
         return null;
     }
-
 
 }

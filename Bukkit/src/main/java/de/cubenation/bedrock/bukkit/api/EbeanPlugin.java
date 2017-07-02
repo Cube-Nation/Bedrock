@@ -33,7 +33,6 @@ import com.google.common.base.Preconditions;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
 import de.cubenation.bedrock.core.exception.DatabaseSetupException;
-import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.plugin.DatabasePlugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -111,17 +110,13 @@ public abstract class EbeanPlugin extends JavaPlugin implements DatabasePlugin {
 
         // Don't do this for Bedrock Plugin Instance
         if (!isFallbackBedrockPlugin()) {
-            try {
-                // If this configuration is null, try to get the Bedrocks one
-                if (configuration == null) {
-                    FoundationPlugin plugin = getFallbackBedrockPlugin();
-                    if (plugin != null) {
-                        configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
-                        log(Level.INFO, "Will use default Bedrock database configuration.");
-                    }
+            // If this configuration is null, try to get the Bedrocks one
+            if (configuration == null) {
+                FoundationPlugin plugin = getFallbackBedrockPlugin();
+                if (plugin != null) {
+                    configuration = plugin.getBedrockDefaults().getDatabaseConfiguration();
+                    log(Level.INFO, "Will use default Bedrock database configuration.");
                 }
-            } catch (EqualFallbackPluginException e) {
-                log(Level.FINER, "Fallback Plugin is equal to this plugin.");
             }
         }
 

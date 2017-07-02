@@ -23,20 +23,20 @@
 package de.cubenation.bedrock.bukkit.api;
 
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
-import de.cubenation.bedrock.bukkit.api.service.config.BukkitConfigService;
+import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
-import de.cubenation.bedrock.core.service.localization.LocalizationService;
-import de.cubenation.bedrock.bukkit.api.service.permission.PermissionService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.*;
 import de.cubenation.bedrock.core.helper.version.VersionComparator;
+import de.cubenation.bedrock.bukkit.api.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
-import de.cubenation.bedrock.core.service.config.ConfigService;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
@@ -59,10 +59,13 @@ import java.util.logging.Logger;
  */
 public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
+    public static final String PLUGIN_NAME = "Bedrock";
     /**
      * The ServiceManager object
      */
     private ServiceManager serviceManager;
+
+    private Messages messages;
 
     /**
      * BasePlugin constructor
@@ -104,7 +107,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
         try {
             // TODO: tbd
             // DO NOT MODIFY THIS ORDER!
-            serviceManager.registerService(BukkitConfigService.class);
+            serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
@@ -118,6 +121,8 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
             this.log(Level.SEVERE, "Loading services failed");
             this.disable(e);
         }
+
+        this.messages = new Messages(this);
 
         try {
             BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
@@ -235,6 +240,12 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
                         ChatColor.RESET;
     }
 
+
+    @Override
+    public Messages messages() {
+        return messages;
+    }
+
     public BedrockDefaults getBedrockDefaults() {
         CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
         if (config instanceof BedrockDefaults) {
@@ -312,7 +323,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
      * If the ConfigService is not ready, <code>null</code> is returned.
      *
      * @return The Bedrock ConfigService
-     * @see ConfigService
+     * @see de.cubenation.bedrock.core.service.config.ConfigService
      */
     public ConfigService getConfigService() {
         return (ConfigService) this.getServiceManager().getService(ConfigService.class);
@@ -469,15 +480,9 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
     }
 
     @Override
-    public FoundationPlugin getFallbackBedrockPlugin() throws EqualFallbackPluginException {
-        String bedrockPluginName = "BukkitBedrock";
-
-        if (getName().equalsIgnoreCase(bedrockPluginName)) {
-            throw new EqualFallbackPluginException();
-        }
-
+    public FoundationPlugin getFallbackBedrockPlugin(){
         try {
-            return (FoundationPlugin) getPlugin(bedrockPluginName);
+            return (FoundationPlugin) getPlugin(PLUGIN_NAME);
         } catch (NoSuchPluginException e) {
             return null;
         }
@@ -485,11 +490,6 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
 
     @Override
     public boolean isFallbackBedrockPlugin() {
-        try {
-            getFallbackBedrockPlugin();
-        } catch (EqualFallbackPluginException e) {
-            return true;
-        }
-        return false;
+        return getName().equalsIgnoreCase(PLUGIN_NAME);
     }
 }

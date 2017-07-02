@@ -24,16 +24,15 @@ package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.bukkit.api.command.Command;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
-import de.cubenation.bedrock.bukkit.api.exception.CommandException;
-import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.bukkit.api.exception.InsufficientPermissionException;
-import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
-import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.service.command.CommandManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,8 +43,8 @@ import java.util.Map;
  */
 @Description("command.bedrock.cmd.list.desc")
 @Permission(Name = "command.list", Role = CommandRole.USER)
-@SubCommand({ "command", "cmd" })
-@SubCommand({ "list", "l" })
+@SubCommand({"command", "cmd"})
+@SubCommand({"list", "l"})
 public class CommandListCommand extends Command {
 
     public CommandListCommand(BasePlugin plugin, CommandManager commandManager) {
@@ -53,14 +52,14 @@ public class CommandListCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();
 
-        for (Map.Entry<String, Map<String, Object>> entry : plugin.getDescription().getCommands().entrySet()) {
+        for (Map.Entry<String, Map<String, Object>> entry : getPlugin().getDescription().getCommands().entrySet()) {
 
             // Skip if the command is the settings command
-            if (entry.getKey().equalsIgnoreCase(plugin.getDescription().getName())) {
+            if (entry.getKey().equalsIgnoreCase(getPlugin().getDescription().getName())) {
                 continue;
             }
 
@@ -83,6 +82,11 @@ public class CommandListCommand extends Command {
             return;
         }
 
-        MessageHelper.displayCommandList(plugin, sender, commandList);
+        plugin.messages().displayCommandList(sender, commandList);
+    }
+
+    @Override
+    public BasePlugin getPlugin() {
+        return (BasePlugin) super.getPlugin();
     }
 }

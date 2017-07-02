@@ -22,22 +22,21 @@
 
 package de.cubenation.bedrock.bukkit.plugin.command;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.annotation.Argument;
-import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.bukkit.api.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
-import de.cubenation.bedrock.bukkit.api.exception.CommandException;
-import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.bukkit.api.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.bukkit.api.helper.BedrockEbeanHelper;
-import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
-import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.Argument;
+import de.cubenation.bedrock.core.annotation.Description;
+import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.helper.UUIDUtil;
 import org.bukkit.command.ConsoleCommandSender;
 
 /**
@@ -54,12 +53,12 @@ import org.bukkit.command.ConsoleCommandSender;
 )
 public class BedrockPlayerInfoCommand extends Command {
 
-    public BedrockPlayerInfoCommand(BasePlugin plugin, CommandManager commandManager) {
+    public BedrockPlayerInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(final CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(final BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         // check args length
         if (args.length > 1) {
@@ -67,7 +66,7 @@ public class BedrockPlayerInfoCommand extends Command {
         }
 
         if (args.length == 0 && sender instanceof ConsoleCommandSender) {
-            MessageHelper.mustBePlayer(plugin, sender);
+            plugin.messages().mustBePlayer(sender);
             return;
         }
 

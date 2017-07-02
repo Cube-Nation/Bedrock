@@ -3,7 +3,7 @@ description: Comprehensive Plugin API
 main: de.cubenation.bedrock.bukkit.plugin.BedrockPlugin
 database: true
 load: startup
-name: BukkitBedrock
+name: Bedrock
 version: "${project.version}"
 
 depend:
@@ -13,5 +13,5 @@ commands:
   bedrockplayer:
     description: Bedrock Player Debug Command
     aliases: bp
-  ${project.artifactId}:
+  ${project.parent.name}:
     description: Bedrock Base Command

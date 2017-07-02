@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.plugin.config;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 
 import java.io.File;
 
@@ -32,7 +32,7 @@ import java.io.File;
  */
 public class BedrockDefaults extends de.cubenation.bedrock.core.config.BedrockDefaults {
 
-    public BedrockDefaults(BasePlugin plugin) {
+    public BedrockDefaults(FoundationPlugin plugin) {
         CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.bedrock.core.config.BedrockDefaults.getFilename());
         CONFIG_HEADER = getHeader();
 

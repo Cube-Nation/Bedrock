@@ -23,23 +23,22 @@
 package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.annotation.Argument;
-import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.bukkit.api.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
-import de.cubenation.bedrock.bukkit.api.exception.CommandException;
-import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.bukkit.api.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.bukkit.api.exception.NoSuchPlayerException;
-import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
+import de.cubenation.bedrock.core.annotation.Argument;
+import de.cubenation.bedrock.core.annotation.Description;
+import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
-import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
 import de.cubenation.bedrock.core.service.settings.SettingsManager;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -62,12 +61,12 @@ public class SettingsInfoCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         String settingsKey = args[0];
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
         if (settingsManager == null) {
-            MessageHelper.Error.SettingsNotFound(plugin, sender, settingsKey);
+            plugin.messages().error().SettingsNotFound(sender, settingsKey);
             return;
         }
 
@@ -99,7 +98,7 @@ public class SettingsInfoCommand extends Command {
                     sender.sendMessage(settingsManager.getDefaultFile().info());
                 }
             } catch (NoSuchPlayerException e) {
-                MessageHelper.noSuchPlayer(plugin, sender, user);
+                plugin.messages().noSuchPlayer(sender, user);
             }
 
         } else {
@@ -113,7 +112,7 @@ public class SettingsInfoCommand extends Command {
     }
 
     @Override
-    public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
+    public ArrayList<String> getTabArgumentCompletion(BedrockCommandSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{
                 addAll(plugin.getSettingService().getSettingsMap().keySet());

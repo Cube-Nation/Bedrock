@@ -24,18 +24,17 @@ package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.bukkit.api.command.Command;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
-import de.cubenation.bedrock.bukkit.api.exception.CommandException;
-import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.bukkit.api.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
-import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
-import org.bukkit.command.CommandSender;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -46,8 +45,8 @@ import java.util.logging.Level;
  */
 @Description("command.bedrock.regeneratelocale.desc")
 @Permission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
-@SubCommand({ "regenerate" })
-@SubCommand({ "locale" })
+@SubCommand({"regenerate"})
+@SubCommand({"locale"})
 public class RegenerateLocaleCommand extends Command {
 
     public RegenerateLocaleCommand(BasePlugin plugin, CommandManager commandManager) {
@@ -55,8 +54,8 @@ public class RegenerateLocaleCommand extends Command {
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-        BasePlugin pluginInstance = this.getPlugin();
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+        BasePlugin pluginInstance = (BasePlugin) this.getPlugin();
         LocalizationService localizationService = pluginInstance.getLocalizationService();
 
         File localeFile = new File(
@@ -64,20 +63,20 @@ public class RegenerateLocaleCommand extends Command {
                 localizationService.getRelativeLocaleFile()
         );
         if (localeFile.exists() && !localeFile.delete()) {
-            MessageHelper.reloadFailed(this.getPlugin(), sender);
+            plugin.messages().reloadFailed(sender);
             return;
         }
 
         try {
             localizationService.reload();
-            MessageHelper.reloadComplete(this.getPlugin(), sender);
+            plugin.messages().reloadComplete(sender);
         } catch (ServiceReloadException e) {
             this.getPlugin().log(
                     Level.SEVERE,
                     String.format("Error while reloading LocalizationService for locale %s", localizationService.getLocale()),
                     e
             );
-            MessageHelper.reloadFailed(this.getPlugin(), sender);
+            plugin.messages().reloadFailed(sender);
         }
     }
 

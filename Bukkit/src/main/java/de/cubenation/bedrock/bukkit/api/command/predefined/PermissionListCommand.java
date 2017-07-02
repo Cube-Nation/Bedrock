@@ -24,23 +24,22 @@ package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.bukkit.api.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.bukkit.api.command.Command;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
-import de.cubenation.bedrock.bukkit.api.exception.CommandException;
-import de.cubenation.bedrock.bukkit.api.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.bukkit.api.helper.MessageHelper;
-import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
-import de.cubenation.bedrock.bukkit.api.service.permission.PermissionService;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
 @Description("command.bedrock.permissions.list.desc")
-@SubCommand({ "pl", "permslist", "permissionslist" })
+@SubCommand({"pl", "permslist", "permissionslist"})
 @Permission(Name = "permission.list", Role = CommandRole.MODERATOR)
 public class PermissionListCommand extends Command {
 
@@ -48,21 +47,14 @@ public class PermissionListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = this.getPlugin().getPermissionService();
 
         if (permissionService != null) {
-            MessageHelper.displayPermissions(
-                    plugin,
-                    sender,
-                    permissionService.getPermissions()
-            );
+            plugin.messages().displayPermissions(sender, permissionService.getPermissions());
 
         } else {
-            MessageHelper.noPermission(
-                    this.getCommandManager().getPlugin(),
-                    sender
-            );
+            plugin.messages().noPermission(sender);
         }
     }
 

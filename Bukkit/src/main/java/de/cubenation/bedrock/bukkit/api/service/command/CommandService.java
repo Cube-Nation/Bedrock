@@ -23,13 +23,13 @@
 package de.cubenation.bedrock.bukkit.api.service.command;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.annotation.CommandHandler;
-import de.cubenation.bedrock.bukkit.api.command.AbstractCommand;
 import de.cubenation.bedrock.bukkit.api.command.predefined.*;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.CommandHandler;
+import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
-import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
+import org.bukkit.command.PluginCommand;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -41,11 +41,11 @@ import java.util.logging.Level;
  * @author Cube-Nation
  * @version 1.0
  */
-public class CommandService extends AbstractService {
+public class CommandService extends de.cubenation.bedrock.core.service.command.CommandService {
 
     private ArrayList<CommandManager> command_manager = new ArrayList<>();
 
-    public CommandService(BasePlugin plugin) {
+    public CommandService(FoundationPlugin plugin) {
         super(plugin);
     }
 
@@ -59,24 +59,25 @@ public class CommandService extends AbstractService {
         // TODO: doc
         CommandManager pluginCommandManager = null;
         for (CommandManager commandManager : this.getCommandManagers()) {
-            if (commandManager.getPluginCommand().getLabel().equalsIgnoreCase(getPlugin().getDescription().getName())) {
+            if (commandManager.getLabel().equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
                 pluginCommandManager = commandManager;
                 break;
             }
         }
-        
+
         if (pluginCommandManager == null) {
+            PluginCommand command = this.getPlugin().getCommand(this.getPlugin().getPluginDescription().getName());
 
             pluginCommandManager = new CommandManager(
                     this.getPlugin(),
-                    this.getPlugin().getCommand(this.getPlugin().getDescription().getName()),
-                    this.getPlugin().getDescription().getName()
+                    command.getLabel(),
+                    this.getPlugin().getPluginDescription().getName()
             );
             this.addCommandManager(pluginCommandManager);
 
             try {
-                pluginCommandManager.getPluginCommand().setExecutor(pluginCommandManager);
-                pluginCommandManager.getPluginCommand().setTabCompleter(pluginCommandManager);
+                command.setExecutor(pluginCommandManager);
+                command.setTabCompleter(pluginCommandManager);
             } catch (Exception e) {
                 throw new ServiceInitException("Please add your Pluginname as command in the plugin.yml!");
             }
@@ -98,38 +99,33 @@ public class CommandService extends AbstractService {
 
     private void addCommandManager(String command, Class<? extends AbstractCommand>[] handlers) {
         if (handlers.length == 0) {
-                this.getPlugin().log(
-                        Level.WARNING,
-                        "CommandService: Not registering command " + command + " (no handlers assigned)"
-                );
-                return;
+            this.getPlugin().log(
+                    Level.WARNING,
+                    "CommandService: Not registering command " + command + " (no handlers assigned)"
+            );
+            return;
         }
-
+        PluginCommand pluginCommand = this.getPlugin().getCommand(command);
         CommandManager manager = new CommandManager(
                 this.getPlugin(),
-                this.getPlugin().getCommand(command),
-                this.getPlugin().getDescription().getName()
+                pluginCommand.getLabel(),
+                this.getPlugin().getPluginDescription().getName()
         );
 
         for (Class<?> handler : handlers) {
             Constructor<?> constructor;
             try {
-                constructor = handler.getConstructor(BasePlugin.class, CommandManager.class);
+                constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
                 manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
         }
 
-        manager.getPluginCommand().setExecutor(manager);
-        manager.getPluginCommand().setTabCompleter(manager);
+        pluginCommand.setExecutor(manager);
+        pluginCommand.setTabCompleter(manager);
 
         this.addCommandManager(manager);
-    }
-
-    @Override
-    public void reload() throws ServiceReloadException {
-        // no reloading of commands supported
     }
 
     @Override
@@ -137,7 +133,7 @@ public class CommandService extends AbstractService {
         return (BasePlugin) super.getPlugin();
     }
 
-    private void addCommandManager(CommandManager manager) {
+    protected void addCommandManager(CommandManager manager) {
         this.command_manager.add(manager);
     }
 
@@ -151,5 +147,4 @@ public class CommandService extends AbstractService {
                 "command_manager=" + command_manager +
                 '}';
     }
-
 }

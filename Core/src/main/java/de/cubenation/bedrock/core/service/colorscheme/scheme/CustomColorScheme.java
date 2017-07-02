@@ -23,7 +23,6 @@
 package de.cubenation.bedrock.core.service.colorscheme.scheme;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import net.md_5.bungee.api.ChatColor;
 
@@ -42,7 +41,7 @@ public class CustomColorScheme extends ColorScheme {
     }
 
     @SuppressWarnings("deprecation")
-    public CustomColorScheme(FoundationPlugin plugin) throws EqualFallbackPluginException {
+    public CustomColorScheme(FoundationPlugin plugin) {
         super(
                 ColorSchemeName.CUSTOM,
                 ChatColor.valueOf(

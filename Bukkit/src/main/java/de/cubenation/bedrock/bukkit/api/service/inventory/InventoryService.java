@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.api.service.inventory;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.helper.MapUtil;
@@ -49,7 +49,7 @@ public class InventoryService extends AbstractService {
 
     private HashMap<String, Long> inventories;
 
-    public InventoryService(BasePlugin plugin) {
+    public InventoryService(FoundationPlugin plugin) {
         super(plugin);
         this.inventoryDirectory = new File(plugin.getDataFolder() + File.separator + "inventories");
     }

@@ -23,7 +23,6 @@
 package de.cubenation.bedrock.core.service;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.exception.EqualFallbackPluginException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 
@@ -74,8 +73,6 @@ public abstract class AbstractService {
                 return value;
             } catch (NullPointerException e) {
                 this.plugin.log(Level.FINER, "Could not fetch path from Bedrock plugin configuration");
-            } catch (EqualFallbackPluginException e) {
-                this.plugin.log(Level.FINER, "Fallback Plugin is equal to this plugin.");
             }
         }
 

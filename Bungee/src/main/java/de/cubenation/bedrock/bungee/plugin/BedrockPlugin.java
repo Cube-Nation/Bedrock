@@ -23,11 +23,14 @@
 package de.cubenation.bedrock.bungee.plugin;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
+import de.cubenation.bedrock.core.annotation.ConfigurationFile;
+import de.cubenation.bedrock.core.config.locale.de_DE;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
+@ConfigurationFile(de_DE.class)
 public class BedrockPlugin extends BasePlugin {
 
     public static BedrockPlugin instance;
