@@ -20,35 +20,44 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.predefined;
+package de.cubenation.bedrock.bungee.api.command.sender;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.command.BedrockCommandSender;
-import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.service.command.CommandManager;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-@Description("command.bedrock.version.desc")
-@Permission(Name = "version", Role = CommandRole.MODERATOR)
-@SubCommand({ "version", "v" })
-public class VersionCommand extends Command {
+public class CommandSender implements BedrockCommandSender {
 
-    public VersionCommand(BasePlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    private final net.md_5.bungee.api.CommandSender commandSender;
+
+    public CommandSender(net.md_5.bungee.api.CommandSender original) {
+        this.commandSender = original;
+    }
+
+    public net.md_5.bungee.api.CommandSender getCommandSender() {
+        return commandSender;
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
-        getPlugin().messages().version(sender);
+    public boolean isOp() {
+        return false;
     }
 
+    @Override
+    public boolean hasPermission(String permission) {
+        return commandSender.hasPermission(permission);
+    }
+
+    @Override
+    public void sendMessage(String legacyText) {
+        commandSender.sendMessage(legacyText);
+    }
+
+    @Override
+    public String getName() {
+        return commandSender.getName();
+    }
 }
+

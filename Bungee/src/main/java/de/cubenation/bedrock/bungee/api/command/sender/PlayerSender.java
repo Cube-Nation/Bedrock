@@ -20,14 +20,44 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.api.command;
+package de.cubenation.bedrock.bungee.api.command.sender;
 
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
-import net.md_5.bungee.api.CommandSender;
+import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public interface BungeeBedrockCommandSender extends BedrockCommandSender, CommandSender {
+public class PlayerSender extends CommandSender implements BedrockPlayerCommandSender {
+
+    private final ProxiedPlayer player;
+
+    public PlayerSender(ProxiedPlayer player) {
+        super(player);
+        this.player = player;
+    }
+
+    public ProxiedPlayer getPlayer() {
+        return player;
+    }
+
+    @Override
+    public void sendMessage(TextComponent components) {
+        player.sendMessage(components);
+    }
+
+    @Override
+    public void sendMessage(ChatMessageType chatMessageType, BaseComponent[] components) {
+        player.sendMessage(chatMessageType, components);
+    }
+
+    @Override
+    public void sendMessage(BaseComponent[] baseComponents) {
+        player.sendMessage(baseComponents);
+    }
 }
+

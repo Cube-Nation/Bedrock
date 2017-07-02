@@ -170,18 +170,18 @@ public class PermissionService extends AbstractService {
 
         // TODO: tbd
         // collect permissions from commands (and arguments)
-//        this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
-//                commandManager.getCommands().forEach(abstractCommand -> {
-//
-//                    abstractCommand.getRuntimePermissions().forEach(this::addPermission);
-//
-//                    abstractCommand.getArguments().forEach(argument -> {
-//                        if (argument.getPermission() != null) {
-//                            this.addPermission(argument.getPermission());
-//                        }
-//                    });
-//
-//                }));
+        this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
+                commandManager.getCommands().forEach(abstractCommand -> {
+
+                    abstractCommand.getRuntimePermissions().forEach(this::addPermission);
+
+                    abstractCommand.getArguments().forEach(argument -> {
+                        if (argument.getPermission() != null) {
+                            this.addPermission(argument.getPermission());
+                        }
+                    });
+
+                }));
 
         // collect externally registered permissions from userland
         this.externalPermissions.forEach(this::addPermission);

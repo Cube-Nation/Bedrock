@@ -27,6 +27,7 @@ import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.command.CommandService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
@@ -82,6 +83,15 @@ public interface FoundationPlugin {
      * @return The ServiceManager instance
      */
     ServiceManager getServiceManager();
+
+    /**
+     * Returns the Bedrock CommandService object instance.
+     * If the CommandService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock CommandService
+     * @see CommandService
+     */
+    CommandService getCommandService();
 
     /**
      * Returns the Bedrock ConfigService object instance.

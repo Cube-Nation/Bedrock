@@ -20,30 +20,32 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.service.command;
+package de.cubenation.bedrock.bungee.api.service.command;
 
+import de.cubenation.bedrock.bungee.api.command.sender.CommandSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.service.AbstractService;
-
-import java.util.ArrayList;
+import de.cubenation.bedrock.core.command.CommandExecutor;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class CommandService extends AbstractService {
+public class CommandManager
+        extends de.cubenation.bedrock.core.service.command.CommandManager
+        implements CommandExecutor, TabExecutor {
 
-    public CommandService(FoundationPlugin plugin) {
-        super(plugin);
+    public CommandManager(FoundationPlugin plugin, String label, String helpPrefix) {
+        super(plugin, label, helpPrefix);
+    }
+
+    public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
+        onCommand(new CommandSender(sender), args);
     }
 
     @Override
-    public void reload() throws ServiceReloadException {
-        // no reloading of commands supported
+    public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
+        return onTabComplete(new CommandSender(sender), args);
     }
 
-    public abstract ArrayList<? extends CommandManager> getCommandManagers();
-
 }
-

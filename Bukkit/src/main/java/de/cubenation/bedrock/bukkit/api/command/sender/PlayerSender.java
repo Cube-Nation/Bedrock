@@ -36,8 +36,8 @@ public class PlayerSender extends CommandSender implements BedrockPlayerCommandS
 
     private final Player player;
 
-    public PlayerSender(org.bukkit.command.CommandSender original, Player player) {
-        super(original);
+    public PlayerSender(Player player) {
+        super(player);
         this.player = player;
     }
 

@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * @author Cube-Nation
  * @version 1.0
  */
-public class CommandManager implements CommandExecutor, TabExecutor {
+public abstract class CommandManager implements CommandExecutor, TabExecutor {
 
     private FoundationPlugin plugin;
 

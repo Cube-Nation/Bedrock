@@ -20,17 +20,14 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.service.command;
+package de.cubenation.bedrock.bungee.api.service.command;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.command.predefined.*;
+import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.predefined.VersionCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
-import de.cubenation.bedrock.core.service.settings.SettingsService;
-import org.bukkit.command.PluginCommand;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -45,6 +42,8 @@ import java.util.logging.Level;
 public class CommandService extends de.cubenation.bedrock.core.service.command.CommandService {
 
     private ArrayList<CommandManager> commandManagers = new ArrayList<>();
+
+    private ArrayList<BungeeCommand> commands = new ArrayList<>();
 
     public CommandService(FoundationPlugin plugin) {
         super(plugin);
@@ -67,36 +66,35 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
         }
 
         if (pluginCommandManager == null) {
-            PluginCommand command = this.getPlugin().getCommand(this.getPlugin().getPluginDescription().getName());
+            String commandName = this.getPlugin().getPluginDescription().getName();
 
-            pluginCommandManager = new de.cubenation.bedrock.bukkit.api.service.command.CommandManager(
+            pluginCommandManager = new CommandManager(
                     this.getPlugin(),
-                    command.getLabel(),
+                    commandName,
                     this.getPlugin().getPluginDescription().getName()
             );
 
-
+//            // add default commands that all plugins are capable of
+//            pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
+//            pluginCommandManager.addCommand(new ReloadCommand(getPlugin(), pluginCommandManager));
+            pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
+//            pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
+//            pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
+//            pluginCommandManager.addCommand(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
+//
+//            SettingsService settingService = plugin.getSettingService();
+//            if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
+//                pluginCommandManager.addCommand(new SettingsInfoCommand(getPlugin(), pluginCommandManager));
+//            }
             try {
-                command.setExecutor(pluginCommandManager);
-                command.setTabCompleter(pluginCommandManager);
+                BungeeCommand bungeeCommand = new BungeeCommand(getPlugin(), pluginCommandManager, commandName);
 
+                this.addCommand(bungeeCommand);
                 this.addCommandManager(pluginCommandManager);
             } catch (Exception e) {
-                throw new ServiceInitException("Please add your Pluginname as command in the plugin.yml!");
+                e.printStackTrace();
+                throw new ServiceInitException("Can't setup command manager for " + commandName);
             }
-        }
-
-        // add default commands that all plugins are capable of
-        pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new ReloadCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new VersionCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
-        pluginCommandManager.addCommand(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
-
-        SettingsService settingService = plugin.getSettingService();
-        if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
-            pluginCommandManager.addCommand(new SettingsInfoCommand(getPlugin(), pluginCommandManager));
         }
     }
 
@@ -108,10 +106,10 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             );
             return;
         }
-        PluginCommand pluginCommand = this.getPlugin().getCommand(command);
-        CommandManager manager = new CommandManager(
+
+        CommandManager commandManager = new CommandManager(
                 this.getPlugin(),
-                pluginCommand.getLabel(),
+                command,
                 this.getPlugin().getPluginDescription().getName()
         );
 
@@ -119,19 +117,20 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             Constructor<?> constructor;
             try {
                 constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                commandManager.addCommand((AbstractCommand) constructor.newInstance(plugin, commandManager));
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
         }
 
         try {
-            pluginCommand.setExecutor(manager);
-            pluginCommand.setTabCompleter(manager);
+            BungeeCommand bungeeCommand = new BungeeCommand(getPlugin(), commandManager, command);
 
-            this.addCommandManager(manager);
+            this.addCommand(bungeeCommand);
+            this.addCommandManager(commandManager);
         } catch (Exception e) {
-            throw new ServiceInitException("Can't setup command manager for " + pluginCommand.getLabel());
+            e.printStackTrace();
+            throw new ServiceInitException("Can't setup command manager for " + command);
         }
     }
 
@@ -144,15 +143,23 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
         this.commandManagers.add(manager);
     }
 
+    protected void addCommand(BungeeCommand command) {
+        getPlugin().getProxy().getPluginManager().registerCommand(getPlugin(), command);
+
+        this.commands.add(command);
+    }
+
     @Override
     public ArrayList<CommandManager> getCommandManagers() {
-        return this.commandManagers;
+        return commandManagers;
     }
 
     @Override
     public String toString() {
         return "CommandService{" +
                 "commandManagers=" + commandManagers +
+                ", commands=" + commands +
                 '}';
     }
 }
+

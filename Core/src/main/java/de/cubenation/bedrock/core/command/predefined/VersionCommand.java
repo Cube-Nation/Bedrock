@@ -20,30 +20,35 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.service.command;
+package de.cubenation.bedrock.core.command.predefined;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.service.AbstractService;
-
-import java.util.ArrayList;
+import de.cubenation.bedrock.core.annotation.Description;
+import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.service.command.CommandManager;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class CommandService extends AbstractService {
+@Description("command.bedrock.version.desc")
+@Permission(Name = "version", Role = CommandRole.MODERATOR)
+@SubCommand({ "version", "v" })
+public class VersionCommand extends Command {
 
-    public CommandService(FoundationPlugin plugin) {
-        super(plugin);
+    public VersionCommand(FoundationPlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
     }
 
     @Override
-    public void reload() throws ServiceReloadException {
-        // no reloading of commands supported
+    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+        getPlugin().messages().version(sender);
     }
 
-    public abstract ArrayList<? extends CommandManager> getCommandManagers();
-
 }
-

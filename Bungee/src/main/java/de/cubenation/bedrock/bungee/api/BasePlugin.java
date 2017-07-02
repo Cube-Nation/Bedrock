@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.bungee.api;
 
 import de.cubenation.bedrock.bungee.api.message.Messages;
+import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
@@ -96,7 +97,7 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
-//            this.registerService(CommandService.class);
+            serviceManager.registerService(CommandService.class);
             serviceManager.registerService(PermissionService.class);
 //            this.registerService(InventoryService.class);
 
@@ -182,6 +183,10 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     @Override
     public ServiceManager getServiceManager() {
         return this.serviceManager;
+    }
+
+    public CommandService getCommandService() {
+        return (CommandService) this.getServiceManager().getService(CommandService.class);
     }
 
     @Override
