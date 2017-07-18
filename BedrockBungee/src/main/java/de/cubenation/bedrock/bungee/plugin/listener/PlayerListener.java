@@ -2,6 +2,7 @@ package de.cubenation.bedrock.bungee.plugin.listener;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.BedrockPlugin;
+import de.cubenation.bedrock.bungee.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bungee.plugin.event.PlayerChangeNameEvent;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.model.BedrockPlayer;
@@ -10,7 +11,9 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
 public class PlayerListener implements Listener {
@@ -33,8 +36,9 @@ public class PlayerListener implements Listener {
                     .eq("uuid", uuid)
                     .findUnique();
 
+            String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
             if (bp == null) {
-                bp = new BedrockPlayer(uuid, event.getPlayer().getName(), new Date());
+                bp = new BedrockPlayer(uuid, event.getPlayer().getName(), ip, new Date());
                 bp.save(plugin.getDatabase());
             } else {
                 // check if username changed
@@ -51,6 +55,26 @@ public class PlayerListener implements Listener {
                     // update username
                     bp.setUsername(event.getPlayer().getName());
                 }
+
+                List<BedrockPlayer> bedrockPlayers = plugin.getDatabase().find(BedrockPlayer.class).where()
+                        .like("ip", ip)
+                        .findList();
+
+                if (bedrockPlayers != null) {
+                    // Remove self
+                    bedrockPlayers = bedrockPlayers.stream()
+                            .filter(player -> !player.getUuid().equals(event.getPlayer().getUniqueId().toString()))
+                            .collect(Collectors.toList());
+
+                    if (bedrockPlayers.size() > 0) {
+                        MultiAccountJoinEvent joinEvent = new MultiAccountJoinEvent(ip, bedrockPlayers);
+                        plugin.getProxy().getPluginManager().callEvent(joinEvent);
+                    }
+                }
+
+                // update ip
+                bp.setIp(ip);
+
                 // update timestamp
                 bp.setLastlogin(new Date());
                 bp.update(plugin.getDatabase());

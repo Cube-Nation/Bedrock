@@ -21,9 +21,10 @@ public class BedrockPlayer {
     public BedrockPlayer() {
     }
 
-    public BedrockPlayer(String uuid, String username, Date lastlogin) {
+    public BedrockPlayer(String uuid, String username, String ip, Date lastlogin) {
         this.uuid = uuid;
         this.username = username;
+        this.ip = ip;
         this.lastlogin = lastlogin;
     }
 
@@ -36,6 +37,9 @@ public class BedrockPlayer {
 
     @NotNull
     private String username;
+
+    @Column(length = 45)
+    private String ip;
 
     private Date lastlogin;
 
@@ -65,6 +69,14 @@ public class BedrockPlayer {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     public Date getLastlogin() {
