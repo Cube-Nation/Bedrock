@@ -2,13 +2,13 @@
     <servers>
         <server>
             <id>org.lichtspiele.nexus.release</id>
-            <username>${env.NEXUS_DEPLOY_USER}</username>
-            <password>${env.NEXUS_DEPLOY_PASSWORD}</password>
+            <username>$NEXUS_DEPLOY_USER</username>
+            <password>$NEXUS_DEPLOY_PASSWORD</password>
         </server>
         <server>
             <id>org.lichtspiele.nexus.snapshot</id>
-            <username>${env.NEXUS_DEPLOY_USER}</username>
-            <password>${env.NEXUS_DEPLOY_PASSWORD}</password>
+            <username>$NEXUS_DEPLOY_USER</username>
+            <password>$NEXUS_DEPLOY_PASSWORD</password>
         </server>
     </servers>
 </settings>
