@@ -18,4 +18,8 @@ pipelines:
     spigot-1.13:
       - step:
           script:
+            - echo "nexus user: $NEXUS_DEPLOY_USER"
+            - echo "nexus user: ${NEXUS_DEPLOY_USER}"
+            - echo "nexus user: ${env.NEXUS_DEPLOY_USER}"
+            - echo "nexus user: %NEXUS_DEPLOY_USER%"
             - mvn clean install -V -B -s settings.xml deploy
