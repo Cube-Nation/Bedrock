@@ -15,3 +15,7 @@ pipelines:
       - step:
           script:
           - mvn clean install -V -B -s settings.xml deploy
+    spigot-1.13:
+      - step:
+          script:
+            - mvn clean install -V -B -s settings.xml deploy
