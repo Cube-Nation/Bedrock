@@ -5,24 +5,49 @@
 
     <groupId>de.cubenation.api</groupId>
     <artifactId>Bedrock</artifactId>
-    <version>1.13.2-1-SNAPSHOT</version>
+    <version>1.15.2-SNAPSHOT</version>
     <name>Bedrock</name>
 
     <repositories>
         <repository>
             <id>org.lichtspiele.nexus.public</id>
-            <url>http://nexus.lichtspiele.org/repository/maven-public/</url>
+            <url>https://nexus.lichtspiele.org/repository/maven-public/</url>
         </repository>
+
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+
+        <repository>
+            <id>maven-central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+
+        <!--
+        <repository>
+            <id>md_5-releases</id>
+            <url>http://repo.md-5.net/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>md_5-snapshots</id>
+            <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+        </repository>
+        -->
     </repositories>
 
     <distributionManagement>
         <repository>
             <id>org.lichtspiele.nexus.release</id>
-            <url>http://nexus.lichtspiele.org/repository/releases/</url>
+            <url>https://nexus.lichtspiele.org/repository/releases/</url>
         </repository>
         <snapshotRepository>
             <id>org.lichtspiele.nexus.snapshot</id>
-            <url>http://nexus.lichtspiele.org/repository/snapshots/</url>
+            <url>https://nexus.lichtspiele.org/repository/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     
@@ -104,7 +129,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.15.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -120,6 +145,12 @@
             <groupId>org.avaje</groupId>
             <artifactId>ebean</artifactId>
             <version>2.8.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1</version>
         </dependency>
 
     </dependencies>

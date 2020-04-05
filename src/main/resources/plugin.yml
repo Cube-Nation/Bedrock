@@ -5,6 +5,7 @@ database: true
 load: startup
 name: Bedrock
 version: "${project.version}"
+api-version: 1.15
 
 depend:
   - Yamler
