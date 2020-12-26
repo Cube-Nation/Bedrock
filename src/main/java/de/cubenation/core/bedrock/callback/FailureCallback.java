@@ -20,24 +20,13 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
-
-import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+package de.cubenation.core.bedrock.callback;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
-
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
-
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
-    }
-
+public interface FailureCallback<T> {
+    void didFailed(T object);
 }
+

@@ -20,24 +20,18 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.exception;
 
-import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+public class BedrockEbeanEntityAlreadyExistsException extends IOException {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
-
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    public BedrockEbeanEntityAlreadyExistsException(Class clazz, String uuid) {
+        super(String.format("Could not create bedrock ebean entity %s for UUID %s", clazz.toString(), uuid));
     }
 
 }

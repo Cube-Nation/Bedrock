@@ -22,8 +22,8 @@
 
 package de.cubenation.plugin.bedrock.listener;
 
-import de.cubenation.api.bedrock.ebean.BedrockPlayer;
-import de.cubenation.api.bedrock.helper.BedrockEbeanHelper;
+import de.cubenation.core.bedrock.ebean.BedrockPlayer;
+import de.cubenation.core.bedrock.helper.BedrockEbeanHelper;
 import de.cubenation.plugin.bedrock.BedrockPlugin;
 import de.cubenation.plugin.bedrock.event.PlayerChangesNameEvent;
 import org.bukkit.event.EventHandler;

@@ -20,24 +20,25 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.helper;
 
-import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+import java.util.UUID;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+public class UUIDUtil {
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static boolean isUUID(String string) {
+        try {
+            UUID.fromString(string);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
 }

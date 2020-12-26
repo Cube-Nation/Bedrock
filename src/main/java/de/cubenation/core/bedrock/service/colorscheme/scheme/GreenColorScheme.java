@@ -20,24 +20,17 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.service.colorscheme.scheme;
 
 import de.cubenation.core.bedrock.BasePlugin;
+import de.cubenation.core.bedrock.service.colorscheme.ColorScheme;
+import net.md_5.bungee.api.ChatColor;
 
-import java.io.File;
+@SuppressWarnings("unused")
+public class GreenColorScheme extends ColorScheme {
 
-/**
- * @author Cube-Nation
- * @version 1.0
- */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
-
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
-
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    public GreenColorScheme(BasePlugin plugin) {
+        super(ColorSchemeName.GREEN, ChatColor.GREEN, ChatColor.DARK_GREEN, ChatColor.GRAY, ChatColor.WHITE);
     }
 
 }

@@ -20,24 +20,53 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.helper;
 
-import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+public class TextHolder {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    private TextComponent textComponent;
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    private HoverEvent hoverEvent;
+
+    private ClickEvent clickEvent;
+
+    public TextHolder(TextComponent textComponent) {
+        this.textComponent = textComponent;
     }
 
+    public TextHolder(TextComponent textComponent, HoverEvent hoverEvent) {
+        this.textComponent = textComponent;
+        this.hoverEvent = hoverEvent;
+    }
+
+    public TextHolder(TextComponent textComponent, ClickEvent clickEvent) {
+        this.textComponent = textComponent;
+        this.clickEvent = clickEvent;
+    }
+
+    public TextHolder(TextComponent textComponent, HoverEvent hoverEvent, ClickEvent clickEvent) {
+        this.textComponent = textComponent;
+        this.hoverEvent = hoverEvent;
+        this.clickEvent = clickEvent;
+    }
+
+    public TextComponent getTextComponent() {
+        return textComponent;
+    }
+
+    public HoverEvent getHoverEvent() {
+        return hoverEvent;
+    }
+
+    public ClickEvent getClickEvent() {
+        return clickEvent;
+    }
 }

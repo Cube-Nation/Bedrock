@@ -20,24 +20,28 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.registry;
 
 import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+import de.cubenation.core.bedrock.exception.NoSuchRegisterableException;
+import org.bukkit.command.CommandSender;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+public interface RegistryInterface {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    @SuppressWarnings("unused")
+    void _register(BasePlugin plugin, String ident, CommandSender sender, Registerable storable);
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
-    }
+    @SuppressWarnings("unused")
+    boolean _exists(BasePlugin plugin, String ident, CommandSender sender);
+
+    @SuppressWarnings("unused")
+    Registerable _get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException;
+
+    @SuppressWarnings("unused")
+    void _remove(BasePlugin plugin, String ident, CommandSender sender);
 
 }

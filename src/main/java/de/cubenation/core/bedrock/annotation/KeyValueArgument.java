@@ -20,24 +20,41 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.annotation;
 
-import de.cubenation.core.bedrock.BasePlugin;
+import de.cubenation.core.bedrock.annotation.condition.DefaultCondition;
+import de.cubenation.core.bedrock.command.CommandRole;
 
-import java.io.File;
+import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Repeatable(KeyValueArguments.class)
+public @interface KeyValueArgument {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    String Key();
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
-    }
+    boolean KeyOnly() default false;
+
+    String Description();
+
+    String Placeholder();
+
+    boolean Optional() default false;
+
+    String Permission() default "";
+
+    CommandRole Role() default CommandRole.NO_ROLE;
+
+    String RoleName() default "NO_ROLE";
+
+    String PermissionDescription() default "";
+
+    Class Condition() default DefaultCondition.class;
 
 }

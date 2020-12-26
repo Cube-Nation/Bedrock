@@ -22,13 +22,13 @@
 
 package de.cubenation.plugin.bedrock;
 
-import de.cubenation.api.bedrock.BasePlugin;
-import de.cubenation.api.bedrock.annotation.CommandHandler;
-import de.cubenation.api.bedrock.annotation.ConfigurationFile;
-import de.cubenation.api.bedrock.config.BedrockDefaults;
-import de.cubenation.api.bedrock.config.locale.de_DE;
-import de.cubenation.api.bedrock.ebean.BedrockPlayer;
-import de.cubenation.api.bedrock.ebean.BedrockWorld;
+import de.cubenation.core.bedrock.BasePlugin;
+import de.cubenation.core.bedrock.annotation.CommandHandler;
+import de.cubenation.core.bedrock.annotation.ConfigurationFile;
+import de.cubenation.core.bedrock.config.BedrockDefaults;
+import de.cubenation.core.bedrock.config.locale.de_DE;
+import de.cubenation.core.bedrock.ebean.BedrockPlayer;
+import de.cubenation.core.bedrock.ebean.BedrockWorld;
 import de.cubenation.plugin.bedrock.command.BedrockPlayerInfoCommand;
 import de.cubenation.plugin.bedrock.listener.EbeanListener;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;

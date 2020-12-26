@@ -20,24 +20,45 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
-
-import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+package de.cubenation.core.bedrock.command;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+@SuppressWarnings("unused")
+public enum CommandRole {
+    // all permissions with no role are in this role by default
+    NO_ROLE("no_role"),
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    // assign permissions to this role if you don't want to use them
+    UNUSED("unused"),
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    // guest users
+    GUEST("guest"),
+
+    // default users
+    USER("user"),
+
+    // more privileged users
+    SUPPORTER("supporter"),
+
+    // much more privileged users
+    MODERATOR("moderator"),
+
+    // administrators
+    ADMIN("admin"),
+
+    // root
+    OWNER("owner");
+
+    private final String type;
+
+    CommandRole(String type) {
+        this.type = type;
     }
 
+    public String getType() {
+        return type;
+    }
 }

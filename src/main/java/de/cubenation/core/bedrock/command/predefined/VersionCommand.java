@@ -20,24 +20,36 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.command.predefined;
 
 import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+import de.cubenation.core.bedrock.annotation.Description;
+import de.cubenation.core.bedrock.annotation.Permission;
+import de.cubenation.core.bedrock.annotation.SubCommand;
+import de.cubenation.core.bedrock.command.Command;
+import de.cubenation.core.bedrock.command.CommandRole;
+import de.cubenation.core.bedrock.exception.CommandException;
+import de.cubenation.core.bedrock.exception.IllegalCommandArgumentException;
+import de.cubenation.core.bedrock.helper.MessageHelper;
+import de.cubenation.core.bedrock.service.command.CommandManager;
+import org.bukkit.command.CommandSender;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+@Description("command.bedrock.version.desc")
+@Permission(Name = "version", Role = CommandRole.MODERATOR)
+@SubCommand({ "version", "v" })
+public class VersionCommand extends Command {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    public VersionCommand(BasePlugin plugin, CommandManager commandManager) {
+        super(plugin, commandManager);
+    }
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    @Override
+    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+        MessageHelper.version(this.getCommandManager().getPlugin(), sender);
     }
 
 }

@@ -20,24 +20,49 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.helper;
 
-import de.cubenation.core.bedrock.BasePlugin;
-
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+public class IgnoreCaseArrayList extends ArrayList<String> {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
-
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    public IgnoreCaseArrayList(List<String> strings) {
+        for (String s : strings) {
+            this.add(s.toLowerCase());
+        }
     }
 
+    @Override
+    public boolean remove(Object o) {
+        String string = (String) o;
+        string = string.toLowerCase();
+        return super.remove(string);
+    }
+
+    @Override
+    public int indexOf(Object o) {
+        String string = (String) o;
+        for (int i = 0; i < size(); i++ ) {
+            if (get(i).toLowerCase().equalsIgnoreCase(string)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        String string = (String) o;
+        for (String s : this) {
+            if (string.equalsIgnoreCase(s)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

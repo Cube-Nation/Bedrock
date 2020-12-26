@@ -20,24 +20,22 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.annotation;
 
-import de.cubenation.core.bedrock.BasePlugin;
+import de.cubenation.core.bedrock.service.AbstractService;
 
-import java.io.File;
+import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Repeatable(Services.class)
+public @interface Service {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
-
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
-    }
+    Class<? extends AbstractService> value();
 
 }

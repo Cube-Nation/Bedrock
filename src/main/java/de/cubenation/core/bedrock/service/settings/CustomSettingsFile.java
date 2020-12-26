@@ -20,9 +20,10 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.plugin.bedrock.config;
+package de.cubenation.core.bedrock.service.settings;
 
 import de.cubenation.core.bedrock.BasePlugin;
+import net.cubespace.Yamler.Config.YamlConfig;
 
 import java.io.File;
 
@@ -30,14 +31,40 @@ import java.io.File;
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.core.bedrock.config.BedrockDefaults {
+@SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored", "unused"})
+public abstract class CustomSettingsFile extends YamlConfig {
 
-    public BedrockDefaults(BasePlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.plugin.bedrock.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    private final BasePlugin plugin;
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    public CustomSettingsFile(BasePlugin plugin) {
+        this(plugin, getFilename());
     }
+
+    public CustomSettingsFile(BasePlugin plugin, String name) {
+        this.plugin = plugin;
+        setConfigFile(name);
+    }
+
+    private void setConfigFile(String name) {
+        File settingsDir = new File(this.plugin.getDataFolder(), SettingsService.SETTINGSDIR);
+        if (!settingsDir.exists()) {
+            settingsDir.mkdir();
+        }
+
+        File file = new File(settingsDir, getSettingsName());
+        if (!file.exists()) {
+            file.mkdir();
+        }
+
+        CONFIG_FILE = new File(file, name);
+    }
+
+    private static String getFilename() {
+        return "_default.yml";
+    }
+
+    public abstract String getSettingsName();
+
+    public abstract String info();
 
 }
