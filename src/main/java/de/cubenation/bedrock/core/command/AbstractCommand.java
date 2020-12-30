@@ -23,25 +23,26 @@
 package de.cubenation.bedrock.core.command;
 
 import de.cubenation.bedrock.core.annotation.Argument;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.MessageHelper;
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.IngameCommand;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.core.helper.LengthComparator;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
-import de.cubenation.bedrock.core.service.permission.Permission;
+import de.cubenation.bedrock.core.authorization.Permission;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -57,7 +58,7 @@ import java.util.logging.Level;
  */
 public abstract class AbstractCommand {
 
-    protected BasePlugin plugin;
+    protected BedrockBasePlugin plugin;
 
     protected CommandManager commandManager;
 
@@ -80,7 +81,7 @@ public abstract class AbstractCommand {
      * @param plugin            A Bedrock-compatible plugin
      * @param commandManager    The Bedrock command manager
      */
-    AbstractCommand(BasePlugin plugin, CommandManager commandManager) {
+    AbstractCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         this.plugin = plugin;
         this.commandManager = commandManager;
 
@@ -88,7 +89,7 @@ public abstract class AbstractCommand {
         this.parseMethodAnnotations(this.getClass());
     }
 
-    public BasePlugin getPlugin() {
+    public BedrockBasePlugin getPlugin() {
         return this.plugin;
     }
 
@@ -163,7 +164,7 @@ public abstract class AbstractCommand {
         return this.arguments;
     }
 
-    private Permission createPermission(String name, CommandRole role, String roleName, String description) {
+    private Permission createPermission(String name, Role role, String roleName, String description) {
         Permission permission = new Permission(name);
 
         if (roleName != null && !roleName.isEmpty()) {
@@ -171,7 +172,7 @@ public abstract class AbstractCommand {
         }
 
         // CommandRole enums always win (in case a role String is defined)
-        if (role != null && !role.equals(CommandRole.NO_ROLE)) {
+        if (role != null && !role.equals(Role.NO_ROLE)) {
             permission.setRole(role);
         }
 
@@ -260,9 +261,9 @@ public abstract class AbstractCommand {
         this.arguments.add(argument);
     }
 
-    public void preExecute(CommandSender commandSender, String[] args)  throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void preExecute(BedrockChatSender commandSender, String[] args)  throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
-        if (this.isIngameCommandOnly() && !(commandSender instanceof Player)) {
+        if (this.isIngameCommandOnly() && !(commandSender instanceof BedrockPlayer)) {
             MessageHelper.mustBePlayer(plugin, commandSender);
             return;
         }
@@ -309,7 +310,7 @@ public abstract class AbstractCommand {
      * @throws IllegalCommandArgumentException  Thrown when the arguments did not match the predefined ones
      * @throws InsufficientPermissionException  Thrown when the command issuer does not have enough permissions for this command
      */
-    public abstract void execute(CommandSender sender, String[] args)
+    public abstract void execute(BedrockChatSender sender, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     /**
@@ -329,7 +330,7 @@ public abstract class AbstractCommand {
      * @param sender the sender of the requested tab completion.
      * @return the tab completion for argument
      */
-    public abstract ArrayList<String> getTabCompletion(String[] args, CommandSender sender);
+    public abstract ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender);
 
     public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
         if (this.subcommands.size() < args.length) {
@@ -430,7 +431,7 @@ public abstract class AbstractCommand {
         return true;
     }
 
-    public JsonMessage getJsonHelp(CommandSender sender) {
+    public JsonMessage getJsonHelp(BedrockChatSender sender) {
         return MessageHelper.getHelpForSubCommand(plugin, sender, this);
     }
 
@@ -538,7 +539,7 @@ public abstract class AbstractCommand {
      * @param sender the sender
      * @return true, if the sender has Permissions, else false.
      */
-    public final boolean hasPermission(CommandSender sender) {
+    public final boolean hasPermission(BedrockChatSender sender) {
         // No permission defined -> sender has permission
         if (getRuntimePermissions().isEmpty())
             return true;

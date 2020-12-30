@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.settings;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import net.cubespace.Yamler.Config.YamlConfig;
 
 import java.io.File;
@@ -34,13 +34,13 @@ import java.io.File;
 @SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored", "unused"})
 public abstract class CustomSettingsFile extends YamlConfig {
 
-    private final BasePlugin plugin;
+    private final BedrockBasePlugin plugin;
 
-    public CustomSettingsFile(BasePlugin plugin) {
+    public CustomSettingsFile(BedrockBasePlugin plugin) {
         this(plugin, getFilename());
     }
 
-    public CustomSettingsFile(BasePlugin plugin, String name) {
+    public CustomSettingsFile(BedrockBasePlugin plugin, String name) {
         this.plugin = plugin;
         setConfigFile(name);
     }

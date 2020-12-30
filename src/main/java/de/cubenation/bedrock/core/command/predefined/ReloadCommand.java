@@ -22,9 +22,9 @@
 
 package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -33,23 +33,23 @@ import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
 @Description("command.bedrock.reload.desc")
-@Permission(Name = "reload", Role = CommandRole.ADMIN)
+@Permission(Name = "reload", Role = Role.ADMIN)
 @SubCommand({ "reload", "r" })
 public class ReloadCommand extends Command {
 
-    public ReloadCommand(BasePlugin plugin, CommandManager commandManager) {
+    public ReloadCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         try {
             this.getPlugin().getServiceManager().reload();
             MessageHelper.reloadComplete(this.getCommandManager().getPlugin(),sender);

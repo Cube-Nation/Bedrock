@@ -22,13 +22,15 @@
 
 package de.cubenation.bedrock.core.service.pageablelist;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.core.registry.AbstractRegistry;
 import de.cubenation.bedrock.core.registry.RegistryInterface;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.plugin.BedrockPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * @author Cube-Nation
@@ -62,27 +64,27 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
     }
 
 
-    public static void register(final BasePlugin plugin, final String ident, final CommandSender sender, AbstractPageableListService object) {
+    public static void register(final BedrockBasePlugin plugin, final String ident, final BedrockChatSender sender, AbstractPageableListService object) {
         getInstance()._register(plugin, ident, sender, object);
 
         // if the timeout is zero, the list is valid until a new list is registered for this CommandSender
         if (timeout > 0) {
-            Bukkit.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            Bukkit.getServer().getScheduler().runTaskTimer((JavaPlugin) plugin, () -> {
                 PageableListRegistry registry = PageableListRegistry.getInstance();
                 remove(plugin, ident, sender);
             }, 60L, (long) 20 * timeout);
         }
     }
 
-    public static boolean exists(BasePlugin plugin, String ident, CommandSender sender) {
+    public static boolean exists(BedrockBasePlugin plugin, String ident, BedrockChatSender sender) {
         return getInstance()._exists(plugin, ident, sender);
     }
 
-    public static AbstractPageableListService get(BasePlugin plugin, String ident, CommandSender sender) throws NoSuchRegisterableException {
+    public static AbstractPageableListService get(BedrockBasePlugin plugin, String ident, BedrockChatSender sender) throws NoSuchRegisterableException {
         return (AbstractPageableListService) getInstance()._get(plugin, ident, sender);
     }
 
-    public static void remove(BasePlugin plugin, String ident, CommandSender sender) {
+    public static void remove(BedrockBasePlugin plugin, String ident, BedrockChatSender sender) {
         getInstance()._remove(plugin, ident, sender);
     }
 

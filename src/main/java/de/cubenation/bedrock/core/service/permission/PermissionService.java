@@ -22,17 +22,18 @@
 
 package de.cubenation.bedrock.core.service.permission;
 
-import de.cubenation.bedrock.core.BasePlugin;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
+import de.cubenation.bedrock.core.authorization.Role;
+import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.config.Permissions;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,14 +52,14 @@ public class PermissionService extends AbstractService {
 
     private ArrayList<Permission> localPermissionCache = new ArrayList<>();
 
-    public PermissionService(BasePlugin plugin) {
+    public PermissionService(BedrockBasePlugin plugin) {
         super(plugin);
     }
 
     public String getPermissionPrefix() {
         return (String) this.getConfigurationValue(
                 "service.permission.prefix",
-                this.getPlugin().getDescription().getName().toLowerCase()
+                this.getPlugin().getPrettyName().toLowerCase()
         );
     }
 
@@ -86,7 +87,7 @@ public class PermissionService extends AbstractService {
 
     @Deprecated
     public void registerPermission(String role, String permission) throws NullPointerException {
-        this.registerPermission(permission, CommandRole.valueOf(role));
+        this.registerPermission(permission, Role.valueOf(role));
     }
 
     @SuppressWarnings("unused")
@@ -95,7 +96,7 @@ public class PermissionService extends AbstractService {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public void registerPermission(String permission, CommandRole role) {
+    public void registerPermission(String permission, Role role) {
         this.registerPermission(new Permission(permission, role));
     }
 
@@ -158,7 +159,7 @@ public class PermissionService extends AbstractService {
 
                 // To self-repair NO_ROLE permissions we ignore them here.
                 // They will be added later to their approriate role (or NO_ROLE) again
-                if (commandRole.equals(CommandRole.NO_ROLE)) {
+                if (commandRole.equals(Role.NO_ROLE)) {
                     return;
                 }
 
@@ -191,7 +192,7 @@ public class PermissionService extends AbstractService {
 
     private void savePermissions(Permissions permissions) {
         // clean up default role - will be restored if necessary
-        permissions.removeRole(CommandRole.NO_ROLE);
+        permissions.removeRole(Role.NO_ROLE);
 
         // restore missing permissions
         this.localPermissionCache.forEach(permission -> {
@@ -211,7 +212,7 @@ public class PermissionService extends AbstractService {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public boolean hasPermission(CommandSender sender, Permission permission) {
+    public boolean hasPermission(BedrockChatSender sender, Permission permission) {
         // op check
         if (sender.isOp() && (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {
             return true;
@@ -224,7 +225,7 @@ public class PermissionService extends AbstractService {
         }
 
         // check again with full permission node (including permission prefix for role)
-        CommandRole role = ((Permissions) plugin.getConfigService().getConfig(Permissions.class)).getRoleForPermission(permission.getName());
+        Role role = ((Permissions) plugin.getConfigService().getConfig(Permissions.class)).getRoleForPermission(permission.getName());
         if (role != null) {
             if (sender.hasPermission(String.format("%s.%s.%s", this.getPermissionPrefix(), role.getType().toLowerCase(), permission.getName()))) {
                 return true;
@@ -235,7 +236,7 @@ public class PermissionService extends AbstractService {
     }
 
     @SuppressWarnings("unused")
-    public boolean hasPermission(CommandSender sender, String permission) {
+    public boolean hasPermission(BedrockChatSender sender, String permission) {
         List<Permission> filtered = this.localPermissionCache.stream()
                 .filter(cachedPermission -> cachedPermission.getName().equals(permission))
                 .collect(Collectors.toList());
@@ -252,7 +253,7 @@ public class PermissionService extends AbstractService {
         return this.localPermissionCache;
     }
 
-    public List<Permission> getPermissions(Player player) throws PlayerNotFoundException {
+    public List<Permission> getPermissions(BedrockPlayer player) throws PlayerNotFoundException {
         if (player == null)
             throw new PlayerNotFoundException();
 

@@ -22,14 +22,14 @@
 
 package de.cubenation.bedrock.core.service.colorscheme.scheme;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import net.md_5.bungee.api.ChatColor;
 
 @SuppressWarnings("unused")
 public class RedColorScheme extends ColorScheme {
 
-    public RedColorScheme(BasePlugin plugin) {
+    public RedColorScheme(BedrockBasePlugin plugin) {
         super(ColorSchemeName.RED, ChatColor.RED, ChatColor.DARK_RED, ChatColor.GRAY, ChatColor.WHITE);
     }
 

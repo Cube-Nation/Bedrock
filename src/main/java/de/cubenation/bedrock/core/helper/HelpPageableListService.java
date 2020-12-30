@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.helper;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.pageablelist.AbstractPageableListService;
 
 /**
@@ -31,7 +31,7 @@ import de.cubenation.bedrock.core.service.pageablelist.AbstractPageableListServi
  */
 public class HelpPageableListService extends AbstractPageableListService {
 
-    public HelpPageableListService(BasePlugin plugin) {
+    public HelpPageableListService(BedrockBasePlugin plugin) {
         super(plugin);
     }
 

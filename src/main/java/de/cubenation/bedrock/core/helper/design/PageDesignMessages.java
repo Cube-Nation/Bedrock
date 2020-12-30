@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.helper.design;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.helper.MessageHelper;
 import de.cubenation.bedrock.core.translation.Translation;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -33,7 +33,7 @@ import net.md_5.bungee.api.chat.TextComponent;
  */
 public class PageDesignMessages extends MessageHelper {
 
-    public static TextComponent getHeader(BasePlugin plugin, int from, int to) {
+    public static TextComponent getHeader(BedrockBasePlugin plugin, int from, int to) {
         return new TextComponent(new Translation(
                 plugin,
                 "page.design.header",

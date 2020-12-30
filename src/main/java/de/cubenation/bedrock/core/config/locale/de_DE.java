@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.config.locale;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Path;
 
@@ -40,7 +40,7 @@ public class de_DE extends CustomConfigurationFile {
         return "locale" + File.separator + "de_DE.yml";
     }
 
-    public de_DE(BasePlugin plugin) {
+    public de_DE(BedrockBasePlugin plugin) {
         CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
     }
 

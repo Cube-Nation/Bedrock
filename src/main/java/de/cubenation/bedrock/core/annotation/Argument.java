@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.annotation;
 
 import de.cubenation.bedrock.core.annotation.condition.DefaultCondition;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 
 import java.lang.annotation.*;
 
@@ -47,7 +47,7 @@ public @interface Argument {
 
     String Permission() default "";
 
-    CommandRole Role() default CommandRole.NO_ROLE;
+    Role Role() default Role.NO_ROLE;
 
     String RoleName() default "NO_ROLE";
 

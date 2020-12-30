@@ -22,17 +22,17 @@
 
 package de.cubenation.bedrock.core.translation;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.Bedrock;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.plugin.BedrockPlugin;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import java.util.Arrays;
 @SuppressWarnings("unused")
 public class JsonMessage {
 
-    private final BasePlugin plugin;
+    private final BedrockBasePlugin plugin;
 
     private String localeIdentifier;
 
@@ -56,11 +56,11 @@ public class JsonMessage {
 
     private final LocalizationService service;
 
-    public JsonMessage(BasePlugin plugin, String localeIdentifier) {
+    public JsonMessage(BedrockBasePlugin plugin, String localeIdentifier) {
         this(plugin, localeIdentifier, new String[]{});
     }
 
-    public JsonMessage(BasePlugin plugin, String localeIdentifier, String... localeArgs) {
+    public JsonMessage(BedrockBasePlugin plugin, String localeIdentifier, String... localeArgs) {
         this.plugin = plugin;
         this.localeIdentifier = localeIdentifier;
         this.setLocaleArgs(localeArgs);
@@ -69,23 +69,23 @@ public class JsonMessage {
         json = getTranslation();
     }
 
-    public JsonMessage(BasePlugin plugin, JSONObject bedrockJson) {
+    public JsonMessage(BedrockBasePlugin plugin, JSONObject bedrockJson) {
         this.plugin = plugin;
         this.service = plugin.getLocalizationService();
 
         json = bedrockJson.toJSONString();
     }
 
-    public void send(CommandSender commandSender) {
+    public void send(BedrockChatSender commandSender) {
         send(commandSender, ChatMessageType.CHAT);
     }
 
-    public void send(CommandSender commandSender, ChatMessageType chatMessageType) {
+    public void send(BedrockChatSender commandSender, ChatMessageType chatMessageType) {
         BaseComponent[] components = createBaseComponent();
         if (components == null) return;
 
-        if (commandSender instanceof Player) {
-            Player player = (Player) commandSender;
+        if (commandSender instanceof BedrockPlayer) {
+            BedrockPlayer player = (BedrockPlayer) commandSender;
             sendPlayer(player, components, chatMessageType);
         } else {
             sendConsole(commandSender, components);
@@ -97,17 +97,17 @@ public class JsonMessage {
     }
 
     public void broadcast(ChatMessageType chatMessageType) {
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        for (BedrockPlayer player : Bedrock.getOnlinePlayers()) {
             send(player, chatMessageType);
         }
     }
 
-    public void broadcast(ArrayList<Player> withoutPlayer) {
+    public void broadcast(ArrayList<BedrockPlayer> withoutPlayer) {
         broadcast(withoutPlayer, ChatMessageType.CHAT);
     }
 
-    public void broadcast(ArrayList<Player> withoutPlayer, ChatMessageType chatMessageType) {
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+    public void broadcast(ArrayList<BedrockPlayer> withoutPlayer, ChatMessageType chatMessageType) {
+        for (BedrockPlayer player : Bedrock.getOnlinePlayers()) {
             if (withoutPlayer.contains(player)) {
                 continue;
             }
@@ -115,11 +115,11 @@ public class JsonMessage {
         }
     }
 
-    private void sendPlayer(Player player, BaseComponent[] components, ChatMessageType chatMessageType) {
-        player.spigot().sendMessage(chatMessageType, components);
+    private void sendPlayer(BedrockPlayer player, BaseComponent[] components, ChatMessageType chatMessageType) {
+        player.sendMessage(chatMessageType, components);
     }
 
-    private void sendConsole(CommandSender commandSender, BaseComponent[] components) {
+    private void sendConsole(BedrockChatSender commandSender, BaseComponent[] components) {
         String legacyText = BaseComponent.toLegacyText(components);
         commandSender.sendMessage(legacyText);
     }
@@ -187,7 +187,7 @@ public class JsonMessage {
     }
 
 
-    public BasePlugin getPlugin() {
+    public BedrockBasePlugin getPlugin() {
         return plugin;
     }
 

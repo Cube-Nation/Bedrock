@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.colorscheme.scheme;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.plugin.BedrockPlugin;
 import net.md_5.bungee.api.ChatColor;
@@ -30,7 +30,7 @@ import net.md_5.bungee.api.ChatColor;
 @SuppressWarnings("unused")
 public class CustomColorScheme extends ColorScheme {
 
-    public CustomColorScheme(BasePlugin plugin, ChatColor primary, ChatColor secondary, ChatColor flag, ChatColor text) {
+    public CustomColorScheme(BedrockBasePlugin plugin, ChatColor primary, ChatColor secondary, ChatColor flag, ChatColor text) {
         super(
                 ColorSchemeName.CUSTOM,
                 primary, secondary, flag, text
@@ -38,7 +38,7 @@ public class CustomColorScheme extends ColorScheme {
     }
 
     @SuppressWarnings("deprecation")
-    public CustomColorScheme(BasePlugin plugin) {
+    public CustomColorScheme(BedrockBasePlugin plugin) {
         super(
                 ColorSchemeName.CUSTOM,
                 ChatColor.valueOf(

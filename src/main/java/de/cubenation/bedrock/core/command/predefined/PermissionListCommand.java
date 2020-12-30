@@ -22,9 +22,9 @@
 
 package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.helper.MessageHelper;
@@ -33,6 +33,7 @@ import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.bukkit.command.CommandSender;
 
 /**
@@ -41,14 +42,14 @@ import org.bukkit.command.CommandSender;
  */
 @Description("command.bedrock.permissions.list.desc")
 @SubCommand({ "pl", "permslist", "permissionslist" })
-@Permission(Name = "permission.list", Role = CommandRole.MODERATOR)
+@Permission(Name = "permission.list", Role = Role.MODERATOR)
 public class PermissionListCommand extends Command {
 
-    public PermissionListCommand(BasePlugin plugin, CommandManager commandManager) {
+    public PermissionListCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = this.getPlugin().getPermissionService();
 
         if (permissionService != null) {

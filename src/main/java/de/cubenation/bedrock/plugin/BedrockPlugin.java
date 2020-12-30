@@ -22,13 +22,14 @@
 
 package de.cubenation.bedrock.plugin;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.core.ebean.BedrockPlayer;
 import de.cubenation.bedrock.core.ebean.BedrockWorld;
+import de.cubenation.bedrock.implementation.bukkit.BukkitBedrockPlugin;
 import de.cubenation.bedrock.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.plugin.command.BedrockPlayerInfoCommand;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
@@ -48,7 +49,7 @@ import java.util.logging.Level;
 @CommandHandler(Command = "bp", Handlers = {
         BedrockPlayerInfoCommand.class
 })
-public class BedrockPlugin extends BasePlugin {
+public class BedrockPlugin extends BukkitBedrockPlugin {
 
     private static BedrockPlugin instance;
 

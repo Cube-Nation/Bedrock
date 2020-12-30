@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.config;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import net.cubespace.Yamler.Config.YamlConfig;
 
 /**
@@ -34,7 +34,7 @@ public abstract class CustomConfigurationFile extends YamlConfig {
     public CustomConfigurationFile() { }
 
     @SuppressWarnings("unused")
-    public CustomConfigurationFile(BasePlugin plugin, String name) { }
+    public CustomConfigurationFile(BedrockBasePlugin plugin, String name) { }
 
     public CustomConfigurationFile get() {
         return this;

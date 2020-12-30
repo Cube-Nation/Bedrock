@@ -22,10 +22,10 @@
 
 package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -37,6 +37,7 @@ import de.cubenation.bedrock.core.service.settings.SettingsManager;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -46,19 +47,19 @@ import java.util.ArrayList;
  * @version 1.0
  */
 @Description("command.bedrock.info.desc")
-@Permission(Name = "settings.list", Role = CommandRole.ADMIN)
+@Permission(Name = "settings.list", Role = Role.ADMIN)
 @SubCommand({ "settings" })
 @SubCommand({ "info", "i" })
 @Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
 @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
 public class SettingsInfoCommand extends Command {
 
-    public SettingsInfoCommand(BasePlugin plugin, CommandManager commandManager) {
+    public SettingsInfoCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         String settingsKey = args[0];
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
@@ -93,7 +94,7 @@ public class SettingsInfoCommand extends Command {
     }
 
     @Override
-    public ArrayList<String> getTabArgumentCompletion(CommandSender sender, int argumentIndex, String[] args) {
+    public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{
                 addAll(plugin.getSettingService().getSettingsMap().keySet());

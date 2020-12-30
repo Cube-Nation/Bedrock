@@ -26,7 +26,7 @@ import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.exception.UnknownServiceException;
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.Service;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.CommandService;
@@ -48,18 +48,18 @@ import java.util.logging.Level;
  */
 public class ServiceManager {
 
-    private BasePlugin plugin;
+    private BedrockBasePlugin plugin;
 
     private boolean intentionally_ready = false;
 
     // A LinkedHashMap preserves the order of its elements which is elementary for all services
     private LinkedHashMap<Class<? extends AbstractService>, AbstractService> services = new LinkedHashMap<>();
 
-    public ServiceManager(BasePlugin plugin) {
+    public ServiceManager(BedrockBasePlugin plugin) {
         this.plugin = plugin;
     }
 
-    protected BasePlugin getPlugin() {
+    protected BedrockBasePlugin getPlugin() {
         return this.plugin;
     }
 
@@ -92,7 +92,7 @@ public class ServiceManager {
 
         AbstractService service;
         try {
-            Constructor<? extends AbstractService> cosntructor = clazz.getConstructor(BasePlugin.class);
+            Constructor<? extends AbstractService> cosntructor = clazz.getConstructor(BedrockBasePlugin.class);
             service = cosntructor.newInstance(this.plugin);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new ServiceInitException(e.getMessage());

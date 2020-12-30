@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.config;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
@@ -49,7 +49,7 @@ public class ConfigService extends AbstractService {
     @SuppressWarnings("FieldCanBeLocal")
     private final String do_not_delete_me = "Seriously. Do not delete this";
 
-    public ConfigService(BasePlugin plugin) {
+    public ConfigService(BedrockBasePlugin plugin) {
         super(plugin);
     }
 
@@ -156,7 +156,7 @@ public class ConfigService extends AbstractService {
         } catch (ClassNotFoundException e) {
             throw new InstantiationException(String.format("Could not find class %s in plugin %s",
                     class_name,
-                    this.getPlugin().getDescription().getName())
+                    this.getPlugin().getPrettyName())
             );
         }
 
@@ -194,9 +194,9 @@ public class ConfigService extends AbstractService {
      * @throws InstantiationException
      */
     @SuppressWarnings("unchecked")
-    private CustomConfigurationFile createPluginConfig(BasePlugin plugin, Class class_name) throws InstantiationException {
+    private CustomConfigurationFile createPluginConfig(BedrockBasePlugin plugin, Class class_name) throws InstantiationException {
         try {
-            Constructor<?> constructor = class_name.getConstructor(BasePlugin.class);
+            Constructor<?> constructor = class_name.getConstructor(BedrockBasePlugin.class);
             return (CustomConfigurationFile) constructor.newInstance(plugin);
         } catch (Exception e) {
             e.printStackTrace();

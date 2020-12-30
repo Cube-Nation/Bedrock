@@ -22,9 +22,9 @@
 
 package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -33,7 +33,9 @@ import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,30 +45,30 @@ import java.util.Map;
  * @version 1.0
  */
 @Description("command.bedrock.cmd.list.desc")
-@Permission(Name = "command.list", Role = CommandRole.USER)
+@Permission(Name = "command.list", Role = Role.USER)
 @SubCommand({ "command", "cmd" })
 @SubCommand({ "list", "l" })
 public class CommandListCommand extends Command {
 
-    public CommandListCommand(BasePlugin plugin, CommandManager commandManager) {
+    public CommandListCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();
 
-        for (Map.Entry<String, Map<String, Object>> entry : plugin.getDescription().getCommands().entrySet()) {
+        for (Map.Entry<String, Map<String, Object>> entry : ((JavaPlugin) plugin).getDescription().getCommands().entrySet()) { // TODO: remove Bukkit dependency
 
             // Skip if the command is the settings command
-            if (entry.getKey().equalsIgnoreCase(plugin.getDescription().getName())) {
+            if (entry.getKey().equalsIgnoreCase(plugin.getPrettyName())) {
                 continue;
             }
 
             // Try to get a description for the current command, if it exists.
             try {
-                String description = (String) entry.getValue().get("description");
+                String description = (String) entry.getValue().get("description"); // TODO: not generic yet
                 if (description != null) {
                     commandList.put(entry.getKey(), description);
                     continue;

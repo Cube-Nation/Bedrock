@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.settings;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -46,7 +46,7 @@ public class SettingsService extends AbstractService {
     private HashMap<String, SettingsManager> settingsMap;
     private HashMap<Class<?>, SettingsManager> settingsClassMap;
 
-    public SettingsService(BasePlugin plugin) {
+    public SettingsService(BedrockBasePlugin plugin) {
         super(plugin);
         this.settingsDirectory = new File(plugin.getDataFolder() + File.separator + SETTINGSDIR);
     }

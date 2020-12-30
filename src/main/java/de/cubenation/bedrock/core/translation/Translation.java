@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.translation;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
@@ -42,7 +42,7 @@ import java.util.Arrays;
  */
 public class Translation {
 
-    private BasePlugin plugin;
+    private BedrockBasePlugin plugin;
 
     private String locale_ident;
 
@@ -51,11 +51,11 @@ public class Translation {
     private final LocalizationService service;
 
 
-    public Translation(BasePlugin plugin, String locale_ident) {
+    public Translation(BedrockBasePlugin plugin, String locale_ident) {
         this(plugin, locale_ident, new String[]{});
     }
 
-    public Translation(BasePlugin plugin, String locale_ident, String[] locale_args) {
+    public Translation(BedrockBasePlugin plugin, String locale_ident, String[] locale_args) {
         /*
         if (plugin instanceof BedrockPlugin) {
             StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
@@ -114,11 +114,11 @@ public class Translation {
     }
 
 
-    private BasePlugin getPlugin() {
+    private BedrockBasePlugin getPlugin() {
         return plugin;
     }
 
-    private void setPlugin(BasePlugin plugin) {
+    private void setPlugin(BedrockBasePlugin plugin) {
         this.plugin = plugin;
     }
 

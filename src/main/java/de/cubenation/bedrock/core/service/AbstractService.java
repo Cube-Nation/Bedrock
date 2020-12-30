@@ -24,7 +24,7 @@ package de.cubenation.bedrock.core.service;
 
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.plugin.BedrockPlugin;
 
 import java.util.logging.Level;
@@ -35,17 +35,17 @@ import java.util.logging.Level;
  */
 public abstract class AbstractService {
 
-    protected BasePlugin plugin;
+    protected BedrockBasePlugin plugin;
 
-    public AbstractService(BasePlugin plugin) {
+    public AbstractService(BedrockBasePlugin plugin) {
         this.setPlugin(plugin);
     }
 
-    protected void setPlugin(BasePlugin plugin) {
+    protected void setPlugin(BedrockBasePlugin plugin) {
         this.plugin = plugin;
     }
 
-    protected BasePlugin getPlugin() {
+    protected BedrockBasePlugin getPlugin() {
         return this.plugin;
     }
 

@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.colorscheme;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.colorscheme.scheme.DefaultColorScheme;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -77,7 +77,7 @@ public class ColorScheme {
                 .setText(text);
     }
 
-    public static ColorScheme getColorScheme(BasePlugin plugin, String name) {
+    public static ColorScheme getColorScheme(BedrockBasePlugin plugin, String name) {
         if (name == null || name.isEmpty() || ColorSchemeName.valueOf(name.toUpperCase()) == null)
             return new DefaultColorScheme(plugin);
 
@@ -85,7 +85,7 @@ public class ColorScheme {
     }
 
     @SuppressWarnings("unchecked")
-    public static ColorScheme getColorScheme(BasePlugin plugin, ColorSchemeName name) {
+    public static ColorScheme getColorScheme(BedrockBasePlugin plugin, ColorSchemeName name) {
         if (ColorSchemeName.valueOf(name.toString()) == null)
             return new DefaultColorScheme(plugin);
 
@@ -96,7 +96,7 @@ public class ColorScheme {
                     "ColorScheme"
             );
 
-            Constructor<?> constructor = cls.getConstructor(BasePlugin.class);
+            Constructor<?> constructor = cls.getConstructor(BedrockBasePlugin.class);
             return (ColorScheme) constructor.newInstance(plugin);
 
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.config;
 
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
@@ -84,7 +84,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
     public BedrockDefaults() {
     }
 
-    public BedrockDefaults(BasePlugin plugin) {
+    public BedrockDefaults(BedrockBasePlugin plugin) {
         CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
         CONFIG_HEADER = getHeader();
     }

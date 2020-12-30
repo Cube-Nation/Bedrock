@@ -22,10 +22,11 @@
 
 package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.Bedrock;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
@@ -35,6 +36,7 @@ import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -43,27 +45,27 @@ import org.bukkit.command.CommandSender;
  * @version 1.0
  */
 @Description("command.bedrock.permissions.desc")
-@Permission(Name = "permissions.other", Role = CommandRole.MODERATOR)
-@Permission(Name = "permissions.self", Role = CommandRole.USER)
+@Permission(Name = "permissions.other", Role = Role.MODERATOR)
+@Permission(Name = "permissions.self", Role = Role.USER)
 @SubCommand({ "permissions", "perms" })
 @Argument(
         Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true,
-        Permission = "permissions.other", Role = CommandRole.MODERATOR
+        Permission = "permissions.other", Role = Role.MODERATOR
 )
 public class PermissionOtherCommand extends Command {
 
-    public PermissionOtherCommand(BasePlugin plugin, CommandManager commandManager) {
+    public PermissionOtherCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
 
         // check args length
         if (args.length > 1)
             throw new IllegalCommandArgumentException();
 
-        String player = (args.length == 0) ? sender.getName() : args[0];
+        String player = (args.length == 0) ? sender.getDisplayName() : args[0];
 
         PermissionService permissionService = getPlugin().getPermissionService();
         if (permissionService == null) {
@@ -76,7 +78,7 @@ public class PermissionOtherCommand extends Command {
                     plugin,
                     sender,
                     permissionService.getPermissions(
-                            Bukkit.getPlayer(player)
+                            Bedrock.getPlayer(player)
                     )
             );
 

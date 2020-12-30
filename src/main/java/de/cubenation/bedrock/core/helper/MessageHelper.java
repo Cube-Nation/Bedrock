@@ -23,12 +23,14 @@
 package de.cubenation.bedrock.core.helper;
 
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
-import de.cubenation.bedrock.core.service.permission.Permission;
+import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;
@@ -42,8 +44,6 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,36 +55,36 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public class MessageHelper {
 
-    public static void commandExecutionError(BasePlugin plugin, CommandSender sender, Exception e) {
+    public static void commandExecutionError(BedrockBasePlugin plugin, BedrockChatSender sender, Exception e) {
         sender.sendMessage(plugin.getMessagePrefix() + " " + e.getMessage());
     }
 
-    public static void insufficientPermission(BasePlugin plugin, CommandSender sender) {
+    public static void insufficientPermission(BedrockBasePlugin plugin, BedrockChatSender sender) {
         new JsonMessage(plugin, "permission.insufficient").send(sender);
     }
 
-    public static void noPermission(BasePlugin plugin, CommandSender sender) {
+    public static void noPermission(BedrockBasePlugin plugin, BedrockChatSender sender) {
         new JsonMessage(plugin, "json.no_permissions").send(sender);
     }
 
-    public static void invalidCommand(BasePlugin plugin, CommandSender sender) {
+    public static void invalidCommand(BedrockBasePlugin plugin, BedrockChatSender sender) {
         JsonMessage jsonMessage = new JsonMessage(plugin, "command.invalid");
         jsonMessage.send(sender);
     }
 
-    public static void mustBePlayer(BasePlugin plugin, CommandSender commandSender) {
+    public static void mustBePlayer(BedrockBasePlugin plugin, BedrockChatSender commandSender) {
         new JsonMessage(plugin, "must_be_player").send(commandSender);
     }
 
-    public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender, String player) {
+    public static void noSuchPlayer(BedrockBasePlugin plugin, BedrockChatSender commandSender, String player) {
         new JsonMessage(plugin, "no_such_player.specific", "player", player).send(commandSender);
     }
 
-    public static void noSuchPlayer(BasePlugin plugin, CommandSender commandSender) {
+    public static void noSuchPlayer(BedrockBasePlugin plugin, BedrockChatSender commandSender) {
         new JsonMessage(plugin, "no_such_player.default").send(commandSender);
     }
 
-    public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender, String world) {
+    public static void noSuchWorld(BedrockBasePlugin plugin, BedrockChatSender commandSender, String world) {
         if (world == null || world.equals("")) {
             noSuchWorld(plugin, commandSender);
             return;
@@ -92,29 +92,29 @@ public class MessageHelper {
         new JsonMessage(plugin, "no_such_world", "world", world).send(commandSender);
     }
 
-    public static void noSuchWorld(BasePlugin plugin, CommandSender commandSender) {
+    public static void noSuchWorld(BedrockBasePlugin plugin, BedrockChatSender commandSender) {
         new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
     }
 
-    public static void reloadComplete(BasePlugin plugin, CommandSender sender) {
+    public static void reloadComplete(BedrockBasePlugin plugin, BedrockChatSender sender) {
         new JsonMessage(plugin, "reload.complete").send(sender);
     }
 
-    public static void reloadFailed(BasePlugin plugin, CommandSender sender) {
+    public static void reloadFailed(BedrockBasePlugin plugin, BedrockChatSender sender) {
         new JsonMessage(plugin, "reload.failed").send(sender);
     }
 
-    public static void version(BasePlugin plugin, CommandSender sender) {
-        new JsonMessage(plugin, "version", "version", plugin.getDescription().getVersion()).send(sender);
+    public static void version(BedrockBasePlugin plugin, BedrockChatSender sender) {
+        new JsonMessage(plugin, "version", "version", plugin.getPluginVersion()).send(sender);
     }
 
     @Deprecated
-    public static void send(BasePlugin plugin, CommandSender sender, String message) {
+    public static void send(BedrockBasePlugin plugin, BedrockChatSender sender, String message) {
         send(plugin, sender, new TextComponent(message));
     }
 
     @Deprecated
-    public static void send(BasePlugin plugin, CommandSender sender, TextComponent component) {
+    public static void send(BedrockBasePlugin plugin, BedrockChatSender sender, TextComponent component) {
         // check for NullPointerException
         if (component == null)
             return;
@@ -122,7 +122,7 @@ public class MessageHelper {
     }
 
     @Deprecated
-    public static void send(BasePlugin plugin, CommandSender sender, TextComponent component, HoverEvent hover_event, ClickEvent click_event) {
+    public static void send(BedrockBasePlugin plugin, BedrockChatSender sender, TextComponent component, HoverEvent hover_event, ClickEvent click_event) {
         // check for NullPointerException
         if (component == null)
             return;
@@ -133,13 +133,13 @@ public class MessageHelper {
         // apply colors from color scheme to message
         component = color_scheme.applyColorScheme(component);
 
-        if (sender instanceof Player) {
+        if (sender instanceof BedrockPlayer) {
             if (hover_event != null)
                 component.setHoverEvent(color_scheme.applyColorScheme(hover_event));
             if (click_event != null)
                 component.setClickEvent(color_scheme.applyColorScheme(click_event));
 
-            ((Player) sender).spigot().sendMessage(component);
+            ((BedrockPlayer) sender).sendMessage(component);
 
         } else {
             StringBuilder hover_message = new StringBuilder();
@@ -214,7 +214,7 @@ public class MessageHelper {
      * @param command a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
-    public static JsonMessage getHelpForSubCommand(BasePlugin plugin, CommandSender sender, AbstractCommand command) {
+    public static JsonMessage getHelpForSubCommand(BedrockBasePlugin plugin, BedrockChatSender sender, AbstractCommand command) {
 
         // check for permission
         if (!command.hasPermission(sender)) {
@@ -426,7 +426,7 @@ public class MessageHelper {
         return new JsonMessage(plugin, helpJson);
     }
 
-    public static String direction(BasePlugin plugin, FacingDirection facingDirection) {
+    public static String direction(BedrockBasePlugin plugin, FacingDirection facingDirection) {
         String string = "";
         switch (facingDirection) {
             case SOUTH:
@@ -457,7 +457,7 @@ public class MessageHelper {
         return string;
     }
 
-    public static String getPlainText(BasePlugin plugin, String localeIdentifier, String... localeArgs) {
+    public static String getPlainText(BedrockBasePlugin plugin, String localeIdentifier, String... localeArgs) {
         // try to get the localized string from the plugins locale file
         try {
             return plugin.getLocalizationService().getTranslation(localeIdentifier, localeArgs);
@@ -481,7 +481,7 @@ public class MessageHelper {
         return "";
     }
 
-    public static void displayCommandList(BasePlugin plugin, CommandSender sender, HashMap<String, String> commandList) {
+    public static void displayCommandList(BedrockBasePlugin plugin, BedrockChatSender sender, HashMap<String, String> commandList) {
         new JsonMessage(plugin, "plugin.command.list.header").send(sender);
 
         for (Map.Entry<String, String> entry : commandList.entrySet()) {
@@ -492,7 +492,7 @@ public class MessageHelper {
         }
     }
 
-    public static void displayPermissions(BasePlugin plugin, CommandSender sender, List<Permission> permissions) {
+    public static void displayPermissions(BedrockBasePlugin plugin, BedrockChatSender sender, List<Permission> permissions) {
         String permission_prefix = plugin.getPermissionService().getPermissionPrefix();
 
         new JsonMessage(plugin, "permission.list.header").send(sender);
@@ -523,7 +523,7 @@ public class MessageHelper {
 
     public static class Bypass {
 
-        public static void Info(BasePlugin plugin, Player player) {
+        public static void Info(BedrockBasePlugin plugin, BedrockPlayer player) {
             new JsonMessage(plugin, "bypass.used").send(player, ChatMessageType.ACTION_BAR);
         }
 
@@ -531,7 +531,7 @@ public class MessageHelper {
 
     public static class Error {
 
-        public static void SettingsNotFound(BasePlugin plugin, CommandSender sender, String key) {
+        public static void SettingsNotFound(BedrockBasePlugin plugin, BedrockChatSender sender, String key) {
             new JsonMessage(plugin, "no_such_setting", "key", key).send(sender);
         }
 

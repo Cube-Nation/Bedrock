@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.command;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.predefined.*;
@@ -30,6 +30,7 @@ import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -39,13 +40,13 @@ import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class CommandService extends AbstractService {
 
     private ArrayList<CommandManager> command_manager = new ArrayList<>();
 
-    public CommandService(BasePlugin plugin) {
+    public CommandService(BedrockBasePlugin plugin) {
         super(plugin);
     }
 
@@ -59,7 +60,7 @@ public class CommandService extends AbstractService {
         // TODO: doc
         CommandManager pluginCommandManager = null;
         for (CommandManager commandManager : this.getCommandManagers()) {
-            if (commandManager.getPluginCommand().getLabel().equalsIgnoreCase(getPlugin().getDescription().getName())) {
+            if (commandManager.getPluginCommand().getLabel().equalsIgnoreCase(getPlugin().getPrettyName())) {
                 pluginCommandManager = commandManager;
                 break;
             }
@@ -69,8 +70,8 @@ public class CommandService extends AbstractService {
 
             pluginCommandManager = new CommandManager(
                     this.getPlugin(),
-                    this.getPlugin().getCommand(this.getPlugin().getDescription().getName()),
-                    this.getPlugin().getDescription().getName()
+                    ((JavaPlugin) this.getPlugin()).getCommand(this.getPlugin().getPrettyName()), // TODO: remove Bukkit dependency
+                    this.getPlugin().getPrettyName()
             );
             this.addCommandManager(pluginCommandManager);
 
@@ -107,14 +108,14 @@ public class CommandService extends AbstractService {
 
         CommandManager manager = new CommandManager(
                 this.getPlugin(),
-                this.getPlugin().getCommand(command),
-                this.getPlugin().getDescription().getName()
+                ((JavaPlugin) this.getPlugin()).getCommand(command), // TODO: remove Bukkit dependency
+                this.getPlugin().getPrettyName()
         );
 
         for (Class<?> handler : handlers) {
             Constructor<?> constructor;
             try {
-                constructor = handler.getConstructor(BasePlugin.class, CommandManager.class);
+                constructor = handler.getConstructor(BedrockBasePlugin.class, CommandManager.class);
                 manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();

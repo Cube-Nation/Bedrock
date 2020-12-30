@@ -25,12 +25,12 @@ package de.cubenation.bedrock.core.command;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.core.helper.IgnoreCaseArrayList;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.service.command.CommandManager;
-import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 public abstract class KeyValueCommand extends AbstractCommand {
 
     @SuppressWarnings("WeakerAccess")
-    public KeyValueCommand(BasePlugin plugin, CommandManager commandManager) {
+    public KeyValueCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
@@ -76,7 +76,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
 
     @Override
-    public final void execute(CommandSender sender, String[] args)
+    public final void execute(BedrockChatSender sender, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         // Parse Arguments
 
@@ -121,11 +121,11 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
     }
 
-    public abstract void execute(CommandSender sender, HashMap<String, String> arguments)
+    public abstract void execute(BedrockChatSender sender, HashMap<String, String> arguments)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     @Override
-    public final ArrayList<String> getTabCompletion(String[] args, CommandSender sender) {
+    public final ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
         if (this.getSubcommands().size() >= args.length) {
             return getTabCompletionFromCommands(args);
         } else if (args.length > this.getSubcommands().size()) {

@@ -22,9 +22,9 @@
 
 package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -35,7 +35,7 @@ import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -45,18 +45,18 @@ import java.util.logging.Level;
  * @version 1.0
  */
 @Description("command.bedrock.regeneratelocale.desc")
-@Permission(Name = "regeneratelocale", Role = CommandRole.ADMIN)
+@Permission(Name = "regeneratelocale", Role = Role.ADMIN)
 @SubCommand({ "regenerate" })
 @SubCommand({ "locale" })
 public class RegenerateLocaleCommand extends Command {
 
-    public RegenerateLocaleCommand(BasePlugin plugin, CommandManager commandManager) {
+    public RegenerateLocaleCommand(BedrockBasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
     @Override
-    public void execute(CommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
-        BasePlugin pluginInstance = this.getPlugin();
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+        BedrockBasePlugin pluginInstance = this.getPlugin();
         LocalizationService localizationService = pluginInstance.getLocalizationService();
 
         File localeFile = new File(

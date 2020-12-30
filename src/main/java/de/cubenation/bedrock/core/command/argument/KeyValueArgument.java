@@ -22,8 +22,8 @@
 
 package de.cubenation.bedrock.core.command.argument;
 
-import de.cubenation.bedrock.core.BasePlugin;
-import de.cubenation.bedrock.core.service.permission.Permission;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
+import de.cubenation.bedrock.core.authorization.Permission;
 
 import java.util.HashMap;
 
@@ -37,7 +37,7 @@ public class KeyValueArgument extends Argument {
 
     private Boolean keyOnly = false;
 
-    public KeyValueArgument(BasePlugin plugin, String key, String description, String placeholder, boolean optional, Permission permission) {
+    public KeyValueArgument(BedrockBasePlugin plugin, String key, String description, String placeholder, boolean optional, Permission permission) {
         super(plugin, description, placeholder, optional, permission);
         this.setKey(key);
     }

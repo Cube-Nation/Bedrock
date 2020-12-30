@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.confirm;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.TimeoutException;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.plugin.BedrockPlugin;
@@ -49,12 +49,12 @@ public abstract class AbstractConfirmService extends AbstractService implements 
     @SuppressWarnings("rawtypes")
     private HashMap<String, ConfirmStorable> storage;
 
-    public AbstractConfirmService(BasePlugin plugin) {
+    public AbstractConfirmService(BedrockBasePlugin plugin) {
         super(plugin);
         this.init((Integer) this.getConfigurationValue("service.confirm.timeout", 30));
     }
 
-    public AbstractConfirmService(BasePlugin plugin, int timeout) {
+    public AbstractConfirmService(BedrockBasePlugin plugin, int timeout) {
         super(plugin);
         this.init(timeout);
     }

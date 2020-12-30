@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.colorscheme;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
@@ -35,7 +35,7 @@ public class ColorSchemeService extends AbstractService {
 
     private ColorScheme scheme;
 
-    public ColorSchemeService(BasePlugin plugin) {
+    public ColorSchemeService(BedrockBasePlugin plugin) {
         super(plugin);
     }
 

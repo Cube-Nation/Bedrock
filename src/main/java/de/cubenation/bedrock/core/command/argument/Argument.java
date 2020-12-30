@@ -22,10 +22,10 @@
 
 package de.cubenation.bedrock.core.command.argument;
 
-import de.cubenation.bedrock.core.BasePlugin;
-import de.cubenation.bedrock.core.service.permission.Permission;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.translation.Translation;
-import org.bukkit.command.CommandSender;
 
 /**
  * @author Cube-Nation
@@ -33,7 +33,7 @@ import org.bukkit.command.CommandSender;
  */
 public class Argument {
 
-    private BasePlugin plugin;
+    private BedrockBasePlugin plugin;
 
     private String description;
 
@@ -43,7 +43,7 @@ public class Argument {
 
     private Permission permission = null;
 
-    public Argument(BasePlugin plugin, String description, String placeholder, boolean optional, Permission permission) {
+    public Argument(BedrockBasePlugin plugin, String description, String placeholder, boolean optional, Permission permission) {
         this.setPlugin(plugin);
         this.setDescription(description);
         this.setPlaceholder(placeholder);
@@ -52,11 +52,11 @@ public class Argument {
     }
 
     // plugin
-    public void setPlugin(BasePlugin plugin) {
+    public void setPlugin(BedrockBasePlugin plugin) {
         this.plugin = plugin;
     }
 
-    public BasePlugin getPlugin() {
+    public BedrockBasePlugin getPlugin() {
         return plugin;
     }
 
@@ -110,7 +110,7 @@ public class Argument {
         return permission;
     }
 
-    public boolean userHasPermission(CommandSender sender) {
+    public boolean userHasPermission(BedrockChatSender sender) {
         return this.permission == null || this.permission.userHasPermission(sender);
     }
 

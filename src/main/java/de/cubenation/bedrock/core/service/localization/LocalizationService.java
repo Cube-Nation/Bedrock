@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.localization;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -50,7 +50,7 @@ public class LocalizationService extends AbstractService {
 
     private YamlConfiguration bedrock_data;
 
-    public LocalizationService(BasePlugin plugin) {
+    public LocalizationService(BedrockBasePlugin plugin) {
         super(plugin);
     }
 
@@ -107,7 +107,7 @@ public class LocalizationService extends AbstractService {
             this.getPlugin().log(Level.SEVERE, String.format(
                     "  localization service: Could not find locale file %s in plugin %s",
                     this.getRelativeLocaleFile(),
-                    this.getPlugin().getDescription().getName()
+                    this.getPlugin().getPrettyName()
             ));
     }
 

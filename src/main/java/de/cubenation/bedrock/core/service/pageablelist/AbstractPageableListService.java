@@ -22,12 +22,12 @@
 
 package de.cubenation.bedrock.core.service.pageablelist;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.registry.Registerable;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.helper.design.PageableMessageHelper;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +45,12 @@ public abstract class AbstractPageableListService extends AbstractService implem
 
     private List<PageableListStorable> storage;
 
-    public AbstractPageableListService(BasePlugin plugin) {
+    public AbstractPageableListService(BedrockBasePlugin plugin) {
         super(plugin);
         this.init();
     }
 
-    public AbstractPageableListService(BasePlugin plugin, int generalPageSize) {
+    public AbstractPageableListService(BedrockBasePlugin plugin, int generalPageSize) {
         super(plugin);
         this.init(generalPageSize);
     }
@@ -80,14 +80,14 @@ public abstract class AbstractPageableListService extends AbstractService implem
         }
     }
 
-    public void paginate(CommandSender sender, String command, String header, int page) {
+    public void paginate(BedrockChatSender sender, String command, String header, int page) {
         PageableMessageHelper pageableMessageHelper = new PageableMessageHelper(getPlugin(), command, this);
 
         pageableMessageHelper.setHeadline(header);
         pageableMessageHelper.paginate(sender, page);
     }
 
-    public void paginate(CommandSender sender, String command, ArrayList<BedrockJson> header, int page) {
+    public void paginate(BedrockChatSender sender, String command, ArrayList<BedrockJson> header, int page) {
         PageableMessageHelper pageableMessageHelper = new PageableMessageHelper(getPlugin(), command, this);
 
         pageableMessageHelper.setJsonHeadline(header);

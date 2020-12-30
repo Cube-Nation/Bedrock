@@ -22,15 +22,15 @@
 
 package de.cubenation.bedrock.core.helper.design;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -50,19 +50,19 @@ public class PageableMessageHelper {
 
     public static final String PAGE_PLACEHOLDER = "%page%";
 
-    private final BasePlugin plugin;
+    private final BedrockBasePlugin plugin;
     private final AbstractPageableListService listService;
     private final String command;
     private String headline;
     private ArrayList<BedrockJson> jsonHeadline;
 
-    public PageableMessageHelper(BasePlugin plugin, String command, AbstractPageableListService listService) {
+    public PageableMessageHelper(BedrockBasePlugin plugin, String command, AbstractPageableListService listService) {
         this.plugin = plugin;
         this.command = command;
         this.listService = listService;
     }
 
-    public void paginate(CommandSender sender, int pageIndex) {
+    public void paginate(BedrockChatSender sender, int pageIndex) {
         if (command == null || !command.contains(PAGE_PLACEHOLDER)) {
             plugin.log(Level.INFO, "No placeholder for RunCommand index");
             return;
@@ -75,8 +75,8 @@ public class PageableMessageHelper {
         displayPageableList(plugin, pageIndex, command, sender, headline, jsonHeadline, listService);
     }
 
-    private void displayPageableList(BasePlugin plugin, int pageIndex, String pageExecutionCmd,
-                                     CommandSender sender,
+    private void displayPageableList(BedrockBasePlugin plugin, int pageIndex, String pageExecutionCmd,
+                                     BedrockChatSender sender,
                                      String headline,
                                      ArrayList<BedrockJson> jsonHeadline,
 
@@ -120,7 +120,7 @@ public class PageableMessageHelper {
     }
 
 
-    private ComponentBuilder getPagination(BasePlugin plugin, int page, int totalPages, String pageExecutionCmd, Integer itemsPerPage) {
+    private ComponentBuilder getPagination(BedrockBasePlugin plugin, int page, int totalPages, String pageExecutionCmd, Integer itemsPerPage) {
         if (totalPages == 1) {
             // No Pagination needed
             return null;
@@ -166,7 +166,7 @@ public class PageableMessageHelper {
         return pagination;
     }
 
-    private static JsonMessage getFullJsonHeader(BasePlugin plugin, JsonMessage jsonMessage, ArrayList<BedrockJson> messages) {
+    private static JsonMessage getFullJsonHeader(BedrockBasePlugin plugin, JsonMessage jsonMessage, ArrayList<BedrockJson> messages) {
 
         JSONParser parser = new JSONParser();
         try {
@@ -308,7 +308,7 @@ public class PageableMessageHelper {
 
     // Getter & Setter
 
-    public BasePlugin getPlugin() {
+    public BedrockBasePlugin getPlugin() {
         return plugin;
     }
 

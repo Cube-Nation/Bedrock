@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.command;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
@@ -30,6 +30,8 @@ import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.MessageHelper;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
 import de.cubenation.bedrock.core.translation.JsonMessage;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.implementation.bukkit.wrapper.BukkitCommandSender;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
@@ -40,11 +42,11 @@ import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class CommandManager implements CommandExecutor, TabCompleter {
 
-    private BasePlugin plugin;
+    private BedrockBasePlugin plugin;
 
     private PluginCommand pluginCommand;
 
@@ -53,7 +55,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     private HelpCommand helpCommand;
 
 
-    public CommandManager(BasePlugin plugin, PluginCommand pluginCommand, String helpPrefix) {
+    public CommandManager(BedrockBasePlugin plugin, PluginCommand pluginCommand, String helpPrefix) {
 
         this.plugin = plugin;
         this.pluginCommand = pluginCommand;
@@ -72,9 +74,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String label, String[] args) {
+        BedrockChatSender sender = BukkitCommandSender.wrap(commandSender); // TODO: remove Bukkit dependency
+
         if (args.length == 0) {
             try {
-                helpCommand.preExecute(commandSender, args);
+                helpCommand.preExecute(sender, args);
             } catch (Exception e) {
                 plugin.getLogger().info("Error while executing help command. Shouldn't happen!");
                 e.printStackTrace();
@@ -87,7 +91,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     this.commands.stream()
                             .filter(abstractCommand -> abstractCommand.getSubcommands().size() != 0)
                             .collect(Collectors.toList()),
-                    commandSender,
+                    sender,
                     args
             )) {
                 return true;
@@ -98,7 +102,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     this.commands.stream()
                             .filter(abstractCommand -> abstractCommand.getSubcommands().size() == 0)
                             .collect(Collectors.toList()),
-                    commandSender,
+                    sender,
                     args
             )) {
                 return true;
@@ -115,15 +119,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (helpList.isEmpty()) {
             // unknown command
-            MessageHelper.invalidCommand(this.plugin, commandSender);
+            MessageHelper.invalidCommand(this.plugin, sender);
             return true;
         }
 
-        helpCommand.printHelp(commandSender, args, helpCommand.getHelpJsonMessages(commandSender, helpList));
+        helpCommand.printHelp(sender, args, helpCommand.getHelpJsonMessages(sender, helpList));
         return true;
     }
 
-    private boolean tryCommand(List<AbstractCommand> abstractCommands, CommandSender commandSender, String[] args) {
+    private boolean tryCommand(List<AbstractCommand> abstractCommands, BedrockChatSender commandSender, String[] args) {
         for (AbstractCommand abstractCommand : abstractCommands) {
 
             // check if provided arguments are a valid trigger for the subcommands and arguments
@@ -171,7 +175,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> onTabComplete(CommandSender sender, org.bukkit.command.Command command, String alias, String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, org.bukkit.command.Command command, String alias, String[] args) {
+        BedrockChatSender sender = BukkitCommandSender.wrap(commandSender); // TODO: remove Bukkit dependency
+
         ArrayList<String> list = new ArrayList<>();
         for (AbstractCommand cmd : getCompletionCommands()) {
             if (!cmd.hasPermission(sender)) {
@@ -217,7 +223,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     //region Getter
-    public BasePlugin getPlugin() {
+    public BedrockBasePlugin getPlugin() {
         return plugin;
     }
 

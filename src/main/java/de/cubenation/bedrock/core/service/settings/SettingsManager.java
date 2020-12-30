@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.settings;
 
-import de.cubenation.bedrock.core.BasePlugin;
+import de.cubenation.bedrock.core.BedrockBasePlugin;
 import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
@@ -43,7 +43,7 @@ import java.util.logging.Level;
  */
 public class SettingsManager {
 
-    private final BasePlugin plugin;
+    private final BedrockBasePlugin plugin;
     private final Class<?> className;
     private final String name;
     private File settingsDirectory;
@@ -52,7 +52,7 @@ public class SettingsManager {
     private HashMap<UUID, CustomSettingsFile> userSettings;
     private HashMap<String, CustomSettingsFile> _userSettings;
 
-    public SettingsManager(BasePlugin plugin, Class<?> className) throws ServiceInitException {
+    public SettingsManager(BedrockBasePlugin plugin, Class<?> className) throws ServiceInitException {
         this.plugin = plugin;
         this.className = className;
 
@@ -134,14 +134,14 @@ public class SettingsManager {
      * @throws InstantiationException
      */
     @SuppressWarnings("unchecked")
-    private CustomSettingsFile createSettings(BasePlugin plugin, Class class_name, String customName) throws InstantiationException {
+    private CustomSettingsFile createSettings(BedrockBasePlugin plugin, Class class_name, String customName) throws InstantiationException {
         try {
 
             if (customName == null) {
-                Constructor<?> constructor = class_name.getConstructor(BasePlugin.class);
+                Constructor<?> constructor = class_name.getConstructor(BedrockBasePlugin.class);
                 return (CustomSettingsFile) constructor.newInstance(plugin);
             } else {
-                Constructor<?> constructor = class_name.getConstructor(BasePlugin.class, String.class);
+                Constructor<?> constructor = class_name.getConstructor(BedrockBasePlugin.class, String.class);
                 return (CustomSettingsFile) constructor.newInstance(plugin, customName);
             }
 
