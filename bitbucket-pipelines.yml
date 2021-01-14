@@ -10,8 +10,12 @@ pipelines:
     master:
       - step:
           script:
-          - mvn clean install -V -B -s settings.xml deploy
+            - mvn clean install -V -B -s settings.xml deploy
     develop:
       - step:
           script:
-          - mvn clean install -V -B -s settings.xml deploy
+            - mvn clean install -V -B -s settings.xml deploy
+    spigot-1.13:
+      - step:
+          script:
+            - mvn clean install -V -B -s settings.xml deploy
