@@ -65,22 +65,21 @@ public class EbeanListener implements Listener {
                     if (!bp.getUsername().equals(event.getPlayer().getName())) {
                         BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: " + bp.getUsername() + " " +
                                 "changed name to " + event.getPlayer().getName());
-                        // fire name change event
+
+                        /**
                         PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
                                 event.getPlayer(),
                                 bp.getUsername(),
                                 event.getPlayer().getName());
                         BedrockPlugin.getInstance().getServer().getPluginManager().callEvent(playerChangesNameEvent);
+                         */
 
-                        // update username
                         bp.setUsername(event.getPlayer().getName());
                     }
                     // update timestamp
                     bp.setLastlogin(new Date());
                     bp.update();
                 }
-
-
             }
 
         }.runTaskAsynchronously(BedrockPlugin.getInstance());
