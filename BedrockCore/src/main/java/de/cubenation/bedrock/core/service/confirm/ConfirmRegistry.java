@@ -20,9 +20,9 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.service.confirm;
+package de.cubenation.bedrock.core.service.confirm;
 
-import org.bukkit.command.CommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.HashMap;
 
@@ -35,7 +35,7 @@ public class ConfirmRegistry {
     /*
      * implicit synchronized singleton
      */
-    private static HashMap<CommandSender,ConfirmInterface> confirm
+    private static HashMap<BedrockChatSender,ConfirmInterface> confirm
             = new HashMap<>();
 
     private static final class InstanceHolder {
@@ -54,7 +54,7 @@ public class ConfirmRegistry {
         return InstanceHolder.INSTANCE;
     }
 
-    public void put(CommandSender sender, ConfirmInterface command) {
+    public void put(BedrockChatSender sender, ConfirmInterface command) {
         // Check if there is already a confirm action & remove it.
         ConfirmInterface confirmInterface = confirm.get(sender);
         if (confirmInterface != null) {
@@ -63,15 +63,15 @@ public class ConfirmRegistry {
         confirm.put(sender, command);
     }
 
-    public boolean has(CommandSender sender) {
+    public boolean has(BedrockChatSender sender) {
         return confirm.containsKey(sender);
     }
 
-    public ConfirmInterface get(CommandSender sender) {
+    public ConfirmInterface get(BedrockChatSender sender) {
         return confirm.get(sender);
     }
 
-    public void remove(CommandSender sender) {
+    public void remove(BedrockChatSender sender) {
         confirm.remove(sender);
     }
 

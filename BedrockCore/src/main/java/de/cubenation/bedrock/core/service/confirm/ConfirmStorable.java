@@ -20,7 +20,7 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.service.confirm;
+package de.cubenation.bedrock.core.service.confirm;
 
 import de.cubenation.bedrock.core.helper.GenericStorable;
 

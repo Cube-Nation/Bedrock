@@ -20,19 +20,19 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.service.confirm;
+package de.cubenation.bedrock.bungee.api.service.confirm;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.bungee.api.BasePlugin;
+import de.cubenation.bedrock.bungee.plugin.BedrockPlugin;
 import de.cubenation.bedrock.core.exception.TimeoutException;
 import de.cubenation.bedrock.core.service.AbstractService;
-import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
 import de.cubenation.bedrock.core.service.confirm.ConfirmInterface;
 import de.cubenation.bedrock.core.service.confirm.ConfirmStorable;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 /**
@@ -46,7 +46,7 @@ public abstract class AbstractConfirmService extends AbstractService implements 
 
     private long created							    = (long) new Date().getTime();
 
-    protected BukkitTask task;
+    protected ScheduledTask task;
 
     @SuppressWarnings("rawtypes")
     private HashMap<String, ConfirmStorable> storage;
@@ -70,7 +70,7 @@ public abstract class AbstractConfirmService extends AbstractService implements 
         final AbstractConfirmService csi = this;
         // create task with timeout
         // this task needs to be canceled when call() is executed via task.cancel();
-        task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), csi::abort, (long) this.getTimeout() * 20L);
+        task = ((BasePlugin) plugin).getProxy().getScheduler().schedule(BedrockPlugin.getInstance(), csi::abort, this.getTimeout(), TimeUnit.SECONDS);
 
     }
 
