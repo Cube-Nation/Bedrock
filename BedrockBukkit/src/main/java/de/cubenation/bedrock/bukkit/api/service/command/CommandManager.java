@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.api.service.command;
 
-import de.cubenation.bedrock.bukkit.api.command.sender.CommandSender;
+import de.cubenation.bedrock.bukkit.wrapper.BukkitChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -44,11 +44,11 @@ public class CommandManager
 
     @Override
     public boolean onCommand(org.bukkit.command.CommandSender sender, Command command, String label, String[] args) {
-        return onCommand(new CommandSender(sender), args);
+        return onCommand(new BukkitChatSender(sender), args);
     }
 
     @Override
     public List<String> onTabComplete(org.bukkit.command.CommandSender sender, Command command, String alias, String[] args) {
-        return onTabComplete(new CommandSender(sender), args);
+        return onTabComplete(new BukkitChatSender(sender), args);
     }
 }

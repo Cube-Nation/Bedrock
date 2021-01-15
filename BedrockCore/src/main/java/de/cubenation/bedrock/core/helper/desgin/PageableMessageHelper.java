@@ -23,8 +23,8 @@
 package de.cubenation.bedrock.core.helper.desgin;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
@@ -62,7 +62,7 @@ public class PageableMessageHelper {
         this.listService = listService;
     }
 
-    public void paginate(BedrockCommandSender sender, int pageIndex) {
+    public void paginate(BedrockChatSender sender, int pageIndex) {
         if (command == null || !command.contains(PAGE_PLACEHOLDER)) {
             plugin.log(Level.INFO, "No placeholder for RunCommand index");
             return;
@@ -76,7 +76,7 @@ public class PageableMessageHelper {
     }
 
     private void displayPageableList(FoundationPlugin plugin, int pageIndex, String pageExecutionCmd,
-                                     BedrockCommandSender sender,
+                                     BedrockChatSender sender,
                                      String headline,
                                      ArrayList<BedrockJson> jsonHeadline,
 
@@ -112,8 +112,8 @@ public class PageableMessageHelper {
         // Display Navigation
         ComponentBuilder pagination = getPagination(plugin, pageIndex, totalPages, pageExecutionCmd, itemsPerPage);
         if (pagination != null) {
-            if (sender instanceof BedrockPlayerCommandSender) {
-                BedrockPlayerCommandSender player = (BedrockPlayerCommandSender) sender;
+            if (sender instanceof BedrockPlayer) {
+                BedrockPlayer player = (BedrockPlayer) sender;
                 player.sendMessage(pagination.create());
             }
         }

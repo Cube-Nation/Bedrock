@@ -20,13 +20,13 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.command;
+package de.cubenation.bedrock.core.wrapper;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public interface BedrockCommandSender {
+public interface BedrockChatSender {
 
     /**
      * Checks if this object is a server operator

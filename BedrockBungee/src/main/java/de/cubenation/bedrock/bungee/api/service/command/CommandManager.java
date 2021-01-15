@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.bungee.api.service.command;
 
-import de.cubenation.bedrock.bungee.api.command.sender.CommandSender;
+import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.CommandExecutor;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -40,12 +40,12 @@ public class CommandManager
     }
 
     public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        onCommand(new CommandSender(sender), args);
+        onCommand(new BungeeChatSender(sender), args);
     }
 
     @Override
     public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        return onTabComplete(new CommandSender(sender), args);
+        return onTabComplete(new BungeeChatSender(sender), args);
     }
 
 }

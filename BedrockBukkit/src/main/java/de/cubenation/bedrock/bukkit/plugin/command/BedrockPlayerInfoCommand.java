@@ -30,7 +30,7 @@ import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
@@ -58,7 +58,7 @@ public class BedrockPlayerInfoCommand extends Command {
     }
 
     @Override
-    public void execute(final BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(final BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         // check args length
         if (args.length > 1) {

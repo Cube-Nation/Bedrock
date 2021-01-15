@@ -22,12 +22,12 @@
 
 package de.cubenation.bedrock.bungee.api;
 
-import de.cubenation.bedrock.bungee.api.command.sender.PlayerSender;
+import de.cubenation.bedrock.bungee.wrapper.BungeePlayer;
 import de.cubenation.bedrock.bungee.api.message.Messages;
 import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
@@ -310,8 +310,8 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
-    public Collection<? extends BedrockPlayerCommandSender> getOnlinePlayers() {
-        return getProxy().getPlayers().stream().map(o -> new PlayerSender(o)).collect(Collectors.toList());
+    public Collection<? extends BedrockPlayer> getOnlinePlayers() {
+        return getProxy().getPlayers().stream().map(o -> new BungeePlayer(o)).collect(Collectors.toList());
     }
 
 }

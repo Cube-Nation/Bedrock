@@ -27,7 +27,7 @@ import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
@@ -56,7 +56,7 @@ public class PermissionOtherCommand extends Command {
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
 
         // check args length
         if (args.length > 1)
@@ -71,8 +71,8 @@ public class PermissionOtherCommand extends Command {
         }
 
         try {
-            BedrockCommandSender bedrockCommandSender = (BedrockCommandSender) Bukkit.getPlayer(player);
-            plugin.messages().displayPermissions(sender, permissionService.getPermissions(bedrockCommandSender));
+            BedrockChatSender bedrockChatSender = (BedrockChatSender) Bukkit.getPlayer(player);
+            plugin.messages().displayPermissions(sender, permissionService.getPermissions(bedrockChatSender));
 
         } catch (PlayerNotFoundException e) {
             plugin.messages().noSuchPlayer(sender, player);

@@ -24,8 +24,8 @@ package de.cubenation.bedrock.core.message;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
@@ -73,36 +73,36 @@ public abstract class Messages {
         return error;
     }
 
-    public void commandExecutionError(BedrockCommandSender sender, Exception e) {
+    public void commandExecutionError(BedrockChatSender sender, Exception e) {
         sender.sendMessage(getPlugin().getMessagePrefix() + " " + e.getMessage());
     }
 
-    public void insufficientPermission(BedrockCommandSender sender) {
+    public void insufficientPermission(BedrockChatSender sender) {
         new JsonMessage(getPlugin(), "permission.insufficient").send(sender);
     }
 
-    public void noPermission(BedrockCommandSender sender) {
+    public void noPermission(BedrockChatSender sender) {
         new JsonMessage(getPlugin(), "json.no_permissions").send(sender);
     }
 
-    public void invalidCommand(BedrockCommandSender sender) {
+    public void invalidCommand(BedrockChatSender sender) {
         JsonMessage jsonMessage = new JsonMessage(getPlugin(), "command.invalid");
         jsonMessage.send(sender);
     }
 
-    public void mustBePlayer(BedrockCommandSender commandSender) {
+    public void mustBePlayer(BedrockChatSender commandSender) {
         new JsonMessage(getPlugin(), "must_be_player").send(commandSender);
     }
 
-    public void noSuchPlayer(BedrockCommandSender commandSender, String player) {
+    public void noSuchPlayer(BedrockChatSender commandSender, String player) {
         new JsonMessage(getPlugin(), "no_such_player.specific", "player", player).send(commandSender);
     }
 
-    public void noSuchPlayer(BedrockCommandSender commandSender) {
+    public void noSuchPlayer(BedrockChatSender commandSender) {
         new JsonMessage(plugin, "no_such_player.default").send(commandSender);
     }
 
-    public void noSuchWorld(BedrockCommandSender commandSender, String world) {
+    public void noSuchWorld(BedrockChatSender commandSender, String world) {
         if (world == null || world.equals("")) {
             noSuchWorld(commandSender);
             return;
@@ -110,29 +110,29 @@ public abstract class Messages {
         new JsonMessage(plugin, "no_such_world", "world", world).send(commandSender);
     }
 
-    public void noSuchWorld(BedrockCommandSender commandSender) {
+    public void noSuchWorld(BedrockChatSender commandSender) {
         new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
     }
 
-    public void reloadComplete(BedrockCommandSender sender) {
+    public void reloadComplete(BedrockChatSender sender) {
         new JsonMessage(plugin, "reload.complete").send(sender);
     }
 
-    public void reloadFailed(BedrockCommandSender sender) {
+    public void reloadFailed(BedrockChatSender sender) {
         new JsonMessage(plugin, "reload.failed").send(sender);
     }
 
-    public void version(BedrockCommandSender sender) {
+    public void version(BedrockChatSender sender) {
         new JsonMessage(plugin, "version", "version", plugin.getPluginDescription().getVersion()).send(sender);
     }
 
     @Deprecated
-    public void send(BedrockCommandSender sender, String message) {
+    public void send(BedrockChatSender sender, String message) {
         send(sender, new TextComponent(message));
     }
 
     @Deprecated
-    public void send(BedrockCommandSender sender, TextComponent component) {
+    public void send(BedrockChatSender sender, TextComponent component) {
         // check for NullPointerException
         if (component == null)
             return;
@@ -140,7 +140,7 @@ public abstract class Messages {
     }
 
     @Deprecated
-    public void send(BedrockCommandSender sender, TextComponent component, HoverEvent hover_event, ClickEvent click_event) {
+    public void send(BedrockChatSender sender, TextComponent component, HoverEvent hover_event, ClickEvent click_event) {
         // check for NullPointerException
         if (component == null)
             return;
@@ -151,13 +151,13 @@ public abstract class Messages {
         // apply colors from color scheme to message
         component = color_scheme.applyColorScheme(component);
 
-        if (sender instanceof BedrockPlayerCommandSender) {
+        if (sender instanceof BedrockPlayer) {
             if (hover_event != null)
                 component.setHoverEvent(color_scheme.applyColorScheme(hover_event));
             if (click_event != null)
                 component.setClickEvent(color_scheme.applyColorScheme(click_event));
 
-            ((BedrockPlayerCommandSender) sender).sendMessage(component);
+            ((BedrockPlayer) sender).sendMessage(component);
 
         } else {
             StringBuilder hover_message = new StringBuilder();
@@ -231,7 +231,7 @@ public abstract class Messages {
      * @param command a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
-    public JsonMessage getHelpForSubCommand(BedrockCommandSender sender, AbstractCommand command) {
+    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, AbstractCommand command) {
 
         // check for permission
         if (!command.hasPermission(sender)) {
@@ -467,7 +467,7 @@ public abstract class Messages {
         return "";
     }
 
-    public void displayCommandList(BedrockCommandSender sender, HashMap<String, String> commandList) {
+    public void displayCommandList(BedrockChatSender sender, HashMap<String, String> commandList) {
         new JsonMessage(plugin, "plugin.command.list.header").send(sender);
 
         for (Map.Entry<String, String> entry : commandList.entrySet()) {
@@ -478,7 +478,7 @@ public abstract class Messages {
         }
     }
 
-    public void displayPermissions(BedrockCommandSender sender, List<Permission> permissions) {
+    public void displayPermissions(BedrockChatSender sender, List<Permission> permissions) {
         String permission_prefix = plugin.getPermissionService().getPermissionPrefix();
 
         new JsonMessage(plugin, "permission.list.header").send(sender);
@@ -509,7 +509,7 @@ public abstract class Messages {
 
     public class Bypass {
 
-        public void Info(BedrockPlayerCommandSender player) {
+        public void Info(BedrockPlayer player) {
             new JsonMessage(plugin, "bypass.used").send(player, ChatMessageType.ACTION_BAR);
         }
 
@@ -517,7 +517,7 @@ public abstract class Messages {
 
     public class Error {
 
-        public void SettingsNotFound(BedrockCommandSender sender, String key) {
+        public void SettingsNotFound(BedrockChatSender sender, String key) {
             new JsonMessage(plugin, "no_such_setting", "key", key).send(sender);
         }
 

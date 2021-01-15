@@ -23,8 +23,8 @@
 package de.cubenation.bedrock.core.translation;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
@@ -74,16 +74,16 @@ public class JsonMessage {
         json = bedrockJson.toJSONString();
     }
 
-    public void send(BedrockCommandSender commandSender) {
+    public void send(BedrockChatSender commandSender) {
         send(commandSender, ChatMessageType.CHAT);
     }
 
-    public void send(BedrockCommandSender commandSender, ChatMessageType chatMessageType) {
+    public void send(BedrockChatSender commandSender, ChatMessageType chatMessageType) {
         BaseComponent[] components = createBaseComponent();
         if (components == null) return;
 
-        if (commandSender instanceof BedrockPlayerCommandSender) {
-            BedrockPlayerCommandSender player = (BedrockPlayerCommandSender) commandSender;
+        if (commandSender instanceof BedrockPlayer) {
+            BedrockPlayer player = (BedrockPlayer) commandSender;
             sendPlayer(player, components, chatMessageType);
         } else {
             sendConsole(commandSender, components);
@@ -96,18 +96,18 @@ public class JsonMessage {
 
     @SuppressWarnings("WeakerAccess")
     public void broadcast(ChatMessageType chatMessageType) {
-        for (BedrockPlayerCommandSender player : plugin.getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getOnlinePlayers()) {
             send(player, chatMessageType);
         }
     }
 
-    public void broadcast(ArrayList<BedrockPlayerCommandSender> withoutPlayer) {
+    public void broadcast(ArrayList<BedrockPlayer> withoutPlayer) {
         broadcast(withoutPlayer, ChatMessageType.CHAT);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public void broadcast(ArrayList<BedrockPlayerCommandSender> withoutPlayer, ChatMessageType chatMessageType) {
-        for (BedrockPlayerCommandSender player : plugin.getOnlinePlayers()) {
+    public void broadcast(ArrayList<BedrockPlayer> withoutPlayer, ChatMessageType chatMessageType) {
+        for (BedrockPlayer player : plugin.getOnlinePlayers()) {
             if (withoutPlayer.contains(player)) {
                 continue;
             }
@@ -115,11 +115,11 @@ public class JsonMessage {
         }
     }
 
-    private void sendPlayer(BedrockPlayerCommandSender player, BaseComponent[] components, ChatMessageType chatMessageType) {
+    private void sendPlayer(BedrockPlayer player, BaseComponent[] components, ChatMessageType chatMessageType) {
         player.sendMessage(chatMessageType, components);
     }
 
-    private void sendConsole(BedrockCommandSender commandSender, BaseComponent[] components) {
+    private void sendConsole(BedrockChatSender commandSender, BaseComponent[] components) {
         String legacyText = BaseComponent.toLegacyText(components);
         commandSender.sendMessage(legacyText);
     }

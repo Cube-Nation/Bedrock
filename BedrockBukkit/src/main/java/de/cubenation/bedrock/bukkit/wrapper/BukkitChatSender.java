@@ -20,30 +20,30 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.api.command.sender;
+package de.cubenation.bedrock.bukkit.wrapper;
 
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class CommandSender implements BedrockCommandSender {
+public class BukkitChatSender implements BedrockChatSender {
 
-    private final net.md_5.bungee.api.CommandSender commandSender;
+    private final org.bukkit.command.CommandSender commandSender;
 
-    public CommandSender(net.md_5.bungee.api.CommandSender original) {
+    public BukkitChatSender(org.bukkit.command.CommandSender original) {
         this.commandSender = original;
     }
 
-    public net.md_5.bungee.api.CommandSender getCommandSender() {
+    public org.bukkit.command.CommandSender getCommandSender() {
         return commandSender;
     }
 
     @Override
     public boolean isOp() {
-        return false;
+        return commandSender.isOp();
     }
 
     @Override
@@ -58,7 +58,7 @@ public class CommandSender implements BedrockCommandSender {
 
     @Override
     public void sendMessage(String[] messages) {
-        commandSender.sendMessages(messages);
+        commandSender.sendMessage(messages);
     }
 
     @Override
@@ -68,12 +68,11 @@ public class CommandSender implements BedrockCommandSender {
 
     @Override
     public void sendMessage(BaseComponent component) {
-        commandSender.sendMessage(component);
+        commandSender.spigot().sendMessage(component);
     }
 
     @Override
     public void sendMessage(BaseComponent... components) {
-        commandSender.sendMessage(components);
+        commandSender.spigot().sendMessage(components);
     }
 }
-

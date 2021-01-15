@@ -24,6 +24,7 @@ package de.cubenation.bedrock.core.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.service.command.CommandManager;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public ArrayList<String> getTabCompletion(String[] args, BedrockCommandSender sender) {
+    public ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
         ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
         if (isValidTrigger(args)) {
             if (args != null && this.getSubcommands()!= null) {
@@ -83,7 +84,7 @@ public abstract class Command extends AbstractCommand {
         return this.isMatchingSubCommands(args);
     }
 
-    public ArrayList<String> getTabArgumentCompletion(BedrockCommandSender sender, int argumentIndex, String[] args) {
+    public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
         return null;
     }
 

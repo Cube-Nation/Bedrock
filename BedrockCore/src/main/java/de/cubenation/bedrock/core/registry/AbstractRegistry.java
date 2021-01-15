@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.registry;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import org.apache.commons.lang.StringUtils;
 
@@ -43,7 +43,7 @@ public abstract class AbstractRegistry {
         registry = new HashMap<>();
     }
 
-    protected static String getRegistryIdentifier(final FoundationPlugin plugin, final String ident, final BedrockCommandSender sender) {
+    protected static String getRegistryIdentifier(final FoundationPlugin plugin, final String ident, final BedrockChatSender sender) {
         ArrayList<String> list = new ArrayList<String>() {{
             add(plugin.getPluginDescription().getName());
             add(ident);
@@ -57,23 +57,23 @@ public abstract class AbstractRegistry {
     /*
      * register object
      */
-    public void _register(FoundationPlugin plugin, String ident, BedrockCommandSender sender, Registerable object) {
+    public void _register(FoundationPlugin plugin, String ident, BedrockChatSender sender, Registerable object) {
         // Replace old if exists
         registry.put(getRegistryIdentifier(plugin, ident, sender), object);
     }
 
-    public boolean _exists(FoundationPlugin plugin, String ident, BedrockCommandSender sender) {
+    public boolean _exists(FoundationPlugin plugin, String ident, BedrockChatSender sender) {
         return registry.containsKey(getRegistryIdentifier(plugin, ident, sender));
     }
 
-    public Registerable _get(FoundationPlugin plugin, String ident, BedrockCommandSender sender) throws NoSuchRegisterableException {
+    public Registerable _get(FoundationPlugin plugin, String ident, BedrockChatSender sender) throws NoSuchRegisterableException {
         if (!_exists(plugin, ident, sender))
             throw new NoSuchRegisterableException(getRegistryIdentifier(plugin, ident, sender));
 
         return registry.get(getRegistryIdentifier(plugin, ident, sender));
     }
 
-    public void _remove(FoundationPlugin plugin, String ident, BedrockCommandSender sender) {
+    public void _remove(FoundationPlugin plugin, String ident, BedrockChatSender sender) {
         registry.remove(getRegistryIdentifier(plugin, ident, sender));
     }
 
@@ -83,7 +83,7 @@ public abstract class AbstractRegistry {
     }
 
     @SuppressWarnings("unused")
-    public static boolean containsKey(FoundationPlugin plugin, String ident, BedrockCommandSender sender) {
+    public static boolean containsKey(FoundationPlugin plugin, String ident, BedrockChatSender sender) {
         return registry.containsKey(getRegistryIdentifier(plugin, ident, sender));
     }
 

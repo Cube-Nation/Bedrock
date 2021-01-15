@@ -20,59 +20,60 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.sender;
+package de.cubenation.bedrock.bungee.wrapper;
 
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.wrapper.BedrockPosition;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class CommandSender implements BedrockCommandSender {
+public class BungeePlayer extends BungeeChatSender implements BedrockPlayer {
 
-    private final org.bukkit.command.CommandSender commandSender;
+    private final ProxiedPlayer player;
 
-    public CommandSender(org.bukkit.command.CommandSender original) {
-        this.commandSender = original;
+    public BungeePlayer(ProxiedPlayer player) {
+        super(player);
+        this.player = player;
     }
 
-    public org.bukkit.command.CommandSender getCommandSender() {
-        return commandSender;
-    }
-
-    @Override
-    public boolean isOp() {
-        return commandSender.isOp();
+    public ProxiedPlayer getPlayer() {
+        return player;
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return commandSender.hasPermission(permission);
+    public String getDisplayName() {
+        return player.getDisplayName();
     }
 
     @Override
-    public void sendMessage(String legacyText) {
-        commandSender.sendMessage(legacyText);
+    public void setDisplayName(String name) {
+        player.setDisplayName(name);
     }
 
     @Override
-    public void sendMessage(String[] messages) {
-        commandSender.sendMessage(messages);
+    public void chat(String msg) {
+        player.chat(msg);
     }
 
     @Override
-    public String getName() {
-        return commandSender.getName();
+    public void sendMessage(ChatMessageType position, BaseComponent component) {
+        player.sendMessage(position, component);
     }
 
     @Override
-    public void sendMessage(BaseComponent component) {
-        commandSender.spigot().sendMessage(component);
+    public void sendMessage(ChatMessageType position, BaseComponent... components) {
+        player.sendMessage(position, components);
     }
 
     @Override
-    public void sendMessage(BaseComponent... components) {
-        commandSender.spigot().sendMessage(components);
+    public void teleport(BedrockPosition pos) throws WrongBedrockImplementationException {
+        //TODO: implement bungee teleport
     }
 }
+

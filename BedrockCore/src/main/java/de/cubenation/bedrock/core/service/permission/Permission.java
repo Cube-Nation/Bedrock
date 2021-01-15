@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.permission;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.CommandRole;
 
 /**
@@ -69,7 +69,7 @@ public class Permission {
         return role;
     }
 
-    public boolean userHasPermission(BedrockCommandSender sender) {
+    public boolean userHasPermission(BedrockChatSender sender) {
         return getPlugin() != null &&
                         sender != null &&
                         plugin.getPermissionService().hasPermission(sender, this);

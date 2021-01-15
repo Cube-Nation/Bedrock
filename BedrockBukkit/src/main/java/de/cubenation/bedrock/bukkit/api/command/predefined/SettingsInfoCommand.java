@@ -28,7 +28,7 @@ import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
@@ -61,7 +61,7 @@ public class SettingsInfoCommand extends Command {
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         String settingsKey = args[0];
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
@@ -112,7 +112,7 @@ public class SettingsInfoCommand extends Command {
     }
 
     @Override
-    public ArrayList<String> getTabArgumentCompletion(BedrockCommandSender sender, int argumentIndex, String[] args) {
+    public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{
                 addAll(plugin.getSettingService().getSettingsMap().keySet());

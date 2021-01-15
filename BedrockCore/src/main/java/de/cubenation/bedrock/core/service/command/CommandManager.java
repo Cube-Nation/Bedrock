@@ -24,7 +24,7 @@ package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.CommandExecutor;
 import de.cubenation.bedrock.core.command.TabExecutor;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
@@ -67,7 +67,7 @@ public abstract class CommandManager implements CommandExecutor, TabExecutor {
 
 
     @Override
-    public boolean onCommand(BedrockCommandSender commandSender, String[] args) {
+    public boolean onCommand(BedrockChatSender commandSender, String[] args) {
         if (args.length == 0) {
             try {
                 helpCommand.preExecute(commandSender, args);
@@ -119,7 +119,7 @@ public abstract class CommandManager implements CommandExecutor, TabExecutor {
         return true;
     }
 
-    private boolean tryCommand(List<AbstractCommand> abstractCommands, BedrockCommandSender commandSender, String[] args) {
+    private boolean tryCommand(List<AbstractCommand> abstractCommands, BedrockChatSender commandSender, String[] args) {
         for (AbstractCommand abstractCommand : abstractCommands) {
 
             // check if provided arguments are a valid trigger for the subcommands and arguments
@@ -166,7 +166,7 @@ public abstract class CommandManager implements CommandExecutor, TabExecutor {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> onTabComplete(BedrockCommandSender sender, String[] args) {
+    public List<String> onTabComplete(BedrockChatSender sender, String[] args) {
         ArrayList<String> list = new ArrayList<>();
         for (AbstractCommand cmd : getCompletionCommands()) {
             if (!cmd.hasPermission(sender)) {

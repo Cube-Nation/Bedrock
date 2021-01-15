@@ -33,6 +33,8 @@ import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Constructor;
@@ -252,9 +254,9 @@ public abstract class AbstractCommand {
         this.arguments.add(argument);
     }
 
-    public void preExecute(BedrockCommandSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void preExecute(BedrockChatSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
-        if (this.isIngameCommandOnly() && !(commandSender instanceof BedrockPlayerCommandSender)) {
+        if (this.isIngameCommandOnly() && !(commandSender instanceof BedrockPlayer)) {
             plugin.messages().mustBePlayer(commandSender);
             return;
         }
@@ -301,7 +303,7 @@ public abstract class AbstractCommand {
      * @throws IllegalCommandArgumentException Thrown when the arguments did not match the predefined ones
      * @throws InsufficientPermissionException Thrown when the command issuer does not have enough permissions for this command
      */
-    public abstract void execute(BedrockCommandSender sender, String[] args)
+    public abstract void execute(BedrockChatSender sender, String[] args)
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     /**
@@ -321,7 +323,7 @@ public abstract class AbstractCommand {
      * @param sender the sender of the requested tab completion.
      * @return the tab completion for argument
      */
-    public abstract ArrayList<String> getTabCompletion(String[] args, BedrockCommandSender sender);
+    public abstract ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender);
 
     public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
         if (this.subcommands.size() < args.length) {
@@ -422,7 +424,7 @@ public abstract class AbstractCommand {
         return true;
     }
 
-    public JsonMessage getJsonHelp(BedrockCommandSender sender) {
+    public JsonMessage getJsonHelp(BedrockChatSender sender) {
         return plugin.messages().getHelpForSubCommand(sender, this);
     }
 
@@ -530,7 +532,7 @@ public abstract class AbstractCommand {
      * @param sender the sender
      * @return true, if the sender has Permissions, else false.
      */
-    public final boolean hasPermission(BedrockCommandSender sender) {
+    public final boolean hasPermission(BedrockChatSender sender) {
         // No permission defined -> sender has permission
         if (getRuntimePermissions().isEmpty())
             return true;

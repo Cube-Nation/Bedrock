@@ -26,7 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
@@ -47,7 +47,7 @@ public class VersionCommand extends Command {
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         getPlugin().messages().version(sender);
     }
 

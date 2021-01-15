@@ -20,23 +20,25 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.sender;
+package de.cubenation.bedrock.bukkit.wrapper;
 
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class PlayerSender extends CommandSender implements BedrockPlayerCommandSender {
+public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
 
     private final Player player;
 
-    public PlayerSender(Player player) {
+    public BukkitPlayer(Player player) {
         super(player);
         this.player = player;
     }
@@ -68,6 +70,13 @@ public class PlayerSender extends CommandSender implements BedrockPlayerCommandS
     @Override
     public void sendMessage(ChatMessageType chatMessageType, BaseComponent[] components) {
         player.spigot().sendMessage(chatMessageType, components);
+    }
+
+    @Override
+    public void teleport(BedrockPosition pos) throws WrongBedrockImplementationException {
+        if(!(pos instanceof BukkitPosition))
+            throw new WrongBedrockImplementationException();
+        player.teleport((Location) pos);
     }
 
 }

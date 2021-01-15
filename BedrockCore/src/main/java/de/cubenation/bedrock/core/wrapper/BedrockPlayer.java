@@ -20,17 +20,15 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.command;
+package de.cubenation.bedrock.core.wrapper;
 
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public interface BedrockPlayerCommandSender extends BedrockCommandSender {
+public interface BedrockPlayer extends BedrockChatSender {
 
     /**
      * Gets the "friendly" name to display of this player. This may include
@@ -76,5 +74,7 @@ public interface BedrockPlayerCommandSender extends BedrockCommandSender {
      * @param components the components to send
      */
     void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components);
+
+    void teleport(BedrockPosition pos) throws WrongBedrockImplementationException;
 
 }

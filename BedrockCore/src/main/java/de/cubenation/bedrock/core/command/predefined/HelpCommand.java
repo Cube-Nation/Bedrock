@@ -26,7 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
@@ -54,7 +54,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
 
@@ -82,7 +82,7 @@ public class HelpCommand extends Command {
         }
     }
 
-    private ArrayList<JsonMessage> getFullHelpList(BedrockCommandSender sender) {
+    private ArrayList<JsonMessage> getFullHelpList(BedrockChatSender sender) {
         // create help for each subcommand
         ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>() {{
             addAll(commandManager.getHelpCommands());
@@ -91,7 +91,7 @@ public class HelpCommand extends Command {
         return getHelpJsonMessages(sender, commands);
     }
 
-    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockCommandSender sender, ArrayList<AbstractCommand> helpList) {
+    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, ArrayList<AbstractCommand> helpList) {
         ArrayList<JsonMessage> jsonList = new ArrayList<>();
 
         for (AbstractCommand abstractCommand : helpList) {
@@ -103,7 +103,7 @@ public class HelpCommand extends Command {
         return jsonList;
     }
 
-    public void printHelp(BedrockCommandSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
+    public void printHelp(BedrockChatSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
         HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
 
         // Preparation for Pagination
@@ -133,7 +133,7 @@ public class HelpCommand extends Command {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ArrayList<String> getTabCompletion(String[] args, BedrockCommandSender sender) {
+    public ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
 
         if (args.length > 1) {
             // Tab Completion for each command to display special help

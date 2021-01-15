@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.registry;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 
 /**
@@ -33,15 +33,15 @@ import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 public interface RegistryInterface {
 
     @SuppressWarnings("unused")
-    void _register(FoundationPlugin plugin, String ident, BedrockCommandSender sender, Registerable storable);
+    void _register(FoundationPlugin plugin, String ident, BedrockChatSender sender, Registerable storable);
 
     @SuppressWarnings("unused")
-    boolean _exists(FoundationPlugin plugin, String ident, BedrockCommandSender sender);
+    boolean _exists(FoundationPlugin plugin, String ident, BedrockChatSender sender);
 
     @SuppressWarnings("unused")
-    Registerable _get(FoundationPlugin plugin, String ident, BedrockCommandSender sender) throws NoSuchRegisterableException;
+    Registerable _get(FoundationPlugin plugin, String ident, BedrockChatSender sender) throws NoSuchRegisterableException;
 
     @SuppressWarnings("unused")
-    void _remove(FoundationPlugin plugin, String ident, BedrockCommandSender sender);
+    void _remove(FoundationPlugin plugin, String ident, BedrockChatSender sender);
 
 }

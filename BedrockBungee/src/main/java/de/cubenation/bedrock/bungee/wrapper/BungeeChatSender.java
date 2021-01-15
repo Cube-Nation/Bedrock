@@ -20,54 +20,60 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.api.command.sender;
+package de.cubenation.bedrock.bungee.wrapper;
 
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
-import net.md_5.bungee.api.ChatMessageType;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class PlayerSender extends CommandSender implements BedrockPlayerCommandSender {
+public class BungeeChatSender implements BedrockChatSender {
 
-    private final ProxiedPlayer player;
+    private final net.md_5.bungee.api.CommandSender commandSender;
 
-    public PlayerSender(ProxiedPlayer player) {
-        super(player);
-        this.player = player;
+    public BungeeChatSender(net.md_5.bungee.api.CommandSender original) {
+        this.commandSender = original;
     }
 
-    public ProxiedPlayer getPlayer() {
-        return player;
-    }
-
-    @Override
-    public String getDisplayName() {
-        return player.getDisplayName();
+    public net.md_5.bungee.api.CommandSender getCommandSender() {
+        return commandSender;
     }
 
     @Override
-    public void setDisplayName(String name) {
-        player.setDisplayName(name);
+    public boolean isOp() {
+        return false;
     }
 
     @Override
-    public void chat(String msg) {
-        player.chat(msg);
+    public boolean hasPermission(String permission) {
+        return commandSender.hasPermission(permission);
     }
 
     @Override
-    public void sendMessage(ChatMessageType position, BaseComponent component) {
-        player.sendMessage(position, component);
+    public void sendMessage(String legacyText) {
+        commandSender.sendMessage(legacyText);
     }
 
     @Override
-    public void sendMessage(ChatMessageType position, BaseComponent... components) {
-        player.sendMessage(position, components);
+    public void sendMessage(String[] messages) {
+        commandSender.sendMessages(messages);
+    }
+
+    @Override
+    public String getName() {
+        return commandSender.getName();
+    }
+
+    @Override
+    public void sendMessage(BaseComponent component) {
+        commandSender.sendMessage(component);
+    }
+
+    @Override
+    public void sendMessage(BaseComponent... components) {
+        commandSender.sendMessage(components);
     }
 }
 

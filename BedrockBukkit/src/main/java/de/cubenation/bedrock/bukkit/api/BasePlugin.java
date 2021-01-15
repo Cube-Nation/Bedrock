@@ -22,13 +22,13 @@
 
 package de.cubenation.bedrock.bukkit.api;
 
-import de.cubenation.bedrock.bukkit.api.command.sender.PlayerSender;
+import de.cubenation.bedrock.bukkit.wrapper.BukkitPlayer;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.*;
 import de.cubenation.bedrock.core.helper.version.VersionComparator;
@@ -498,7 +498,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
     }
 
     @Override
-    public Collection<? extends BedrockPlayerCommandSender> getOnlinePlayers() {
-        return Bukkit.getServer().getOnlinePlayers().stream().map(o -> new PlayerSender(o)).collect(Collectors.toList());
+    public Collection<? extends BedrockPlayer> getOnlinePlayers() {
+        return Bukkit.getServer().getOnlinePlayers().stream().map(o -> new BukkitPlayer(o)).collect(Collectors.toList());
     }
 }

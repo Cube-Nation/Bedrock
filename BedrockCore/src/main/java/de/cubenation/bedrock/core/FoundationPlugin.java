@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core;
 
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -190,6 +190,6 @@ public interface FoundationPlugin {
 
     BedrockDefaults getBedrockDefaults();
 
-    Collection<? extends BedrockPlayerCommandSender> getOnlinePlayers();
+    Collection<? extends BedrockPlayer> getOnlinePlayers();
 
 }

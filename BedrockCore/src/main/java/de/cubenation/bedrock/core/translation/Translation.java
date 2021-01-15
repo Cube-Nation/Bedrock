@@ -23,8 +23,8 @@
 package de.cubenation.bedrock.core.translation;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
-import de.cubenation.bedrock.core.command.BedrockPlayerCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
@@ -75,7 +75,7 @@ public class Translation {
         this.service = plugin.getLocalizationService();
     }
 
-    public void send(BedrockCommandSender commandSender) {
+    public void send(BedrockChatSender commandSender) {
         String message = getTranslation();
         if (message == null) {
             return;
@@ -88,8 +88,8 @@ public class Translation {
         message = colorScheme.applyColorScheme(message);
         TextComponent component = new TextComponent(message);
 
-        if (commandSender instanceof BedrockPlayerCommandSender) {
-            BedrockPlayerCommandSender player = (BedrockPlayerCommandSender) commandSender;
+        if (commandSender instanceof BedrockPlayer) {
+            BedrockPlayer player = (BedrockPlayer) commandSender;
             sendPlayer(player, component);
         } else {
             sendConsole(commandSender, component);
@@ -97,16 +97,16 @@ public class Translation {
     }
 
     public void broadcast() {
-        for (BedrockPlayerCommandSender player : plugin.getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getOnlinePlayers()) {
             send(player);
         }
     }
 
-    private void sendPlayer(BedrockPlayerCommandSender player, TextComponent components) {
+    private void sendPlayer(BedrockPlayer player, TextComponent components) {
         player.sendMessage(components);
     }
 
-    private void sendConsole(BedrockCommandSender commandSender, TextComponent components) {
+    private void sendConsole(BedrockChatSender commandSender, TextComponent components) {
         String legacyText = BaseComponent.toLegacyText(components);
         commandSender.sendMessage(legacyText);
     }

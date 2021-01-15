@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.permission;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.config.Permissions;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
@@ -210,7 +210,7 @@ public class PermissionService extends AbstractService {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public boolean hasPermission(BedrockCommandSender sender, Permission permission) {
+    public boolean hasPermission(BedrockChatSender sender, Permission permission) {
         // op check
         if (sender.isOp() && (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {
             return true;
@@ -234,7 +234,7 @@ public class PermissionService extends AbstractService {
     }
 
     @SuppressWarnings("unused")
-    public boolean hasPermission(BedrockCommandSender sender, String permission) {
+    public boolean hasPermission(BedrockChatSender sender, String permission) {
         List<Permission> filtered = this.localPermissionCache.stream()
                 .filter(cachedPermission -> cachedPermission.getName().equals(permission))
                 .collect(Collectors.toList());
@@ -251,7 +251,7 @@ public class PermissionService extends AbstractService {
         return this.localPermissionCache;
     }
 
-    public List<Permission> getPermissions(BedrockCommandSender player) throws PlayerNotFoundException {
+    public List<Permission> getPermissions(BedrockChatSender player) throws PlayerNotFoundException {
         if (player == null)
             throw new PlayerNotFoundException();
 

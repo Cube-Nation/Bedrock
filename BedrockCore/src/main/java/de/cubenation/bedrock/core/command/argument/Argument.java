@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.command.argument;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.service.permission.Permission;
 import de.cubenation.bedrock.core.translation.Translation;
 
@@ -110,7 +110,7 @@ public class Argument {
         return permission;
     }
 
-    public boolean userHasPermission(BedrockCommandSender sender) {
+    public boolean userHasPermission(BedrockChatSender sender) {
         return this.permission == null || this.permission.userHasPermission(sender);
     }
 

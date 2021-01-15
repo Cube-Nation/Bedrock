@@ -26,7 +26,7 @@ import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandRole;
 import de.cubenation.bedrock.core.exception.CommandException;
@@ -52,7 +52,7 @@ public class CommandListCommand extends Command {
     }
 
     @Override
-    public void execute(BedrockCommandSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();
 

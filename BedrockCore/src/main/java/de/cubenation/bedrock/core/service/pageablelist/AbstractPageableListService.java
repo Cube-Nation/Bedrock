@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.pageablelist;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.helper.desgin.PageableMessageHelper;
 import de.cubenation.bedrock.core.registry.Registerable;
 import de.cubenation.bedrock.core.service.AbstractService;
@@ -85,14 +85,14 @@ public abstract class AbstractPageableListService extends AbstractService implem
         }
     }
 
-    public void paginate(BedrockCommandSender sender, String command, String header, int page) {
+    public void paginate(BedrockChatSender sender, String command, String header, int page) {
         PageableMessageHelper pageableMessageHelper = new PageableMessageHelper(getPlugin(), command, this);
 
         pageableMessageHelper.setHeadline(header);
         pageableMessageHelper.paginate(sender, page);
     }
 
-    public void paginate(BedrockCommandSender sender, String command, ArrayList<BedrockJson> header, int page) {
+    public void paginate(BedrockChatSender sender, String command, ArrayList<BedrockJson> header, int page) {
         PageableMessageHelper pageableMessageHelper = new PageableMessageHelper(getPlugin(), command, this);
 
         pageableMessageHelper.setJsonHeadline(header);

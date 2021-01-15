@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.pageablelist;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.BedrockCommandSender;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.core.registry.AbstractRegistry;
 import de.cubenation.bedrock.core.registry.RegistryInterface;
@@ -41,7 +41,7 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
         timeout = plugin.getConfigService().getReadOnlyConfig().getInt("service.pageablelist.timeout");
     }
 
-    public void register(final FoundationPlugin plugin, final String ident, final BedrockCommandSender sender, AbstractPageableListService object) {
+    public void register(final FoundationPlugin plugin, final String ident, final BedrockChatSender sender, AbstractPageableListService object) {
         _register(plugin, ident, sender, object);
 
         // if the timeout is zero, the list is valid until a new list is registered for this CommandSender
@@ -53,15 +53,15 @@ public class PageableListRegistry extends AbstractRegistry implements RegistryIn
         }
     }
 
-    public boolean exists(FoundationPlugin plugin, String ident, BedrockCommandSender sender) {
+    public boolean exists(FoundationPlugin plugin, String ident, BedrockChatSender sender) {
         return _exists(plugin, ident, sender);
     }
 
-    public AbstractPageableListService get(FoundationPlugin plugin, String ident, BedrockCommandSender sender) throws NoSuchRegisterableException {
+    public AbstractPageableListService get(FoundationPlugin plugin, String ident, BedrockChatSender sender) throws NoSuchRegisterableException {
         return (AbstractPageableListService) _get(plugin, ident, sender);
     }
 
-    public void remove(FoundationPlugin plugin, String ident, BedrockCommandSender sender) {
+    public void remove(FoundationPlugin plugin, String ident, BedrockChatSender sender) {
         _remove(plugin, ident, sender);
     }
 
