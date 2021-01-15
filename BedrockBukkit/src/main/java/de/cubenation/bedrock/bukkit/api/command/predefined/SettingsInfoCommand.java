@@ -24,13 +24,14 @@ package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.api.exception.NoSuchPlayerException;
+import de.cubenation.bedrock.bukkit.wrapper.BukkitPlayer;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -39,17 +40,16 @@ import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
 import de.cubenation.bedrock.core.service.settings.SettingsManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Description("command.bedrock.info.desc")
-@Permission(Name = "settings.list", Role = CommandRole.ADMIN)
+@Permission(Name = "settings.list", Role = Role.ADMIN)
 @SubCommand({ "settings" })
 @SubCommand({ "info", "i" })
 @Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
@@ -79,7 +79,7 @@ public class SettingsInfoCommand extends Command {
                 if (UUIDUtil.isUUID(user)) {
                     uuid = UUID.fromString(user);
                 } else {
-                    Player player = Bukkit.getPlayer(user);
+                    BukkitPlayer player = new BukkitPlayer(Bukkit.getPlayer(user)); // TODO: get rid of Bukkit dependency
                     if (player == null) {
                         throw new NoSuchPlayerException(user);
                     }

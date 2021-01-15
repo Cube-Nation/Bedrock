@@ -20,14 +20,14 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.command;
+package de.cubenation.bedrock.core.authorization;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("unused")
-public enum CommandRole {
+public enum Role {
     // all permissions with no role are in this role by default
     NO_ROLE("no_role"),
 
@@ -54,7 +54,7 @@ public enum CommandRole {
 
     private final String type;
 
-    CommandRole(String type) {
+    Role(String type) {
         this.type = type;
     }
 

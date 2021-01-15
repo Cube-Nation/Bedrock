@@ -32,7 +32,7 @@ import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -44,7 +44,7 @@ import org.bukkit.command.ConsoleCommandSender;
  * @version 1.0
  */
 @Description("command.bedrock.playerinfo.desc")
-@Permission(Name = "info.other", Role = CommandRole.ADMIN)
+@Permission(Name = "info.other", Role = Role.ADMIN)
 @SubCommand({ "info", "i" })
 @Argument(
         Description = "command.bedrock.username_uuid.desc",

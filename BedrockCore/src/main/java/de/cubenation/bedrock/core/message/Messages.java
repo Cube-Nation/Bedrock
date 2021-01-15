@@ -31,7 +31,7 @@ import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
-import de.cubenation.bedrock.core.service.permission.Permission;
+import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;

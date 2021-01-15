@@ -23,8 +23,9 @@
 package de.cubenation.bedrock.core.service.permission;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.config.Permissions;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
@@ -85,7 +86,7 @@ public class PermissionService extends AbstractService {
 
     @Deprecated
     public void registerPermission(String role, String permission) throws NullPointerException {
-        this.registerPermission(permission, CommandRole.valueOf(role));
+        this.registerPermission(permission, Role.valueOf(role));
     }
 
     @SuppressWarnings("unused")
@@ -94,7 +95,7 @@ public class PermissionService extends AbstractService {
     }
 
     @SuppressWarnings("WeakerAccess")
-    public void registerPermission(String permission, CommandRole role) {
+    public void registerPermission(String permission, Role role) {
         this.registerPermission(new Permission(permission, role));
     }
 
@@ -157,7 +158,7 @@ public class PermissionService extends AbstractService {
 
                         // To self-repair NO_ROLE permissions we ignore them here.
                         // They will be added later to their approriate role (or NO_ROLE) again
-                        if (commandRole.equals(CommandRole.NO_ROLE)) {
+                        if (commandRole.equals(Role.NO_ROLE)) {
                             return;
                         }
 
@@ -190,7 +191,7 @@ public class PermissionService extends AbstractService {
 
     private void savePermissions(Permissions permissions) {
         // clean up default role - will be restored if necessary
-        permissions.removeRole(CommandRole.NO_ROLE);
+        permissions.removeRole(Role.NO_ROLE);
 
         // restore missing permissions
         this.localPermissionCache.forEach(permission -> {
@@ -223,7 +224,7 @@ public class PermissionService extends AbstractService {
         }
 
         // check again with full permission node (including permission prefix for role)
-        CommandRole role = ((Permissions) plugin.getConfigService().getConfig(Permissions.class)).getRoleForPermission(permission.getName());
+        Role role = ((Permissions) plugin.getConfigService().getConfig(Permissions.class)).getRoleForPermission(permission.getName());
         if (role != null) {
             if (sender.hasPermission(String.format("%s.%s.%s", this.getPermissionPrefix(), role.getType().toLowerCase(), permission.getName()))) {
                 return true;

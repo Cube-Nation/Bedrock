@@ -29,6 +29,8 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.UUID;
+
 /**
  * @author Cube-Nation
  * @version 1.0
@@ -54,6 +56,11 @@ public class BungeePlayer extends BungeeChatSender implements BedrockPlayer {
     @Override
     public void setDisplayName(String name) {
         player.setDisplayName(name);
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
 
     @Override

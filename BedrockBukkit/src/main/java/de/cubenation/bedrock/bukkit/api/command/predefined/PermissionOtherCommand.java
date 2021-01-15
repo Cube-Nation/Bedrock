@@ -29,7 +29,7 @@ import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
@@ -42,12 +42,12 @@ import org.bukkit.Bukkit;
  * @version 1.0
  */
 @Description("command.bedrock.permissions.desc")
-@Permission(Name = "permissions.other", Role = CommandRole.MODERATOR)
-@Permission(Name = "permissions.self", Role = CommandRole.USER)
+@Permission(Name = "permissions.other", Role = Role.MODERATOR)
+@Permission(Name = "permissions.self", Role = Role.USER)
 @SubCommand({"permissions", "perms"})
 @Argument(
         Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true,
-        Permission = "permissions.other", Role = CommandRole.MODERATOR
+        Permission = "permissions.other", Role = Role.MODERATOR
 )
 public class PermissionOtherCommand extends Command {
 
@@ -71,7 +71,7 @@ public class PermissionOtherCommand extends Command {
         }
 
         try {
-            BedrockChatSender bedrockChatSender = (BedrockChatSender) Bukkit.getPlayer(player);
+            BedrockChatSender bedrockChatSender = (BedrockChatSender) Bukkit.getPlayer(player); // TODO: remove Bukkit dependency
             plugin.messages().displayPermissions(sender, permissionService.getPermissions(bedrockChatSender));
 
         } catch (PlayerNotFoundException e) {

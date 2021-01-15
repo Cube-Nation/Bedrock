@@ -28,7 +28,7 @@ import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -42,7 +42,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Description("command.bedrock.cmd.list.desc")
-@Permission(Name = "command.list", Role = CommandRole.USER)
+@Permission(Name = "command.list", Role = Role.USER)
 @SubCommand({"command", "cmd"})
 @SubCommand({"list", "l"})
 public class CommandListCommand extends Command {

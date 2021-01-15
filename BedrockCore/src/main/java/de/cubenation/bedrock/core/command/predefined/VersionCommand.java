@@ -28,7 +28,7 @@ import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.service.command.CommandManager;
@@ -38,7 +38,7 @@ import de.cubenation.bedrock.core.service.command.CommandManager;
  * @version 1.0
  */
 @Description("command.bedrock.version.desc")
-@Permission(Name = "version", Role = CommandRole.MODERATOR)
+@Permission(Name = "version", Role = Role.MODERATOR)
 @SubCommand({ "version", "v" })
 public class VersionCommand extends Command {
 

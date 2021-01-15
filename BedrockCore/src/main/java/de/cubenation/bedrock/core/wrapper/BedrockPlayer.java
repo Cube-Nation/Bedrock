@@ -24,6 +24,8 @@ package de.cubenation.bedrock.core.wrapper;
 
 import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
 
+import java.util.UUID;
+
 /**
  * @author Cube-Nation
  * @version 2.0
@@ -53,6 +55,12 @@ public interface BedrockPlayer extends BedrockChatSender {
     void setDisplayName(String name);
 
     /**
+     * Gets the players unique ID
+     * @return UUID of the Player
+     */
+    UUID getUniqueId();
+
+    /**
      * Says a message (or runs a command).
      *
      * @param msg message to print
@@ -75,6 +83,10 @@ public interface BedrockPlayer extends BedrockChatSender {
      */
     void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components);
 
+    /**
+     * Teleports the player to a given position
+     *
+     * @param pos   the desired position
+     */
     void teleport(BedrockPosition pos) throws WrongBedrockImplementationException;
-
 }

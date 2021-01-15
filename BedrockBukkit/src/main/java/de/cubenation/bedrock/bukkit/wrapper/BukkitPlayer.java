@@ -30,6 +30,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
  * @author Cube-Nation
  * @version 1.0
@@ -55,6 +57,11 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
     @Override
     public void setDisplayName(String name) {
         player.setDisplayName(name);
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
 
     @Override

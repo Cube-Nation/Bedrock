@@ -25,6 +25,7 @@ package de.cubenation.bedrock.core.command;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.*;
 import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
+import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -61,7 +62,7 @@ public abstract class AbstractCommand {
 
     private ArrayList<de.cubenation.bedrock.core.command.argument.Argument> arguments = new ArrayList<>();
 
-    private ArrayList<de.cubenation.bedrock.core.service.permission.Permission> runtimePermissions = new ArrayList<>();
+    private ArrayList<de.cubenation.bedrock.core.authorization.Permission> runtimePermissions = new ArrayList<>();
 
     private boolean isIngameCommandOnly = false;
 
@@ -144,11 +145,11 @@ public abstract class AbstractCommand {
         this.subcommands.add(subCommands);
     }
 
-    public ArrayList<de.cubenation.bedrock.core.service.permission.Permission> getRuntimePermissions() {
+    public ArrayList<de.cubenation.bedrock.core.authorization.Permission> getRuntimePermissions() {
         return this.runtimePermissions;
     }
 
-    private void addRuntimePermission(de.cubenation.bedrock.core.service.permission.Permission permission) {
+    private void addRuntimePermission(de.cubenation.bedrock.core.authorization.Permission permission) {
         permission.setPlugin(plugin);
         this.runtimePermissions.add(permission);
     }
@@ -157,15 +158,15 @@ public abstract class AbstractCommand {
         return this.arguments;
     }
 
-    private de.cubenation.bedrock.core.service.permission.Permission createPermission(String name, CommandRole role, String roleName, String description) {
-        de.cubenation.bedrock.core.service.permission.Permission permission = new de.cubenation.bedrock.core.service.permission.Permission(name);
+    private de.cubenation.bedrock.core.authorization.Permission createPermission(String name, Role role, String roleName, String description) {
+        de.cubenation.bedrock.core.authorization.Permission permission = new de.cubenation.bedrock.core.authorization.Permission(name);
 
         if (roleName != null && !roleName.isEmpty()) {
-            permission.setRole(de.cubenation.bedrock.core.service.permission.Permission.getCommandRole(roleName));
+            permission.setRole(de.cubenation.bedrock.core.authorization.Permission.getCommandRole(roleName));
         }
 
         // CommandRole enums always win (in case a role String is defined)
-        if (role != null && !role.equals(CommandRole.NO_ROLE)) {
+        if (role != null && !role.equals(Role.NO_ROLE)) {
             permission.setRole(role);
         }
 
@@ -537,7 +538,7 @@ public abstract class AbstractCommand {
         if (getRuntimePermissions().isEmpty())
             return true;
 
-        for (de.cubenation.bedrock.core.service.permission.Permission permission : getRuntimePermissions()) {
+        for (de.cubenation.bedrock.core.authorization.Permission permission : getRuntimePermissions()) {
             if (permission.userHasPermission(sender)) {
                 return true;
             }

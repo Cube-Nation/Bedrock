@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.command.argument;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.service.permission.Permission;
+import de.cubenation.bedrock.core.authorization.Permission;
 
 import java.util.HashMap;
 

@@ -20,17 +20,17 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.service.permission;
+package de.cubenation.bedrock.core.authorization;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.command.CommandRole;
+import de.cubenation.bedrock.core.authorization.Role;
 
 /**
  * The Permission class
  *
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("unused")
 public class Permission {
@@ -39,30 +39,30 @@ public class Permission {
 
     private String name;
 
-    private CommandRole role = CommandRole.NO_ROLE;
+    private Role role = Role.NO_ROLE;
 
     private String descriptionLocaleIdent;
 
     public Permission(String name) {
-        this(name, CommandRole.NO_ROLE, null);
+        this(name, Role.NO_ROLE, null);
     }
 
-    public Permission(String name, CommandRole role) {
+    public Permission(String name, Role role) {
         this(name, role, null);
     }
 
-    public Permission(String name, CommandRole role, String descriptionLocaleIdent) {
+    public Permission(String name, Role role, String descriptionLocaleIdent) {
         this.setName(name);
         this.setRole(role);
         this.setDescriptionLocaleIdent(descriptionLocaleIdent);
     }
 
-    public static CommandRole getCommandRole(String roleName) {
-        CommandRole role = CommandRole.NO_ROLE;
+    public static Role getCommandRole(String roleName) {
+        Role role = Role.NO_ROLE;
 
-        for (CommandRole commandRole : CommandRole.values()) {
+        for (Role commandRole : Role.values()) {
             if (commandRole.getType().toLowerCase().equals(roleName.toLowerCase())) {
-                role = CommandRole.valueOf(roleName.toUpperCase());
+                role = Role.valueOf(roleName.toUpperCase());
             }
         }
 
@@ -91,11 +91,11 @@ public class Permission {
         this.name = name;
     }
 
-    public CommandRole getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(CommandRole role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -116,7 +116,7 @@ public class Permission {
 
     public String getPermissionNode() {
         if (this.getPlugin() == null) {
-            if (this.getRole().equals(CommandRole.NO_ROLE)) {
+            if (this.getRole().equals(Role.NO_ROLE)) {
                 return this.getName();
             } else {
                 return String.format("%s.%s",
@@ -127,7 +127,7 @@ public class Permission {
         }
 
         String permissionPrefix = this.getPlugin().getPermissionService().getPermissionPrefix();
-        if (this.getRole().equals(CommandRole.NO_ROLE)) {
+        if (this.getRole().equals(Role.NO_ROLE)) {
             return String.format("%s.%s", permissionPrefix, this.getName());
         }
 
