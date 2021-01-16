@@ -38,6 +38,7 @@ import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
+import de.cubenation.bedrock.core.BedrockServer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -310,8 +311,9 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
-    public Collection<? extends BedrockPlayer> getOnlinePlayers() {
-        return getProxy().getPlayers().stream().map(o -> new BungeePlayer(o)).collect(Collectors.toList());
+    public BedrockServer getBedrockServer() {
+        // TODO: ugly
+        return new BungeeServer(this);
     }
 
 }

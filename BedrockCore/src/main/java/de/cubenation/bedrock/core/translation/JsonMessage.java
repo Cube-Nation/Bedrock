@@ -96,7 +96,7 @@ public class JsonMessage {
 
     @SuppressWarnings("WeakerAccess")
     public void broadcast(ChatMessageType chatMessageType) {
-        for (BedrockPlayer player : plugin.getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getBedrockServer().getOnlinePlayers()) {
             send(player, chatMessageType);
         }
     }
@@ -107,7 +107,7 @@ public class JsonMessage {
 
     @SuppressWarnings("WeakerAccess")
     public void broadcast(ArrayList<BedrockPlayer> withoutPlayer, ChatMessageType chatMessageType) {
-        for (BedrockPlayer player : plugin.getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getBedrockServer().getOnlinePlayers()) {
             if (withoutPlayer.contains(player)) {
                 continue;
             }

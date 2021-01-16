@@ -97,7 +97,7 @@ public class Translation {
     }
 
     public void broadcast() {
-        for (BedrockPlayer player : plugin.getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getBedrockServer().getOnlinePlayers()) {
             send(player);
         }
     }

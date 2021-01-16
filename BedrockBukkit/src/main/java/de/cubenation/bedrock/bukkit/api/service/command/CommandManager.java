@@ -49,6 +49,6 @@ public class CommandManager
 
     @Override
     public List<String> onTabComplete(org.bukkit.command.CommandSender sender, Command command, String alias, String[] args) {
-        return onTabComplete(new BukkitChatSender(sender), args);
+        return onAutoComplete(new BukkitChatSender(sender), args);
     }
 }

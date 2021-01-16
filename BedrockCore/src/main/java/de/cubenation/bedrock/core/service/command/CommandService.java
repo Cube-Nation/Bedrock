@@ -24,10 +24,7 @@ package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.command.predefined.PermissionListCommand;
-import de.cubenation.bedrock.core.command.predefined.RegenerateLocaleCommand;
-import de.cubenation.bedrock.core.command.predefined.ReloadCommand;
-import de.cubenation.bedrock.core.command.predefined.VersionCommand;
+import de.cubenation.bedrock.core.command.predefined.*;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 
@@ -55,6 +52,7 @@ public abstract class CommandService extends AbstractService {
         predefinedCommands.add(new VersionCommand(getPlugin(), pluginCommandManager));
         predefinedCommands.add(new PermissionListCommand(getPlugin(), pluginCommandManager));
         predefinedCommands.add(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
+        predefinedCommands.add(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
         return predefinedCommands;
     }
 

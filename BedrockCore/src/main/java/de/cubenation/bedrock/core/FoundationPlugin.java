@@ -22,7 +22,6 @@
 
 package de.cubenation.bedrock.core;
 
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -36,7 +35,6 @@ import de.cubenation.bedrock.core.service.settings.SettingsService;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Level;
 
 /**
@@ -190,6 +188,6 @@ public interface FoundationPlugin {
 
     BedrockDefaults getBedrockDefaults();
 
-    Collection<? extends BedrockPlayer> getOnlinePlayers();
+    BedrockServer getBedrockServer();
 
 }

@@ -20,21 +20,17 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.exception;
+package de.cubenation.bedrock.core.command;
+
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class NoSuchPlayerException extends Exception {
+public interface AutoCompletionExecutor {
 
-    private static final long serialVersionUID = 1L;
+    Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args);
 
-    public NoSuchPlayerException(String name) {
-        super(name);
-    }
-
-    public NoSuchPlayerException() {
-        super();
-    }
 }
+

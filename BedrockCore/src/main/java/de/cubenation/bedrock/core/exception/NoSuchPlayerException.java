@@ -20,17 +20,21 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.command;
-
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public interface TabExecutor {
+public class NoSuchPlayerException extends Exception {
 
-    Iterable<String> onTabComplete(BedrockChatSender sender, String[] args);
+    private static final long serialVersionUID = 1L;
 
+    public NoSuchPlayerException(String name) {
+        super(name);
+    }
+
+    public NoSuchPlayerException() {
+        super();
+    }
 }
-

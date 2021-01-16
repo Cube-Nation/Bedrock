@@ -20,15 +20,14 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.predefined;
+package de.cubenation.bedrock.core.command.predefined;
 
-import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.exception.NoSuchPlayerException;
-import de.cubenation.bedrock.bukkit.wrapper.BukkitPlayer;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
+import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.authorization.Role;
@@ -39,7 +38,7 @@ import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
 import de.cubenation.bedrock.core.service.settings.SettingsManager;
-import org.bukkit.Bukkit;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -56,7 +55,7 @@ import java.util.UUID;
 @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
 public class SettingsInfoCommand extends Command {
 
-    public SettingsInfoCommand(BasePlugin plugin, CommandManager commandManager) {
+    public SettingsInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
@@ -79,7 +78,7 @@ public class SettingsInfoCommand extends Command {
                 if (UUIDUtil.isUUID(user)) {
                     uuid = UUID.fromString(user);
                 } else {
-                    BukkitPlayer player = new BukkitPlayer(Bukkit.getPlayer(user)); // TODO: get rid of Bukkit dependency
+                    BedrockPlayer player = plugin.getBedrockServer().getPlayer(user);
                     if (player == null) {
                         throw new NoSuchPlayerException(user);
                     }

@@ -20,7 +20,7 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.command.predefined;
+package de.cubenation.bedrock.core.command.predefined;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
@@ -35,11 +35,10 @@ import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
-import org.bukkit.Bukkit;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Description("command.bedrock.permissions.desc")
 @Permission(Name = "permissions.other", Role = Role.MODERATOR)
@@ -71,7 +70,7 @@ public class PermissionOtherCommand extends Command {
         }
 
         try {
-            BedrockChatSender bedrockChatSender = (BedrockChatSender) Bukkit.getPlayer(player); // TODO: remove Bukkit dependency
+            BedrockChatSender bedrockChatSender = plugin.getBedrockServer().getPlayer(player);
             plugin.messages().displayPermissions(sender, permissionService.getPermissions(bedrockChatSender));
 
         } catch (PlayerNotFoundException e) {

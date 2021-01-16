@@ -26,7 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.CommandExecutor;
-import de.cubenation.bedrock.core.command.TabExecutor;
+import de.cubenation.bedrock.core.command.AutoCompletionExecutor;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class CommandManager implements CommandExecutor, TabExecutor {
+public abstract class CommandManager implements CommandExecutor, AutoCompletionExecutor {
 
     private FoundationPlugin plugin;
 
@@ -166,7 +166,7 @@ public abstract class CommandManager implements CommandExecutor, TabExecutor {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<String> onTabComplete(BedrockChatSender sender, String[] args) {
+    public List<String> onAutoComplete(BedrockChatSender sender, String[] args) {
         ArrayList<String> list = new ArrayList<>();
         for (AbstractCommand cmd : getCompletionCommands()) {
             if (!cmd.hasPermission(sender)) {

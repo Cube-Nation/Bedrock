@@ -27,6 +27,7 @@ import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
+import de.cubenation.bedrock.core.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
@@ -498,7 +499,8 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
     }
 
     @Override
-    public Collection<? extends BedrockPlayer> getOnlinePlayers() {
-        return Bukkit.getServer().getOnlinePlayers().stream().map(o -> new BukkitPlayer(o)).collect(Collectors.toList());
+    public BedrockServer getBedrockServer() {
+        // TODO: ugly
+        return new BukkitServer();
     }
 }

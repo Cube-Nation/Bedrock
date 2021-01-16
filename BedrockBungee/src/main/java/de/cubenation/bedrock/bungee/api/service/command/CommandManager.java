@@ -45,7 +45,7 @@ public class CommandManager
 
     @Override
     public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        return onTabComplete(new BungeeChatSender(sender), args);
+        return onAutoComplete(new BungeeChatSender(sender), args);
     }
 
 }
