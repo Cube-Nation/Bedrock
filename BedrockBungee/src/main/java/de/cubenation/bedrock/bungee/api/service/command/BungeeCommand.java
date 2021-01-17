@@ -52,8 +52,8 @@ public class BungeeCommand extends Command implements TabExecutor {
     }
 
     @Override
-    public void execute(CommandSender commandSender, String[] strings) {
-        commandManager.execute(commandSender, strings);
+    public void execute(CommandSender commandSender, String[] args) {
+        commandManager.execute(commandSender, args);
     }
 
     @Override
