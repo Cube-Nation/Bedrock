@@ -23,7 +23,10 @@
 package de.cubenation.bedrock.bungee.plugin;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
+import de.cubenation.bedrock.bungee.plugin.command.BedrockPlayerTeleportCommand;
+import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.listener.PlayerListener;
+import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.core.model.BedrockPlayer;
@@ -37,6 +40,9 @@ import java.util.logging.Level;
  * @author Cube-Nation
  * @version 1.0
  */
+@CommandHandler(Command = "bun", Handlers = {
+        BedrockPlayerTeleportCommand.class,
+})
 @ConfigurationFile(de_DE.class)
 public class BedrockPlugin extends BasePlugin {
 
@@ -61,6 +67,8 @@ public class BedrockPlugin extends BasePlugin {
             getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
             installDDL();
         }
+
+        getProxy().registerChannel(IOVerbs.CHANNEL);
 
         getProxy().getPluginManager().registerListener(this, new PlayerListener(this));
     }

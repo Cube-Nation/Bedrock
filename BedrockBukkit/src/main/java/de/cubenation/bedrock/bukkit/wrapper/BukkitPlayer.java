@@ -28,13 +28,15 @@ import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
 
@@ -43,6 +45,11 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
     public BukkitPlayer(Player player) {
         super(player);
         this.player = player;
+    }
+
+    public BukkitPlayer(OfflinePlayer offlinePlayer) {
+        super(offlinePlayer.getPlayer());
+        this.player = offlinePlayer.getPlayer();
     }
 
     public Player getPlayer() {
@@ -80,10 +87,19 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
     }
 
     @Override
-    public void teleport(BedrockPosition pos) throws WrongBedrockImplementationException {
-        if(!(pos instanceof BukkitPosition))
-            throw new WrongBedrockImplementationException();
-        player.teleport((Location) pos);
+    public void teleport(BedrockPosition pos) {
+        System.out.println("teleport");
+        player.teleport(((BukkitPosition) pos).getLocation());
+    }
+
+    @Override
+    public void teleport(BedrockPlayer target) {
+        player.teleport(((BukkitPlayer)target).getPlayer());
+    }
+
+    @Override
+    public BedrockPosition getPosition() {
+        return new BukkitPosition(player.getLocation());
     }
 
 }

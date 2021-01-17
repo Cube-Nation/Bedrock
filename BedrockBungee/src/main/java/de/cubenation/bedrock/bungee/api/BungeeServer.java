@@ -5,6 +5,7 @@ import de.cubenation.bedrock.core.BedrockServer;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class BungeeServer implements BedrockServer {
@@ -18,6 +19,11 @@ public class BungeeServer implements BedrockServer {
     @Override
     public BedrockPlayer getPlayer(String username) {
         return new BungeePlayer(plugin.getProxy().getPlayer(username));
+    }
+
+    @Override
+    public BedrockPlayer getPlayer(UUID uuid) {
+        return new BungeePlayer(plugin.getProxy().getPlayer(uuid));
     }
 
     @Override

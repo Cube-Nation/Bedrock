@@ -24,10 +24,11 @@ package de.cubenation.bedrock.bukkit.wrapper;
 
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.entity.Player;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class BukkitChatSender implements BedrockChatSender {
 
@@ -75,4 +76,5 @@ public class BukkitChatSender implements BedrockChatSender {
     public void sendMessage(BaseComponent... components) {
         commandSender.spigot().sendMessage(components);
     }
+
 }

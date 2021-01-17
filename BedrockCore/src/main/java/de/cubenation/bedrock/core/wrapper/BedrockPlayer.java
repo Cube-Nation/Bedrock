@@ -88,5 +88,18 @@ public interface BedrockPlayer extends BedrockChatSender {
      *
      * @param pos   the desired position
      */
-    void teleport(BedrockPosition pos) throws WrongBedrockImplementationException;
+    void teleport(BedrockPosition pos);
+
+    /**
+     * Teleports the player to a given player
+     *
+     * @param target   the desired target Player
+     */
+    void teleport(BedrockPlayer target);
+
+    /**
+     * Gets the players current position
+     * @return the BedrockPosition of the player
+     */
+    BedrockPosition getPosition();
 }

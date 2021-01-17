@@ -22,18 +22,20 @@
 
 package de.cubenation.bedrock.bungee.wrapper;
 
+import de.cubenation.bedrock.bungee.plugin.helper.BungeeTeleportHelper;
 import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import org.apache.commons.lang.NotImplementedException;
 
 import java.util.UUID;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class BungeePlayer extends BungeeChatSender implements BedrockPlayer {
 
@@ -79,8 +81,19 @@ public class BungeePlayer extends BungeeChatSender implements BedrockPlayer {
     }
 
     @Override
-    public void teleport(BedrockPosition pos) throws WrongBedrockImplementationException {
-        //TODO: implement bungee teleport
+    public void teleport(BedrockPosition pos) {
+        BungeeTeleportHelper.executeTeleport(this, (BungeePosition) pos);
+    }
+
+    @Override
+    public void teleport(BedrockPlayer target) {
+        BungeeTeleportHelper.executeTeleport(this, (BungeePlayer) target);
+    }
+
+    @Override
+    public BedrockPosition getPosition() {
+        // TODO: implement BungeePosition callback
+        throw new NotImplementedException();
     }
 }
 

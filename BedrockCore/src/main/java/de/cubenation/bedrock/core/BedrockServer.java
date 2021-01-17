@@ -3,6 +3,7 @@ package de.cubenation.bedrock.core;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
 import java.util.Collection;
+import java.util.UUID;
 
 /**
  * @author Cube-Nation
@@ -16,6 +17,13 @@ public interface BedrockServer {
      * @return corresponding BedrockPlayer
      */
     BedrockPlayer getPlayer(String username);
+
+    /**
+     * Gets the player for a given UUID
+     * @param uuid
+     * @return corresponding BedrockPlayer
+     */
+    BedrockPlayer getPlayer(UUID uuid);
 
     /**
      * Gets all currently active players

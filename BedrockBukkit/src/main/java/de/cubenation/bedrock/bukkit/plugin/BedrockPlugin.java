@@ -26,6 +26,9 @@ import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockWorld;
 import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
+import de.cubenation.bedrock.bukkit.plugin.io.BungeeTeleportInputHandler;
+import de.cubenation.bedrock.bukkit.plugin.io.IOVerbs;
+import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
@@ -42,11 +45,11 @@ import java.util.logging.Level;
  * This is the Bedrock main plugin class
  *
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
 @CommandHandler(Command = "bp", Handlers = {
-        BedrockPlayerInfoCommand.class
+        BedrockPlayerInfoCommand.class,
 })
 public class BedrockPlugin extends BasePlugin {
 
@@ -84,6 +87,9 @@ public class BedrockPlugin extends BasePlugin {
         //  - a BedrockPlayer - fired when a player joins the server
         //  - a Bedrockorld - fired when a world is loaded
         this.getServer().getPluginManager().registerEvents(new EbeanListener(), this);
+        // register events for bungee support
+        this.getServer().getPluginManager().registerEvents(new BungeeTeleportListener(), this);
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, IOVerbs.CHANNEL, new BungeeTeleportInputHandler());
     }
 
     /**

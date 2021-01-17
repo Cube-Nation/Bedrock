@@ -27,7 +27,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class BungeeChatSender implements BedrockChatSender {
 
@@ -48,6 +48,7 @@ public class BungeeChatSender implements BedrockChatSender {
 
     @Override
     public boolean hasPermission(String permission) {
+        //TODO: allow star notation
         return commandSender.hasPermission(permission);
     }
 
@@ -75,5 +76,6 @@ public class BungeeChatSender implements BedrockChatSender {
     public void sendMessage(BaseComponent... components) {
         commandSender.sendMessage(components);
     }
+
 }
 
