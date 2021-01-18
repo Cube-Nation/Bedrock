@@ -26,10 +26,6 @@ import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.command.predefined.PermissionListCommand;
-import de.cubenation.bedrock.core.command.predefined.RegenerateLocaleCommand;
-import de.cubenation.bedrock.core.command.predefined.ReloadCommand;
-import de.cubenation.bedrock.core.command.predefined.VersionCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 
 import java.lang.reflect.Constructor;
@@ -115,7 +111,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
         for (Class<?> handler : handlers) {
             Constructor<?> constructor;
             try {
-                constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
+                constructor = handler.getConstructor(FoundationPlugin.class, de.cubenation.bedrock.core.service.command.CommandManager.class);
                 commandManager.addCommand((AbstractCommand) constructor.newInstance(plugin, commandManager));
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
