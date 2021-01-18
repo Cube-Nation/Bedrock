@@ -37,6 +37,7 @@ public class BungeeChatSender implements BedrockChatSender {
         this.commandSender = original;
     }
 
+    @SuppressWarnings("unused")
     public net.md_5.bungee.api.CommandSender getCommandSender() {
         return commandSender;
     }
@@ -48,15 +49,26 @@ public class BungeeChatSender implements BedrockChatSender {
 
     @Override
     public boolean hasPermission(String permission) {
-        //TODO: allow star notation
+        // allow star wildcard with BungeeBedrock permissions
+        String[] parts = permission.split("\\.");
+        StringBuilder currentNode = new StringBuilder();
+        for (int i = 0; i < parts.length-1; i++) {
+            currentNode.append(parts[i]).append(".");
+            if(commandSender.hasPermission(currentNode+"*"))
+                return true;
+        }
+
+        // default permission validation
         return commandSender.hasPermission(permission);
     }
 
+    @Deprecated
     @Override
     public void sendMessage(String legacyText) {
         commandSender.sendMessage(legacyText);
     }
 
+    @Deprecated
     @Override
     public void sendMessage(String[] messages) {
         commandSender.sendMessages(messages);
