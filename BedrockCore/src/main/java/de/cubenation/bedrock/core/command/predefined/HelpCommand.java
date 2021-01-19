@@ -130,7 +130,7 @@ public class HelpCommand extends Command {
         int number = 1;
         if (args.length > 0 && StringUtils.isNumeric(args[0])) {
             int n = Integer.parseInt(args[0]);
-            if(n >= 0 && n <= helpPageableListService.getPages())
+            if(n > 0 && n <= helpPageableListService.getPages())
                 number = n;
         }
         helpPageableListService.paginate(sender, "/" + getCommandManager().getLabel() + " help %page%", header, number);
