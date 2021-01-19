@@ -44,11 +44,11 @@ public class CommandManager
 
     @Override
     public boolean onCommand(org.bukkit.command.CommandSender sender, Command command, String label, String[] args) {
-        return onCommand(new BukkitChatSender(sender), args);
+        return onCommand(BukkitChatSender.wrap(sender), args);
     }
 
     @Override
     public List<String> onTabComplete(org.bukkit.command.CommandSender sender, Command command, String alias, String[] args) {
-        return onAutoComplete(new BukkitChatSender(sender), args);
+        return onAutoComplete(BukkitChatSender.wrap(sender), args);
     }
 }

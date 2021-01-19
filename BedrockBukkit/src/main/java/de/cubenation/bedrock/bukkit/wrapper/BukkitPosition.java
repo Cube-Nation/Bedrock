@@ -12,16 +12,28 @@ public class BukkitPosition implements BedrockPosition {
 
     private final Location location;
 
-    public BukkitPosition(Location location) {
+    protected BukkitPosition(Location location) {
         this.location = location;
     }
 
-    public BukkitPosition(BukkitDimension dimension, double x, double y, double z, float yaw, float pitch) {
+    protected BukkitPosition(BukkitDimension dimension, double x, double y, double z, float yaw, float pitch) {
         this.location = new Location(Bukkit.getWorld(dimension.getName()), x, y, z, yaw, pitch);
     }
 
-    public BukkitPosition(String worldName, double x, double y, double z, float yaw, float pitch) {
+    protected BukkitPosition(String worldName, double x, double y, double z, float yaw, float pitch) {
         this.location = new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
+    }
+
+    public static BukkitPosition wrap(Location location) {
+        return new BukkitPosition(location);
+    }
+
+    public static BukkitPosition wrap(BukkitDimension dimension, double x, double y, double z, float yaw, float pitch) {
+        return new BukkitPosition(dimension, x, y, z, yaw, pitch);
+    }
+
+    public static BukkitPosition wrap(String worldName, double x, double y, double z, float yaw, float pitch) {
+        return new BukkitPosition(worldName, x, y, z, yaw, pitch);
     }
 
     public Location getLocation() {

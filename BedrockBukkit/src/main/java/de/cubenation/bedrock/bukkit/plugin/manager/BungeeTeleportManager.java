@@ -29,7 +29,7 @@ public class BungeeTeleportManager {
         // directly teleport if player is online
         Player player = Bukkit.getPlayer(uuid);
         if (player != null && player.isOnline()) {
-            new BukkitPlayer(player).teleport(pos);
+            BukkitPlayer.wrap(player).teleport(pos);
             return;
         }
 

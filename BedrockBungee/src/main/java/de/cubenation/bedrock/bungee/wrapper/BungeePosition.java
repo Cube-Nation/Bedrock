@@ -12,13 +12,17 @@ public class BungeePosition implements BedrockPosition {
     private double x = 0.0d, y = 0.0d, z = 0.0d;
     private float yaw = 0.0f, pitch = 0.0f;
 
-    public BungeePosition(BungeeDimension dimension, double x, double y, double z, float yaw, float pitch) {
+    protected BungeePosition(BungeeDimension dimension, double x, double y, double z, float yaw, float pitch) {
         this.dimension = dimension;
         this.x = x;
         this.y = y;
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+    }
+
+    public static BungeePosition wrap(BungeeDimension dimension, double x, double y, double z, float yaw, float pitch) {
+        return new BungeePosition(dimension, x, y, z, yaw, pitch);
     }
 
     @Override

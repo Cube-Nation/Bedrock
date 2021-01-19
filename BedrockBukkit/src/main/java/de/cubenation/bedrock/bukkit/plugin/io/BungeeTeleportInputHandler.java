@@ -47,7 +47,7 @@ public class BungeeTeleportInputHandler implements PluginMessageListener {
         float yaw = data.readFloat();
         float pitch = data.readFloat();
 
-        BukkitPosition loc = new BukkitPosition(world, x, y, z, yaw, pitch);
+        BukkitPosition loc = BukkitPosition.wrap(world, x, y, z, yaw, pitch);
         BungeeTeleportManager.getInstance().scheduleTeleport(playerUuid, loc);
     }
 

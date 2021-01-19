@@ -14,7 +14,7 @@ public class BungeeTeleportListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        BukkitPlayer player = new BukkitPlayer(event.getPlayer());
+        BukkitPlayer player = BukkitPlayer.wrap(event.getPlayer());
         BungeeTeleportManager.getInstance().tryExecuteTeleport(player);
     }
 

@@ -23,7 +23,6 @@
 package de.cubenation.bedrock.bungee.wrapper;
 
 import de.cubenation.bedrock.bungee.plugin.helper.BungeeTeleportHelper;
-import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ChatMessageType;
@@ -41,13 +40,17 @@ public class BungeePlayer extends BungeeChatSender implements BedrockPlayer {
 
     private final ProxiedPlayer player;
 
-    public BungeePlayer(ProxiedPlayer player) {
+    protected BungeePlayer(ProxiedPlayer player) {
         super(player);
         this.player = player;
     }
 
     public ProxiedPlayer getPlayer() {
         return player;
+    }
+
+    public static BungeePlayer wrap(ProxiedPlayer player) {
+        return new BungeePlayer(player);
     }
 
     @Override

@@ -22,14 +22,10 @@
 
 package de.cubenation.bedrock.bukkit.wrapper;
 
-import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -42,18 +38,17 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
 
     private final Player player;
 
-    public BukkitPlayer(Player player) {
+    protected BukkitPlayer(Player player) {
         super(player);
         this.player = player;
     }
 
-    public BukkitPlayer(OfflinePlayer offlinePlayer) {
-        super(offlinePlayer.getPlayer());
-        this.player = offlinePlayer.getPlayer();
-    }
-
     public Player getPlayer() {
         return player;
+    }
+
+    public static BukkitPlayer wrap(Player player) {
+        return new BukkitPlayer(player);
     }
 
     @Override

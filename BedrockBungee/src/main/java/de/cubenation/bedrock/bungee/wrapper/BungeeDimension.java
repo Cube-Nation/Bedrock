@@ -10,9 +10,13 @@ public class BungeeDimension implements BedrockDimension {
 
     private String server, world;
 
-    public BungeeDimension(String server, String world) {
+    protected BungeeDimension(String server, String world) {
         this.server = server;
         this.world = world;
+    }
+
+    public static BungeeDimension wrap(String server, String world) {
+        return new BungeeDimension(server, world);
     }
 
     @Override

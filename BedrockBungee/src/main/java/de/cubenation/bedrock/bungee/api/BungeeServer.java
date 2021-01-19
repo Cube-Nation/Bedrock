@@ -18,16 +18,16 @@ public class BungeeServer implements BedrockServer {
 
     @Override
     public BedrockPlayer getPlayer(String username) {
-        return new BungeePlayer(plugin.getProxy().getPlayer(username));
+        return BungeePlayer.wrap(plugin.getProxy().getPlayer(username));
     }
 
     @Override
     public BedrockPlayer getPlayer(UUID uuid) {
-        return new BungeePlayer(plugin.getProxy().getPlayer(uuid));
+        return BungeePlayer.wrap(plugin.getProxy().getPlayer(uuid));
     }
 
     @Override
     public Collection<? extends BedrockPlayer> getOnlinePlayers() {
-        return plugin.getProxy().getPlayers().stream().map(o -> new BungeePlayer(o)).collect(Collectors.toList());
+        return plugin.getProxy().getPlayers().stream().map(o -> BungeePlayer.wrap(o)).collect(Collectors.toList());
     }
 }

@@ -23,7 +23,9 @@
 package de.cubenation.bedrock.bungee.wrapper;
 
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /**
  * @author Cube-Nation
@@ -33,13 +35,19 @@ public class BungeeChatSender implements BedrockChatSender {
 
     private final net.md_5.bungee.api.CommandSender commandSender;
 
-    public BungeeChatSender(net.md_5.bungee.api.CommandSender original) {
+    protected BungeeChatSender(net.md_5.bungee.api.CommandSender original) {
         this.commandSender = original;
     }
 
     @SuppressWarnings("unused")
     public net.md_5.bungee.api.CommandSender getCommandSender() {
         return commandSender;
+    }
+
+    public static BungeeChatSender wrap(CommandSender sender) {
+        if(sender instanceof ProxiedPlayer)
+            return new BungeePlayer((ProxiedPlayer) sender);
+        return new BungeeChatSender(sender);
     }
 
     @Override

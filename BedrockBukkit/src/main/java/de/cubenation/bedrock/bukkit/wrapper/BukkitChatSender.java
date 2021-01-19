@@ -24,6 +24,7 @@ package de.cubenation.bedrock.bukkit.wrapper;
 
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.chat.BaseComponent;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
@@ -34,12 +35,18 @@ public class BukkitChatSender implements BedrockChatSender {
 
     private final org.bukkit.command.CommandSender commandSender;
 
-    public BukkitChatSender(org.bukkit.command.CommandSender original) {
+    protected BukkitChatSender(org.bukkit.command.CommandSender original) {
         this.commandSender = original;
     }
 
     public org.bukkit.command.CommandSender getCommandSender() {
         return commandSender;
+    }
+
+    public static BukkitChatSender wrap(CommandSender sender) {
+        if(sender instanceof Player)
+            return new BukkitPlayer((Player) sender);
+        return new BukkitChatSender(sender);
     }
 
     @Override

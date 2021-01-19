@@ -17,18 +17,18 @@ public class BukkitServer implements BedrockServer {
         Player player = Bukkit.getPlayer(username);
         if(player == null)
             return null;
-        return new BukkitPlayer(player);
+        return BukkitPlayer.wrap(player);
     }
 
     public BukkitPlayer getPlayer(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if(player == null)
             return null;
-        return new BukkitPlayer(player);
+        return BukkitPlayer.wrap(player);
     }
 
     @Override
     public Collection<? extends BedrockPlayer> getOnlinePlayers() {
-        return Bukkit.getServer().getOnlinePlayers().stream().map(o -> new BukkitPlayer(o)).collect(Collectors.toList());
+        return Bukkit.getServer().getOnlinePlayers().stream().map(o -> BukkitPlayer.wrap(o)).collect(Collectors.toList());
     }
 }
