@@ -29,10 +29,10 @@ import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
-import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
@@ -50,7 +50,7 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 )
 public class PermissionOtherCommand extends Command {
 
-    public PermissionOtherCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
+    public PermissionOtherCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 

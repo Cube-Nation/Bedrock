@@ -27,9 +27,9 @@ import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
-import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
@@ -46,7 +46,7 @@ import java.util.*;
 @SubCommand({ "help" })
 public class HelpCommand extends Command {
 
-    public HelpCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
+    public HelpCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 

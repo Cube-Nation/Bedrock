@@ -28,10 +28,10 @@ import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
-import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.HashMap;
@@ -47,7 +47,7 @@ import java.util.Map;
 @SubCommand({"list", "l"})
 public class CommandListCommand extends Command {
 
-    public CommandListCommand(BasePlugin plugin, ComplexCommandManager commandManager) {
+    public CommandListCommand(BasePlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
