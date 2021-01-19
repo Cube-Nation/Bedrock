@@ -25,6 +25,7 @@ package de.cubenation.bedrock.bungee.api.service.command;
 import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.api.command.BungeeCommand;
 import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
+import de.cubenation.bedrock.bungee.api.command.predefined.CommandListCommand;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
@@ -79,7 +80,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             }
 
             // Add bungee exclusive commands
-            // Todo: Add bungee exclusive commands
+            pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
 
             registerCommand(commandName, pluginCommandManager);
         }
