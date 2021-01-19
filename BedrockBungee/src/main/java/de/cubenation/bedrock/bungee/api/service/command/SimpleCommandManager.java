@@ -20,35 +20,36 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.command.predefined;
+package de.cubenation.bedrock.bungee.api.service.command;
 
+import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
+import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.authorization.Role;
-import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+
+import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-@Description("command.bedrock.version.desc")
-@Permission(Name = "version", Role = Role.MODERATOR)
-@SubCommand({ "version", "v" })
-public class VersionCommand extends Command {
+public class SimpleCommandManager
+        extends de.cubenation.bedrock.core.service.command.SimpleCommandManager
+        implements BungeeCommandManager {
 
-    public VersionCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
-        super(plugin, commandManager);
+    public SimpleCommandManager(FoundationPlugin plugin, String label) {
+        super(plugin, label);
     }
 
     @Override
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
-        getPlugin().messages().version(sender);
+    public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
+        onCommand(BungeeChatSender.wrap(sender), args);
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
+        Iterable<String> res = onAutoComplete(BungeeChatSender.wrap(sender), args);
+        return res != null ? res : getPlugin().getBedrockServer().getOnlinePlayers().stream().map(BedrockChatSender::getName).collect(Collectors.toList());
     }
 
 }

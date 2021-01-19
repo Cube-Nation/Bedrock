@@ -24,24 +24,22 @@ package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.command.CommandExecutor;
-import de.cubenation.bedrock.core.command.AutoCompletionExecutor;
+import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
-import de.cubenation.bedrock.core.translation.JsonMessage;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public abstract class CommandManager implements CommandExecutor, AutoCompletionExecutor {
+public abstract class ComplexCommandManager implements CommandManager {
 
     private FoundationPlugin plugin;
 
@@ -52,11 +50,10 @@ public abstract class CommandManager implements CommandExecutor, AutoCompletionE
     private String label;
 
 
-    public CommandManager(FoundationPlugin plugin, String label, String helpPrefix) {
+    public ComplexCommandManager(FoundationPlugin plugin, String label) {
         this.plugin = plugin;
         this.label = label;
 
-        this.commands.addAll(commands);
         this.helpCommand = new HelpCommand(plugin, this);
         this.commands.add(helpCommand);
     }
@@ -78,7 +75,7 @@ public abstract class CommandManager implements CommandExecutor, AutoCompletionE
             return true;
         } else {
 
-            // try commands with subcommands
+            // Try commands with subcommands
             if (this.tryCommand(
                     this.commands.stream()
                             .filter(abstractCommand -> abstractCommand.getSubcommands().size() != 0)
@@ -89,7 +86,8 @@ public abstract class CommandManager implements CommandExecutor, AutoCompletionE
                 return true;
             }
 
-            // try commands without subcommands
+            // TODO: Is this ever used?
+            // Try commands without subcommands
             if (this.tryCommand(
                     this.commands.stream()
                             .filter(abstractCommand -> abstractCommand.getSubcommands().size() == 0)
@@ -101,16 +99,16 @@ public abstract class CommandManager implements CommandExecutor, AutoCompletionE
             }
         }
 
-        // display help
+        // Display help
         ArrayList<AbstractCommand> helpList = new ArrayList<>();
-        for (AbstractCommand possibleHelpCommand : getHelpCommands()) {
+        for (AbstractCommand possibleHelpCommand : helpCommand.getHelpCommands()) {
             if (!(possibleHelpCommand instanceof HelpCommand) && possibleHelpCommand.isValidHelpTrigger(args)) {
                 helpList.add(possibleHelpCommand);
             }
         }
 
         if (helpList.isEmpty()) {
-            // unknown command
+            // Unknown command
             plugin.messages().invalidCommand(commandSender);
             return true;
         }
@@ -121,46 +119,9 @@ public abstract class CommandManager implements CommandExecutor, AutoCompletionE
 
     private boolean tryCommand(List<AbstractCommand> abstractCommands, BedrockChatSender commandSender, String[] args) {
         for (AbstractCommand abstractCommand : abstractCommands) {
-
-            // check if provided arguments are a valid trigger for the subcommands and arguments
-            // defined in the command
-            if (!abstractCommand.isValidTrigger(args))
-                continue;
-
-            if (!abstractCommand.hasPermission(commandSender)) {
-                plugin.messages().insufficientPermission(commandSender);
+            if(abstractCommand.tryCommand(commandSender, args))
                 return true;
-            }
-
-            // If the execution fails with an exception, the manager will search for another command to execute!
-            try {
-                abstractCommand.preExecute(
-                        commandSender,
-                        Arrays.copyOfRange(args, abstractCommand.getSubcommands().size(), args.length));
-                return true;
-
-            } catch (CommandException e) {
-                plugin.messages().commandExecutionError(commandSender, e);
-                e.printStackTrace();
-                return true;
-
-            } catch (IllegalCommandArgumentException e) {
-                plugin.messages().invalidCommand(commandSender);
-
-                JsonMessage jsonHelp = abstractCommand.getJsonHelp(commandSender);
-                if (jsonHelp == null) {
-                    plugin.messages().insufficientPermission(commandSender);
-                } else {
-                    jsonHelp.send(commandSender);
-                }
-                return true;
-
-            } catch (InsufficientPermissionException e) {
-                plugin.messages().insufficientPermission(commandSender);
-                return true;
-            }
         }
-
         return false;
     }
 
@@ -178,27 +139,13 @@ public abstract class CommandManager implements CommandExecutor, AutoCompletionE
                 list.addAll(tabCom);
             }
         }
-        // Remove duplicates.
+        // Remove duplicates
         Set<String> set = new HashSet<>(list);
         if (set.isEmpty()) {
             return null;
         } else {
             return new ArrayList<>(set);
         }
-    }
-
-    public List<AbstractCommand> getHelpCommands() {
-        ArrayList<AbstractCommand> helpCommands = new ArrayList<>();
-        for (AbstractCommand command : getCommands()) {
-            if (command.displayInHelp()) {
-                helpCommands.add(command);
-            }
-        }
-
-        // Sorting
-        helpCommands.sort(Comparator.comparing(AbstractCommand::getHelpPriority));
-
-        return helpCommands;
     }
 
     public List<AbstractCommand> getCompletionCommands() {

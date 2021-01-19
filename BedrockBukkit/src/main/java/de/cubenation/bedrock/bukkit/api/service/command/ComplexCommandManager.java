@@ -20,44 +20,34 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.api.service.command;
+package de.cubenation.bedrock.bukkit.api.service.command;
 
-import de.cubenation.bedrock.bungee.api.BasePlugin;
+import de.cubenation.bedrock.bukkit.api.command.BukkitCommandManager;
+import de.cubenation.bedrock.bukkit.wrapper.BukkitChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.TabExecutor;
+import org.bukkit.command.Command;
 
-import java.util.logging.Level;
+import java.util.List;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class BungeeCommand extends Command implements TabExecutor {
+public class ComplexCommandManager
+        extends de.cubenation.bedrock.core.service.command.ComplexCommandManager
+        implements BukkitCommandManager {
 
-    private final CommandManager commandManager;
-    private final FoundationPlugin plugin;
-
-    public BungeeCommand(BasePlugin plugin, CommandManager commandManager, String name) {
-        super(name);
-        this.plugin = plugin;
-        this.commandManager = commandManager;
-    }
-
-    public BungeeCommand(BasePlugin plugin, CommandManager commandManager, String name, String permission, String... aliases) {
-        super(name, permission, aliases);
-        this.plugin = plugin;
-        this.commandManager = commandManager;
+    public ComplexCommandManager(FoundationPlugin plugin, String label) {
+        super(plugin, label);
     }
 
     @Override
-    public void execute(CommandSender commandSender, String[] args) {
-        commandManager.execute(commandSender, args);
+    public boolean onCommand(org.bukkit.command.CommandSender sender, Command command, String label, String[] args) {
+        return onCommand(BukkitChatSender.wrap(sender), args);
     }
 
     @Override
-    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return commandManager.onTabComplete(sender, args);
+    public List<String> onTabComplete(org.bukkit.command.CommandSender sender, Command command, String alias, String[] args) {
+        return onAutoComplete(BukkitChatSender.wrap(sender), args);
     }
 }

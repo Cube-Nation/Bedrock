@@ -23,7 +23,6 @@
 package de.cubenation.bedrock.core.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.ArrayList;

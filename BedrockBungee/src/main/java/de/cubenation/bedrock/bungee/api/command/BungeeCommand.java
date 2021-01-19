@@ -20,35 +20,42 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.command.predefined;
+package de.cubenation.bedrock.bungee.api.command;
 
+import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.annotation.Description;
-import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.authorization.Role;
-import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-@Description("command.bedrock.version.desc")
-@Permission(Name = "version", Role = Role.MODERATOR)
-@SubCommand({ "version", "v" })
-public class VersionCommand extends Command {
+public class BungeeCommand extends Command implements TabExecutor {
 
-    public VersionCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
-        super(plugin, commandManager);
+    private final BungeeCommandManager commandManager;
+    private final FoundationPlugin plugin;
+
+    public BungeeCommand(BasePlugin plugin, BungeeCommandManager commandManager, String name) {
+        super(name);
+        this.plugin = plugin;
+        this.commandManager = commandManager;
+    }
+
+    public BungeeCommand(BasePlugin plugin, BungeeCommandManager commandManager, String name, String permission, String... aliases) {
+        super(name, permission, aliases);
+        this.plugin = plugin;
+        this.commandManager = commandManager;
     }
 
     @Override
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
-        getPlugin().messages().version(sender);
+    public void execute(CommandSender commandSender, String[] args) {
+        commandManager.execute(commandSender, args);
     }
 
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        return commandManager.onTabComplete(sender, args);
+    }
 }

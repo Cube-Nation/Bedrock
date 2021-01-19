@@ -20,35 +20,36 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.service.command;
+package de.cubenation.bedrock.bungee.api.service.command;
 
-import de.cubenation.bedrock.bukkit.wrapper.BukkitChatSender;
+import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
+import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.TabCompleter;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class CommandManager
-        extends de.cubenation.bedrock.core.service.command.CommandManager
-        implements CommandExecutor, TabCompleter {
+public class ComplexCommandManager
+        extends de.cubenation.bedrock.core.service.command.ComplexCommandManager
+        implements BungeeCommandManager {
 
-    public CommandManager(FoundationPlugin plugin, String label, String helpPrefix) {
-        super(plugin, label, helpPrefix);
+    public ComplexCommandManager(FoundationPlugin plugin, String label) {
+        super(plugin, label);
     }
 
     @Override
-    public boolean onCommand(org.bukkit.command.CommandSender sender, Command command, String label, String[] args) {
-        return onCommand(BukkitChatSender.wrap(sender), args);
+    public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
+        onCommand(BungeeChatSender.wrap(sender), args);
     }
 
     @Override
-    public List<String> onTabComplete(org.bukkit.command.CommandSender sender, Command command, String alias, String[] args) {
-        return onAutoComplete(BukkitChatSender.wrap(sender), args);
+    public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
+        Iterable<String> res = onAutoComplete(BungeeChatSender.wrap(sender), args);
+        return res != null ? res : getPlugin().getBedrockServer().getOnlinePlayers().stream().map(BedrockChatSender::getName).collect(Collectors.toList());
     }
+
 }

@@ -29,7 +29,7 @@ import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.IgnoreCaseArrayList;
-import de.cubenation.bedrock.core.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 public abstract class KeyValueCommand extends AbstractCommand {
 
     @SuppressWarnings("WeakerAccess")
-    public KeyValueCommand(FoundationPlugin plugin, CommandManager commandManager) {
+    public KeyValueCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
         super(plugin, commandManager);
     }
 

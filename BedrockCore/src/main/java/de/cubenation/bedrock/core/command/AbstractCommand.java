@@ -30,7 +30,6 @@ import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.LengthComparator;
-import de.cubenation.bedrock.core.service.command.CommandManager;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
@@ -272,6 +271,46 @@ public abstract class AbstractCommand {
         }
 
         execute(commandSender, args);
+    }
+
+    public boolean tryCommand(BedrockChatSender commandSender, String[] args) {
+        // check if provided arguments are a valid trigger for the subcommands and arguments
+        // defined in the command
+        if (!this.isValidTrigger(args))
+            return false;
+
+        if (!this.hasPermission(commandSender)) {
+            plugin.messages().insufficientPermission(commandSender);
+            return true;
+        }
+
+        // If the execution fails with an exception, the manager will search for another command to execute!
+        try {
+            this.preExecute(
+                    commandSender,
+                    Arrays.copyOfRange(args, this.getSubcommands().size(), args.length));
+            return true;
+
+        } catch (CommandException e) {
+            plugin.messages().commandExecutionError(commandSender, e);
+            e.printStackTrace();
+            return true;
+
+        } catch (IllegalCommandArgumentException e) {
+            plugin.messages().invalidCommand(commandSender);
+
+            JsonMessage jsonHelp = this.getJsonHelp(commandSender);
+            if (jsonHelp == null) {
+                plugin.messages().insufficientPermission(commandSender);
+            } else {
+                jsonHelp.send(commandSender);
+            }
+            return true;
+
+        } catch (InsufficientPermissionException e) {
+            plugin.messages().insufficientPermission(commandSender);
+            return true;
+        }
     }
 
     private boolean isIngameCommandOnly() {

@@ -26,15 +26,15 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.authorization.Role;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -49,7 +49,7 @@ import java.util.logging.Level;
 @SubCommand({"locale"})
 public class RegenerateLocaleCommand extends Command {
 
-    public RegenerateLocaleCommand(FoundationPlugin plugin, CommandManager commandManager) {
+    public RegenerateLocaleCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
         super(plugin, commandManager);
     }
 

@@ -24,6 +24,7 @@ package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.command.predefined.*;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public abstract class CommandService extends AbstractService {
 
@@ -42,11 +43,11 @@ public abstract class CommandService extends AbstractService {
 
     @Override
     public void reload() throws ServiceReloadException {
-        // no reloading of commands supported
+        // No reloading of commands supported
     }
 
 
-    protected ArrayList<AbstractCommand> getPredefinedCommands(CommandManager pluginCommandManager) {
+    protected ArrayList<AbstractCommand> getPredefinedCommands(ComplexCommandManager pluginCommandManager) {
         ArrayList<AbstractCommand> predefinedCommands = new ArrayList<>();
         predefinedCommands.add(new ReloadCommand(getPlugin(), pluginCommandManager));
         predefinedCommands.add(new VersionCommand(getPlugin(), pluginCommandManager));
@@ -56,7 +57,7 @@ public abstract class CommandService extends AbstractService {
         return predefinedCommands;
     }
 
-    public abstract ArrayList<? extends CommandManager> getCommandManagers();
+    public abstract ArrayList<CommandManager> getCommandManagers();
 
 }
 

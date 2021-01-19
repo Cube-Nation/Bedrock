@@ -23,11 +23,13 @@
 package de.cubenation.bedrock.bukkit.api.service.command;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.command.predefined.*;
+import de.cubenation.bedrock.bukkit.api.command.BukkitCommandManager;
+import de.cubenation.bedrock.bukkit.api.command.predefined.CommandListCommand;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.command.predefined.*;
+import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.predefined.SettingsInfoCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import org.bukkit.command.PluginCommand;
@@ -39,7 +41,7 @@ import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("Duplicates")
 public class CommandService extends de.cubenation.bedrock.core.service.command.CommandService {
@@ -52,38 +54,30 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
 
     @Override
     public void init() throws ServiceInitException {
-        // get all commands and their handles from CommandHandler annotations
+        // Get all commands and their handles from CommandHandler annotations
         for (CommandHandler commandHandler : this.getPlugin().getClass().getAnnotationsByType(CommandHandler.class)) {
             this.addCommandManager(commandHandler.Command(), commandHandler.Handlers());
         }
 
-        // TODO: doc
-        CommandManager pluginCommandManager = null;
+        // Try to get plugin command manager
+        ComplexCommandManager pluginCommandManager = null;
         for (CommandManager commandManager : commandManagers) {
             if (commandManager.getLabel().equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
-                pluginCommandManager = commandManager;
+                pluginCommandManager = (ComplexCommandManager) commandManager;
                 break;
             }
         }
 
+        // Add plugin command manager in case it's missing
         if (pluginCommandManager == null) {
             PluginCommand command = this.getPlugin().getCommand(this.getPlugin().getPluginDescription().getName());
 
-            pluginCommandManager = new de.cubenation.bedrock.bukkit.api.service.command.CommandManager(
+            pluginCommandManager = new ComplexCommandManager(
                     this.getPlugin(),
-                    command.getLabel(),
-                    this.getPlugin().getPluginDescription().getName()
+                    command.getLabel()
             );
 
-
-            try {
-                command.setExecutor(pluginCommandManager);
-                command.setTabCompleter(pluginCommandManager);
-
-                this.addCommandManager(pluginCommandManager);
-            } catch (Exception e) {
-                throw new ServiceInitException("Please add your pluginname as command in the plugin.yml!");
-            }
+            registerCommand(command, pluginCommandManager);
         }
 
         // Add default commands that all plugins are capable of
@@ -101,6 +95,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
     }
 
     private void addCommandManager(String command, Class<? extends AbstractCommand>[] handlers) throws ServiceInitException {
+        // Invalid command
         if (handlers.length == 0) {
             this.getPlugin().log(
                     Level.WARNING,
@@ -108,30 +103,52 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             );
             return;
         }
-        PluginCommand pluginCommand = this.getPlugin().getCommand(command);
-        CommandManager manager = new CommandManager(
-                this.getPlugin(),
-                pluginCommand.getLabel(),
-                this.getPlugin().getPluginDescription().getName()
-        );
 
-        for (Class<?> handler : handlers) {
-            Constructor<?> constructor;
+        // Register command manager
+        PluginCommand pluginCommand = this.getPlugin().getCommand(command);
+        BukkitCommandManager manager;
+        if(handlers.length == 1) {
+            // Simple command
+            manager = new SimpleCommandManager(
+                    this.getPlugin(),
+                    pluginCommand.getLabel()
+            );
+
+            Class<?> handler = handlers[0];
             try {
-                constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                manager.addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
+                ((SimpleCommandManager) manager).setCommand((AbstractCommand) constructor.newInstance(plugin, manager));
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
+        } else {
+            // Complex command
+            manager = new ComplexCommandManager(
+                    this.getPlugin(),
+                    pluginCommand.getLabel()
+            );
+
+            for (Class<?> handler : handlers) {
+                try {
+                    Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
+                    ((ComplexCommandManager) manager).addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        try {
-            pluginCommand.setExecutor(manager);
-            pluginCommand.setTabCompleter(manager);
+        registerCommand(pluginCommand, manager);
+    }
 
-            this.addCommandManager(manager);
+    private void registerCommand(PluginCommand command, BukkitCommandManager commandManager) throws ServiceInitException {
+        try {
+            command.setExecutor(commandManager);
+            command.setTabCompleter(commandManager);
+
+            this.addCommandManager(commandManager);
         } catch (Exception e) {
-            throw new ServiceInitException("Can't setup command manager for " + pluginCommand.getLabel());
+            throw new ServiceInitException("Please add your pluginname as command in the plugin.yml!");
         }
     }
 

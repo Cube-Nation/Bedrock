@@ -26,20 +26,17 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
-import de.cubenation.bedrock.core.service.command.CommandManager;
+import de.cubenation.bedrock.core.service.command.ComplexCommandManager;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Cube-Nation
@@ -49,7 +46,7 @@ import java.util.Set;
 @SubCommand({ "help" })
 public class HelpCommand extends Command {
 
-    public HelpCommand(FoundationPlugin plugin, CommandManager commandManager) {
+    public HelpCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
         super(plugin, commandManager);
     }
 
@@ -64,7 +61,7 @@ public class HelpCommand extends Command {
         } else {
             // Send help for special command
             ArrayList<AbstractCommand> helpList = new ArrayList<>();
-            for (AbstractCommand command : getCommandManager().getHelpCommands()) {
+            for (AbstractCommand command : getHelpCommands()) {
                 if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
                     helpList.add(command);
                 }
@@ -82,10 +79,24 @@ public class HelpCommand extends Command {
         }
     }
 
+    public List<AbstractCommand> getHelpCommands() {
+        ArrayList<AbstractCommand> helpCommands = new ArrayList<>();
+        for (AbstractCommand command : getCommandManager().getCommands()) {
+            if (command.displayInHelp()) {
+                helpCommands.add(command);
+            }
+        }
+
+        // Sorting
+        helpCommands.sort(Comparator.comparing(AbstractCommand::getHelpPriority));
+
+        return helpCommands;
+    }
+
     private ArrayList<JsonMessage> getFullHelpList(BedrockChatSender sender) {
         // create help for each subcommand
         ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>() {{
-            addAll(commandManager.getHelpCommands());
+            addAll(getHelpCommands());
         }};
 
         return getHelpJsonMessages(sender, commands);

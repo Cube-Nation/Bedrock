@@ -24,19 +24,19 @@ package de.cubenation.bedrock.bukkit.plugin.command;
 
 import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
 import de.cubenation.bedrock.bukkit.api.helper.BedrockEbeanHelper;
-import de.cubenation.bedrock.bukkit.api.service.command.CommandManager;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.authorization.Role;
+import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.bukkit.command.ConsoleCommandSender;
 
 /**
