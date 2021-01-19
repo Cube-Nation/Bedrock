@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.core.command.predefined;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.command.AbstractCommand;
@@ -44,6 +45,7 @@ import java.util.*;
  */
 @Description("command.bedrock.help.desc")
 @SubCommand({ "help" })
+@Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph", Optional = true)
 public class HelpCommand extends Command {
 
     public HelpCommand(FoundationPlugin plugin, CommandManager commandManager) {
@@ -127,7 +129,9 @@ public class HelpCommand extends Command {
 
         int number = 1;
         if (args.length > 0 && StringUtils.isNumeric(args[0])) {
-            number = Integer.parseInt(args[0]);
+            int n = Integer.parseInt(args[0]);
+            if(n >= 0 && n <= helpPageableListService.getPages())
+                number = n;
         }
         helpPageableListService.paginate(sender, "/" + getCommandManager().getLabel() + " help %page%", header, number);
     }

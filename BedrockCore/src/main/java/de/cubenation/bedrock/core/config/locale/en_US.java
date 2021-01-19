@@ -28,6 +28,7 @@ import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * @author Cube-Nation
@@ -214,6 +215,12 @@ public class en_US extends CustomConfigurationFile {
 
     @Path("command.bedrock.username_uuid.ph")
     private String help_args_username_uuid_placeholder = "Username/UUID";
+
+    @Path("command.bedrock.page")
+    private HashMap<String, String> command_bedrock_page = new HashMap<String, String>() {{
+        put("ph", "Page");
+        put("desc", "Page");
+    }};
 
     /*
      * PageDesignHelper Messages

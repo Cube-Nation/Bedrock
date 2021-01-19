@@ -262,6 +262,12 @@ public class de_DE extends CustomConfigurationFile {
     @Path("command.bedrock.key.ph")
     private String help_args_key_placeholder = "Key";
 
+    @Path("command.bedrock.page")
+    private HashMap<String, String> command_bedrock_page = new HashMap<String, String>() {{
+        put("ph", "Seite");
+        put("desc", "Seite");
+    }};
+
     // CommandList
 
     @Path("plugin.command.list.header")
