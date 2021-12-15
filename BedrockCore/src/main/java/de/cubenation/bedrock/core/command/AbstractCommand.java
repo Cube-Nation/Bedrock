@@ -416,7 +416,7 @@ public abstract class AbstractCommand {
         }};
     }
 
-    boolean isMatchingSubCommands(String[] args) {
+    protected boolean isMatchingSubCommands(String[] args) {
         if (args.length < this.getSubcommands().size())
             return false;
 
@@ -425,20 +425,13 @@ public abstract class AbstractCommand {
             return true;
         }
 
-        boolean allSubCommandsMatched = false;
+        // iterate arguments
         for (int i = 0; i < this.getSubcommands().size(); i++) {
-            boolean subCommandMatched = false;
-            for (String subCommand : this.getSubcommands().get(i)) {
-                if (args[i].equalsIgnoreCase(subCommand)) {
-                    subCommandMatched = true;
-                    break;
-                }
-            }
-
-            allSubCommandsMatched = subCommandMatched;
+            int finalI = i;
+            boolean subCommandMatched = Arrays.stream(this.getSubcommands().get(i)).anyMatch(s -> args[finalI].equalsIgnoreCase(s));
+            if (!subCommandMatched) return false;
         }
-
-        return allSubCommandsMatched;
+        return true;
     }
 
 
