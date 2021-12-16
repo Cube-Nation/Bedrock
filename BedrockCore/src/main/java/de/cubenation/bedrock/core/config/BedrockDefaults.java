@@ -76,7 +76,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
                 "",
                 "3. To whom it may concern:",
                 "   If you encounter any errors or bugs feel free to file a ticket:",
-                "   http://cube-nation.de:8082/secure/CreateIssueDetails!init.jspa?pid=10202&issuetype=1",
+                "   https://github.com/Cube-Nation/Bedrock/issues",
                 ""
         };
     }
