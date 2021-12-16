@@ -63,7 +63,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
                 "",
                 "",
                 "2. To Plugin developers:",
-                "   Tbis file is NOT intended to hold a custom configuration for this plugin. Custom settings have",
+                "   This file is NOT intended to hold a custom configuration for this plugin. Custom settings have",
                 "   to be placed in custom configuration files, which can be registered, read, modified and saved by",
                 "   the Bedrock config service.",
                 "   For more details on how to manage custom configuration files please see here:",
