@@ -26,7 +26,7 @@ import java.util.UUID;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 
 public class UUIDUtil {
@@ -39,6 +39,26 @@ public class UUIDUtil {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    public static boolean isUUIDRegex(String input){
+        return input.toLowerCase().matches("[0-9a-f]{8}(-?[0-9a-f]{4}){3}-?[0-9a-f]{12}");
+    }
+
+    public static boolean isTrimmed(String uuid){
+        return uuid.toLowerCase().matches("[0-9a-f]{8}([0-9a-f]{4}){3}[0-9a-f]{12}");
+    }
+
+    public static String trim(UUID uuid){
+        return trim(uuid.toString());
+    }
+
+    public static String trim(String uuid){
+        return uuid.replace("-","");
+    }
+
+    public static String untrim(String uuid){
+        return uuid.substring(0,8) + "-" + uuid.substring(8,12) + "-" + uuid.substring(12,16) + "-" + uuid.substring(16,20)  + "-" + uuid.substring(20,32);
     }
 
 }
