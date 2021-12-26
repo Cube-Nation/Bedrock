@@ -4,8 +4,7 @@ import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.BedrockPlugin;
 import de.cubenation.bedrock.bungee.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bungee.plugin.event.PlayerChangeNameEvent;
-import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.model.BedrockPlayer;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -30,15 +29,15 @@ public class PlayerListener implements Listener {
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
 
             String uuid = event.getPlayer().getUniqueId().toString();
-            BedrockPlayer bp = BedrockPlugin.getInstance().getDatabase()
-                    .find(BedrockPlayer.class)
+            BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getDatabase()
+                    .find(BedrockOfflinePlayer.class)
                     .where()
                     .eq("uuid", uuid)
                     .findUnique();
 
             String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
             if (bp == null) {
-                bp = new BedrockPlayer(uuid, event.getPlayer().getName(), ip, new Date());
+                bp = new BedrockOfflinePlayer(uuid, event.getPlayer().getName(), ip, new Date());
                 bp.save(plugin.getDatabase());
             } else {
                 // check if username changed
@@ -56,7 +55,7 @@ public class PlayerListener implements Listener {
                     bp.setUsername(event.getPlayer().getName());
                 }
 
-                List<BedrockPlayer> bedrockPlayers = plugin.getDatabase().find(BedrockPlayer.class).where()
+                List<BedrockOfflinePlayer> bedrockPlayers = plugin.getDatabase().find(BedrockOfflinePlayer.class).where()
                         .like("ip", ip)
                         .findList();
 
