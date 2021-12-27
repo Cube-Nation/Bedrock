@@ -59,7 +59,6 @@ public class SettingsInfoCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
     public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         String settingsKey = args[0];

@@ -46,7 +46,6 @@ public class VersionCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
     public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
         getPlugin().messages().version(sender);
     }

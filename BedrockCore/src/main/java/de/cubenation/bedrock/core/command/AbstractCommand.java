@@ -42,7 +42,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * Abstract class for command executor classes
@@ -257,13 +259,6 @@ public abstract class AbstractCommand {
 
     public void preExecute(BedrockChatSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
-        Method executeMethod;
-        try {
-            executeMethod = AbstractCommand.class.getMethod("execute", BedrockChatSender.class, String[].class);
-        } catch (NoSuchMethodException e) {
-            throw new CommandException(getClass().getName()+": Execute method not found.");
-        }
-
         if (this.isIngameCommandOnly() && !(commandSender instanceof BedrockPlayer)) {
             plugin.messages().mustBePlayer(commandSender);
             return;
@@ -278,8 +273,32 @@ public abstract class AbstractCommand {
             }
         }
 
+        // get possible execute method matches
+        List<Method> matches = Arrays.stream(getClass().getDeclaredMethods())
+                .filter(m -> m.getName().equals("execute"))
+                .collect(Collectors.toList());
+
+        // only proceed if there's exactly one execute method
+        if (matches.isEmpty()) {
+            throw new CommandException(getClass().getName()+": Execute method not found. Please contact plugin author.");
+        } else if (matches.size() > 1) {
+            throw new CommandException(getClass().getName()+": Multiple execute methods found. Please contact plugin author.");
+        }
+        Method executeMethod = matches.get(0);
+
+        // get method parameters
+        Class<?>[] executeParameters = executeMethod.getParameterTypes();
+        // remove BedrockChatSender element
+        if (executeParameters.length == 0 || !executeParameters[0].equals(BedrockChatSender.class)) {
+            throw new CommandException(getClass().getName()+": Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
+        }
+        executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
+
+        ArrayList<Object> executeParameterValues = tryCastInputToArgumentTypes(commandSender, executeParameters, args);
+        executeParameterValues.add(0, (BedrockChatSender) commandSender);
+
         try {
-            executeMethod.invoke(this, commandSender, args);
+            executeMethod.invoke(this, executeParameterValues.toArray());
         } catch (IllegalAccessException e) {
             throw new CommandException(getClass().getName()+": Execute method not accessible.");
         } catch (InvocationTargetException e) {
@@ -331,35 +350,6 @@ public abstract class AbstractCommand {
     private boolean isIngameCommandOnly() {
         return this.isIngameCommandOnly;
     }
-
-    /**
-     * Executor for this command class.
-     * <p>
-     * For a full working command you need to define at least these annotations:
-     * <ul>
-     * <li>@Description(String)
-     * <li>@SubCommand(String[]) (OR)
-     * <li>@SubCommands(SubCommands = { @SubCommand(), ... } )
-     * </ul>
-     * <p>
-     * These annotations are optional:
-     * <ul>
-     * <li>@Permission(Name = "permission.name"[, Role = CommandRole.TYPE]) - optional
-     * <li>@Permissions(Permissions = { @Permission() } )
-     * <li>@Argument( String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role )
-     * <li>@Arguments(Arguments = { @Argument() } )
-     * <li>@KeyValueArgument( String Key, String Description, String Placeholder, boolean Optional, String Permission, CommandRole Role, String RoleName )
-     * <li>@KeyValueArguments(Arguments = { @KeyValueArgument() } )
-     * </ul>
-     *
-     * @param sender The sender of the command
-     * @param args   The list of Arguments
-     * @throws CommandException                Thrown by yourself (e.g. when an error occurs)
-     * @throws IllegalCommandArgumentException Thrown when the arguments did not match the predefined ones
-     * @throws InsufficientPermissionException Thrown when the command issuer does not have enough permissions for this command
-     */
-    public abstract void execute(BedrockChatSender sender, String[] args)
-            throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     /**
      * Define the priority to change the help order
@@ -447,6 +437,41 @@ public abstract class AbstractCommand {
             if (!subCommandMatched) return false;
         }
         return true;
+    }
+
+    /**
+     * Returns an ArrayList of casted objects matching the types-array or throws exception for invalid types.
+     *
+     * @param types the type it should be casted to
+     * @param args the value of the arguments
+     * @return ArrayList of casted objects
+     */
+    protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, Class<?>[] types, String[] args) throws CommandException, IllegalCommandArgumentException {
+        if (args.length < this.getSubcommands().size()) {
+            throw new IllegalCommandArgumentException();
+        }
+
+        // return true immediately if no subcommands are defined
+        if (this.getSubcommands().size() == 0) {
+            return new ArrayList<>();
+        }
+
+        // iterate arguments
+        ArrayList<Object> result = new ArrayList<>();
+        for (int i = 0; i < types.length; i++) {
+            if (String.class.equals(types[i])) {
+                result.add(args[i]);
+            } else if (Integer.class.equals(types[i])) {
+                try {
+                    result.add(Integer.parseInt(args[i]));
+                } catch (NumberFormatException nfe) {
+                    commandSender.sendMessage("not a valid number");
+                }
+            } else {
+                throw new CommandException(getClass().getName() + ": " + types[i].getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
+            }
+        }
+        return result;
     }
 
 

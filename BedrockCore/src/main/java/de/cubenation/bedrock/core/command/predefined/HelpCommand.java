@@ -52,7 +52,6 @@ public class HelpCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
     public void execute(BedrockChatSender sender, String[] args) throws CommandException {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
