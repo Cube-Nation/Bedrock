@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Level;
@@ -256,6 +257,13 @@ public abstract class AbstractCommand {
 
     public void preExecute(BedrockChatSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
+        Method executeMethod;
+        try {
+            executeMethod = AbstractCommand.class.getMethod("execute", BedrockChatSender.class, String[].class);
+        } catch (NoSuchMethodException e) {
+            throw new CommandException(getClass().getName()+": Execute method not found.");
+        }
+
         if (this.isIngameCommandOnly() && !(commandSender instanceof BedrockPlayer)) {
             plugin.messages().mustBePlayer(commandSender);
             return;
@@ -270,7 +278,14 @@ public abstract class AbstractCommand {
             }
         }
 
-        execute(commandSender, args);
+        try {
+            executeMethod.invoke(this, commandSender, args);
+        } catch (IllegalAccessException e) {
+            throw new CommandException(getClass().getName()+": Execute method not accessible.");
+        } catch (InvocationTargetException e) {
+            throw new CommandException(getClass().getName()+": Execute method not valid.");
+        }
+        //execute(commandSender, args);
     }
 
     public boolean tryCommand(BedrockChatSender commandSender, String[] args) {
