@@ -447,12 +447,12 @@ public abstract class AbstractCommand {
      * @return ArrayList of casted objects
      */
     protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, Class<?>[] types, String[] args) throws CommandException, IllegalCommandArgumentException {
-        if (args.length < this.getSubcommands().size()) {
+        if (args.length < types.length) {
             throw new IllegalCommandArgumentException();
         }
 
         // return true immediately if no subcommands are defined
-        if (this.getSubcommands().size() == 0) {
+        if (types.length == 0) {
             return new ArrayList<>();
         }
 
@@ -461,7 +461,7 @@ public abstract class AbstractCommand {
         for (int i = 0; i < types.length; i++) {
             if (String.class.equals(types[i])) {
                 result.add(args[i]);
-            } else if (Integer.class.equals(types[i])) {
+            } else if (int.class.equals(types[i])) {
                 try {
                     result.add(Integer.parseInt(args[i]));
                 } catch (NumberFormatException nfe) {
