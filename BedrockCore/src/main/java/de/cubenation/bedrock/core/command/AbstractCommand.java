@@ -26,6 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.*;
 import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.core.authorization.Role;
+import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -295,6 +296,9 @@ public abstract class AbstractCommand {
         executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
 
         ArrayList<Object> executeParameterValues = tryCastInputToArgumentTypes(commandSender, executeParameters, args);
+        if (executeParameterValues == null) {
+            return;
+        }
         executeParameterValues.add(0, (BedrockChatSender) commandSender);
 
         try {
@@ -459,17 +463,18 @@ public abstract class AbstractCommand {
         // iterate arguments
         ArrayList<Object> result = new ArrayList<>();
         for (int i = 0; i < types.length; i++) {
-            if (String.class.equals(types[i])) {
-                result.add(args[i]);
-            } else if (int.class.equals(types[i])) {
-                try {
-                    result.add(Integer.parseInt(args[i]));
-                } catch (NumberFormatException nfe) {
-                    commandSender.sendMessage("not a valid number");
-                }
-            } else {
+            ArgumentType type = plugin.getArgumentTypeService().getType(types[i]);
+            if (type == null) {
                 throw new CommandException(getClass().getName() + ": " + types[i].getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
             }
+
+            Object value = type.tryCast(args[i]);
+            if (value == null) {
+                type.sendFailureMessage(commandSender, args[i]);
+                return null;
+            }
+
+            result.add(value);
         }
         return result;
     }

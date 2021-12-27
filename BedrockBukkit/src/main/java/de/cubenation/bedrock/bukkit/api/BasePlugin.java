@@ -22,21 +22,23 @@
 
 package de.cubenation.bedrock.bukkit.api;
 
-import de.cubenation.bedrock.bukkit.wrapper.BukkitPlayer;
+import de.cubenation.bedrock.bukkit.api.message.Messages;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
 import de.cubenation.bedrock.core.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
-import de.cubenation.bedrock.core.exception.*;
+import de.cubenation.bedrock.core.exception.DependencyException;
+import de.cubenation.bedrock.core.exception.NoSuchPluginException;
+import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
+import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.helper.version.VersionComparator;
-import de.cubenation.bedrock.bukkit.api.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
@@ -50,11 +52,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Represents a Bedrock-based plugin.
@@ -117,6 +117,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
+            serviceManager.registerService(ArgumentTypeService.class);
             serviceManager.registerService(CommandService.class);
             serviceManager.registerService(PermissionService.class);
             serviceManager.registerService(InventoryService.class);
@@ -392,7 +393,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
 
     /**
      * Returns the Bedrock SettingsService object instance.
-     * If the InventoryService is not ready, <code>null</code> is returned.
+     * If the SettingsService is not ready, <code>null</code> is returned.
      *
      * @return The Bedrock SettingsService
      * @see SettingsService
@@ -409,6 +410,17 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
      */
     public ArrayList<Class<?>> getCustomSettingsFiles() {
         return null;
+    }
+
+    /**
+     * Returns the Bedrock ArgumentTypeService object instance.
+     * If the ArgumentTypeService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock ArgumentTypeService
+     * @see ArgumentTypeService
+     */
+    public ArgumentTypeService getArgumentTypeService() {
+        return (ArgumentTypeService) this.getServiceManager().getService(ArgumentTypeService.class);
     }
 
     /**

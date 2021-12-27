@@ -22,30 +22,27 @@
 
 package de.cubenation.bedrock.bungee.api;
 
-import de.cubenation.bedrock.bungee.wrapper.BungeePlayer;
 import de.cubenation.bedrock.bungee.api.message.Messages;
 import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
+import de.cubenation.bedrock.core.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
-import de.cubenation.bedrock.core.BedrockServer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
@@ -102,6 +99,7 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
+            serviceManager.registerService(ArgumentTypeService.class);
             serviceManager.registerService(CommandService.class);
             serviceManager.registerService(PermissionService.class);
 //            this.registerService(InventoryService.class);
@@ -217,6 +215,11 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     @Override
     public SettingsService getSettingService() {
         return (SettingsService) this.getServiceManager().getService(SettingsService.class);
+    }
+
+    @Override
+    public ArgumentTypeService getArgumentTypeService() {
+        return (ArgumentTypeService) this.getServiceManager().getService(ArgumentTypeService.class);
     }
 
     /**

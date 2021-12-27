@@ -57,7 +57,6 @@ public class BedrockPlayerInfoCommand extends Command {
         super(plugin, commandManager);
     }
 
-    @Override
     public void execute(final BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         // check args length

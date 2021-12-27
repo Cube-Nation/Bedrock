@@ -27,6 +27,7 @@ import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.command.CommandService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
@@ -131,7 +132,7 @@ public interface FoundationPlugin {
 
     /**
      * Returns the Bedrock SettingsService object instance.
-     * If the InventoryService is not ready, <code>null</code> is returned.
+     * If the SettingsService is not ready, <code>null</code> is returned.
      *
      * @return The Bedrock SettingsService
      * @see SettingsService
@@ -139,6 +140,15 @@ public interface FoundationPlugin {
     SettingsService getSettingService();
 
     ArrayList<Class<?>> getCustomSettingsFiles();
+
+    /**
+     * Returns the Bedrock ArgumentTypeService object instance.
+     * If the ArgumentTypeService is not ready, <code>null</code> is returned.
+     *
+     * @return The Bedrock ArgumentTypeService
+     * @see ArgumentTypeService
+     */
+    ArgumentTypeService getArgumentTypeService();
 
     /**
      * Returns a colored string of the current plugin, known as the message prefix.
