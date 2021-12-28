@@ -108,6 +108,9 @@ public class de_DE extends CustomConfigurationFile {
     @Path("no_valid_uuid")
     private String no_valid_uuid = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige UUID.\",\"color\":\"red\"}]}";
 
+    @Path("no_valid_enum_constant")
+    private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Option. Nutze eine der Folgenden: &SECONDARY&%constants%\",\"color\":\"red\"}]}";
+
     /*
      * Help messages
      */

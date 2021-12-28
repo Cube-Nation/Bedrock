@@ -119,6 +119,9 @@ public class en_US extends CustomConfigurationFile {
     @Path("no_valid_uuid")
     private String no_valid_uuid = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid UUID.\",\"color\":\"red\"}]}";
 
+    @Path("no_valid_enum_constant")
+    private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid option. Use one of the following: &SECONDARY&%constants%\",\"color\":\"red\"}]}";
+
 
     @Path("json.permission.list.header")
     private String json_permission_list_header = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"All permissions:\",color:\"&SECONDARY&\"}]}";

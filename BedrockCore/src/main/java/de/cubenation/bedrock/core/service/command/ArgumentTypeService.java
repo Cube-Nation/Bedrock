@@ -1,14 +1,16 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
-import de.cubenation.bedrock.core.command.argument.type.IntegerArgument;
-import de.cubenation.bedrock.core.command.argument.type.StringArgument;
+import de.cubenation.bedrock.core.command.argument.type.*;
+import de.cubenation.bedrock.core.exception.ArgumentTypeAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class ArgumentTypeService extends AbstractService {
 
@@ -24,6 +26,7 @@ public class ArgumentTypeService extends AbstractService {
     @Override
     public void init() throws ServiceInitException {
         types.putAll(getPredefined());
+        addCustomTypes();
     }
 
     @Override
@@ -35,6 +38,9 @@ public class ArgumentTypeService extends AbstractService {
         return new HashMap<Class, ArgumentType>() {{
             put(String.class, new StringArgument(plugin));
             put(int.class, new IntegerArgument(plugin));
+            put(float.class, new FloatArgument(plugin));
+            put(double.class, new DoubleArgument(plugin));
+            put(UUID.class, new UuidArgument(plugin));
         }};
     }
 
@@ -43,5 +49,35 @@ public class ArgumentTypeService extends AbstractService {
             return null;
         }
         return types.get(clazz);
+    }
+
+    private void addCustomTypes() throws ServiceInitException {
+        try {
+            // find and register custom ArgumentType annotations
+            for (de.cubenation.bedrock.core.annotation.ArgumentType type : plugin.getClass().getAnnotationsByType(de.cubenation.bedrock.core.annotation.ArgumentType.class)) {
+                this.addArgumentType(type.value());
+            }
+
+        } catch (ArgumentTypeAlreadyExistsException e) {
+            throw new ServiceInitException(e.getMessage());
+        }
+    }
+
+    private void addArgumentType(Class<? extends ArgumentType> clazz) throws ArgumentTypeAlreadyExistsException, ServiceInitException {
+        if (this.exists(clazz))
+            throw new ArgumentTypeAlreadyExistsException(clazz.toString());
+
+        ArgumentType instance;
+        try {
+            Constructor<? extends ArgumentType> constructor = clazz.getConstructor(FoundationPlugin.class);
+            instance = constructor.newInstance(plugin);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ServiceInitException(e.getMessage());
+        }
+        this.types.put(instance.getGenericClass(), instance);
+    }
+
+    private boolean exists(Class<? extends ArgumentType> clazz) {
+        return this.types.containsKey(clazz);
     }
 }

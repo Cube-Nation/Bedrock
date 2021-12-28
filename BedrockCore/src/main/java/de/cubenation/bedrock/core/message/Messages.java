@@ -126,6 +126,11 @@ public abstract class Messages {
         new JsonMessage(plugin, "no_valid_uuid", "input", input).send(commandSender);
     }
 
+    public void noValidEnumConstant(BedrockChatSender commandSender, String input, List<String> constantList) {
+        String constants = constantList.stream().collect(Collectors.joining(", "));
+        new JsonMessage(plugin, "no_valid_enum_constant", "input", input, "constants", constants).send(commandSender);
+    }
+
     public void reloadComplete(BedrockChatSender sender) {
         new JsonMessage(plugin, "reload.complete").send(sender);
     }
