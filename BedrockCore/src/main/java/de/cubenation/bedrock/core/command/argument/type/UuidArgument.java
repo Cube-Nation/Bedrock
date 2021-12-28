@@ -3,23 +3,25 @@ package de.cubenation.bedrock.core.command.argument.type;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-public class IntegerArgument extends ArgumentType<Integer> {
+import java.util.UUID;
 
-    public IntegerArgument(FoundationPlugin plugin) {
+public class UuidArgument extends ArgumentType<UUID> {
+
+    public UuidArgument(FoundationPlugin plugin) {
         super(plugin);
     }
 
     @Override
-    public Integer tryCast(String input) throws ClassCastException {
+    public UUID tryCast(String input) throws ClassCastException {
         try {
-            return Integer.parseInt(input);
-        } catch (NumberFormatException nfe) {
+            return UUID.fromString(input);
+        } catch (IllegalArgumentException e) {
             throw new ClassCastException();
         }
     }
 
     @Override
     public void sendFailureMessage(BedrockChatSender commandSender, String input) {
-        plugin.messages().noValidInt(commandSender, input);
+        plugin.messages().noValidUuid(commandSender, input);
     }
 }

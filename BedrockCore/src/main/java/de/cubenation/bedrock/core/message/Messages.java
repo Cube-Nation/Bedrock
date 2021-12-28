@@ -23,21 +23,21 @@
 package de.cubenation.bedrock.core.message;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
-import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockHoverEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -112,6 +112,18 @@ public abstract class Messages {
 
     public void noSuchWorld(BedrockChatSender commandSender) {
         new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
+    }
+
+    public void noValidInt(BedrockChatSender commandSender, String input) {
+        new JsonMessage(plugin, "no_valid_int", "input", input).send(commandSender);
+    }
+
+    public void noValidFloat(BedrockChatSender commandSender, String input) {
+        new JsonMessage(plugin, "no_valid_float", "input", input).send(commandSender);
+    }
+
+    public void noValidUuid(BedrockChatSender commandSender, String input) {
+        new JsonMessage(plugin, "no_valid_uuid", "input", input).send(commandSender);
     }
 
     public void reloadComplete(BedrockChatSender sender) {

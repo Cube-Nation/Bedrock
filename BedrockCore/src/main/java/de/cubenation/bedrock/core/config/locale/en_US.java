@@ -110,6 +110,14 @@ public class en_US extends CustomConfigurationFile {
     @Path("no_such_player")
     private String no_such_player                   = "%plugin_prefix%&RESET& &RED&Player &SECONDARY&%player% &RED&not found";
 
+    @Path("no_valid_int")
+    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid integer.\",\"color\":\"red\"}]}";
+
+    @Path("no_valid_float")
+    private String no_valid_float = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid floating point number.\",\"color\":\"red\"}]}";
+
+    @Path("no_valid_uuid")
+    private String no_valid_uuid = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid UUID.\",\"color\":\"red\"}]}";
 
 
     @Path("json.permission.list.header")
@@ -138,7 +146,6 @@ public class en_US extends CustomConfigurationFile {
 
     @Path("json.no_such_player.default")
     private String json_no_such_player_default = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Player not found\",color:\"red\"}]}";
-
 
     /*
      * Help messages

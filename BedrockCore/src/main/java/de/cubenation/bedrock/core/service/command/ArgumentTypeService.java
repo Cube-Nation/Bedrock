@@ -33,8 +33,8 @@ public class ArgumentTypeService extends AbstractService {
 
     private HashMap<Class, ArgumentType> getPredefined() {
         return new HashMap<Class, ArgumentType>() {{
-            put(String.class, new StringArgument());
-            put(int.class, new IntegerArgument());
+            put(String.class, new StringArgument(plugin));
+            put(int.class, new IntegerArgument(plugin));
         }};
     }
 

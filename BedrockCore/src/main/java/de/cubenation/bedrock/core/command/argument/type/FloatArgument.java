@@ -3,16 +3,16 @@ package de.cubenation.bedrock.core.command.argument.type;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-public class IntegerArgument extends ArgumentType<Integer> {
+public class FloatArgument extends ArgumentType<Float> {
 
-    public IntegerArgument(FoundationPlugin plugin) {
+    public FloatArgument(FoundationPlugin plugin) {
         super(plugin);
     }
 
     @Override
-    public Integer tryCast(String input) throws ClassCastException {
+    public Float tryCast(String input) throws ClassCastException {
         try {
-            return Integer.parseInt(input);
+            return Float.parseFloat(input);
         } catch (NumberFormatException nfe) {
             throw new ClassCastException();
         }
@@ -20,6 +20,6 @@ public class IntegerArgument extends ArgumentType<Integer> {
 
     @Override
     public void sendFailureMessage(BedrockChatSender commandSender, String input) {
-        plugin.messages().noValidInt(commandSender, input);
+        plugin.messages().noValidFloat(commandSender, input);
     }
 }

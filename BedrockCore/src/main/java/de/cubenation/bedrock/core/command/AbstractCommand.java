@@ -468,13 +468,12 @@ public abstract class AbstractCommand {
                 throw new CommandException(getClass().getName() + ": " + types[i].getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
             }
 
-            Object value = type.tryCast(args[i]);
-            if (value == null) {
+            try {
+                result.add(type.tryCast(args[i]));
+            } catch (ClassCastException e) {
                 type.sendFailureMessage(commandSender, args[i]);
                 return null;
             }
-
-            result.add(value);
         }
         return result;
     }
