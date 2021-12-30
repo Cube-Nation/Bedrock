@@ -28,6 +28,7 @@ import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
 import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.LengthComparator;
@@ -69,6 +70,9 @@ public abstract class AbstractCommand {
 
     private boolean isIngameCommandOnly = false;
 
+    private Method executeMethod;
+    private Class<?>[] executeParameters;
+
     /**
      * The class constructor for all Bedrock commands.
      * <p>
@@ -78,7 +82,7 @@ public abstract class AbstractCommand {
      * @param plugin         A Bedrock-compatible plugin
      * @param commandManager The Bedrock command manager
      */
-    AbstractCommand(FoundationPlugin plugin, CommandManager commandManager) {
+    public AbstractCommand(FoundationPlugin plugin, CommandManager commandManager) throws CommandInitException {
         this.plugin = plugin;
         this.commandManager = commandManager;
 
@@ -130,6 +134,29 @@ public abstract class AbstractCommand {
         if (clazz.isAnnotationPresent(IngameCommand.class)) {
             this.isIngameCommandOnly = true;
         }
+    }
+
+    public void parseExecuteMethod() throws CommandInitException {
+        // get possible execute method matches
+        List<Method> matches = Arrays.stream(getClass().getDeclaredMethods())
+                .filter(m -> m.getName().equals("execute"))
+                .collect(Collectors.toList());
+
+        // only proceed if there's exactly one execute method
+        if (matches.isEmpty()) {
+            throw new CommandInitException(getClass().getName()+": Execute method not found. Please contact plugin author.");
+        } else if (matches.size() > 1) {
+            throw new CommandInitException(getClass().getName()+": Multiple execute methods found. Please contact plugin author.");
+        }
+        this.executeMethod = matches.get(0);
+
+        // get method parameters
+        Class<?>[] executeParameters = this.executeMethod.getParameterTypes();
+        // remove BedrockChatSender element
+        if (executeParameters.length == 0 || !executeParameters[0].equals(BedrockChatSender.class)) {
+            throw new CommandInitException(getClass().getName()+": Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
+        }
+        this.executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
     }
 
     public String getDescription() {
@@ -274,35 +301,14 @@ public abstract class AbstractCommand {
             }
         }
 
-        // get possible execute method matches
-        List<Method> matches = Arrays.stream(getClass().getDeclaredMethods())
-                .filter(m -> m.getName().equals("execute"))
-                .collect(Collectors.toList());
-
-        // only proceed if there's exactly one execute method
-        if (matches.isEmpty()) {
-            throw new CommandException(getClass().getName()+": Execute method not found. Please contact plugin author.");
-        } else if (matches.size() > 1) {
-            throw new CommandException(getClass().getName()+": Multiple execute methods found. Please contact plugin author.");
-        }
-        Method executeMethod = matches.get(0);
-
-        // get method parameters
-        Class<?>[] executeParameters = executeMethod.getParameterTypes();
-        // remove BedrockChatSender element
-        if (executeParameters.length == 0 || !executeParameters[0].equals(BedrockChatSender.class)) {
-            throw new CommandException(getClass().getName()+": Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
-        }
-        executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
-
-        ArrayList<Object> executeParameterValues = tryCastInputToArgumentTypes(commandSender, executeParameters, args);
+        ArrayList<Object> executeParameterValues = tryCastInputToArgumentTypes(commandSender, this.executeParameters, args);
         if (executeParameterValues == null) {
             return;
         }
-        executeParameterValues.add(0, (BedrockChatSender) commandSender);
+        executeParameterValues.add(0, commandSender);
 
         try {
-            executeMethod.invoke(this, executeParameterValues.toArray());
+            this.executeMethod.invoke(this, executeParameterValues.toArray());
         } catch (IllegalAccessException e) {
             throw new CommandException(getClass().getName()+": Execute method not accessible.");
         } catch (InvocationTargetException e) {

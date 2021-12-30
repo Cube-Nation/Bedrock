@@ -30,6 +30,7 @@ import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.command.predefined.SettingsInfoCommand;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import org.bukkit.command.PluginCommand;
@@ -116,8 +117,17 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
 
             Class<?> handler = handlers[0];
             try {
-                Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                ((SimpleCommandManager) manager).setCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                AbstractCommand instance = null;
+                try {
+                    Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
+                    instance = (AbstractCommand) constructor.newInstance(plugin, manager);
+                    instance.parseExecuteMethod();
+                } catch (CommandInitException e) {
+                    e.printStackTrace();
+                }
+                if (instance != null) {
+                    ((SimpleCommandManager) manager).setCommand(instance);
+                }
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
@@ -130,8 +140,16 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
 
             for (Class<?> handler : handlers) {
                 try {
-                    Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                    ((ComplexCommandManager) manager).addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                    AbstractCommand instance;
+                    try {
+                        Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
+                        instance = (AbstractCommand) constructor.newInstance(plugin, manager);
+                        instance.parseExecuteMethod();
+                    } catch (CommandInitException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    ((ComplexCommandManager) manager).addCommand(instance);
                 } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                     e.printStackTrace();
                 }
