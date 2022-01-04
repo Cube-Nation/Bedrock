@@ -22,4 +22,9 @@ public class FloatArgument extends ArgumentType<Float> {
     public void sendFailureMessage(BedrockChatSender commandSender, String input) {
         plugin.messages().noValidFloat(commandSender, input);
     }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        return null;
+    }
 }

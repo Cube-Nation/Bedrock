@@ -6,8 +6,7 @@ import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Cube-Nation
@@ -46,7 +45,23 @@ public abstract class SimpleCommandManager implements CommandManager {
 
     @Override
     public List<String> onAutoComplete(BedrockChatSender sender, String[] args) {
-        return null;
+        ArrayList<String> list = new ArrayList<>();
+        if (!this.command.hasPermission(sender)) {
+            return null;
+        }
+
+        ArrayList tabCom = this.command.getTabCompletion(args, sender);
+        if (tabCom != null) {
+            list.addAll(tabCom);
+        }
+
+        // Remove duplicates
+        Set<String> set = new HashSet<>(list);
+        if (set.isEmpty()) {
+            return null;
+        } else {
+            return new ArrayList<>(set);
+        }
     }
 
     public void setCommand(AbstractCommand command) {

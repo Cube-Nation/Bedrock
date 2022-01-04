@@ -29,7 +29,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
@@ -52,33 +51,37 @@ public class HelpCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException {
-        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
-            // Display help for all commands
-
-            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
-            printHelp(sender, args, commandComponents);
-
-        } else {
-            // Send help for special command
-            ArrayList<AbstractCommand> helpList = new ArrayList<>();
-            for (AbstractCommand command : getHelpCommands()) {
-                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
-                    helpList.add(command);
-                }
-            }
-
-            ArrayList<JsonMessage> jsonList;
-            if (helpList.isEmpty()) {
-                // If no command is valid, show help for all
-                jsonList = getFullHelpList(sender);
-            } else {
-                jsonList = getHelpJsonMessages(sender, helpList);
-            }
-
-            printHelp(sender, args, jsonList);
-        }
+    public void execute(BedrockChatSender sender) {
+        // ToDo: fix command after String[] parameter is available
     }
+
+//    public void execute(BedrockChatSender sender, String[] args) throws CommandException {
+//        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
+//            // Display help for all commands
+//
+//            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
+//            printHelp(sender, args, commandComponents);
+//
+//        } else {
+//            // Send help for special command
+//            ArrayList<AbstractCommand> helpList = new ArrayList<>();
+//            for (AbstractCommand command : getHelpCommands()) {
+//                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
+//                    helpList.add(command);
+//                }
+//            }
+//
+//            ArrayList<JsonMessage> jsonList;
+//            if (helpList.isEmpty()) {
+//                // If no command is valid, show help for all
+//                jsonList = getFullHelpList(sender);
+//            } else {
+//                jsonList = getHelpJsonMessages(sender, helpList);
+//            }
+//
+//            printHelp(sender, args, jsonList);
+//        }
+//    }
 
     public List<AbstractCommand> getHelpCommands() {
         ArrayList<AbstractCommand> helpCommands = new ArrayList<>();

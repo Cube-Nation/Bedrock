@@ -26,11 +26,10 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public abstract class Command extends AbstractCommand {
 
@@ -40,36 +39,24 @@ public abstract class Command extends AbstractCommand {
 
     @Override
     public ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
-        ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
-        if (isValidTrigger(args)) {
-            if (args != null && this.getSubcommands()!= null) {
-                ArrayList<String> tabArgumentCompletion = getTabArgumentCompletion(sender,args.length - this.getSubcommands().size() - 1, Arrays.copyOfRange(args, this.getSubcommands().size(), args.length));
-                if (tabArgumentCompletion != null && !tabArgumentCompletion.isEmpty()) {
-                    if (tabCompletionFromCommands == null) {
-                        tabCompletionFromCommands = new ArrayList<>();
-                    }
-                    tabCompletionFromCommands.addAll(tabArgumentCompletion);
-                }
+        ArrayList<String> tabCompletion = new ArrayList<>();
+
+        // not a valid command yet? autocomplete subcommands.
+        if (!isValidTrigger(args)) {
+            ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
+            if (tabCompletionFromCommands != null) {
+                tabCompletion.addAll(tabCompletionFromCommands);
             }
-
-
-            if (tabCompletionFromCommands == null || args == null) {
-                return tabCompletionFromCommands;
-            }
-
-            ArrayList<String> toRemove = new ArrayList<>();
-            String arg = args[args.length - 1];
-
-            for (String completion: tabCompletionFromCommands) {
-                if (!completion.toLowerCase().startsWith(arg.toLowerCase())) {
-                    toRemove.add(completion);
-                }
-            }
-
-            tabCompletionFromCommands.removeAll(toRemove);
+            return tabCompletion;
         }
 
-        return tabCompletionFromCommands;
+        // autocomplete arguments from ArgumentType
+        ArrayList<String> tabCompletionFromArguments = getTabCompletionFromArguments(sender, args);
+        if (tabCompletionFromArguments != null) {
+            tabCompletion.addAll(tabCompletionFromArguments);
+        }
+
+        return tabCompletion;
     }
 
     /**
@@ -82,9 +69,4 @@ public abstract class Command extends AbstractCommand {
     public boolean isValidTrigger(String[] args) {
         return this.isMatchingSubCommands(args);
     }
-
-    public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
-        return null;
-    }
-
 }

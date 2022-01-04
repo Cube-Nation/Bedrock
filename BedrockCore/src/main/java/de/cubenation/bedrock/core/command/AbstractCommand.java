@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * Abstract class for command executor classes
  *
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public abstract class AbstractCommand {
 
@@ -71,7 +71,7 @@ public abstract class AbstractCommand {
     private boolean isIngameCommandOnly = false;
 
     private Method executeMethod;
-    private Class<?>[] executeParameters;
+    protected Class<?>[] executeParameters;
 
     /**
      * The class constructor for all Bedrock commands.
@@ -82,12 +82,17 @@ public abstract class AbstractCommand {
      * @param plugin         A Bedrock-compatible plugin
      * @param commandManager The Bedrock command manager
      */
-    public AbstractCommand(FoundationPlugin plugin, CommandManager commandManager) throws CommandInitException {
+    public AbstractCommand(FoundationPlugin plugin, CommandManager commandManager) {
         this.plugin = plugin;
         this.commandManager = commandManager;
 
         // read annotations from execute methods
         this.parseMethodAnnotations(this.getClass());
+        try {
+            parseExecuteMethod();
+        } catch (CommandInitException e) {
+            e.printStackTrace();
+        }
     }
 
     public FoundationPlugin getPlugin() {
@@ -431,6 +436,27 @@ public abstract class AbstractCommand {
         }};
     }
 
+    public final ArrayList<String> getTabCompletionFromArguments(BedrockChatSender sender, String[] args) {
+        int argIndex = args.length - this.getSubcommands().size() - 1;
+        if (argIndex < 0 || executeParameters.length < (args.length - 1)) {
+            return null;
+        }
+        String[] realArgs = Arrays.copyOfRange(args, this.getSubcommands().size(), args.length);
+
+        ArgumentType<?> argumentType = plugin.getArgumentTypeService().getType(this.executeParameters[argIndex]);
+        if (argumentType == null) {
+            return null;
+        }
+        Iterable<String> tabCompletionFromArguments = argumentType.onAutoComplete(sender, realArgs);
+        if (tabCompletionFromArguments == null) {
+            return null;
+        }
+
+        ArrayList<String> tabCompletion = new ArrayList<>();
+        tabCompletionFromArguments.forEach(tabCompletion::add);
+        return tabCompletion;
+    }
+
     protected boolean isMatchingSubCommands(String[] args) {
         if (args.length < this.getSubcommands().size())
             return false;
@@ -457,6 +483,7 @@ public abstract class AbstractCommand {
      * @return ArrayList of casted objects
      */
     protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, Class<?>[] types, String[] args) throws CommandException, IllegalCommandArgumentException {
+        // ToDo: Doesn't make sense with optional commands
         if (args.length < types.length) {
             throw new IllegalCommandArgumentException();
         }

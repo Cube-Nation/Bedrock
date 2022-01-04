@@ -18,4 +18,9 @@ public class StringArgument extends ArgumentType<String> {
     public void sendFailureMessage(BedrockChatSender commandSender, String input) {
         // not gonna happen
     }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        return null;
+    }
 }

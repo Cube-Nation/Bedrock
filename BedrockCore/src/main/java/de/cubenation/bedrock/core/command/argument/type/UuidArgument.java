@@ -24,4 +24,9 @@ public class UuidArgument extends ArgumentType<UUID> {
     public void sendFailureMessage(BedrockChatSender commandSender, String input) {
         plugin.messages().noValidUuid(commandSender, input);
     }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        return null;
+    }
 }

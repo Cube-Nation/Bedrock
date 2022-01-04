@@ -30,4 +30,9 @@ public class EnumArgument<T extends Enum<T>> extends ArgumentType<T> {
     private List<String> getEnumConstants() {
         return Arrays.stream(genericClass.getEnumConstants()).map(t -> t.toString()).collect(Collectors.toList());
     }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        return getEnumConstants();
+    }
 }

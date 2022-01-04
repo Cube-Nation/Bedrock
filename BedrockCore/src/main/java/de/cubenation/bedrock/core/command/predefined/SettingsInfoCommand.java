@@ -109,7 +109,7 @@ public class SettingsInfoCommand extends Command {
         ///TODO - B1acksheep
     }
 
-    @Override
+    // TODO: needs ArgumentType instead
     public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{

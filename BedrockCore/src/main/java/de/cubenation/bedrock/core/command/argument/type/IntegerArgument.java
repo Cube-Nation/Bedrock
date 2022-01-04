@@ -22,4 +22,9 @@ public class IntegerArgument extends ArgumentType<Integer> {
     public void sendFailureMessage(BedrockChatSender commandSender, String input) {
         plugin.messages().noValidInt(commandSender, input);
     }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        return null;
+    }
 }
