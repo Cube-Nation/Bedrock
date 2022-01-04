@@ -134,7 +134,7 @@ public abstract class ComplexCommandManager implements CommandManager {
                 continue;
             }
 
-            ArrayList tabCom = cmd.getTabCompletion(args, sender);
+            List tabCom = cmd.getTabCompletion(args, sender);
             if (tabCom != null) {
                 list.addAll(tabCom);
             }

@@ -124,7 +124,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
             throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException;
 
     @Override
-    public final ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
+    public final List<String> getTabCompletion(String[] args, BedrockChatSender sender) {
         if (this.getSubcommands().size() >= args.length) {
             return getTabCompletionFromCommands(args);
         } else if (args.length > this.getSubcommands().size()) {

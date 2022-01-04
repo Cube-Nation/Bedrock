@@ -44,6 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -383,9 +384,9 @@ public abstract class AbstractCommand {
      * @param sender the sender of the requested tab completion.
      * @return the tab completion for argument
      */
-    public abstract ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender);
+    public abstract List<String> getTabCompletion(String[] args, BedrockChatSender sender);
 
-    public final ArrayList<String> getTabCompletionFromCommands(String[] args) {
+    public final List<String> getTabCompletionFromCommands(String[] args) {
         if (this.subcommands.size() < args.length) {
             return null;
         }
@@ -412,31 +413,20 @@ public abstract class AbstractCommand {
             }
         }
 
-        final ArrayList<String> list = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
-        list.sort(String::compareToIgnoreCase);
+        final ArrayList<String> tabCompletion = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
+        tabCompletion.sort(String::compareToIgnoreCase);
 
-        // If the user typed a part of the command, return the matching
-        String completionCommand = "";
+        // prioritize largest (because of abbreviations)
+        Collections.reverse(tabCompletion);
 
-        for (String completion : list) {
-            if (completion.startsWith(args[args.length - 1])) {
-                completionCommand = completion;
-                break;
-            }
-        }
-
-        // If the user typed nothing, return the largest
-        if (completionCommand.equals("")) {
-            completionCommand = list.get(list.size() - 1);
-        }
-
-        final String finalCompletionCommand = completionCommand;
-        return new ArrayList<String>() {{
-            add(finalCompletionCommand);
-        }};
+        // if the user typed a part of the command, return the matching
+        String currentArg = args[args.length - 1];
+        return tabCompletion.stream()
+                .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
-    public final ArrayList<String> getTabCompletionFromArguments(BedrockChatSender sender, String[] args) {
+    public final List<String> getTabCompletionFromArguments(BedrockChatSender sender, String[] args) {
         int argIndex = args.length - this.getSubcommands().size() - 1;
         if (argIndex < 0 || executeParameters.length < (args.length - 1)) {
             return null;
@@ -454,7 +444,12 @@ public abstract class AbstractCommand {
 
         ArrayList<String> tabCompletion = new ArrayList<>();
         tabCompletionFromArguments.forEach(tabCompletion::add);
-        return tabCompletion;
+
+        // If the user typed a part of the command, return the matching
+        String currentArg = args[args.length - 1];
+        return tabCompletion.stream()
+                .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     protected boolean isMatchingSubCommands(String[] args) {

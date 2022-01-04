@@ -26,6 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Cube-Nation
@@ -38,12 +39,12 @@ public abstract class Command extends AbstractCommand {
     }
 
     @Override
-    public ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
+    public List<String> getTabCompletion(String[] args, BedrockChatSender sender) {
         ArrayList<String> tabCompletion = new ArrayList<>();
 
         // not a valid command yet? autocomplete subcommands.
         if (!isValidTrigger(args)) {
-            ArrayList<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
+            List<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
             if (tabCompletionFromCommands != null) {
                 tabCompletion.addAll(tabCompletionFromCommands);
             }
@@ -51,7 +52,7 @@ public abstract class Command extends AbstractCommand {
         }
 
         // autocomplete arguments from ArgumentType
-        ArrayList<String> tabCompletionFromArguments = getTabCompletionFromArguments(sender, args);
+        List<String> tabCompletionFromArguments = getTabCompletionFromArguments(sender, args);
         if (tabCompletionFromArguments != null) {
             tabCompletion.addAll(tabCompletionFromArguments);
         }

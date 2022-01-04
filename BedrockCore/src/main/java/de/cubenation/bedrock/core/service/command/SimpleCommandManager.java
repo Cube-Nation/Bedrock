@@ -50,7 +50,7 @@ public abstract class SimpleCommandManager implements CommandManager {
             return null;
         }
 
-        ArrayList tabCom = this.command.getTabCompletion(args, sender);
+        List tabCom = this.command.getTabCompletion(args, sender);
         if (tabCom != null) {
             list.addAll(tabCom);
         }

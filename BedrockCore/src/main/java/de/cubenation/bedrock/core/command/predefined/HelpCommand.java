@@ -150,7 +150,7 @@ public class HelpCommand extends Command {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ArrayList<String> getTabCompletion(String[] args, BedrockChatSender sender) {
+    public List<String> getTabCompletion(String[] args, BedrockChatSender sender) {
 
         if (args.length > 1) {
             // Tab Completion for each command to display special help
@@ -182,7 +182,7 @@ public class HelpCommand extends Command {
                     continue;
                 }
 
-                ArrayList tabCom = cmd.getTabCompletion(arrayList.toArray(new String[arrayList.size()]), sender);
+                List tabCom = cmd.getTabCompletion(arrayList.toArray(new String[arrayList.size()]), sender);
                 if (tabCom != null) {
                     list.addAll(tabCom);
                 }
