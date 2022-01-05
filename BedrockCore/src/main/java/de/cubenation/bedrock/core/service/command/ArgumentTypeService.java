@@ -6,6 +6,7 @@ import de.cubenation.bedrock.core.exception.ArgumentTypeAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -41,6 +42,7 @@ public class ArgumentTypeService extends AbstractService {
             put(float.class, new FloatArgument(plugin));
             put(double.class, new DoubleArgument(plugin));
             put(UUID.class, new UuidArgument(plugin));
+            put(BedrockPlayer.class, new BedrockPlayerArgument(plugin));
         }};
     }
 
