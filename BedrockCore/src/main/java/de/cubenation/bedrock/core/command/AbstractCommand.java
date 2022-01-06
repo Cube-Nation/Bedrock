@@ -428,7 +428,7 @@ public abstract class AbstractCommand {
 
     public final List<String> getTabCompletionFromArguments(BedrockChatSender sender, String[] args) {
         int argIndex = args.length - this.getSubcommands().size() - 1;
-        if (argIndex < 0 || executeParameters.length < (args.length - 1)) {
+        if (argIndex < 0 || argIndex >= executeParameters.length) {
             return null;
         }
         String[] realArgs = Arrays.copyOfRange(args, this.getSubcommands().size(), args.length);
