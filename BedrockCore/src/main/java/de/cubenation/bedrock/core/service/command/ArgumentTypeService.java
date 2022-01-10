@@ -46,7 +46,7 @@ public class ArgumentTypeService extends AbstractService {
         }};
     }
 
-    public ArgumentType getType(Class clazz) {
+    public ArgumentType getType(Class<?> clazz) {
         if (!types.containsKey(clazz)) {
             return null;
         }

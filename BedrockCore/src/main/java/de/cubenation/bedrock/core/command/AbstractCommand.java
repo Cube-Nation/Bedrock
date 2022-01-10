@@ -39,13 +39,8 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import org.apache.commons.lang.StringUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -72,7 +67,7 @@ public abstract class AbstractCommand {
     private boolean isIngameCommandOnly = false;
 
     private Method executeMethod;
-    protected Class<?>[] executeParameters;
+    protected Parameter[] executeParameters;
 
     /**
      * The class constructor for all Bedrock commands.
@@ -157,12 +152,22 @@ public abstract class AbstractCommand {
         this.executeMethod = matches.get(0);
 
         // get method parameters
-        Class<?>[] executeParameters = this.executeMethod.getParameterTypes();
+        Parameter[] executeParameters = this.executeMethod.getParameters();
         // remove BedrockChatSender element
-        if (executeParameters.length == 0 || !executeParameters[0].equals(BedrockChatSender.class)) {
+        if (executeParameters.length == 0 || !executeParameters[0].getType().equals(BedrockChatSender.class)) {
             throw new CommandInitException(getClass().getName()+": Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
         }
         this.executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
+
+        // check if optional arguments are at the end
+        boolean followsOptional = false;
+        for (Parameter parameter : this.executeParameters) {
+            if (parameter.getType().equals(Optional.class)) {
+                followsOptional = true;
+            } else if (followsOptional) {
+                throw new CommandInitException(getClass().getName()+": Invalid execute method. Optional parameters need to be last.");
+            }
+        }
     }
 
     public String getDescription() {
@@ -433,7 +438,14 @@ public abstract class AbstractCommand {
         }
         String[] realArgs = Arrays.copyOfRange(args, this.getSubcommands().size(), args.length);
 
-        ArgumentType<?> argumentType = plugin.getArgumentTypeService().getType(this.executeParameters[argIndex]);
+        Class<?> clazz = this.executeParameters[argIndex].getType();
+
+        // check for optional argument
+        if (clazz.equals(Optional.class)) {
+            clazz = ((Class) ((ParameterizedType) this.executeParameters[argIndex].getParameterizedType()).getActualTypeArguments()[0]);
+        }
+
+        ArgumentType<?> argumentType = plugin.getArgumentTypeService().getType(clazz);
         if (argumentType == null) {
             return null;
         }
@@ -473,31 +485,45 @@ public abstract class AbstractCommand {
     /**
      * Returns an ArrayList of casted objects matching the types-array or throws exception for invalid types.
      *
-     * @param types the type it should be casted to
+     * @param parameters the type it should be casted to
      * @param args the value of the arguments
      * @return ArrayList of casted objects
      */
-    protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, Class<?>[] types, String[] args) throws CommandException, IllegalCommandArgumentException {
+    protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, Parameter[] parameters, String[] args) throws CommandException, IllegalCommandArgumentException {
         // ToDo: Doesn't make sense with optional commands
-        if (args.length < types.length) {
+        if (args.length < parameters.length) {
             throw new IllegalCommandArgumentException();
         }
 
         // return true immediately if no subcommands are defined
-        if (types.length == 0) {
+        if (parameters.length == 0) {
             return new ArrayList<>();
         }
 
         // iterate arguments
         ArrayList<Object> result = new ArrayList<>();
-        for (int i = 0; i < types.length; i++) {
-            ArgumentType type = plugin.getArgumentTypeService().getType(types[i]);
+        for (int i = 0; i < parameters.length; i++) {
+            Class<?> clazz = parameters[i].getType();
+            boolean isOptional = false;
+
+            // check for optional argument
+            if (clazz.equals(Optional.class)) {
+                isOptional = true;
+                clazz = ((Class) ((ParameterizedType) parameters[i].getParameterizedType()).getActualTypeArguments()[0]);
+            }
+
+            // get corresponding argument type
+            ArgumentType type = plugin.getArgumentTypeService().getType(clazz);
             if (type == null) {
-                throw new CommandException(getClass().getName() + ": " + types[i].getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
+                throw new CommandException(getClass().getName() + ": " + clazz.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
             }
 
             try {
-                result.add(type.tryCast(args[i]));
+                Object value = type.tryCast(args[i]);
+                if (isOptional) {
+                    value = Optional.ofNullable(value);
+                }
+                result.add(value);
             } catch (ClassCastException e) {
                 type.sendFailureMessage(commandSender, args[i]);
                 return null;

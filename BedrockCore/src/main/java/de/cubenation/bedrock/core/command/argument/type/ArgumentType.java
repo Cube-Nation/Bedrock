@@ -10,7 +10,7 @@ import java.lang.reflect.ParameterizedType;
 public abstract class ArgumentType<T> implements AutoCompletionExecutor {
 
     @Getter
-    protected final Class<T> genericClass = ((Class) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);;
+    protected final Class<T> genericClass = ((Class) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
 
     protected final FoundationPlugin plugin;
 
