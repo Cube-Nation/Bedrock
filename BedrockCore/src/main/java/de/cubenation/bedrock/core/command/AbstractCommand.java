@@ -258,8 +258,8 @@ public abstract class AbstractCommand {
         // TODO: argument localisation
         Argument argument = new Argument(
                 this.getPlugin(),
-                "N/A",
-                parameter.getName(),
+                "command.bedrock.key.desc",
+                "command.bedrock.key.ph",
                 optional,
                 null,
                 clazz
@@ -517,7 +517,7 @@ public abstract class AbstractCommand {
             ArgumentType type = argument.getArgumentType();
 
             try {
-                Object value = type.tryCast(args[i]);
+                Object value = args.length > i ? type.tryCast(args[i]) : null;
                 if (argument.isOptional()) {
                     value = Optional.ofNullable(value);
                 }
