@@ -254,6 +254,10 @@ public abstract class AbstractCommand {
         if (optional) {
             clazz = ((Class) ((ParameterizedType) parameter.getParameterizedType()).getActualTypeArguments()[0]);
         }
+        boolean array = clazz.isArray();
+        if (array) {
+            clazz = clazz.getComponentType();
+        }
 
         // TODO: argument localisation
         Argument argument = new Argument(
@@ -261,6 +265,7 @@ public abstract class AbstractCommand {
                 "command.bedrock.key.desc",
                 "command.bedrock.key.ph",
                 optional,
+                array,
                 null,
                 clazz
         );
@@ -338,7 +343,8 @@ public abstract class AbstractCommand {
         executeParameterValues.add(0, commandSender);
 
         try {
-            this.executeMethod.invoke(this, executeParameterValues.toArray());
+            Object[] params = executeParameterValues.toArray();
+            this.executeMethod.invoke(this, params);
         } catch (IllegalAccessException e) {
             throw new CommandException(getClass().getName()+": Execute method not accessible.");
         } catch (InvocationTargetException e) {
@@ -517,7 +523,21 @@ public abstract class AbstractCommand {
             ArgumentType type = argument.getArgumentType();
 
             try {
-                Object value = args.length > i ? type.tryCast(args[i]) : null;
+                Object value;
+                if (argument.isArray()) {
+                    int z = i;
+                    ArrayList<Object> entries = new ArrayList<>();
+                    while (z < args.length) {
+                        entries.add(type.tryCast(args[z++]));
+                    }
+                    if (!argument.isOptional() && entries.isEmpty()){
+                        // non-optional arrays need at least one item
+                        throw new IllegalCommandArgumentException();
+                    }
+                    value = !entries.isEmpty() ? type.toArray(entries) : null;
+                } else {
+                    value = args.length > i ? type.tryCast(args[i]) : null;
+                }
                 if (argument.isOptional()) {
                     value = Optional.ofNullable(value);
                 }

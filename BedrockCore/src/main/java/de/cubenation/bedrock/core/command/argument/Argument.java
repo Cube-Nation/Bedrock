@@ -49,7 +49,10 @@ public class Argument {
     private String placeholder;
 
     @Getter
-    private boolean optional = false;
+    private boolean optional;
+
+    @Getter
+    private boolean array;
 
     @Getter
     private Permission permission = null;
@@ -60,11 +63,12 @@ public class Argument {
     @Getter
     private ArgumentType argumentType;
 
-    public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, Permission permission, Class<?> dataType) throws CommandInitException {
+    public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, boolean array, Permission permission, Class<?> dataType) throws CommandInitException {
         this.plugin = plugin;
         this.setDescription(description);
         this.setPlaceholder(placeholder);
         this.optional = optional;
+        this.array = array;
         this.setPermission(permission);
         this.dataType = dataType;
         this.argumentType = plugin.getArgumentTypeService().getType(this.dataType);

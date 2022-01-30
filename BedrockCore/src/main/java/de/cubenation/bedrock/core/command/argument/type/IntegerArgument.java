@@ -3,6 +3,8 @@ package de.cubenation.bedrock.core.command.argument.type;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
+import java.util.List;
+
 public class IntegerArgument extends ArgumentType<Integer> {
 
     public IntegerArgument(FoundationPlugin plugin) {
@@ -26,5 +28,14 @@ public class IntegerArgument extends ArgumentType<Integer> {
     @Override
     public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
         return null;
+    }
+
+    @Override
+    public Object toArray(List<Object> list) {
+        int[] array = new int[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            array[i] = (int) list.get(i);
+        }
+        return array;
     }
 }

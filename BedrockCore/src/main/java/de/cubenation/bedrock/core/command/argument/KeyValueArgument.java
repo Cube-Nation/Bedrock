@@ -39,7 +39,7 @@ public class KeyValueArgument extends Argument {
     private Boolean keyOnly = false;
 
     public KeyValueArgument(FoundationPlugin plugin, String key, String description, String placeholder, boolean optional, Permission permission) throws CommandInitException {
-        super(plugin, description, placeholder, optional, permission, null); // TODO: keyvalue argument broken
+        super(plugin, description, placeholder, optional, false, permission, null); // TODO: keyvalue argument broken
         this.setKey(key);
     }
 
