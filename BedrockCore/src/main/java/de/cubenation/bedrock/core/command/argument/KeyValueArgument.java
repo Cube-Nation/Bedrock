@@ -24,6 +24,7 @@ package de.cubenation.bedrock.core.command.argument;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.authorization.Permission;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 
 import java.util.HashMap;
 
@@ -37,8 +38,8 @@ public class KeyValueArgument extends Argument {
 
     private Boolean keyOnly = false;
 
-    public KeyValueArgument(FoundationPlugin plugin, String key, String description, String placeholder, boolean optional, Permission permission) {
-        super(plugin, description, placeholder, optional, permission);
+    public KeyValueArgument(FoundationPlugin plugin, String key, String description, String placeholder, boolean optional, Permission permission) throws CommandInitException {
+        super(plugin, description, placeholder, optional, permission, null); // TODO: keyvalue argument broken
         this.setKey(key);
     }
 

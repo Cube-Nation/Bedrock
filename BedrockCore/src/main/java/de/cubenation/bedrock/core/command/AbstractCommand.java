@@ -26,6 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.*;
 import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.core.authorization.Role;
+import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.CommandInitException;
@@ -37,6 +38,7 @@ import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.*;
@@ -50,6 +52,8 @@ import java.util.stream.Collectors;
  * @author Cube-Nation
  * @version 2.0
  */
+
+@ToString
 public abstract class AbstractCommand {
 
     protected FoundationPlugin plugin;
@@ -67,7 +71,6 @@ public abstract class AbstractCommand {
     private boolean isIngameCommandOnly = false;
 
     private Method executeMethod;
-    protected Parameter[] executeParameters;
 
     /**
      * The class constructor for all Bedrock commands.
@@ -83,9 +86,9 @@ public abstract class AbstractCommand {
         this.commandManager = commandManager;
 
         // read annotations from execute methods
-        this.parseMethodAnnotations(this.getClass());
         try {
-            parseExecuteMethod();
+            this.parseMethodAnnotations(this.getClass());
+            this.parseExecuteMethod();
         } catch (CommandInitException e) {
             e.printStackTrace();
         }
@@ -99,7 +102,7 @@ public abstract class AbstractCommand {
         return this.commandManager;
     }
 
-    private void parseMethodAnnotations(Class<? extends AbstractCommand> clazz) {
+    private void parseMethodAnnotations(Class<? extends AbstractCommand> clazz) throws CommandInitException {
         // Description
         Description description = clazz.getAnnotation(Description.class);
         if (description != null) {
@@ -112,14 +115,15 @@ public abstract class AbstractCommand {
         );
 
         // Argument/s
-        Arrays.stream(clazz.getAnnotationsByType(Argument.class)).forEach(
-                this::processArgumentAnnotation
-        );
+        // TODO: Do something about the localisation stuff
+//        Arrays.stream(clazz.getAnnotationsByType(Argument.class)).forEach(
+//                this::processArgumentAnnotation
+//        );
 
         // Key-Value Argument/s
-        Arrays.stream(clazz.getAnnotationsByType(KeyValueArgument.class)).forEach(
-                this::processKeyValueArgumentAnnotation
-        );
+        for (KeyValueArgument keyValueArgument : clazz.getAnnotationsByType(KeyValueArgument.class)) {
+            processKeyValueArgumentAnnotation(keyValueArgument);
+        }
 
         // Permission/s
         Arrays.stream(clazz.getAnnotationsByType(Permission.class)).forEach(permission -> this.addRuntimePermission(
@@ -153,16 +157,22 @@ public abstract class AbstractCommand {
 
         // get method parameters
         Parameter[] executeParameters = this.executeMethod.getParameters();
-        // remove BedrockChatSender element
+        // check for bedrockChatSender
         if (executeParameters.length == 0 || !executeParameters[0].getType().equals(BedrockChatSender.class)) {
             throw new CommandInitException(getClass().getName()+": Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
         }
-        this.executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
+        // remove BedrockChatSender from parameters
+        executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
+
+        // create argument objects
+        for (Parameter executeParameter : executeParameters) {
+            processExecuteParameter(executeParameter);
+        }
 
         // check if optional arguments are at the end
         boolean followsOptional = false;
-        for (Parameter parameter : this.executeParameters) {
-            if (parameter.getType().equals(Optional.class)) {
+        for (Argument argument : this.arguments) {
+            if (argument.isOptional()) {
                 followsOptional = true;
             } else if (followsOptional) {
                 throw new CommandInitException(getClass().getName()+": Invalid execute method. Optional parameters need to be last.");
@@ -233,36 +243,45 @@ public abstract class AbstractCommand {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
-    private void processArgumentAnnotation(Argument commandArgument) {
-        if (!this.checkArgumentCondition(commandArgument.Condition())) {
-            return;
+    private void processExecuteParameter(Parameter parameter) throws CommandInitException {
+        // TODO: argument conditions
+        // if (!this.checkArgumentCondition(commandArgument.Condition())) {
+        //    return;
+        // }
+
+        Class<?> clazz = parameter.getType();
+        boolean optional = clazz.equals(Optional.class);
+        if (optional) {
+            clazz = ((Class) ((ParameterizedType) parameter.getParameterizedType()).getActualTypeArguments()[0]);
         }
 
-        de.cubenation.bedrock.core.command.argument.Argument argument = new de.cubenation.bedrock.core.command.argument.Argument(
+        // TODO: argument localisation
+        Argument argument = new Argument(
                 this.getPlugin(),
-                commandArgument.Description(),
-                commandArgument.Placeholder(),
-                commandArgument.Optional(),
-                null
+                "N/A",
+                parameter.getName(),
+                optional,
+                null,
+                clazz
         );
 
-        if (!commandArgument.Permission().isEmpty()) {
-            argument.setPermission(
-                    this.createPermission(
-                            commandArgument.Permission(),
-                            commandArgument.Role(),
-                            commandArgument.RoleName(),
-                            commandArgument.PermissionDescription()
-                    )
-            );
-        }
+        // TODO: argument permissions
+        //if (!commandArgument.Permission().isEmpty()) {
+        //    argument.setPermission(
+        //            this.createPermission(
+        //                    commandArgument.Permission(),
+        //                    commandArgument.Role(),
+        //                    commandArgument.RoleName(),
+        //                    commandArgument.PermissionDescription()
+        //            )
+        //    );
+        //}
 
         this.addArgument(argument);
     }
 
     @SuppressWarnings("unchecked")
-    private void processKeyValueArgumentAnnotation(KeyValueArgument commandKeyValueArgument) {
+    private void processKeyValueArgumentAnnotation(KeyValueArgument commandKeyValueArgument) throws CommandInitException {
         if (!this.checkArgumentCondition(commandKeyValueArgument.Condition())) {
             return;
         }
@@ -312,7 +331,7 @@ public abstract class AbstractCommand {
             }
         }
 
-        ArrayList<Object> executeParameterValues = tryCastInputToArgumentTypes(commandSender, this.executeParameters, args);
+        ArrayList<Object> executeParameterValues = tryCastInputToArgumentTypes(commandSender, args);
         if (executeParameterValues == null) {
             return;
         }
@@ -325,7 +344,6 @@ public abstract class AbstractCommand {
         } catch (InvocationTargetException e) {
             throw new CommandException(getClass().getName()+": Execute method not valid.");
         }
-        //execute(commandSender, args);
     }
 
     public boolean tryCommand(BedrockChatSender commandSender, String[] args) {
@@ -433,19 +451,14 @@ public abstract class AbstractCommand {
 
     public final List<String> getTabCompletionFromArguments(BedrockChatSender sender, String[] args) {
         int argIndex = args.length - this.getSubcommands().size() - 1;
-        if (argIndex < 0 || argIndex >= executeParameters.length) {
+        if (argIndex < 0 || argIndex >= this.arguments.size()) {
             return null;
         }
         String[] realArgs = Arrays.copyOfRange(args, this.getSubcommands().size(), args.length);
 
-        Class<?> clazz = this.executeParameters[argIndex].getType();
+        Argument argument = this.arguments.get(argIndex);
 
-        // check for optional argument
-        if (clazz.equals(Optional.class)) {
-            clazz = ((Class) ((ParameterizedType) this.executeParameters[argIndex].getParameterizedType()).getActualTypeArguments()[0]);
-        }
-
-        ArgumentType<?> argumentType = plugin.getArgumentTypeService().getType(clazz);
+        ArgumentType<?> argumentType = argument.getArgumentType();
         if (argumentType == null) {
             return null;
         }
@@ -485,42 +498,27 @@ public abstract class AbstractCommand {
     /**
      * Returns an ArrayList of casted objects matching the types-array or throws exception for invalid types.
      *
-     * @param parameters the type it should be casted to
      * @param args the value of the arguments
      * @return ArrayList of casted objects
      */
-    protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, Parameter[] parameters, String[] args) throws CommandException, IllegalCommandArgumentException {
-        // ToDo: Doesn't make sense with optional commands
-        if (args.length < parameters.length) {
-            throw new IllegalCommandArgumentException();
-        }
+    protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException {
 
         // return true immediately if no subcommands are defined
-        if (parameters.length == 0) {
+        if (arguments.size() == 0) {
             return new ArrayList<>();
         }
 
         // iterate arguments
         ArrayList<Object> result = new ArrayList<>();
-        for (int i = 0; i < parameters.length; i++) {
-            Class<?> clazz = parameters[i].getType();
-            boolean isOptional = false;
-
-            // check for optional argument
-            if (clazz.equals(Optional.class)) {
-                isOptional = true;
-                clazz = ((Class) ((ParameterizedType) parameters[i].getParameterizedType()).getActualTypeArguments()[0]);
-            }
+        for (int i = 0; i < arguments.size(); i++) {
+            Argument argument = arguments.get(i);
 
             // get corresponding argument type
-            ArgumentType type = plugin.getArgumentTypeService().getType(clazz);
-            if (type == null) {
-                throw new CommandException(getClass().getName() + ": " + clazz.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
-            }
+            ArgumentType type = argument.getArgumentType();
 
             try {
                 Object value = type.tryCast(args[i]);
-                if (isOptional) {
+                if (argument.isOptional()) {
                     value = Optional.ofNullable(value);
                 }
                 result.add(value);
@@ -674,18 +672,6 @@ public abstract class AbstractCommand {
             }
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractCommand{" +
-                "description=" + description +
-                ", subcommands=" + subcommands +
-                ", Arguments=" + arguments +
-                ", runtimePermissions=" + runtimePermissions +
-                ", plugin=" + plugin +
-                ", commandManager=" + commandManager +
-                '}';
     }
 }
 
