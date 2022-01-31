@@ -348,7 +348,7 @@ public abstract class AbstractCommand {
         } catch (IllegalAccessException e) {
             throw new CommandException(getClass().getName()+": Execute method not accessible.");
         } catch (InvocationTargetException e) {
-            throw new CommandException(getClass().getName()+": Execute method not valid.");
+            e.getCause().printStackTrace();
         }
     }
 

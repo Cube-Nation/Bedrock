@@ -36,6 +36,8 @@ import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
+import java.util.Optional;
+
 /**
  * @author Cube-Nation
  * @version 2.0
@@ -54,13 +56,9 @@ public class PermissionOtherCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender, Optional<String> name) throws CommandException, IllegalCommandArgumentException {
 
-        // check args length
-        if (args.length > 1)
-            throw new IllegalCommandArgumentException();
-
-        String player = (args.length == 0) ? sender.getName() : args[0];
+        String player = name.orElse(sender.getName());
 
         PermissionService permissionService = getPlugin().getPermissionService();
         if (permissionService == null) {

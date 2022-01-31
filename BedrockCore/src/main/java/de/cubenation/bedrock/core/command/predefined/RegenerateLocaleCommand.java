@@ -53,7 +53,7 @@ public class RegenerateLocaleCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         LocalizationService localizationService = getPlugin().getLocalizationService();
 
         File localeFile = new File(

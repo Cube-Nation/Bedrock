@@ -51,37 +51,34 @@ public class HelpCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender) {
-        // ToDo: fix command after String[] parameter is available
-    }
+    public void execute(BedrockChatSender sender, Optional<String[]> args) {
 
-//    public void execute(BedrockChatSender sender, String[] args) throws CommandException {
-//        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
-//            // Display help for all commands
-//
-//            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
-//            printHelp(sender, args, commandComponents);
-//
-//        } else {
-//            // Send help for special command
-//            ArrayList<AbstractCommand> helpList = new ArrayList<>();
-//            for (AbstractCommand command : getHelpCommands()) {
-//                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
-//                    helpList.add(command);
-//                }
-//            }
-//
-//            ArrayList<JsonMessage> jsonList;
-//            if (helpList.isEmpty()) {
-//                // If no command is valid, show help for all
-//                jsonList = getFullHelpList(sender);
-//            } else {
-//                jsonList = getHelpJsonMessages(sender, helpList);
-//            }
-//
-//            printHelp(sender, args, jsonList);
-//        }
-//    }
+        if (args.isEmpty() || StringUtils.isNumeric(args.get()[0])) {
+            // Display help for all commands
+
+            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
+            printHelp(sender, args.orElse(new String[]{"0"}), commandComponents);
+
+        } else {
+            // Send help for special command
+            ArrayList<AbstractCommand> helpList = new ArrayList<>();
+            for (AbstractCommand command : getHelpCommands()) {
+                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args.get())) {
+                    helpList.add(command);
+                }
+            }
+
+            ArrayList<JsonMessage> jsonList;
+            if (helpList.isEmpty()) {
+                // If no command is valid, show help for all
+                jsonList = getFullHelpList(sender);
+            } else {
+                jsonList = getHelpJsonMessages(sender, helpList);
+            }
+
+            printHelp(sender, args.get(), jsonList);
+        }
+    }
 
     public List<AbstractCommand> getHelpCommands() {
         ArrayList<AbstractCommand> helpCommands = new ArrayList<>();

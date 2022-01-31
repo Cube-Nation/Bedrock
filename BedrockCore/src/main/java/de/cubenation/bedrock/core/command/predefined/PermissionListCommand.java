@@ -47,7 +47,7 @@ public class PermissionListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException {
         PermissionService permissionService = this.getPlugin().getPermissionService();
 
         if (permissionService != null) {

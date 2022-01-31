@@ -47,7 +47,7 @@ public class ReloadCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException {
         try {
             this.getPlugin().getServiceManager().reload();
             getPlugin().messages().reloadComplete(sender);
