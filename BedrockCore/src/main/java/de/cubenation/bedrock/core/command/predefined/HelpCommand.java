@@ -44,14 +44,17 @@ import java.util.*;
  */
 @Description("command.bedrock.help.desc")
 @SubCommand({ "help" })
-@Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph", Optional = true)
 public class HelpCommand extends Command {
 
     public HelpCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, Optional<String[]> args) {
+    public void execute(
+            BedrockChatSender sender,
+            @Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph")
+            Optional<String[]> args
+    ) {
 
         if (args.isEmpty() || StringUtils.isNumeric(args.get()[0])) {
             // Display help for all commands

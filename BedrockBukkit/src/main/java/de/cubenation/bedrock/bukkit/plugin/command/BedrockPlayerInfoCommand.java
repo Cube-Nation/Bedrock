@@ -31,9 +31,7 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -46,18 +44,17 @@ import org.bukkit.command.ConsoleCommandSender;
 @Description("command.bedrock.playerinfo.desc")
 @Permission(Name = "info.other", Role = Role.ADMIN)
 @SubCommand({ "info", "i" })
-@Argument(
-        Description = "command.bedrock.username_uuid.desc",
-        Placeholder = "command.bedrock.username_uuid.ph",
-        Optional = true
-)
 public class BedrockPlayerInfoCommand extends Command {
 
     public BedrockPlayerInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    public void execute(final BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(
+            final BedrockChatSender sender,
+            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
+            String[] args
+    ) throws IllegalCommandArgumentException {
 
         // check args length
         if (args.length > 1) {

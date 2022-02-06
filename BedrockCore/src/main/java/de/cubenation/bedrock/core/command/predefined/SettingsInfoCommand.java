@@ -52,15 +52,19 @@ import java.util.UUID;
 @Permission(Name = "settings.list", Role = Role.ADMIN)
 @SubCommand({ "settings" })
 @SubCommand({ "info", "i" })
-@Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
-@Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
 public class SettingsInfoCommand extends Command {
 
     public SettingsInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String settingsKey, Optional<String> userName) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(
+            BedrockChatSender sender,
+            @Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
+            String settingsKey,
+            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
+            Optional<String> userName
+    ) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
         if (settingsManager == null) {

@@ -46,17 +46,20 @@ import java.util.Optional;
 @Permission(Name = "permissions.other", Role = Role.MODERATOR)
 @Permission(Name = "permissions.self", Role = Role.USER)
 @SubCommand({"permissions", "perms"})
-@Argument(
-        Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true,
-        Permission = "permissions.other", Role = Role.MODERATOR
-)
 public class PermissionOtherCommand extends Command {
 
     public PermissionOtherCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, Optional<String> name) throws CommandException, IllegalCommandArgumentException {
+    public void execute(
+            BedrockChatSender sender,
+            @Argument(
+                    Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph",
+                    Permission = "permissions.other", Role = Role.MODERATOR
+            )
+            Optional<String> name
+    ) throws CommandException, IllegalCommandArgumentException {
 
         String player = name.orElse(sender.getName());
 

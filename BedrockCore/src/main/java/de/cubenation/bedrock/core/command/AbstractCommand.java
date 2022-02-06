@@ -244,10 +244,11 @@ public abstract class AbstractCommand {
     }
 
     private void processExecuteParameter(Parameter parameter) throws CommandInitException {
-        // TODO: argument conditions
-        // if (!this.checkArgumentCondition(commandArgument.Condition())) {
-        //    return;
-        // }
+        de.cubenation.bedrock.core.annotation.Argument annotation = parameter.getAnnotation(de.cubenation.bedrock.core.annotation.Argument.class);
+
+        if (annotation != null && !this.checkArgumentCondition(annotation.Condition())) {
+            return;
+        }
 
         Class<?> clazz = parameter.getType();
         boolean optional = clazz.equals(Optional.class);
@@ -259,28 +260,26 @@ public abstract class AbstractCommand {
             clazz = clazz.getComponentType();
         }
 
-        // TODO: argument localisation
         Argument argument = new Argument(
                 this.getPlugin(),
-                "command.bedrock.key.desc",
-                "command.bedrock.key.ph",
+                annotation != null ? annotation.Description() : null,
+                annotation != null ? annotation.Placeholder() : null,
                 optional,
                 array,
                 null,
                 clazz
         );
 
-        // TODO: argument permissions
-        //if (!commandArgument.Permission().isEmpty()) {
-        //    argument.setPermission(
-        //            this.createPermission(
-        //                    commandArgument.Permission(),
-        //                    commandArgument.Role(),
-        //                    commandArgument.RoleName(),
-        //                    commandArgument.PermissionDescription()
-        //            )
-        //    );
-        //}
+        if (annotation != null && !annotation.Permission().isEmpty()) {
+            argument.setPermission(
+                    this.createPermission(
+                            annotation.Permission(),
+                            annotation.Role(),
+                            annotation.RoleName(),
+                            annotation.PermissionDescription()
+                    )
+            );
+        }
 
         this.addArgument(argument);
     }

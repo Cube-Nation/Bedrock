@@ -29,19 +29,16 @@ import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Repeatable(Arguments.class)
+@Target(ElementType.PARAMETER)
 public @interface Argument {
 
     String Description();
 
     String Placeholder();
-
-    boolean Optional() default false;
 
     Class Condition() default DefaultCondition.class;
 
