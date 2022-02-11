@@ -24,7 +24,7 @@ package de.cubenation.bedrock.core.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.argument.Argument;
-import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
+import de.cubenation.bedrock.core.command.argument.Option;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -40,10 +40,10 @@ import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings("unused")
-public abstract class KeyValueCommand extends AbstractCommand {
+public abstract class KeyValueCommand extends Command {
 
     @SuppressWarnings("WeakerAccess")
     public KeyValueCommand(FoundationPlugin plugin, ComplexCommandManager commandManager) {
@@ -51,27 +51,26 @@ public abstract class KeyValueCommand extends AbstractCommand {
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected List<KeyValueArgument> getKeyValueArguments() {
+    protected List<Option> getKeyValueArguments() {
         return this.getArguments().stream()
-                .filter(argument -> argument instanceof KeyValueArgument)
-                .map(argument -> (KeyValueArgument) argument)
+                .filter(argument -> argument instanceof Option)
+                .map(argument -> (Option) argument)
                 .collect(Collectors.toList());
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected KeyValueArgument getKeyValueArgument(String key) {
-        List<KeyValueArgument> keyValueArguments = this.getKeyValueArguments().stream()
-                .filter(keyValueArgument -> keyValueArgument.getKey().equals(key))
-                .collect(Collectors.toList());
+    protected Option getKeyValueArgument(String key) {
+        List<Option> options = this.getKeyValueArguments().stream()
+                .filter(option -> option.getKey().equals(key)).toList();
 
-        return (keyValueArguments.size() == 1)
-                ? keyValueArguments.get(0)
+        return (options.size() == 1)
+                ? options.get(0)
                 : null;
     }
 
     protected boolean hasKeyValueArgument(String key, HashMap<String, String> args) {
-        KeyValueArgument argument = this.getKeyValueArgument(key);
-        return argument != null && args.keySet().stream().filter(arg -> arg.equals(key)).collect(Collectors.toList()).size() != 0;
+        Option argument = this.getKeyValueArgument(key);
+        return argument != null && args.keySet().stream().filter(arg -> arg.equals(key)).toList().size() != 0;
     }
 
 
@@ -84,19 +83,17 @@ public abstract class KeyValueCommand extends AbstractCommand {
         HashMap<String, String> parsedArguments = new HashMap<>();
 
         for (Argument argument : getArguments()) {
-            if (argument instanceof KeyValueArgument) {
+            if (argument instanceof Option option) {
 
-                KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
+                if (arrayList.contains(option.getKey())) {
 
-                if (arrayList.contains(keyValueArgument.getKey())) {
-
-                    int index = arrayList.indexOf(keyValueArgument.getKey());
+                    int index = arrayList.indexOf(option.getKey());
 
                     if (index == -1) {
                         throw new IllegalCommandArgumentException();
                     }
 
-                    if (!keyValueArgument.getKeyOnly()) {
+                    if (option.hasParameter()) {
                         index++;
                     }
 
@@ -105,10 +102,10 @@ public abstract class KeyValueCommand extends AbstractCommand {
                     }
 
                     // Add new Key to HasMap
-                    parsedArguments.put(keyValueArgument.getKey(), arrayList.get((index)));
+                    parsedArguments.put(option.getKey(), arrayList.get((index)));
 
                 } else {
-                    if (!keyValueArgument.isOptional()) {
+                    if (!option.isOptional()) {
                         // Missing required Argument
                         throw new IllegalCommandArgumentException();
                     }
@@ -150,20 +147,20 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
         // TODO
         // Unschön, etwas besseres überlegen
-        ArrayList<KeyValueArgument> cmdArgs = new ArrayList<>();
+        ArrayList<Option> cmdArgs = new ArrayList<>();
         for (int i = 0; i < getArguments().size(); i++) {
-            if (getArguments().get(i) instanceof KeyValueArgument) {
-                cmdArgs.add((KeyValueArgument) getArguments().get(i));
+            if (getArguments().get(i) instanceof Option) {
+                cmdArgs.add((Option) getArguments().get(i));
             }
         }
 
-        ArrayList<KeyValueArgument> recursive = getPossibleArguments(cmdArgs, args, this.getSubcommands().size());
+        ArrayList<Option> recursive = getPossibleArguments(cmdArgs, args, this.getSubcommands().size());
 
         ArrayList<String> arrayList = new ArrayList<>();
         if (recursive != null) {
-            for (KeyValueArgument argument : recursive) {
-                if (argument.getKey().startsWith(args[args.length - 1])) {
-                    arrayList.add(argument.getKey());
+            for (Option option : recursive) {
+                if (option.getKey().startsWith(args[args.length - 1])) {
+                    arrayList.add(option.getKey());
                 }
             }
         }
@@ -172,19 +169,19 @@ public abstract class KeyValueCommand extends AbstractCommand {
     }
 
 
-    private ArrayList<KeyValueArgument> getPossibleArguments(ArrayList<KeyValueArgument> list, String[] args, int position) {
+    private ArrayList<Option> getPossibleArguments(ArrayList<Option> list, String[] args, int position) {
         if (position >= args.length) {
             return null;
         } else if (position == args.length - 1) {
             return list;
         }
 
-        KeyValueArgument argument = containsKey(list, args[position]);
-        if (argument != null) {
-            list.remove(argument);
-            // Add this argument
+        Option option = containsKey(list, args[position]);
+        if (option != null) {
+            list.remove(option);
+            // Add this option
             position++;
-            if (!argument.getKeyOnly()) {
+            if (option.hasParameter()) {
                 // Add Placeholder size to ignore them
                 position++;
             }
@@ -193,10 +190,10 @@ public abstract class KeyValueCommand extends AbstractCommand {
         return null;
     }
 
-    private KeyValueArgument containsKey(ArrayList<KeyValueArgument> list, String key) {
-        for (KeyValueArgument argument : list) {
-            if (argument.getKey().startsWith(key)) {
-                return argument;
+    private Option containsKey(ArrayList<Option> list, String key) {
+        for (Option option : list) {
+            if (option.getKey().startsWith(key)) {
+                return option;
             }
         }
         return null;
@@ -265,15 +262,15 @@ public abstract class KeyValueCommand extends AbstractCommand {
         }
 
         // Unschön, etwas besseres überlegen
-        ArrayList<KeyValueArgument> cmdArgs = new ArrayList<>();
+        ArrayList<Option> cmdArgs = new ArrayList<>();
         for (int i = 0; i < getArguments().size(); i++) {
-            if (getArguments().get(i) instanceof KeyValueArgument) {
-                cmdArgs.add((KeyValueArgument) getArguments().get(i));
+            if (getArguments().get(i) instanceof Option) {
+                cmdArgs.add((Option) getArguments().get(i));
             }
         }
 
         for (int i = this.getSubcommands().size(); i < args.length; i++) {
-            KeyValueArgument argument = containsKey(cmdArgs, args[i]);
+            Option argument = containsKey(cmdArgs, args[i]);
             if (argument != null) {
                 cmdArgs.remove(argument);
             }
@@ -281,7 +278,7 @@ public abstract class KeyValueCommand extends AbstractCommand {
 
         // cmdArgs should contains none or optional commands
         // else return false
-        for (KeyValueArgument argument : cmdArgs) {
+        for (Option argument : cmdArgs) {
             if (!argument.isOptional()) {
                 return false;
             }

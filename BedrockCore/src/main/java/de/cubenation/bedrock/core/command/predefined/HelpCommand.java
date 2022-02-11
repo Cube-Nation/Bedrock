@@ -26,7 +26,6 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.SubCommand;
-import de.cubenation.bedrock.core.command.AbstractCommand;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
@@ -64,8 +63,8 @@ public class HelpCommand extends Command {
 
         } else {
             // Send help for special command
-            ArrayList<AbstractCommand> helpList = new ArrayList<>();
-            for (AbstractCommand command : getHelpCommands()) {
+            ArrayList<Command> helpList = new ArrayList<>();
+            for (Command command : getHelpCommands()) {
                 if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
                     helpList.add(command);
                 }
@@ -83,34 +82,34 @@ public class HelpCommand extends Command {
         }
     }
 
-    public List<AbstractCommand> getHelpCommands() {
-        ArrayList<AbstractCommand> helpCommands = new ArrayList<>();
-        for (AbstractCommand command : getCommandManager().getCommands()) {
+    public List<Command> getHelpCommands() {
+        ArrayList<Command> helpCommands = new ArrayList<>();
+        for (Command command : getCommandManager().getCommands()) {
             if (command.displayInHelp()) {
                 helpCommands.add(command);
             }
         }
 
         // Sorting
-        helpCommands.sort(Comparator.comparing(AbstractCommand::getHelpPriority));
+        helpCommands.sort(Comparator.comparing(Command::getHelpPriority));
 
         return helpCommands;
     }
 
     private ArrayList<JsonMessage> getFullHelpList(BedrockChatSender sender) {
         // create help for each subcommand
-        ArrayList<AbstractCommand> commands = new ArrayList<AbstractCommand>() {{
+        ArrayList<Command> commands = new ArrayList<Command>() {{
             addAll(getHelpCommands());
         }};
 
         return getHelpJsonMessages(sender, commands);
     }
 
-    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, ArrayList<AbstractCommand> helpList) {
+    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, ArrayList<Command> helpList) {
         ArrayList<JsonMessage> jsonList = new ArrayList<>();
 
-        for (AbstractCommand abstractCommand : helpList) {
-            JsonMessage jsonHelp = abstractCommand.getJsonHelp(sender);
+        for (Command command : helpList) {
+            JsonMessage jsonHelp = command.getJsonHelp(sender);
             if (jsonHelp != null) {
                 jsonList.add(jsonHelp);
             }
@@ -164,7 +163,7 @@ public class HelpCommand extends Command {
             }
 
             ArrayList<String> list = new ArrayList<>();
-            for (AbstractCommand cmd : getCommandManager().getCommands()) {
+            for (Command cmd : getCommandManager().getCommands()) {
                 //Ignore Help Command
                 if (cmd instanceof HelpCommand) {
                     continue;

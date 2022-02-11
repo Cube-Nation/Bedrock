@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.Command;
 
 import java.lang.annotation.*;
 
@@ -38,6 +38,6 @@ public @interface CommandHandler {
 
     String Command();
 
-    Class<? extends AbstractCommand>[] Handlers();
+    Class<? extends Command>[] Handlers();
 
 }

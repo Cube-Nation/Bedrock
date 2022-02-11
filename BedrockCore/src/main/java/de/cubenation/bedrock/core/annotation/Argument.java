@@ -22,8 +22,6 @@
 
 package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.core.annotation.condition.DefaultCondition;
-
 import java.lang.annotation.*;
 
 /**
@@ -40,7 +38,5 @@ public @interface Argument {
     String Placeholder();
 
     boolean Optional() default false;
-
-    Class Condition() default DefaultCondition.class;
 
 }

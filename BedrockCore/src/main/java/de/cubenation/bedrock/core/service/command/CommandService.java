@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.command.predefined.*;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -47,8 +47,8 @@ public abstract class CommandService extends AbstractService {
     }
 
 
-    protected ArrayList<AbstractCommand> getPredefinedCommands(ComplexCommandManager pluginCommandManager) {
-        ArrayList<AbstractCommand> predefinedCommands = new ArrayList<>();
+    protected ArrayList<Command> getPredefinedCommands(ComplexCommandManager pluginCommandManager) {
+        ArrayList<Command> predefinedCommands = new ArrayList<>();
         predefinedCommands.add(new ReloadCommand(getPlugin(), pluginCommandManager));
         predefinedCommands.add(new VersionCommand(getPlugin(), pluginCommandManager));
         predefinedCommands.add(new PermissionListCommand(getPlugin(), pluginCommandManager));

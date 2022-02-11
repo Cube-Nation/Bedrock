@@ -49,31 +49,34 @@ public class Argument {
     private String placeholder;
 
     @Getter
-    private boolean optional;
+    private final boolean optional;
 
     @Getter
-    private boolean array;
+    private final boolean array;
 
     @Getter
     private Permission permission = null;
 
     @Getter
-    private Class<?> dataType;
+    private final Class<?> dataType;
 
     @Getter
-    private ArgumentType argumentType;
+    private final ArgumentType<?> argumentType;
 
-    public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, boolean array, Permission permission, Class<?> dataType) throws CommandInitException {
+    public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, boolean array, Class<?> dataType) throws CommandInitException {
         this.plugin = plugin;
         this.setDescription(description);
         this.setPlaceholder(placeholder);
         this.optional = optional;
         this.array = array;
-        this.setPermission(permission);
         this.dataType = dataType;
-        this.argumentType = plugin.getArgumentTypeService().getType(this.dataType);
-        if (this.argumentType == null) {
-            throw new CommandInitException(getClass().getName() + ": " + this.dataType.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
+        if (dataType == null) {
+            this.argumentType = null;
+        } else {
+            this.argumentType = plugin.getArgumentTypeService().getType(this.dataType);
+            if (this.argumentType == null) {
+                throw new CommandInitException(getClass().getName() + ": " + this.dataType.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
+            }
         }
     }
 

@@ -18,8 +18,8 @@
     </modules>
 
     <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
         <spigot-api.version>1.16.4-R0.1-SNAPSHOT</spigot-api.version>
         <bungeecord.version>1.16-R0.4</bungeecord.version>
         <ebean.version>2.8.1</ebean.version>

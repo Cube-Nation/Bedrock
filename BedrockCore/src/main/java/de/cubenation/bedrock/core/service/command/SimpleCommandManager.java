@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -18,7 +18,7 @@ public abstract class SimpleCommandManager implements CommandManager {
 
     private String label;
 
-    private AbstractCommand command;
+    private Command command;
 
     public SimpleCommandManager(FoundationPlugin plugin, String label) {
         this.plugin = plugin;
@@ -64,7 +64,7 @@ public abstract class SimpleCommandManager implements CommandManager {
         }
     }
 
-    public void setCommand(AbstractCommand command) {
+    public void setCommand(Command command) {
         this.command = command;
     }
 
@@ -77,8 +77,8 @@ public abstract class SimpleCommandManager implements CommandManager {
         return label;
     }
 
-    public List<AbstractCommand> getCommands() {
-        return Arrays.asList(new AbstractCommand[]{command});
+    public List<Command> getCommands() {
+        return Arrays.asList(new Command[]{command});
     }
 
     //endregion
