@@ -30,9 +30,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -63,7 +60,7 @@ public class SettingsInfoCommand extends Command {
             String settingsKey,
             @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
             String user
-    ) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    ) {
 
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
         if (settingsManager == null) {
@@ -75,7 +72,7 @@ public class SettingsInfoCommand extends Command {
         if (user != null) {
 
             try {
-                UUID uuid = null;
+                UUID uuid;
                 if (UUIDUtil.isUUID(user)) {
                     uuid = UUID.fromString(user);
                 } else {

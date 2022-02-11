@@ -252,6 +252,7 @@ public abstract class AbstractCommand {
     @SuppressWarnings("unchecked")
     private void processExecuteParameter(Parameter parameter) throws CommandInitException {
         de.cubenation.bedrock.core.annotation.Argument annotation = parameter.getAnnotation(de.cubenation.bedrock.core.annotation.Argument.class);
+        de.cubenation.bedrock.core.annotation.Permission permission = parameter.getAnnotation(de.cubenation.bedrock.core.annotation.Permission.class);
 
         if (annotation != null && !this.checkArgumentCondition(annotation.Condition())) {
             return;
@@ -273,13 +274,13 @@ public abstract class AbstractCommand {
                 clazz
         );
 
-        if (annotation != null && !annotation.Permission().isEmpty()) {
+        if (permission != null && !permission.Name().isEmpty()) {
             argument.setPermission(
                     this.createPermission(
-                            annotation.Permission(),
-                            annotation.Role(),
-                            annotation.RoleName(),
-                            annotation.PermissionDescription()
+                            permission.Name(),
+                            permission.Role(),
+                            permission.RoleName(),
+                            permission.Description()
                     )
             );
         }

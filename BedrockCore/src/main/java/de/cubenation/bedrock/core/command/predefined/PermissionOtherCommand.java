@@ -30,8 +30,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -52,12 +50,10 @@ public class PermissionOtherCommand extends Command {
 
     public void execute(
             BedrockChatSender sender,
-            @Argument(
-                    Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph",
-                    Permission = "permissions.other", Role = Role.MODERATOR
-            )
+            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
+            @Permission(Name = "permissions.other", Role = Role.MODERATOR)
             String name
-    ) throws CommandException, IllegalCommandArgumentException {
+    ) {
 
         String player = name != null ? name : sender.getName();
 

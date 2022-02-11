@@ -29,8 +29,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
@@ -47,7 +45,7 @@ public class ReloadCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender) {
         try {
             this.getPlugin().getServiceManager().reload();
             getPlugin().messages().reloadComplete(sender);
