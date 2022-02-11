@@ -299,4 +299,9 @@ public class de_DE extends CustomConfigurationFile {
         put("desc", "Username/UUID eines Spielers");
     }};
 
+    // Misc
+
+    @Path("no_description")
+    private String no_description = "Keine Beschreibung";
+
 }

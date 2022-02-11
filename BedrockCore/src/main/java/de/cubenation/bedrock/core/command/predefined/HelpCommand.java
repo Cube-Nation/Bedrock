@@ -52,21 +52,21 @@ public class HelpCommand extends Command {
 
     public void execute(
             BedrockChatSender sender,
-            @Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph")
-            Optional<String[]> args
+            @Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph", Optional = true)
+            String[] args
     ) {
 
-        if (args.isEmpty() || StringUtils.isNumeric(args.get()[0])) {
+        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
 
             ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
-            printHelp(sender, args.orElse(new String[]{"0"}), commandComponents);
+            printHelp(sender, args, commandComponents);
 
         } else {
             // Send help for special command
             ArrayList<AbstractCommand> helpList = new ArrayList<>();
             for (AbstractCommand command : getHelpCommands()) {
-                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args.get())) {
+                if (!(command instanceof HelpCommand) && command.isValidHelpTrigger(args)) {
                     helpList.add(command);
                 }
             }
@@ -79,7 +79,7 @@ public class HelpCommand extends Command {
                 jsonList = getHelpJsonMessages(sender, helpList);
             }
 
-            printHelp(sender, args.get(), jsonList);
+            printHelp(sender, args, jsonList);
         }
     }
 

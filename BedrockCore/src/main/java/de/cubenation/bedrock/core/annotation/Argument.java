@@ -40,6 +40,8 @@ public @interface Argument {
 
     String Placeholder();
 
+    boolean Optional() default false;
+
     Class Condition() default DefaultCondition.class;
 
     String Permission() default "";

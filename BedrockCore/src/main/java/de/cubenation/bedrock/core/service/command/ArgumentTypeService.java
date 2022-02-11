@@ -38,9 +38,9 @@ public class ArgumentTypeService extends AbstractService {
     private HashMap<Class, ArgumentType> getPredefined() {
         return new HashMap<>() {{
             put(String.class, new StringArgument(plugin));
-            put(int.class, new IntegerArgument(plugin));
-            put(float.class, new FloatArgument(plugin));
-            put(double.class, new DoubleArgument(plugin));
+            put(Integer.class, new IntegerArgument(plugin));
+            put(Float.class, new FloatArgument(plugin));
+            put(Double.class, new DoubleArgument(plugin));
             put(UUID.class, new UuidArgument(plugin));
             put(BedrockPlayer.class, new BedrockPlayerArgument(plugin));
         }};

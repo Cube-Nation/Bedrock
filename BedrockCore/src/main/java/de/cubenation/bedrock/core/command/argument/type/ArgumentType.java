@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class ArgumentType<T> implements AutoCompletionExecutor {
 
     @Getter
-    protected final Class<T> genericClass = ((Class) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+    protected final Class<?> genericClass = ((Class<?>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
 
     protected final FoundationPlugin plugin;
 
@@ -24,8 +24,9 @@ public abstract class ArgumentType<T> implements AutoCompletionExecutor {
 
     public abstract void sendFailureMessage(BedrockChatSender commandSender, String input);
 
+    @SuppressWarnings("unchecked")
     public Object toArray(List<Object> list) {
-        T[] array = (T[]) Array.newInstance(genericClass, list.size());
+        Object[] array = (T[]) Array.newInstance(genericClass, list.size());
         return list.toArray(array);
     }
 }

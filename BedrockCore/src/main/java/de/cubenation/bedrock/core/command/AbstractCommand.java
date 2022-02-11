@@ -41,8 +41,14 @@ import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import lombok.ToString;
 import org.apache.commons.lang.StringUtils;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -243,6 +249,7 @@ public abstract class AbstractCommand {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     private void processExecuteParameter(Parameter parameter) throws CommandInitException {
         de.cubenation.bedrock.core.annotation.Argument annotation = parameter.getAnnotation(de.cubenation.bedrock.core.annotation.Argument.class);
 
@@ -251,10 +258,6 @@ public abstract class AbstractCommand {
         }
 
         Class<?> clazz = parameter.getType();
-        boolean optional = clazz.equals(Optional.class);
-        if (optional) {
-            clazz = ((Class) ((ParameterizedType) parameter.getParameterizedType()).getActualTypeArguments()[0]);
-        }
         boolean array = clazz.isArray();
         if (array) {
             clazz = clazz.getComponentType();
@@ -262,9 +265,9 @@ public abstract class AbstractCommand {
 
         Argument argument = new Argument(
                 this.getPlugin(),
-                annotation != null ? annotation.Description() : null,
-                annotation != null ? annotation.Placeholder() : null,
-                optional,
+                annotation != null ? annotation.Description() : "no_description",
+                annotation != null ? annotation.Placeholder() : parameter.getName(),
+                annotation != null && annotation.Optional(),
                 array,
                 null,
                 clazz
@@ -519,11 +522,12 @@ public abstract class AbstractCommand {
             Argument argument = arguments.get(i);
 
             // get corresponding argument type
-            ArgumentType type = argument.getArgumentType();
+            ArgumentType<?> type = argument.getArgumentType();
 
             try {
                 Object value;
                 if (argument.isArray()) {
+                    // ARRAY
                     int z = i;
                     ArrayList<Object> entries = new ArrayList<>();
                     while (z < args.length) {
@@ -533,12 +537,10 @@ public abstract class AbstractCommand {
                         // non-optional arrays need at least one item
                         throw new IllegalCommandArgumentException();
                     }
-                    value = !entries.isEmpty() ? type.toArray(entries) : null;
+                    value = type.toArray(entries); // return empty array and NOT null! Java conventions
                 } else {
+                    // NON ARRAY
                     value = args.length > i ? type.tryCast(args[i]) : null;
-                }
-                if (argument.isOptional()) {
-                    value = Optional.ofNullable(value);
                 }
                 result.add(value);
             } catch (ClassCastException e) {

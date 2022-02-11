@@ -269,4 +269,9 @@ public class en_US extends CustomConfigurationFile {
     @Path("direction.southeast")
     private String southeast = "southeast";
 
+    // Misc
+
+    @Path("no_description")
+    private String no_description = "No description";
+
 }

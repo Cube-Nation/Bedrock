@@ -41,7 +41,6 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -63,7 +62,7 @@ public class SettingsInfoCommand extends Command {
             @Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
             String settingsKey,
             @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
-            Optional<String> userName
+            String user
     ) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
@@ -73,8 +72,7 @@ public class SettingsInfoCommand extends Command {
         }
 
         // TODO: Make it fancy!
-        if (userName.isPresent()) {
-            String user = userName.get();
+        if (user != null) {
 
             try {
                 UUID uuid = null;

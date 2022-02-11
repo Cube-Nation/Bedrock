@@ -13,10 +13,11 @@ public class EnumArgument<T extends Enum<T>> extends ArgumentType<T> {
         super(plugin);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T tryCast(String input) throws ClassCastException {
         try {
-            return Enum.valueOf(genericClass, input.toUpperCase());
+            return Enum.valueOf((Class<T>) genericClass, input.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new ClassCastException();
         }
@@ -28,7 +29,7 @@ public class EnumArgument<T extends Enum<T>> extends ArgumentType<T> {
     }
 
     private List<String> getEnumConstants() {
-        return Arrays.stream(genericClass.getEnumConstants()).map(t -> t.toString()).collect(Collectors.toList());
+        return Arrays.stream(genericClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
 
     @Override
