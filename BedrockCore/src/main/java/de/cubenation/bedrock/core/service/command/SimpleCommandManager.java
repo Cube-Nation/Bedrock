@@ -6,7 +6,10 @@ import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Cube-Nation
@@ -14,9 +17,9 @@ import java.util.*;
  */
 public abstract class SimpleCommandManager implements CommandManager {
 
-    private FoundationPlugin plugin;
+    private final FoundationPlugin plugin;
 
-    private String label;
+    private final String label;
 
     private Command command;
 
@@ -50,9 +53,9 @@ public abstract class SimpleCommandManager implements CommandManager {
             return null;
         }
 
-        List tabCom = this.command.getTabCompletion(args, sender);
-        if (tabCom != null) {
-            list.addAll(tabCom);
+        List<String> autoCompletion = this.command.getAutoCompletion(args, sender);
+        if (autoCompletion != null) {
+            list.addAll(autoCompletion);
         }
 
         // Remove duplicates
@@ -78,7 +81,7 @@ public abstract class SimpleCommandManager implements CommandManager {
     }
 
     public List<Command> getCommands() {
-        return Arrays.asList(new Command[]{command});
+        return List.of(command);
     }
 
     //endregion

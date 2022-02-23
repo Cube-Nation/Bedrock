@@ -26,9 +26,9 @@ import java.util.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class MapUtil {
+public class CollectionUtil {
 
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
         List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
@@ -40,6 +40,12 @@ public class MapUtil {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
+    }
+
+    public static <T> void addAllIfNotNull(List<T> list, List<T> input) {
+        if (input != null) {
+            list.addAll(input);
+        }
     }
 
 }

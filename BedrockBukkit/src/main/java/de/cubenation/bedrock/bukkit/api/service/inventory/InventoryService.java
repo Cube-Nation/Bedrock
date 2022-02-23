@@ -25,7 +25,7 @@ package de.cubenation.bedrock.bukkit.api.service.inventory;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
-import de.cubenation.bedrock.core.helper.MapUtil;
+import de.cubenation.bedrock.core.helper.CollectionUtil;
 import de.cubenation.bedrock.core.service.AbstractService;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -182,7 +182,7 @@ public class InventoryService extends AbstractService {
 
             list.put((String) entry.getKey(), (Long) entry.getValue());
         }
-        return (HashMap<String, Long>) MapUtil.sortByValue(list);
+        return (HashMap<String, Long>) CollectionUtil.sortByValue(list);
     }
 
 }

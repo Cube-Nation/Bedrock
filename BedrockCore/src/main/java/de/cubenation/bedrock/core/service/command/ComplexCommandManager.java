@@ -41,13 +41,13 @@ import java.util.stream.Collectors;
  */
 public abstract class ComplexCommandManager implements CommandManager {
 
-    private FoundationPlugin plugin;
+    private final FoundationPlugin plugin;
 
-    private List<Command> commands = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
 
-    private HelpCommand helpCommand;
+    private final HelpCommand helpCommand;
 
-    private String label;
+    private final String label;
 
 
     public ComplexCommandManager(FoundationPlugin plugin, String label) {
@@ -134,9 +134,9 @@ public abstract class ComplexCommandManager implements CommandManager {
                 continue;
             }
 
-            List tabCom = cmd.getTabCompletion(args, sender);
-            if (tabCom != null) {
-                list.addAll(tabCom);
+            List<String> autoCompletion = cmd.getAutoCompletion(args, sender);
+            if (autoCompletion != null) {
+                list.addAll(autoCompletion);
             }
         }
         // Remove duplicates

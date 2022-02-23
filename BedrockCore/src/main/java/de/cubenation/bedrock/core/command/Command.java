@@ -36,6 +36,7 @@ import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.helper.CollectionUtil;
 import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
@@ -80,6 +81,7 @@ public abstract class Command {
     @Getter
     private final ArrayList<de.cubenation.bedrock.core.command.argument.Argument> arguments = new ArrayList<>();
 
+    private final ArrayList<de.cubenation.bedrock.core.command.argument.Argument> genericArguments = new ArrayList<>();
     private final HashMap<String, Option> options = new HashMap<>();
 
     private final ArrayList<de.cubenation.bedrock.core.authorization.Permission> runtimePermissions = new ArrayList<>();
@@ -255,6 +257,8 @@ public abstract class Command {
                     optionAnnotation.Key() != null ? optionAnnotation.Key() : parameter.getName().toLowerCase(),
                     (Option) argument
             );
+        } else {
+            genericArguments.add(argument);
         }
     }
 
@@ -654,34 +658,36 @@ public abstract class Command {
      */
 
     /**
-     * Gets tab completion for argument.
+     * Gets auto-completion for argument.
      *
      * @param args   the args of the asking command
-     * @param sender the sender of the requested tab completion.
-     * @return the tab completion for argument
+     * @param sender the sender of the requested auto-completion.
+     * @return the auto-completion for argument
      */
-    public List<String> getTabCompletion(String[] args, BedrockChatSender sender) {
-        ArrayList<String> tabCompletion = new ArrayList<>();
+    public List<String> getAutoCompletion(String[] args, BedrockChatSender sender) {
 
-        // not a valid command yet? autocomplete subcommands.
+        // not a valid command yet? autocomplete only subcommands.
         if (!isValidTrigger(args)) {
-            List<String> tabCompletionFromCommands = getTabCompletionFromCommands(args);
-            if (tabCompletionFromCommands != null) {
-                tabCompletion.addAll(tabCompletionFromCommands);
-            }
-            return tabCompletion;
+            return getAutoCompletionFromCommands(args);
         }
 
-        // autocomplete arguments from ArgumentType
-        List<String> tabCompletionFromArguments = getTabCompletionFromArguments(sender, args);
-        if (tabCompletionFromArguments != null) {
-            tabCompletion.addAll(tabCompletionFromArguments);
+        ArrayList<String> autoCompletion = new ArrayList<>();
+
+        // starts with '-'? autocomplete option keys itself
+        CollectionUtil.addAllIfNotNull(autoCompletion, getAutoCompletionFromOptions(args));
+
+        // previous is option key and has value? autocomplete option value else normal argument
+        List<String> autoCompletionForOptionValues = getAutoCompletionFromOptionValues(sender, args);
+        if (autoCompletionForOptionValues != null) {
+            autoCompletion.addAll(autoCompletionForOptionValues);
+        } else {
+            CollectionUtil.addAllIfNotNull(autoCompletion, getAutoCompletionFromArguments(sender, args));
         }
 
-        return tabCompletion;
+        return autoCompletion;
     }
 
-    public final List<String> getTabCompletionFromCommands(String[] args) {
+    private List<String> getAutoCompletionFromCommands(String[] args) {
         if (this.subcommands.size() < args.length) {
             return null;
         }
@@ -708,45 +714,103 @@ public abstract class Command {
             }
         }
 
-        final ArrayList<String> tabCompletion = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
-        tabCompletion.sort(String::compareToIgnoreCase);
+        final ArrayList<String> autoCompletion = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
+        autoCompletion.sort(String::compareToIgnoreCase);
 
         // prioritize largest (because of abbreviations)
-        Collections.reverse(tabCompletion);
+        Collections.reverse(autoCompletion);
 
         // if the user typed a part of the command, return the matching
         String currentArg = args[args.length - 1];
-        return tabCompletion.stream()
+        return autoCompletion.stream()
                 .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
                 .collect(Collectors.toList());
     }
 
-    public final List<String> getTabCompletionFromArguments(BedrockChatSender sender, String[] args) {
-        int argIndex = args.length - this.getSubcommands().size() - 1;
-        if (argIndex < 0 || argIndex >= this.arguments.size()) {
+    private List<String> getAutoCompletionFromOptions(String[] args) {
+        if (args.length < 1) {
             return null;
         }
+
+        String currentArg = args[args.length - 1];
+        if (!currentArg.startsWith("-")) {
+            return null;
+        }
+
+        return options.keySet().stream()
+                .map(s -> "-"+s)
+                .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
+                .toList();
+    }
+
+    private List<String> getAutoCompletionFromOptionValues(BedrockChatSender sender, String[] args) {
+        if (args.length < 2) {
+            return null;
+        }
+
+        String prevArg = args[args.length - 2];
+        String prevArgKey = prevArg.substring(1);
+        if (!prevArg.startsWith("-") || !options.containsKey(prevArgKey) || !options.get(prevArgKey).hasParameter()) {
+            return null;
+        }
+
+        List<String> autoCompletion = getAutoCompletionForArgument(sender, args, options.get(prevArg.substring(1)));
+        // do not return null in case of no auto-completion results! option key is still valid
+        return autoCompletion != null ? autoCompletion : new ArrayList<>();
+    }
+
+    private List<String> getAutoCompletionFromArguments(BedrockChatSender sender, String[] args) {
         String[] realArgs = Arrays.copyOfRange(args, this.getSubcommands().size(), args.length);
+        realArgs = this.filterOutOptions(realArgs);
 
-        Argument argument = this.arguments.get(argIndex);
+        int argIndex = realArgs.length - 1;
+        if (argIndex < 0 || argIndex >= this.genericArguments.size()) {
+            return null;
+        }
 
+        Argument argument = this.genericArguments.get(argIndex);
+
+        List<String> autoCompletion = this.getAutoCompletionForArgument(sender, realArgs, argument);
+        if (autoCompletion == null) {
+            return null;
+        }
+
+        // If the user typed a part of the command, return the matching
+        String currentArg = args[args.length - 1];
+        return autoCompletion.stream()
+                .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
+                .toList();
+    }
+
+    private List<String> getAutoCompletionForArgument(BedrockChatSender sender, String[] args, Argument argument) {
         ArgumentType<?> argumentType = argument.getArgumentType();
         if (argumentType == null) {
             return null;
         }
-        Iterable<String> tabCompletionFromArguments = argumentType.onAutoComplete(sender, realArgs);
-        if (tabCompletionFromArguments == null) {
+        Iterable<String> autoCompletionFromArguments = argumentType.onAutoComplete(sender, args);
+        if (autoCompletionFromArguments == null) {
             return null;
         }
 
-        ArrayList<String> tabCompletion = new ArrayList<>();
-        tabCompletionFromArguments.forEach(tabCompletion::add);
+        ArrayList<String> autoCompletion = new ArrayList<>();
+        autoCompletionFromArguments.forEach(autoCompletion::add);
 
-        // If the user typed a part of the command, return the matching
-        String currentArg = args[args.length - 1];
-        return tabCompletion.stream()
-                .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
-                .collect(Collectors.toList());
+        return autoCompletion;
+    }
+
+    private String[] filterOutOptions(String[] args) {
+        ArrayList<String> realArgsList = new ArrayList<>();
+        if (options.size() > 0) {
+            for (int i = 0; i < args.length; i++) {
+                if (!args[i].startsWith("-") || !options.containsKey(args[i].substring(1))) {
+                    realArgsList.add(args[i]);
+                    continue;
+                }
+                String key = args[i].substring(1);
+                if (options.get(key).hasParameter()) i++;
+            }
+        }
+        return realArgsList.toArray(new String[0]);
     }
 }
 
