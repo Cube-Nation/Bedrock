@@ -22,7 +22,6 @@
 
 package de.cubenation.bedrock.bukkit.plugin.command;
 
-import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
 import de.cubenation.bedrock.bukkit.api.helper.BedrockEbeanHelper;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
@@ -36,6 +35,7 @@ import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.bukkit.command.ConsoleCommandSender;
 
@@ -80,7 +80,7 @@ public class BedrockPlayerInfoCommand extends Command {
         } else {
             BedrockEbeanHelper.requestBedrockPlayerForLastKnownName(player, false, bedrockPlayers -> {
                 sender.sendMessage("Results: (" + bedrockPlayers.size() + ")");
-                for (BedrockPlayer bedrockPlayer : bedrockPlayers) {
+                for (BedrockOfflinePlayer bedrockPlayer : bedrockPlayers) {
                     sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
                 }
             }, e -> sender.sendMessage("No player found for: " + player));

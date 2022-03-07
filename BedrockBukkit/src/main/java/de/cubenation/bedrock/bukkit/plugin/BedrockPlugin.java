@@ -23,8 +23,6 @@
 package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
-import de.cubenation.bedrock.bukkit.api.ebean.BedrockWorld;
 import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
 import de.cubenation.bedrock.bukkit.plugin.io.BungeeTeleportInputHandler;
 import de.cubenation.bedrock.bukkit.plugin.io.IOVerbs;
@@ -34,6 +32,7 @@ import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.config.locale.de_DE;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import javax.persistence.PersistenceException;
@@ -76,8 +75,7 @@ public class BedrockPlugin extends BasePlugin {
 
         // install database table
         try {
-            this.getDatabase().find(BedrockPlayer.class).findRowCount();
-            this.getDatabase().find(BedrockWorld.class).findRowCount();
+            this.getDatabase().find(BedrockOfflinePlayer.class).findRowCount();
         } catch (PersistenceException e) {
             getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
             installDDL();
@@ -100,8 +98,7 @@ public class BedrockPlugin extends BasePlugin {
     @Override
     public List<Class<?>> getDatabaseClasses() {
         return new ArrayList<Class<?>>() {{
-            add(BedrockPlayer.class);
-            add(BedrockWorld.class);
+            add(BedrockOfflinePlayer.class);
         }};
     }
 

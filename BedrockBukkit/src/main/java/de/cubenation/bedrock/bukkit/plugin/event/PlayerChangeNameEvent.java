@@ -20,33 +20,42 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.exception;
+package de.cubenation.bedrock.bukkit.plugin.event;
 
-import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
-
-import java.io.IOException;
-import java.util.ArrayList;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-@SuppressWarnings("DefaultFileTemplate")
-public class BedrockEbeanEntityNotFoundException extends IOException {
+@ToString
+public class PlayerChangeNameEvent extends Event {
 
-    public BedrockEbeanEntityNotFoundException(Class clazz, String uuid) {
-        super(String.format("Could not find bedrock ebean entity %s for UUID %s", clazz.toString(), uuid));
+    @Setter
+    private static final HandlerList handlers = new HandlerList();
+
+    @Getter @Setter
+    private Player player;
+
+    @Getter @Setter
+    private String oldName;
+
+    @Getter @Setter
+    private String newName;
+
+    public PlayerChangeNameEvent(Player player, String oldName, String newName) {
+        this.player = player;
+        this.oldName = oldName;
+        this.newName = newName;
     }
 
-    public BedrockEbeanEntityNotFoundException(Class clazz, int id) {
-        super(String.format("Could not find bedrock ebean entity %s for id %s", clazz.toString(), id));
-    }
-
-    public BedrockEbeanEntityNotFoundException(Class<BedrockOfflinePlayer> clazz, ArrayList<Integer> ids) {
-        super(String.format("Could not find bedrock ebean entity %s for ids %s", clazz.toString(), ids));
-    }
-
-    public BedrockEbeanEntityNotFoundException(ArrayList<String> uuids, Class<BedrockOfflinePlayer> clazz) {
-        super(String.format("Could not find bedrock ebean entity %s for ids %s", clazz.toString(), uuids));
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
     }
 }

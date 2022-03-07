@@ -22,22 +22,25 @@
 
 package de.cubenation.bedrock.bukkit.plugin.listener;
 
-import de.cubenation.bedrock.bukkit.api.ebean.BedrockPlayer;
-import de.cubenation.bedrock.bukkit.api.helper.BedrockEbeanHelper;
 import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
-import de.cubenation.bedrock.bukkit.plugin.event.PlayerChangesNameEvent;
+import de.cubenation.bedrock.bukkit.plugin.event.MultiAccountJoinEvent;
+import de.cubenation.bedrock.bukkit.plugin.event.PlayerChangeNameEvent;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @SuppressWarnings({"unused", "DefaultFileTemplate"})
 public class EbeanListener implements Listener {
@@ -50,52 +53,60 @@ public class EbeanListener implements Listener {
             @Override
             public void run() {
 
+                BedrockPlugin plugin = BedrockPlugin.getInstance();
+
                 String uuid = event.getPlayer().getUniqueId().toString();
-                BedrockPlayer bp = BedrockPlugin.getInstance().getDatabase()
-                        .find(BedrockPlayer.class)
+                BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getDatabase()
+                        .find(BedrockOfflinePlayer.class)
                         .where()
                         .eq("uuid", uuid)
                         .findUnique();
 
+                String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
                 if (bp == null) {
-                    bp = new BedrockPlayer(uuid, event.getPlayer().getName(), new Date());
-                    bp.save();
+                    bp = new BedrockOfflinePlayer(uuid, event.getPlayer().getName(), ip, new Date());
+                    bp.save(plugin.getDatabase());
                 } else {
                     // check if username changed
                     if (!bp.getUsername().equals(event.getPlayer().getName())) {
-                        BedrockPlugin.getInstance().getLogger().info("BedrockPlayer: " + bp.getUsername() + " " +
-                                "changed name to " + event.getPlayer().getName());
-
-                        /**
-                        PlayerChangesNameEvent playerChangesNameEvent = new PlayerChangesNameEvent(
+                        plugin.log(Level.INFO, String.format("BedrockPlayer: %s changed name to %s",
+                                bp.getUsername(), event.getPlayer().getName()));
+                        // fire name change event
+                        PlayerChangeNameEvent changeNameEvent = new PlayerChangeNameEvent(
                                 event.getPlayer(),
                                 bp.getUsername(),
                                 event.getPlayer().getName());
-                        BedrockPlugin.getInstance().getServer().getPluginManager().callEvent(playerChangesNameEvent);
-                         */
+                        Bukkit.getPluginManager().callEvent(changeNameEvent);
 
+                        // update username
                         bp.setUsername(event.getPlayer().getName());
                     }
+
+                    List<BedrockOfflinePlayer> bedrockPlayers = plugin.getDatabase().find(BedrockOfflinePlayer.class).where()
+                            .like("ip", ip)
+                            .findList();
+
+                    if (bedrockPlayers != null) {
+                        // Remove self
+                        bedrockPlayers = bedrockPlayers.stream()
+                                .filter(player -> !player.getUuid().equals(event.getPlayer().getUniqueId().toString()))
+                                .collect(Collectors.toList());
+
+                        if (bedrockPlayers.size() > 0) {
+                            MultiAccountJoinEvent joinEvent = new MultiAccountJoinEvent(ip, bedrockPlayers);
+                            Bukkit.getPluginManager().callEvent(joinEvent);
+                        }
+                    }
+
+                    // update ip
+                    bp.setIp(ip);
+
                     // update timestamp
                     bp.setLastlogin(new Date());
-                    bp.update();
+                    bp.update(plugin.getDatabase());
                 }
             }
 
         }.runTaskAsynchronously(BedrockPlugin.getInstance());
     }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onWorldInit(final WorldInitEvent event) {
-        // run this as async task
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                BedrockEbeanHelper.createBedrockWorld(event.getWorld());
-            }
-
-        }.runTaskAsynchronously(BedrockPlugin.getInstance());
-    }
-
 }
