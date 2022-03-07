@@ -20,19 +20,16 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.annotation;
-
-import java.lang.annotation.*;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Arguments {
+public class ArgumentTypeAlreadyExistsException extends Exception {
 
-    Argument[] value();
+    public ArgumentTypeAlreadyExistsException(String message) {
+        super(message);
+    }
 
 }

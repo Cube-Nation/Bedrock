@@ -27,6 +27,7 @@ import de.cubenation.bedrock.bukkit.wrapper.BukkitChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import org.bukkit.command.Command;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +49,7 @@ public class SimpleCommandManager
 
     @Override
     public List<String> onTabComplete(org.bukkit.command.CommandSender sender, Command command, String alias, String[] args) {
-        return onAutoComplete(BukkitChatSender.wrap(sender), args);
+        List<String> res = onAutoComplete(BukkitChatSender.wrap(sender), args);
+        return res != null ? res : new ArrayList<>();
     }
 }

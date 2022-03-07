@@ -110,6 +110,17 @@ public class en_US extends CustomConfigurationFile {
     @Path("no_such_player")
     private String no_such_player                   = "%plugin_prefix%&RESET& &RED&Player &SECONDARY&%player% &RED&not found";
 
+    @Path("no_valid_int")
+    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid integer.\",\"color\":\"white\"}]}";
+
+    @Path("no_valid_float")
+    private String no_valid_float = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid floating point number.\",\"color\":\"white\"}]}";
+
+    @Path("no_valid_uuid")
+    private String no_valid_uuid = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid UUID.\",\"color\":\"white\"}]}";
+
+    @Path("no_valid_enum_constant")
+    private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid option. Use one of the following:\",\"color\":\"white\"},{\"text\":\" &%constants%\",\"color\":\"&SECONDARY&\"}]}";
 
 
     @Path("json.permission.list.header")
@@ -138,7 +149,6 @@ public class en_US extends CustomConfigurationFile {
 
     @Path("json.no_such_player.default")
     private String json_no_such_player_default = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"Player not found\",color:\"red\"}]}";
-
 
     /*
      * Help messages
@@ -258,5 +268,10 @@ public class en_US extends CustomConfigurationFile {
 
     @Path("direction.southeast")
     private String southeast = "southeast";
+
+    // Misc
+
+    @Path("no_description")
+    private String no_description = "No description";
 
 }

@@ -27,7 +27,7 @@ import de.cubenation.bedrock.bukkit.api.command.BukkitCommandManager;
 import de.cubenation.bedrock.bukkit.api.command.predefined.CommandListCommand;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
-import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.command.predefined.SettingsInfoCommand;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
@@ -81,7 +81,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
         }
 
         // Add default commands that all plugins are capable of
-        for (AbstractCommand predefinedCommand : getPredefinedCommands(pluginCommandManager)) {
+        for (Command predefinedCommand : getPredefinedCommands(pluginCommandManager)) {
             pluginCommandManager.addCommand(predefinedCommand);
         }
 
@@ -94,7 +94,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
         }
     }
 
-    private void addCommandManager(String command, Class<? extends AbstractCommand>[] handlers) throws ServiceInitException {
+    private void addCommandManager(String command, Class<? extends Command>[] handlers) throws ServiceInitException {
         // Invalid command
         if (handlers.length == 0) {
             this.getPlugin().log(
@@ -117,7 +117,8 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             Class<?> handler = handlers[0];
             try {
                 Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                ((SimpleCommandManager) manager).setCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                Command instance = (Command) constructor.newInstance(plugin, manager);
+                ((SimpleCommandManager) manager).setCommand(instance);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             }
@@ -131,7 +132,8 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             for (Class<?> handler : handlers) {
                 try {
                     Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                    ((ComplexCommandManager) manager).addCommand((AbstractCommand) constructor.newInstance(plugin, manager));
+                    Command instance = (Command) constructor.newInstance(plugin, manager);
+                    ((ComplexCommandManager) manager).addCommand(instance);
                 } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                     e.printStackTrace();
                 }

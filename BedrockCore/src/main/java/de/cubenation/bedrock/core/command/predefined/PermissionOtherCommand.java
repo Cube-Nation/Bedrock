@@ -30,8 +30,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -44,24 +42,20 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 @Permission(Name = "permissions.other", Role = Role.MODERATOR)
 @Permission(Name = "permissions.self", Role = Role.USER)
 @SubCommand({"permissions", "perms"})
-@Argument(
-        Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true,
-        Permission = "permissions.other", Role = Role.MODERATOR
-)
 public class PermissionOtherCommand extends Command {
 
     public PermissionOtherCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @Override
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(
+            BedrockChatSender sender,
+            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
+            @Permission(Name = "permissions.other", Role = Role.MODERATOR)
+            String name
+    ) {
 
-        // check args length
-        if (args.length > 1)
-            throw new IllegalCommandArgumentException();
-
-        String player = (args.length == 0) ? sender.getName() : args[0];
+        String player = name != null ? name : sender.getName();
 
         PermissionService permissionService = getPlugin().getPermissionService();
         if (permissionService == null) {

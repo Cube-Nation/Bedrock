@@ -23,11 +23,11 @@
 package de.cubenation.bedrock.core.translation;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -173,10 +173,10 @@ public class Translation {
         }
 
         // we do not return null to avoid NullPointerExceptions.
-        // If you see an empty string somewhere
+        // If you see a not translated string somewhere
         //  a) the locale file is damaged/incomplete - try deleting it and restart the server
         //  b) check if the plugin refers to the correct path in the YamlConfiguration object
-        return "";
+        return locale_ident;
     }
 
     public TextComponent getTextComponent() {
