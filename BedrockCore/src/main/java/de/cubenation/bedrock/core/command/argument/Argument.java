@@ -23,82 +23,73 @@
 package de.cubenation.bedrock.core.command.argument;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.authorization.Permission;
+import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.translation.Translation;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
+
+@ToString
 public class Argument {
 
-    private FoundationPlugin plugin;
+    protected FoundationPlugin plugin;
 
+    @Getter @Setter
     private String description;
 
+    @Getter @Setter
     private String placeholder;
 
-    private boolean optional = false;
+    @Getter
+    private final boolean optional;
 
+    @Getter
+    private final boolean array;
+
+    @Getter
     private Permission permission = null;
 
-    public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, Permission permission) {
-        this.setPlugin(plugin);
+    @Getter
+    private final Class<?> dataType;
+
+    @Getter
+    private final ArgumentType<?> argumentType;
+
+    public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, boolean array, Class<?> dataType) throws CommandInitException {
+        this.plugin = plugin;
         this.setDescription(description);
         this.setPlaceholder(placeholder);
-        this.setOptional(optional);
-        this.setPermission(permission);
-    }
-
-    // plugin
-    public void setPlugin(FoundationPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    public FoundationPlugin getPlugin() {
-        return plugin;
-    }
-
-    // description
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return this.description;
+        this.optional = optional;
+        this.array = array;
+        this.dataType = dataType;
+        if (dataType == null) {
+            this.argumentType = null;
+        } else {
+            this.argumentType = plugin.getArgumentTypeService().getType(this.dataType);
+            if (this.argumentType == null) {
+                throw new CommandInitException(getClass().getName() + ": " + this.dataType.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
+            }
+        }
     }
 
     public String getRuntimeDescription() {
         return new Translation(this.plugin, this.description).getTranslation();
     }
 
-    // placeholder
-    public void setPlaceholder(String placeholder) {
-        this.placeholder = placeholder;
-    }
-
-    public String getPlaceholder() {
-        return placeholder;
-    }
-
     public String getRuntimePlaceholder() {
         if (this.placeholder == null)
             return null;
-
         return new Translation(this.plugin, this.placeholder).getTranslation();
     }
 
-    // optional
-    public void setOptional(boolean optional) {
-        this.optional = optional;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    // permission
     public void setPermission(Permission permission) {
         if (this.permission != null) {
             permission.setPlugin(this.plugin);
@@ -106,25 +97,8 @@ public class Argument {
         this.permission = permission;
     }
 
-    public Permission getPermission() {
-        return permission;
-    }
-
     public boolean userHasPermission(BedrockChatSender sender) {
         return this.permission == null || this.permission.userHasPermission(sender);
     }
-
-    @Override
-    public String toString() {
-        return "Argument{" +
-                "description='" + description + '\'' +
-                ", runTimeDescription='" + this.getRuntimeDescription() + '\'' +
-                ", placeholder='" + placeholder + '\'' +
-                ", runTimePlaceholder='" + this.getRuntimePlaceholder() + '\'' +
-                ", optional=" + optional +
-                ", permission=" + permission.toString() +
-                '}';
-    }
-
 }
 

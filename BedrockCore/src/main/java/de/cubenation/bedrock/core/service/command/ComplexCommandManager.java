@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.AbstractCommand;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -41,13 +41,13 @@ import java.util.stream.Collectors;
  */
 public abstract class ComplexCommandManager implements CommandManager {
 
-    private FoundationPlugin plugin;
+    private final FoundationPlugin plugin;
 
-    private List<AbstractCommand> commands = new ArrayList<>();
+    private final List<Command> commands = new ArrayList<>();
 
-    private HelpCommand helpCommand;
+    private final HelpCommand helpCommand;
 
-    private String label;
+    private final String label;
 
 
     public ComplexCommandManager(FoundationPlugin plugin, String label) {
@@ -58,7 +58,7 @@ public abstract class ComplexCommandManager implements CommandManager {
         this.commands.add(helpCommand);
     }
 
-    public void addCommand(AbstractCommand command) {
+    public void addCommand(Command command) {
         this.commands.add(command);
     }
 
@@ -100,8 +100,8 @@ public abstract class ComplexCommandManager implements CommandManager {
         }
 
         // Display help
-        ArrayList<AbstractCommand> helpList = new ArrayList<>();
-        for (AbstractCommand possibleHelpCommand : helpCommand.getHelpCommands()) {
+        ArrayList<Command> helpList = new ArrayList<>();
+        for (Command possibleHelpCommand : helpCommand.getHelpCommands()) {
             if (!(possibleHelpCommand instanceof HelpCommand) && possibleHelpCommand.isValidHelpTrigger(args)) {
                 helpList.add(possibleHelpCommand);
             }
@@ -117,9 +117,9 @@ public abstract class ComplexCommandManager implements CommandManager {
         return true;
     }
 
-    private boolean tryCommand(List<AbstractCommand> abstractCommands, BedrockChatSender commandSender, String[] args) {
-        for (AbstractCommand abstractCommand : abstractCommands) {
-            if(abstractCommand.tryCommand(commandSender, args))
+    private boolean tryCommand(List<Command> commands, BedrockChatSender commandSender, String[] args) {
+        for (Command command : commands) {
+            if(command.tryCommand(commandSender, args))
                 return true;
         }
         return false;
@@ -129,14 +129,14 @@ public abstract class ComplexCommandManager implements CommandManager {
     @SuppressWarnings("unchecked")
     public List<String> onAutoComplete(BedrockChatSender sender, String[] args) {
         ArrayList<String> list = new ArrayList<>();
-        for (AbstractCommand cmd : getCompletionCommands()) {
+        for (Command cmd : getCompletionCommands()) {
             if (!cmd.hasPermission(sender)) {
                 continue;
             }
 
-            ArrayList tabCom = cmd.getTabCompletion(args, sender);
-            if (tabCom != null) {
-                list.addAll(tabCom);
+            List<String> autoCompletion = cmd.getAutoCompletion(args, sender);
+            if (autoCompletion != null) {
+                list.addAll(autoCompletion);
             }
         }
         // Remove duplicates
@@ -148,9 +148,9 @@ public abstract class ComplexCommandManager implements CommandManager {
         }
     }
 
-    public List<AbstractCommand> getCompletionCommands() {
-        ArrayList<AbstractCommand> completionCommands = new ArrayList<>();
-        for (AbstractCommand command : getCommands()) {
+    public List<Command> getCompletionCommands() {
+        ArrayList<Command> completionCommands = new ArrayList<>();
+        for (Command command : getCommands()) {
             if (command.displayInCompletion()) {
                 completionCommands.add(command);
             }
@@ -167,7 +167,7 @@ public abstract class ComplexCommandManager implements CommandManager {
         return label;
     }
 
-    public List<AbstractCommand> getCommands() {
+    public List<Command> getCommands() {
         return commands;
     }
 

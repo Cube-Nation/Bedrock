@@ -99,6 +99,17 @@ public class de_DE extends CustomConfigurationFile {
     @Path("no_such_world_empty")
     private String no_such_world_empty = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Die Welt wurde nicht gefunden\",\"color\":\"red\"}]}";
 
+    @Path("no_valid_int")
+    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Ganzzahl.\",\"color\":\"white\"}]}";
+
+    @Path("no_valid_float")
+    private String no_valid_float = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Ganzzahl.\",\"color\":\"white\"}]}";
+
+    @Path("no_valid_uuid")
+    private String no_valid_uuid = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige UUID.\",\"color\":\"white\"}]}";
+
+    @Path("no_valid_enum_constant")
+    private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Option. Nutze eine der Folgenden:\",\"color\":\"white\"},{\"text\":\" %constants%\",\"color\":\"&SECONDAR&\"}]}";
 
     /*
      * Help messages
@@ -287,5 +298,10 @@ public class de_DE extends CustomConfigurationFile {
         put("ph", "Username/UUID");
         put("desc", "Username/UUID eines Spielers");
     }};
+
+    // Misc
+
+    @Path("no_description")
+    private String no_description = "Keine Beschreibung";
 
 }

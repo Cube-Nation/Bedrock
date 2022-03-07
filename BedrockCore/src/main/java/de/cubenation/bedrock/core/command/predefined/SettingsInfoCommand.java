@@ -30,9 +30,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -51,18 +48,20 @@ import java.util.UUID;
 @Permission(Name = "settings.list", Role = Role.ADMIN)
 @SubCommand({ "settings" })
 @SubCommand({ "info", "i" })
-@Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
-@Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
 public class SettingsInfoCommand extends Command {
 
     public SettingsInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
         super(plugin, commandManager);
     }
 
-    @Override
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(
+            BedrockChatSender sender,
+            @Argument(Description = "command.bedrock.key.desc", Placeholder = "command.bedrock.key.ph")
+            String settingsKey,
+            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
+            String user
+    ) {
 
-        String settingsKey = args[0];
         SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
         if (settingsManager == null) {
             plugin.messages().error().SettingsNotFound(sender, settingsKey);
@@ -70,11 +69,10 @@ public class SettingsInfoCommand extends Command {
         }
 
         // TODO: Make it fancy!
-        if (args.length > 1) {
-            String user = args[1];
-            try {
+        if (user != null) {
 
-                UUID uuid = null;
+            try {
+                UUID uuid;
                 if (UUIDUtil.isUUID(user)) {
                     uuid = UUID.fromString(user);
                 } else {
@@ -110,7 +108,7 @@ public class SettingsInfoCommand extends Command {
         ///TODO - B1acksheep
     }
 
-    @Override
+    // TODO: needs ArgumentType instead
     public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{

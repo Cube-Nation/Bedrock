@@ -29,8 +29,6 @@ import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
@@ -47,7 +45,7 @@ public class PermissionListCommand extends Command {
         super(plugin, commandManager);
     }
 
-    public void execute(BedrockChatSender sender, String[] args) throws CommandException, IllegalCommandArgumentException {
+    public void execute(BedrockChatSender sender) {
         PermissionService permissionService = this.getPlugin().getPermissionService();
 
         if (permissionService != null) {

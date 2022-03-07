@@ -20,26 +20,16 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.helper;
-
-import java.util.*;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class MapUtil {
+public class CommandInitException extends Exception {
 
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-
-        list.sort(Comparator.comparing(o -> (o.getValue())));
-
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-        return result;
+    public CommandInitException(String message) {
+        super(message);
     }
 
 }

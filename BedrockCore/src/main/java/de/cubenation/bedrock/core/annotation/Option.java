@@ -22,39 +22,21 @@
 
 package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.core.annotation.condition.DefaultCondition;
-import de.cubenation.bedrock.core.authorization.Role;
-
 import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Repeatable(KeyValueArguments.class)
-public @interface KeyValueArgument {
+@Target(ElementType.PARAMETER)
+public @interface Option {
 
     String Key();
-
-    boolean KeyOnly() default false;
 
     String Description();
 
     String Placeholder();
-
-    boolean Optional() default false;
-
-    String Permission() default "";
-
-    Role Role() default Role.NO_ROLE;
-
-    String RoleName() default "NO_ROLE";
-
-    String PermissionDescription() default "";
-
-    Class Condition() default DefaultCondition.class;
 
 }

@@ -14,5 +14,5 @@ public interface CommandManager extends CommandExecutor, AutoCompletionExecutor 
 
     String getLabel();
 
-    List<AbstractCommand> getCommands();
+    List<Command> getCommands();
 }

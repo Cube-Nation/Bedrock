@@ -20,19 +20,37 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.annotation;
+package de.cubenation.bedrock.core.command.argument;
 
-import java.lang.annotation.*;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.exception.CommandInitException;
+import de.cubenation.bedrock.core.translation.Translation;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface KeyValueArguments {
 
-    KeyValueArgument[] value();
+@ToString
+public class Option extends Argument {
 
+    @Getter @Setter
+    private String key = "";
+
+    public Option(FoundationPlugin plugin, String key, String description, String placeholder, Class<?> dataType) throws CommandInitException {
+        super(plugin, description, placeholder, true, false, dataType);
+        this.setKey(key);
+    }
+
+    public boolean hasParameter() {
+        return this.getDataType() != null;
+    }
+
+    public String getRuntimeKey() {
+        return new Translation(this.plugin, this.key).getTranslation();
+    }
 }
+

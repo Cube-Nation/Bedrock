@@ -25,9 +25,8 @@ package de.cubenation.bedrock.bungee.api.service.command;
 import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
 import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 /**
  * @author Cube-Nation
@@ -49,7 +48,6 @@ public class SimpleCommandManager
     @Override
     public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
         Iterable<String> res = onAutoComplete(BungeeChatSender.wrap(sender), args);
-        return res != null ? res : getPlugin().getBedrockServer().getOnlinePlayers().stream().map(BedrockChatSender::getName).collect(Collectors.toList());
+        return res != null ? res : new ArrayList<>();
     }
-
 }

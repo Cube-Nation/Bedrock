@@ -23,21 +23,21 @@
 package de.cubenation.bedrock.core.message;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.AbstractCommand;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.authorization.Permission;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.argument.Argument;
-import de.cubenation.bedrock.core.command.argument.KeyValueArgument;
+import de.cubenation.bedrock.core.command.argument.Option;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
-import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockHoverEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -112,6 +112,23 @@ public abstract class Messages {
 
     public void noSuchWorld(BedrockChatSender commandSender) {
         new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
+    }
+
+    public void noValidInt(BedrockChatSender commandSender, String input) {
+        new JsonMessage(plugin, "no_valid_int", "input", input).send(commandSender);
+    }
+
+    public void noValidFloat(BedrockChatSender commandSender, String input) {
+        new JsonMessage(plugin, "no_valid_float", "input", input).send(commandSender);
+    }
+
+    public void noValidUuid(BedrockChatSender commandSender, String input) {
+        new JsonMessage(plugin, "no_valid_uuid", "input", input).send(commandSender);
+    }
+
+    public void noValidEnumConstant(BedrockChatSender commandSender, String input, List<String> constantList) {
+        String constants = constantList.stream().collect(Collectors.joining(", "));
+        new JsonMessage(plugin, "no_valid_enum_constant", "input", input, "constants", constants).send(commandSender);
     }
 
     public void reloadComplete(BedrockChatSender sender) {
@@ -231,7 +248,7 @@ public abstract class Messages {
      * @param command a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
-    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, AbstractCommand command) {
+    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, Command command) {
 
         // check for permission
         if (!command.hasPermission(sender)) {
@@ -339,17 +356,17 @@ public abstract class Messages {
              * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
              * key-value command) we need to prepend the key
              */
-            if (argument instanceof KeyValueArgument) {
-                KeyValueArgument keyValueArgument = (KeyValueArgument) argument;
+            if (argument instanceof Option) {
+                Option option = (Option) argument;
 
-                String keyString = "[" + keyValueArgument.getKey() + (keyValueArgument.getKeyOnly() ? "]" : "");
+                String keyString = "[" + option.getKey() + (!option.hasParameter() ? "]" : "");
 
                 helpJson.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
                 helpJson.addExtra(BedrockJson.Space());
 
                 cmdDesc.addExtra(BedrockJson.Space());
                 cmdDesc.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
-                if (!keyValueArgument.getKeyOnly()) {
+                if (option.hasParameter()) {
                     cmdDesc.addExtra(BedrockJson.Space());
                 }
             }
@@ -358,11 +375,10 @@ public abstract class Messages {
              * Argument placeholder
              */
 
-            if (!(argument instanceof KeyValueArgument)
-                    || !((KeyValueArgument) argument).getKeyOnly()) {
-                BedrockJson runtimePlaceholder = null;
+            if (!(argument instanceof Option) || ((Option) argument).hasParameter()) {
+                BedrockJson runtimePlaceholder;
 
-                if (argument instanceof KeyValueArgument) {
+                if (argument instanceof Option) {
                     runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
                             ? argument.getRuntimePlaceholder() + "]"
                             : argument.getRuntimePlaceholder()))
