@@ -5,6 +5,7 @@
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
@@ -12,8 +13,27 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.16-R0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:21.0" level="project" />
-    <orderEntry type="library" name="Maven: org.avaje:ebean:2.8.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-datasource:7.5" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-datasource-api:7.5" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-api:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: io.avaje:avaje-config:1.7" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.30" level="project" />
+    <orderEntry type="library" name="Maven: io.avaje:avaje-lang:1.0" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:persistence-api:2.2.5" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-annotation:7.6" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-types:2.2" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-core:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-migration-auto:1.1" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-core-type:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-externalmapping-api:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: org.antlr:antlr4-runtime:4.8-1" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-querybean:12.15.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: io.ebean:ebean-ddl-generator:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-ddl-runner:1.2" level="project" />
+    <orderEntry type="library" name="Maven: io.ebean:ebean-migration:12.15.0" level="project" />
+    <orderEntry type="library" name="Maven: io.avaje:classpath-scanner:6.2" level="project" />
+    <orderEntry type="library" name="Maven: io.avaje:classpath-scanner-api:6.2" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />

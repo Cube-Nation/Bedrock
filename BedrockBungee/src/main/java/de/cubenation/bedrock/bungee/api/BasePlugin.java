@@ -35,6 +35,7 @@ import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
@@ -46,9 +47,9 @@ import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
+public class BasePlugin extends Plugin implements FoundationPlugin {
 
     public static final String PLUGIN_NAME = "BungeeBedrock";
 
@@ -95,6 +96,7 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
             // TODO: tbd
             // DO NOT MODIFY THIS ORDER!
             serviceManager.registerService(ConfigService.class);
+            serviceManager.registerService(DatabaseService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
@@ -114,8 +116,7 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
         try {
             BedrockDefaults bedrockDefaults = getBedrockDefaults();
-            log(Level.INFO, bedrockDefaults.toString());
-            setupDatabase(bedrockDefaults.getDatabaseConfiguration());
+            this.getDatabaseService().setupDatabases(bedrockDefaults.getDatabaseConfiguration());
         } catch (Exception e) {
             this.disable(e);
             return;
@@ -136,12 +137,6 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
      */
     public void onPostEnable() throws Exception {
     }
-
-    @Override
-    public Boolean isDatabaseEnabled() {
-        return true;
-    }
-
 
     /**
      * Disables this plugin.
@@ -195,6 +190,11 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     @Override
     public ConfigService getConfigService() {
         return (ConfigService) this.getServiceManager().getService(ConfigService.class);
+    }
+
+    @Override
+    public DatabaseService getDatabaseService() {
+        return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
     }
 
     @Override

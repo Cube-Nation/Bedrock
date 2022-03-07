@@ -1,8 +1,8 @@
 package de.cubenation.bedrock.core.model;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.validation.NotNull;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import io.ebean.Database;
+import io.ebean.annotation.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
@@ -66,11 +66,11 @@ public class BedrockOfflinePlayer {
         this.uuid = uuid;
     }
 
-    public void save(EbeanServer database) {
+    public void save(Database database) {
         database.save(this);
     }
 
-    public void update(EbeanServer database) {
+    public void update(Database database) {
         database.update(this);
     }
 

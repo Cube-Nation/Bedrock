@@ -40,6 +40,7 @@ import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -62,7 +63,7 @@ import java.util.logging.Logger;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin {
+public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin {
 
     public static final String PLUGIN_NAME = "Bedrock";
     /**
@@ -110,9 +111,9 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
         // initialize ServiceManager
         this.serviceManager = new ServiceManager(this);
         try {
-            // TODO: tbd
             // DO NOT MODIFY THIS ORDER!
             serviceManager.registerService(ConfigService.class);
+            serviceManager.registerService(DatabaseService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
@@ -132,7 +133,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
 
         try {
             BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
-            setupDatabase(bedrockDefaults.getDatabaseConfiguration());
+            this.getDatabaseService().setupDatabases(bedrockDefaults.getDatabaseConfiguration());
         } catch (Exception e) {
             this.disable(e);
             return;
@@ -147,11 +148,6 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
         } catch (Exception e) {
             this.disable(e);
         }
-    }
-
-    @Override
-    public Boolean isDatabaseEnabled() {
-        return true;
     }
 
     /**
@@ -324,57 +320,32 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
         this.disable(e);
     }
 
-    /**
-     * Returns the Bedrock ConfigService object instance.
-     * If the ConfigService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ConfigService
-     * @see de.cubenation.bedrock.core.service.config.ConfigService
-     */
+    @Override
     public ConfigService getConfigService() {
         return (ConfigService) this.getServiceManager().getService(ConfigService.class);
     }
 
-    /**
-     * Returns the Bedrock ColorSchemeService object instance.
-     * If the ColorSchemeService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ColorSchemeService
-     * @see ColorSchemeService
-     */
+    @Override
+    public DatabaseService getDatabaseService() {
+        return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
+    }
+
+    @Override
     public ColorSchemeService getColorSchemeService() {
         return (ColorSchemeService) this.getServiceManager().getService(ColorSchemeService.class);
     }
 
-    /**
-     * Returns the Bedrock CommandService object instance.
-     * If the CommandService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock CommandService
-     * @see CommandService
-     */
+    @Override
     public CommandService getCommandService() {
         return (CommandService) this.getServiceManager().getService(CommandService.class);
     }
 
-    /**
-     * Returns the Bedrock PermissionService object instance.
-     * If the PermissionService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock PermissionService
-     * @see PermissionService
-     */
+    @Override
     public PermissionService getPermissionService() {
         return (PermissionService) this.getServiceManager().getService(PermissionService.class);
     }
 
-    /**
-     * Returns the Bedrock LocalizationService object instance.
-     * If the LocalizationService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock LocalizationService
-     * @see LocalizationService
-     */
+    @Override
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
     }
@@ -391,13 +362,7 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
         return (InventoryService) this.getServiceManager().getService(InventoryService.class);
     }
 
-    /**
-     * Returns the Bedrock SettingsService object instance.
-     * If the SettingsService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock SettingsService
-     * @see SettingsService
-     */
+    @Override
     public SettingsService getSettingService() {
         return (SettingsService) this.getServiceManager().getService(SettingsService.class);
     }

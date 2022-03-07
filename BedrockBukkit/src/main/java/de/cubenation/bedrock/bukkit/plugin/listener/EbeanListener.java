@@ -25,6 +25,7 @@ package de.cubenation.bedrock.bukkit.plugin.listener;
 import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
 import de.cubenation.bedrock.bukkit.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bukkit.plugin.event.PlayerChangeNameEvent;
+import de.cubenation.bedrock.core.database.BedrockDatabase;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -56,16 +57,16 @@ public class EbeanListener implements Listener {
                 BedrockPlugin plugin = BedrockPlugin.getInstance();
 
                 String uuid = event.getPlayer().getUniqueId().toString();
-                BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getDatabase()
+                BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getDatabaseService().getDatabase(BedrockDatabase.class)
                         .find(BedrockOfflinePlayer.class)
                         .where()
                         .eq("uuid", uuid)
-                        .findUnique();
+                        .findOne();
 
                 String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
                 if (bp == null) {
                     bp = new BedrockOfflinePlayer(uuid, event.getPlayer().getName(), ip, new Date());
-                    bp.save(plugin.getDatabase());
+                    bp.save(plugin.getDatabaseService().getDatabase(BedrockDatabase.class));
                 } else {
                     // check if username changed
                     if (!bp.getUsername().equals(event.getPlayer().getName())) {
@@ -82,20 +83,18 @@ public class EbeanListener implements Listener {
                         bp.setUsername(event.getPlayer().getName());
                     }
 
-                    List<BedrockOfflinePlayer> bedrockPlayers = plugin.getDatabase().find(BedrockOfflinePlayer.class).where()
+                    List<BedrockOfflinePlayer> bedrockPlayers = plugin.getDatabaseService().getDatabase(BedrockDatabase.class).find(BedrockOfflinePlayer.class).where()
                             .like("ip", ip)
                             .findList();
 
-                    if (bedrockPlayers != null) {
-                        // Remove self
-                        bedrockPlayers = bedrockPlayers.stream()
-                                .filter(player -> !player.getUuid().equals(event.getPlayer().getUniqueId().toString()))
-                                .collect(Collectors.toList());
+                    // Remove self
+                    bedrockPlayers = bedrockPlayers.stream()
+                            .filter(player -> !player.getUuid().equals(event.getPlayer().getUniqueId().toString()))
+                            .collect(Collectors.toList());
 
-                        if (bedrockPlayers.size() > 0) {
-                            MultiAccountJoinEvent joinEvent = new MultiAccountJoinEvent(ip, bedrockPlayers);
-                            Bukkit.getPluginManager().callEvent(joinEvent);
-                        }
+                    if (bedrockPlayers.size() > 0) {
+                        MultiAccountJoinEvent joinEvent = new MultiAccountJoinEvent(ip, bedrockPlayers);
+                        Bukkit.getPluginManager().callEvent(joinEvent);
                     }
 
                     // update ip
@@ -103,7 +102,7 @@ public class EbeanListener implements Listener {
 
                     // update timestamp
                     bp.setLastlogin(new Date());
-                    bp.update(plugin.getDatabase());
+                    bp.update(plugin.getDatabaseService().getDatabase(BedrockDatabase.class));
                 }
             }
 

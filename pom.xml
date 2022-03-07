@@ -18,11 +18,12 @@
     </modules>
 
     <properties>
+        <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <spigot-api.version>1.16.4-R0.1-SNAPSHOT</spigot-api.version>
         <bungeecord.version>1.16-R0.4</bungeecord.version>
-        <ebean.version>2.8.1</ebean.version>
+        <ebean.version>12.15.0</ebean.version>
     </properties>
 
     <repositories>
@@ -89,8 +90,40 @@
 
         <plugins>
             <plugin>
+                <groupId>io.ebean</groupId>
+                <artifactId>ebean-maven-plugin</artifactId>
+                <version>${ebean.version}</version>
+                <executions>
+                    <!-- enhance main classes -->
+                    <execution>
+                        <id>main</id>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <transformArgs>debug=1</transformArgs>
+                        </configuration>
+                        <goals>
+                            <goal>enhance</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- enhance test classes -->
+                    <execution>
+                        <id>test</id>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                            <transformArgs>debug=1</transformArgs>
+                        </configuration>
+                        <goals>
+                            <goal>testEnhance</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.2</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -104,7 +137,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
+                <version>${maven.compiler.version}</version>
                 <configuration>
                     <source>${maven.compiler.target}</source>
                     <target>${maven.compiler.target}</target>
@@ -124,10 +157,21 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Ebean API -->
+        <!-- Ebean -->
         <dependency>
-            <groupId>org.avaje</groupId>
+            <groupId>io.ebean</groupId>
             <artifactId>ebean</artifactId>
+            <version>${ebean.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean-ddl-generator</artifactId>
+            <version>${ebean.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ebean</groupId>
+            <artifactId>ebean-migration</artifactId>
             <version>${ebean.version}</version>
         </dependency>
 
@@ -149,12 +193,6 @@
             <artifactId>Yamler-Core</artifactId>
             <version>2.4.0-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.avaje</groupId>
-            <artifactId>ebean</artifactId>
-            <version>2.8.1</version>
         </dependency>
 
         <!-- Dev Dependencies -->

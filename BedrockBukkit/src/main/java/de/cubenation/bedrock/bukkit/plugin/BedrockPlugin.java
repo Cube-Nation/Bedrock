@@ -32,12 +32,8 @@ import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.config.locale.de_DE;
-import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
-import javax.persistence.PersistenceException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -73,33 +69,12 @@ public class BedrockPlugin extends BasePlugin {
             this.disable(e);
         }
 
-        // install database table
-        try {
-            this.getDatabase().find(BedrockOfflinePlayer.class).findRowCount();
-        } catch (PersistenceException e) {
-            getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
-            installDDL();
-        }
-
         // register events for creation of
         //  - a BedrockPlayer - fired when a player joins the server
-        //  - a Bedrockorld - fired when a world is loaded
+        //  - a BedrockWorld - fired when a world is loaded
         this.getServer().getPluginManager().registerEvents(new EbeanListener(), this);
         // register events for bungee support
         this.getServer().getPluginManager().registerEvents(new BungeeTeleportListener(), this);
         this.getServer().getMessenger().registerIncomingPluginChannel(this, IOVerbs.CHANNEL, new BungeeTeleportInputHandler());
     }
-
-    /**
-     * Returns the database class that handles player mapping
-     *
-     * @return A list of database classes.
-     */
-    @Override
-    public List<Class<?>> getDatabaseClasses() {
-        return new ArrayList<Class<?>>() {{
-            add(BedrockOfflinePlayer.class);
-        }};
-    }
-
 }

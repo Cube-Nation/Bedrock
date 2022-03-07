@@ -22,24 +22,22 @@
 
 package de.cubenation.bedrock.core.database;
 
-
-import com.avaje.ebean.config.DataSourceConfig;
-import com.avaje.ebeaninternal.server.lib.sql.TransactionIsolation;
+import io.ebean.annotation.TxIsolation;
+import io.ebean.datasource.DataSourceConfig;
+import lombok.ToString;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
+
+@ToString
 public class DatabaseConfiguration {
 
     private String username = "username";
-
     private String password = "password";
-
     private String url = "url";
-
-    private String driver = "com.mysql.jdbc.Driver";
-
+    private String driver = "com.mysql.cj.jdbc.Driver";
     private String isolation = "SERIALIZABLE";
 
     public DatabaseConfiguration(String username, String password, String url, String driver, String isolation) {
@@ -70,25 +68,12 @@ public class DatabaseConfiguration {
         return isolation;
     }
 
-
-
     public DataSourceConfig configure(DataSourceConfig ds) {
         ds.setUsername(username);
         ds.setPassword(password);
         ds.setUrl(url);
         ds.setDriver(driver);
-        ds.setIsolationLevel(TransactionIsolation.getLevel(isolation));
+        ds.setIsolationLevel(TxIsolation.valueOf(isolation).getLevel());
         return ds;
-    }
-
-    @Override
-    public String toString() {
-        return "DatabaseConfiguration{" +
-                "username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", url='" + url + '\'' +
-                ", driver='" + driver + '\'' +
-                ", isolation='" + isolation + '\'' +
-                '}';
     }
 }
