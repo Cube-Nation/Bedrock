@@ -25,10 +25,9 @@ package de.cubenation.bedrock.bungee.plugin;
 import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.listener.PlayerListener;
-import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.locale.de_DE;
-import de.cubenation.bedrock.core.model.BedrockPlayer;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 
 import javax.persistence.PersistenceException;
 import java.util.ArrayList;
@@ -58,7 +57,7 @@ public class BedrockPlugin extends BasePlugin {
     public void onPostEnable() throws Exception {
         // install database table
         try {
-            this.getDatabase().find(BedrockPlayer.class).findRowCount();
+            this.getDatabase().find(BedrockOfflinePlayer.class).findRowCount();
         } catch (PersistenceException e) {
             getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
             installDDL();
@@ -72,7 +71,7 @@ public class BedrockPlugin extends BasePlugin {
     @Override
     public List<Class<?>> getDatabaseClasses() {
         return new ArrayList<Class<?>>() {{
-            add(BedrockPlayer.class);
+            add(BedrockOfflinePlayer.class);
         }};
     }
 

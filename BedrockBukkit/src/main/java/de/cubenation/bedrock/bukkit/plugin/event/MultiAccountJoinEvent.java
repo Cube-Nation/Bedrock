@@ -22,61 +22,38 @@
 
 package de.cubenation.bedrock.bukkit.plugin.event;
 
-import org.bukkit.entity.Player;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import java.util.List;
+
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class PlayerChangesNameEvent extends Event {
+@ToString
+public class MultiAccountJoinEvent extends Event {
 
+    @Setter
     private static final HandlerList handlers = new HandlerList();
 
-    private Player player;
+    @Getter
+    private String ip;
 
-    private String oldName;
+    @Getter
+    private List<BedrockOfflinePlayer> bedrockPlayers;
 
-    private String newName;
-
-
-    public PlayerChangesNameEvent(Player player, String oldName, String newName) {
-        this.player = player;
-        this.oldName = oldName;
-        this.newName = newName;
+    public MultiAccountJoinEvent(String ip, List<BedrockOfflinePlayer> bedrockPlayers) {
+        this.ip = ip;
+        this.bedrockPlayers = bedrockPlayers;
     }
 
     @Override
     public HandlerList getHandlers() {
         return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public String getOldName() {
-        return oldName;
-    }
-
-    public void setOldName(String oldName) {
-        this.oldName = oldName;
-    }
-
-    public String getNewName() {
-        return newName;
-    }
-
-    public void setNewName(String newName) {
-        this.newName = newName;
     }
 }
