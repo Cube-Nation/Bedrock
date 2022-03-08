@@ -5,6 +5,7 @@ import de.cubenation.bedrock.core.command.argument.type.*;
 import de.cubenation.bedrock.core.exception.ArgumentTypeAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
@@ -43,6 +44,7 @@ public class ArgumentTypeService extends AbstractService {
             put(Double.class, new DoubleArgument(plugin));
             put(UUID.class, new UuidArgument(plugin));
             put(BedrockPlayer.class, new BedrockPlayerArgument(plugin));
+            put(BedrockOfflinePlayer.class, new BedrockOfflinePlayerArgument(plugin));
         }};
     }
 
