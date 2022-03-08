@@ -28,7 +28,7 @@ public class BedrockPlayerArgument extends ArgumentType<BedrockPlayer>{
 
     @Override
     public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
-        return plugin.getBedrockServer().getOnlinePlayers().stream()
+        return plugin.getBedrockServer().getPlayers().stream()
                 .map(BedrockPlayer::getDisplayName)
                 .collect(Collectors.toList());
     }

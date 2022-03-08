@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BukkitServer implements BedrockServer {
+public class BukkitServer extends BedrockServer {
 
     @Override
     public BedrockPlayer getPlayer(String username) {
@@ -20,6 +20,7 @@ public class BukkitServer implements BedrockServer {
         return BukkitPlayer.wrap(player);
     }
 
+    @Override
     public BukkitPlayer getPlayer(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
         if(player == null)
@@ -28,7 +29,7 @@ public class BukkitServer implements BedrockServer {
     }
 
     @Override
-    public Collection<? extends BedrockPlayer> getOnlinePlayers() {
+    public Collection<? extends BedrockPlayer> getPlayers() {
         return Bukkit.getServer().getOnlinePlayers().stream().map(o -> BukkitPlayer.wrap(o)).collect(Collectors.toList());
     }
 }

@@ -23,11 +23,11 @@
 package de.cubenation.bedrock.core.translation;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -96,7 +96,7 @@ public class JsonMessage {
 
     @SuppressWarnings("WeakerAccess")
     public void broadcast(ChatMessageType chatMessageType) {
-        for (BedrockPlayer player : plugin.getBedrockServer().getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getBedrockServer().getPlayers()) {
             send(player, chatMessageType);
         }
     }
@@ -107,7 +107,7 @@ public class JsonMessage {
 
     @SuppressWarnings("WeakerAccess")
     public void broadcast(ArrayList<BedrockPlayer> withoutPlayer, ChatMessageType chatMessageType) {
-        for (BedrockPlayer player : plugin.getBedrockServer().getOnlinePlayers()) {
+        for (BedrockPlayer player : plugin.getBedrockServer().getPlayers()) {
             if (withoutPlayer.contains(player)) {
                 continue;
             }

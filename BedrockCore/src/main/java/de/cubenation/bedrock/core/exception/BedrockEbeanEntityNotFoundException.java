@@ -20,18 +20,32 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.api.exception;
+package de.cubenation.bedrock.core.exception;
 
-import java.io.IOException;
+import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
+
+import java.util.Collection;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class BedrockEbeanEntityAlreadyExistsException extends IOException {
+@SuppressWarnings("DefaultFileTemplate")
+public class BedrockEbeanEntityNotFoundException extends RuntimeException {
 
-    public BedrockEbeanEntityAlreadyExistsException(Class clazz, String uuid) {
-        super(String.format("Could not create bedrock ebean entity %s for UUID %s", clazz.toString(), uuid));
+    public BedrockEbeanEntityNotFoundException(Class clazz, String uuid) {
+        super(String.format("Could not find bedrock ebean entity %s for UUID %s", clazz.toString(), uuid));
     }
 
+    public BedrockEbeanEntityNotFoundException(Class clazz, int id) {
+        super(String.format("Could not find bedrock ebean entity %s for id %s", clazz.toString(), id));
+    }
+
+    public BedrockEbeanEntityNotFoundException(Class<BedrockOfflinePlayer> clazz, Collection<Integer> ids) {
+        super(String.format("Could not find bedrock ebean entity %s for ids %s", clazz.toString(), ids));
+    }
+
+    public BedrockEbeanEntityNotFoundException(Collection<String> uuids, Class<BedrockOfflinePlayer> clazz) {
+        super(String.format("Could not find bedrock ebean entity %s for ids %s", clazz.toString(), uuids));
+    }
 }

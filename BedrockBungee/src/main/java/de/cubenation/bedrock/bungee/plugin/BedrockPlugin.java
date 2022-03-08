@@ -23,8 +23,10 @@
 package de.cubenation.bedrock.bungee.plugin;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
+import de.cubenation.bedrock.bungee.plugin.command.BedrockPlayerInfoCommand;
 import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.listener.PlayerListener;
+import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 
@@ -33,6 +35,9 @@ import de.cubenation.bedrock.core.config.locale.de_DE;
  * @version 2.0
  */
 
+@CommandHandler(Command = "bp", Handlers = {
+        BedrockPlayerInfoCommand.class,
+})
 @ConfigurationFile(de_DE.class)
 public class BedrockPlugin extends BasePlugin {
 
@@ -45,7 +50,6 @@ public class BedrockPlugin extends BasePlugin {
     @Override
     public void onPreEnable() {
         instance = this;
-        getLogger().info("Yay! It loads!");
     }
 
     @Override

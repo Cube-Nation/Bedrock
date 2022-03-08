@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class BungeeServer implements BedrockServer {
+public class BungeeServer extends BedrockServer {
 
     private BasePlugin plugin;
 
@@ -27,7 +27,7 @@ public class BungeeServer implements BedrockServer {
     }
 
     @Override
-    public Collection<? extends BedrockPlayer> getOnlinePlayers() {
+    public Collection<? extends BedrockPlayer> getPlayers() {
         return plugin.getProxy().getPlayers().stream().map(o -> BungeePlayer.wrap(o)).collect(Collectors.toList());
     }
 }
