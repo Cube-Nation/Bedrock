@@ -24,6 +24,7 @@
         <spigot-api.version>1.16.4-R0.1-SNAPSHOT</spigot-api.version>
         <bungeecord.version>1.16-R0.4</bungeecord.version>
         <ebean.version>12.15.0</ebean.version>
+        <lombok.version>1.18.22</lombok.version>
     </properties>
 
     <repositories>
@@ -141,6 +142,18 @@
                 <configuration>
                     <source>${maven.compiler.target}</source>
                     <target>${maven.compiler.target}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.ebean</groupId>
+                            <artifactId>querybean-generator</artifactId>
+                            <version>${ebean.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>
@@ -199,7 +212,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 

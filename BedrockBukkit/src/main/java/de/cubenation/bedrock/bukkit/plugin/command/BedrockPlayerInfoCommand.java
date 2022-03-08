@@ -31,7 +31,6 @@ import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.CommandManager;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.helper.BedrockEbeanHelper;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 /**
@@ -50,13 +49,13 @@ public class BedrockPlayerInfoCommand extends Command {
 
     public void execute(
             final BedrockChatSender sender,
-            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph")
+            @Argument(Description = "command.bedrock.username_uuid.desc", Placeholder = "command.bedrock.username_uuid.ph", Optional = true)
             String input
     ) throws IllegalCommandArgumentException {
 
         final String player = input == null ? sender.getName() : input;
 
-        BedrockEbeanHelper.requestOfflinePlayer(player, false).handle((bedrockPlayer, e) -> {
+        plugin.getBedrockServer().getOfflinePlayer(player, false).handle((bedrockPlayer, e) -> {
             if (bedrockPlayer == null) {
                 sender.sendMessage("No player found for: " + player);
             } else {
