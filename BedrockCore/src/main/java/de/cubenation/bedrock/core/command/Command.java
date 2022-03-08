@@ -372,8 +372,9 @@ public abstract class Command {
 
         // collect option values
         HashMap<String, Object> optionValues = new HashMap<>();
-        ArrayList<String> realArgsList = new ArrayList<>();
+        String[] realArgs;
         if (options.size() > 0) {
+            ArrayList<String> realArgsList = new ArrayList<>();
             for (int i = 0; i < args.length; i++) {
                 if (!args[i].startsWith("-") || !options.containsKey(args[i].substring(1))) {
                     realArgsList.add(args[i]);
@@ -381,7 +382,7 @@ public abstract class Command {
                 }
                 String key = args[i].substring(1);
                 Option option = options.get(key);
-                Object value = null;
+                Object value;
                 if (option.getDataType() == null) {
                     value = true;
                 } else {
@@ -396,8 +397,10 @@ public abstract class Command {
                 }
                 optionValues.put(key, value);
             }
+            realArgs = realArgsList.toArray(new String[0]);
+        } else {
+            realArgs = args;
         }
-        String[] realArgs = realArgsList.toArray(new String[0]);
 
         // iterate all arguments
         ArrayList<Object> result = new ArrayList<>();
@@ -799,16 +802,18 @@ public abstract class Command {
     }
 
     private String[] filterOutOptions(String[] args) {
+        if (options.isEmpty()) {
+            return args;
+        }
+
         ArrayList<String> realArgsList = new ArrayList<>();
-        if (options.size() > 0) {
-            for (int i = 0; i < args.length; i++) {
-                if (!args[i].startsWith("-") || !options.containsKey(args[i].substring(1))) {
-                    realArgsList.add(args[i]);
-                    continue;
-                }
-                String key = args[i].substring(1);
-                if (options.get(key).hasParameter()) i++;
+        for (int i = 0; i < args.length; i++) {
+            if (!args[i].startsWith("-") || !options.containsKey(args[i].substring(1))) {
+                realArgsList.add(args[i]);
+                continue;
             }
+            String key = args[i].substring(1);
+            if (options.get(key).hasParameter()) i++;
         }
         return realArgsList.toArray(new String[0]);
     }
