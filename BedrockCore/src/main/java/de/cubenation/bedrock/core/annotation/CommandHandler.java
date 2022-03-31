@@ -28,7 +28,7 @@ import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -37,6 +37,8 @@ import java.lang.annotation.*;
 public @interface CommandHandler {
 
     String Command();
+
+    SubCommand[] SubCommands();
 
     Class<? extends Command>[] Handlers();
 

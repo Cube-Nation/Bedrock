@@ -30,6 +30,7 @@ import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.CommandHandler;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
+import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
@@ -47,9 +48,56 @@ import java.util.logging.Level;
  * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
-@CommandHandler(Command = "bp", Handlers = {
-        BedrockPlayerInfoCommand.class,
+@CommandHandler(
+        Command = "bp",
+        SubCommands = {
+                @SubCommand({ "info", "i" })
+        },
+        Handlers = { BedrockPlayerInfoCommand.class }
+)
+@Command(
+        Command = {"bla","bli"},
+        Handlers = {
+                @CommandHandler(
+                        SubCommands = {
+                                @SubCommand({ "sub1", "s1" }),
+                                @SubCommand({ "sub2", "s2" }),
+                                @SubCommand({ "sub3", "s3" })
+                        },
+                        Class = BedrockPlayerInfoCommand.class
+                ),
+                @CommandHandler(
+                        SubCommands = {
+                                @SubCommand({ "sub1", "s1" }),
+                                @SubCommand({ "sub2", "s2" }),
+                                @SubCommand({ "sub3", "s3" })
+                        },
+                        Class = BedrockPlayerInfoCommand.class
+                ),
+                @CommandHandler(
+                        SubCommands = {
+                                @SubCommand({ "sub1", "s1" }),
+                                @SubCommand({ "sub2", "s2" }),
+                                @SubCommand({ "sub3", "s3" })
+                        },
+                        Class = BedrockPlayerInfoCommand.class
+                )
+        }
+)
+@CommandHandler(
+        Command = "woloo",
+        Handlers = {
+                BedrockPlayerInfoCommand.class,
+                BedrockPlayerInfoCommand.class,
+                BedrockPlayerInfoCommand.class
+        }
+)
+@CommandHandler({
+                BedrockPlayerInfoCommand.class,
+                BedrockPlayerInfoCommand.class,
+                BedrockPlayerInfoCommand.class
 })
+
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;

@@ -171,7 +171,7 @@ public class PermissionService extends AbstractService {
 
         // collect permissions from commands (and arguments)
         this.getPlugin().getCommandService().getCommandManagers().forEach(commandManager ->
-                commandManager.getCommands().forEach(abstractCommand -> {
+                commandManager.getCommandPaths().forEach(abstractCommand -> {
 
                     abstractCommand.getRuntimePermissions().forEach(this::addPermission);
 

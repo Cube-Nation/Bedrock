@@ -1,61 +1,38 @@
-/*
- * Bedrock
- *
- * Copyright (c) 2017 Cube-Nation (Benedikt Hruschka, Tristan Cebulla)
- *
- * Permission is hereby granted, free of charge,
- * to any person obtaining a copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package de.cubenation.bedrock.bungee.api.command;
 
-import de.cubenation.bedrock.bungee.api.BasePlugin;
-import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
+import de.cubenation.bedrock.core.command.tree.CommandTreeRoot;
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
-/**
- * @author Cube-Nation
- * @version 2.0
- */
 public class BungeeCommand extends Command implements TabExecutor {
 
-    private final BungeeCommandManager commandManager;
-    private final FoundationPlugin plugin;
+    private final CommandTreeRoot root;
 
-    public BungeeCommand(BasePlugin plugin, BungeeCommandManager commandManager, String name) {
+    public BungeeCommand(CommandTreeRoot root, String name) {
         super(name);
-        this.plugin = plugin;
-        this.commandManager = commandManager;
-    }
-
-    public BungeeCommand(BasePlugin plugin, BungeeCommandManager commandManager, String name, String permission, String... aliases) {
-        super(name, permission, aliases);
-        this.plugin = plugin;
-        this.commandManager = commandManager;
+        this.root = root;
     }
 
     @Override
-    public void execute(CommandSender commandSender, String[] args) {
-        commandManager.execute(commandSender, args);
+    public void execute(CommandSender sender, String[] args) {
+        try {
+            root.onCommand(BungeeChatSender.wrap(sender), args);
+        } catch (IllegalCommandArgumentException e) {
+            e.printStackTrace();
+        } catch (InsufficientPermissionException e) {
+            e.printStackTrace();
+        } catch (CommandException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return commandManager.onTabComplete(sender, args);
+        return null;
     }
 }

@@ -25,10 +25,10 @@ package de.cubenation.bedrock.bungee.api.command.predefined;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -42,23 +42,21 @@ import java.util.HashMap;
  */
 @Description("command.bedrock.cmd.list.desc")
 @Permission(Name = "command.list", Role = Role.USER)
-@SubCommand({"command", "cmd"})
-@SubCommand({"list", "l"})
 public class CommandListCommand extends Command {
 
-    public CommandListCommand(FoundationPlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public CommandListCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
+        super(plugin, label, previousNode);
     }
 
     public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();
 
-        for (CommandManager commandManager : getPlugin().getCommandService().getCommandManagers()) {
-            if (commandManager.getLabel().equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
+        for (CommandTreeNestedNode nestedNode : getPlugin().getCommandService().getCommandManagers()) {
+            if (nestedNode.getLabel().equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
                 continue;
             }
-            commandList.put(commandManager.getLabel(), "");
+            commandList.put(nestedNode.getLabel(), "");
         }
 
         if (commandList.isEmpty())
