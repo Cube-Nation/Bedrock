@@ -1,52 +1,25 @@
-/*
- * Bedrock
- *
- * Copyright (c) 2017 Cube-Nation (Benedikt Hruschka, Tristan Cebulla)
- *
- * Permission is hereby granted, free of charge,
- * to any person obtaining a copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
- * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-
 package de.cubenation.bedrock.core.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.IngameCommand;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.Option;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.CollectionUtil;
-import de.cubenation.bedrock.core.helper.LengthComparator;
-import de.cubenation.bedrock.core.translation.JsonMessage;
-import de.cubenation.bedrock.core.translation.parts.BedrockJson;
-import de.cubenation.bedrock.core.translation.parts.JsonColor;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -54,7 +27,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * Abstract class for command executor classes
@@ -62,21 +34,11 @@ import java.util.stream.Collectors;
  * @author Cube-Nation
  * @version 2.0
  */
-
 @ToString
-public abstract class Command {
-
-    @Getter
-    protected FoundationPlugin plugin;
-
-    @Getter
-    protected CommandManager commandManager;
+public abstract class Command extends CommandTreeNode {
 
     @Getter @Setter
     private String description = "";
-
-    @Getter
-    private final ArrayList<String[]> subcommands = new ArrayList<>();
 
     @Getter
     private final ArrayList<de.cubenation.bedrock.core.command.argument.Argument> arguments = new ArrayList<>();
@@ -96,13 +58,9 @@ public abstract class Command {
      * <p>
      * Reads all annotations from #execute() and enables features
      * TBD
-     *
-     * @param plugin         A Bedrock-compatible plugin
-     * @param commandManager The Bedrock command manager
      */
-    public Command(FoundationPlugin plugin, CommandManager commandManager) {
-        this.plugin = plugin;
-        this.commandManager = commandManager;
+    public Command(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
+        super(plugin, label, previousNode);
 
         // read annotations from execute methods
         try {
@@ -125,11 +83,6 @@ public abstract class Command {
         if (description != null) {
             this.setDescription(description.value());
         }
-
-        // SubCommand/s
-        Arrays.stream(clazz.getAnnotationsByType(SubCommand.class)).forEach(
-                subCommand -> this.addSubCommand(subCommand.value())
-        );
 
         // Permission/s
         Arrays.stream(clazz.getAnnotationsByType(Permission.class)).forEach(permission -> this.addRuntimePermission(
@@ -155,9 +108,9 @@ public abstract class Command {
 
         // only proceed if there's exactly one execute method
         if (matches.isEmpty()) {
-            throw new CommandInitException(getClass().getName()+": Execute method not found. Please contact plugin author.");
+            throw new CommandInitException("Execute method not found. Please contact plugin author.");
         } else if (matches.size() > 1) {
-            throw new CommandInitException(getClass().getName()+": Multiple execute methods found. Please contact plugin author.");
+            throw new CommandInitException("Multiple execute methods found. Please contact plugin author.");
         }
         this.executeMethod = matches.get(0);
 
@@ -165,8 +118,9 @@ public abstract class Command {
         Parameter[] executeParameters = this.executeMethod.getParameters();
         // check for bedrockChatSender
         if (executeParameters.length == 0 || !executeParameters[0].getType().equals(BedrockChatSender.class)) {
-            throw new CommandInitException(getClass().getName()+": Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
+            throw new CommandInitException("Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
         }
+
         // remove BedrockChatSender from parameters
         executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
 
@@ -181,7 +135,7 @@ public abstract class Command {
             if (argument.isOptional()) {
                 followsOptional = true;
             } else if (followsOptional) {
-                throw new CommandInitException(getClass().getName()+": Invalid execute method. Optional parameters need to be last.");
+                throw new CommandInitException("Invalid execute method. Optional parameters need to be last.");
             }
         }
     }
@@ -283,10 +237,6 @@ public abstract class Command {
      * ###################################
      */
 
-    private void addSubCommand(String[] subCommands) {
-        this.subcommands.add(subCommands);
-    }
-
     public ArrayList<de.cubenation.bedrock.core.authorization.Permission> getRuntimePermissions() {
         return this.runtimePermissions;
     }
@@ -325,7 +275,17 @@ public abstract class Command {
      * ###################################
      */
 
+    @Override
+    public boolean onCommand(BedrockChatSender commandSender, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
+        this.preExecute(commandSender, args);
+        return true;
+    }
+
     public void preExecute(BedrockChatSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+        if (!this.hasPermission(commandSender)) {
+            plugin.messages().insufficientPermission(commandSender);
+            throw new InsufficientPermissionException();
+        }
 
         if (this.isIngameCommandOnly() && !(commandSender instanceof BedrockPlayer)) {
             plugin.messages().mustBePlayer(commandSender);
@@ -358,10 +318,10 @@ public abstract class Command {
     }
 
     /**
-     * Returns an ArrayList of casted objects matching the types-array or throws exception for invalid types.
+     * Returns an ArrayList of cast objects matching the types-array or throws exception for invalid types.
      *
      * @param args the value of the arguments
-     * @return ArrayList of casted objects
+     * @return ArrayList of cast objects
      */
     protected ArrayList<Object> tryCastInputToArgumentTypes(BedrockChatSender commandSender, String[] args) throws IllegalCommandArgumentException {
 
@@ -445,123 +405,9 @@ public abstract class Command {
         return result;
     }
 
-    public boolean tryCommand(BedrockChatSender commandSender, String[] args) {
-        // check if provided arguments are a valid trigger for the subcommands and arguments
-        // defined in the command
-        if (!this.isValidTrigger(args))
-            return false;
-
-        if (!this.hasPermission(commandSender)) {
-            plugin.messages().insufficientPermission(commandSender);
-            return true;
-        }
-
-        // If the execution fails with an exception, the manager will search for another command to execute!
-        try {
-            this.preExecute(
-                    commandSender,
-                    Arrays.copyOfRange(args, this.getSubcommands().size(), args.length));
-            return true;
-
-        } catch (CommandException e) {
-            plugin.messages().commandExecutionError(commandSender, e);
-            e.printStackTrace();
-            return true;
-
-        } catch (IllegalCommandArgumentException e) {
-            plugin.messages().invalidCommand(commandSender);
-
-            JsonMessage jsonHelp = this.getJsonHelp(commandSender);
-            if (jsonHelp == null) {
-                plugin.messages().insufficientPermission(commandSender);
-            } else {
-                jsonHelp.send(commandSender);
-            }
-            return true;
-
-        } catch (InsufficientPermissionException e) {
-            plugin.messages().insufficientPermission(commandSender);
-            return true;
-        }
-    }
-
     public boolean performPreArgumentCheck() {
         return true;
     }
-
-    protected boolean isMatchingSubCommands(String[] args) {
-        if (args.length < this.getSubcommands().size())
-            return false;
-
-        // return true immediately if no subcommands are defined
-        if (this.getSubcommands().size() == 0) {
-            return true;
-        }
-
-        // iterate arguments
-        for (int i = 0; i < this.getSubcommands().size(); i++) {
-            int finalI = i;
-            boolean subCommandMatched = Arrays.stream(this.getSubcommands().get(i)).anyMatch(s -> args[finalI].equalsIgnoreCase(s));
-            if (!subCommandMatched) return false;
-        }
-        return true;
-    }
-
-    /**
-     * Returns if the subcommand is a valid trigger for the asking command.
-     *
-     * @param args the args
-     * @return true if it is a valid trigger, else false
-     */
-    public boolean isValidTrigger(String[] args) {
-        return this.isMatchingSubCommands(args);
-    }
-
-    /**
-     * Define the priority to change the help order
-     * Smaller = more important.
-     *
-     * @return priority
-     */
-    public Integer getHelpPriority() {
-        return 0;
-    }
-
-    public boolean isValidHelpTrigger(String[] args) {
-
-        for (int i = 0; i < args.length && i < getSubcommands().size(); i++) {
-            for (String cmd : getSubcommands().get(i)) {
-                if (cmd.startsWith(args[i])) {
-                    continue;
-                }
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public JsonMessage getJsonHelp(BedrockChatSender sender) {
-        return plugin.messages().getHelpForSubCommand(sender, this);
-    }
-
-    public String getStringSuggestion() {
-
-        ArrayList<String> suggestString = new ArrayList<>();
-        suggestString.add("/" + getCommandManager().getLabel());
-
-        if (getSubcommands() != null) {
-            for (String[] commands : getSubcommands()) {
-                // sort commands by length
-                Arrays.sort(commands, new LengthComparator());
-
-                // add longest command to suggest string
-                suggestString.add(commands[commands.length - 1]);
-            }
-        }
-
-        return StringUtils.join(suggestString, " ");
-    }
-
 
     private int getRequiredArgumentsSize() {
         int requiredArguments = 0;
@@ -572,67 +418,6 @@ public abstract class Command {
         }
 
         return requiredArguments;
-    }
-
-    public ArrayList<BedrockJson> getColoredSuggestion(@SuppressWarnings("SameParameterValue") Boolean argPlaceholderEnabled) {
-        ArrayList<BedrockJson> result = new ArrayList<>();
-        String commandHeadline = "/" + getCommandManager().getLabel();
-        result.add(BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY));
-        result.add(BedrockJson.Space());
-
-        if (getSubcommands() != null) {
-            for (String[] commands : getSubcommands()) {
-                // sort commands by length
-                Arrays.sort(commands, new LengthComparator());
-
-                String subCmd = commands[commands.length - 1];
-                BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
-
-                result.add(subCommand);
-                result.add(BedrockJson.Space());
-            }
-        }
-
-        if (argPlaceholderEnabled) {
-            // process all Arguments
-            for (de.cubenation.bedrock.core.command.argument.Argument argument : getArguments()) {
-
-
-                /*
-                 * KeyValueArgument
-                 *
-                 * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
-                 * key-value command) we need to prepend the key
-                 */
-                if (argument instanceof Option option) {
-                    result.add(BedrockJson.JsonWithText(option.getKey()).color(JsonColor.SECONDARY));
-                    result.add(BedrockJson.Space());
-                }
-
-                /*
-                 * Argument placeholder
-                 */
-
-                if (!(argument instanceof Option) || ((Option) argument).hasParameter()) {
-                    BedrockJson runtimePlaceholder = BedrockJson.JsonWithText(argument.getRuntimePlaceholder())
-                            .color(JsonColor.GRAY)
-                            .italic(argument.isOptional());
-
-                    result.add(runtimePlaceholder);
-                    result.add(BedrockJson.Space());
-                }
-            }
-        }
-
-        return result;
-    }
-
-    public boolean displayInHelp() {
-        return true;
-    }
-
-    public boolean displayInCompletion() {
-        return true;
     }
 
     /**
@@ -669,11 +454,6 @@ public abstract class Command {
      */
     public List<String> getAutoCompletion(String[] args, BedrockChatSender sender) {
 
-        // not a valid command yet? autocomplete only subcommands.
-        if (!isValidTrigger(args)) {
-            return getAutoCompletionFromCommands(args);
-        }
-
         ArrayList<String> autoCompletion = new ArrayList<>();
 
         // starts with '-'? autocomplete option keys itself
@@ -688,46 +468,6 @@ public abstract class Command {
         }
 
         return autoCompletion;
-    }
-
-    private List<String> getAutoCompletionFromCommands(String[] args) {
-        if (this.subcommands.size() < args.length) {
-            return null;
-        }
-
-        for (int i = 0; i < args.length; i++) {
-
-            boolean validCommand = false;
-            for (String com : this.subcommands.get(i)) {
-                // Last Argument can start with
-                // Other MUST be equal
-                if (i < args.length - 1) {
-                    if (com.equalsIgnoreCase(args[i])) {
-                        validCommand = true;
-                    }
-                } else {
-                    if (com.startsWith(args[i])) {
-                        validCommand = true;
-                    }
-                }
-
-            }
-            if (!validCommand) {
-                return null;
-            }
-        }
-
-        final ArrayList<String> autoCompletion = new ArrayList<>(Arrays.asList(this.subcommands.get(args.length - 1)));
-        autoCompletion.sort(String::compareToIgnoreCase);
-
-        // prioritize largest (because of abbreviations)
-        Collections.reverse(autoCompletion);
-
-        // if the user typed a part of the command, return the matching
-        String currentArg = args[args.length - 1];
-        return autoCompletion.stream()
-                .filter(s -> s.toLowerCase().startsWith(currentArg.toLowerCase()))
-                .collect(Collectors.toList());
     }
 
     private List<String> getAutoCompletionFromOptions(String[] args) {
@@ -763,8 +503,7 @@ public abstract class Command {
     }
 
     private List<String> getAutoCompletionFromArguments(BedrockChatSender sender, String[] args) {
-        String[] realArgs = Arrays.copyOfRange(args, this.getSubcommands().size(), args.length);
-        realArgs = this.filterOutOptions(realArgs);
+        String[] realArgs = this.filterOutOptions(args);
 
         int argIndex = realArgs.length - 1;
         if (argIndex < 0 || argIndex >= this.genericArguments.size()) {

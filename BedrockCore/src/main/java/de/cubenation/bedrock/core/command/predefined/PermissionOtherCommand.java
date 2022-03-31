@@ -26,10 +26,9 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -41,11 +40,10 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 @Description("command.bedrock.permissions.desc")
 @Permission(Name = "permissions.other", Role = Role.MODERATOR)
 @Permission(Name = "permissions.self", Role = Role.USER)
-@SubCommand({"permissions", "perms"})
 public class PermissionOtherCommand extends Command {
 
-    public PermissionOtherCommand(FoundationPlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public PermissionOtherCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
+        super(plugin, label, previousNode);
     }
 
     public void execute(

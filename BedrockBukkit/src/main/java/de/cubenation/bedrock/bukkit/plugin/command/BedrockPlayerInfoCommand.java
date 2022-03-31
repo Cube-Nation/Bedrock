@@ -27,10 +27,9 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
@@ -41,13 +40,13 @@ import org.bukkit.command.ConsoleCommandSender;
  * @author Cube-Nation
  * @version 1.0
  */
+
 @Description("command.bedrock.playerinfo.desc")
 @Permission(Name = "info.other", Role = Role.ADMIN)
-@SubCommand({ "info", "i" })
 public class BedrockPlayerInfoCommand extends Command {
 
-    public BedrockPlayerInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public BedrockPlayerInfoCommand(FoundationPlugin plugin, CommandTreeNestedNode nestedNode) {
+        super(plugin, nestedNode);
     }
 
     public void execute(

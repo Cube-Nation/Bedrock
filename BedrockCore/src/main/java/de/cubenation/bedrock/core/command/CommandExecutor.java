@@ -22,14 +22,17 @@
 
 package de.cubenation.bedrock.core.command;
 
+import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
+import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public interface CommandExecutor {
 
-    boolean onCommand(BedrockChatSender sender, String[] args);
+    boolean onCommand(BedrockChatSender sender, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException;
 
 }

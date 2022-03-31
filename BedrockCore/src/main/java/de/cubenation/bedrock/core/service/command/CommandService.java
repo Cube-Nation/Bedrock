@@ -23,22 +23,58 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
+import de.cubenation.bedrock.core.command.tree.AbstractCommandTreeNestedNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNodeWithHelp;
 import de.cubenation.bedrock.core.command.predefined.*;
+import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.service.settings.SettingsService;
+import lombok.ToString;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
+@ToString
 public abstract class CommandService extends AbstractService {
+
+    protected AbstractCommandTreeNestedNode pluginCommandManager;
+    protected final HashMap<String, CommandTreeNode> commandHandlers = new HashMap<>();
 
     public CommandService(FoundationPlugin plugin) {
         super(plugin);
+    }
+
+    @Override
+    public void init() throws ServiceInitException {
+        // Get all commands and their handles from CommandHandler annotations
+        // TODO: Create commands from config
+
+        // Try to get the plugin-command handler or create a new one
+        String pluginCommandLabel = getPlugin().getPluginDescription().getName().toLowerCase();
+        pluginCommandManager = (AbstractCommandTreeNestedNode) commandHandlers.getOrDefault(
+                pluginCommandLabel,
+                new CommandTreeNestedNodeWithHelp(plugin, null)
+                );
+        registerCommand(pluginCommandManager, pluginCommandLabel);
+
+        // Add default commands that all plugins are capable of
+        registerPredefinedCommands();
+
+        // Add platform exclusive commands
+        registerPlatformSpecificCommands();
+
+        SettingsService settingService = plugin.getSettingService();
+        if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
+            CommandTreeNestedNode settingsManager = new CommandTreeNestedNode(plugin, pluginCommandManager);
+            settingsManager.addCommandHandler(new SettingsInfoCommand(plugin, settingsManager), "info", "i");
+            pluginCommandManager.addCommandHandler(settingsManager, "settings");
+        }
     }
 
     @Override
@@ -46,18 +82,18 @@ public abstract class CommandService extends AbstractService {
         // No reloading of commands supported
     }
 
-
-    protected ArrayList<Command> getPredefinedCommands(ComplexCommandManager pluginCommandManager) {
-        ArrayList<Command> predefinedCommands = new ArrayList<>();
-        predefinedCommands.add(new ReloadCommand(getPlugin(), pluginCommandManager));
-        predefinedCommands.add(new VersionCommand(getPlugin(), pluginCommandManager));
-        predefinedCommands.add(new PermissionListCommand(getPlugin(), pluginCommandManager));
-        predefinedCommands.add(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
-        predefinedCommands.add(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
-        return predefinedCommands;
+    private void registerPredefinedCommands() {
+        pluginCommandManager.addCommandHandler(new ReloadCommand(plugin, pluginCommandManager), "reload", "r");
+        pluginCommandManager.addCommandHandler(new VersionCommand(plugin, pluginCommandManager), "version", "v");
+        pluginCommandManager.addCommandHandler(new PermissionListCommand(plugin, pluginCommandManager), "pl", "permslist", "permissionslist");
+        CommandTreeNestedNode regenerateManager = new CommandTreeNestedNode(plugin, pluginCommandManager);
+        regenerateManager.addCommandHandler(new RegenerateLocaleCommand(plugin, regenerateManager), "locale");
+        pluginCommandManager.addCommandHandler(regenerateManager, "regenerate", "regen");
+        pluginCommandManager.addCommandHandler(new PermissionOtherCommand(plugin, pluginCommandManager), "permissions", "perms");
     }
 
-    public abstract ArrayList<CommandManager> getCommandManagers();
+    protected abstract void registerCommand(CommandTreeNode command, String label) throws ServiceInitException;
 
+    protected abstract void registerPlatformSpecificCommands();
 }
 

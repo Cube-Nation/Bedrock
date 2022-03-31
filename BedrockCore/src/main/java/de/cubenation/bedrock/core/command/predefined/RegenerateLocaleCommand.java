@@ -25,10 +25,9 @@ package de.cubenation.bedrock.core.command.predefined;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -38,16 +37,14 @@ import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Description("command.bedrock.regeneratelocale.desc")
 @Permission(Name = "regeneratelocale", Role = Role.ADMIN)
-@SubCommand({"regenerate"})
-@SubCommand({"locale"})
 public class RegenerateLocaleCommand extends Command {
 
-    public RegenerateLocaleCommand(FoundationPlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public RegenerateLocaleCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
+        super(plugin, label, previousNode);
     }
 
     public void execute(BedrockChatSender sender) {

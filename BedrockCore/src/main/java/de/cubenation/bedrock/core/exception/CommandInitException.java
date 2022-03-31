@@ -32,4 +32,7 @@ public class CommandInitException extends Exception {
         super(message);
     }
 
+    public CommandInitException(Exception exception) {
+        super(exception);
+    }
 }
