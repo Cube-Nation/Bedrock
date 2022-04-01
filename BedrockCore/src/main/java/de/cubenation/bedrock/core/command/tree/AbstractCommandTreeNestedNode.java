@@ -1,27 +1,29 @@
 package de.cubenation.bedrock.core.command.tree;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.annotation.CommandHandler;
-import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 public abstract class AbstractCommandTreeNestedNode extends CommandTreeNode {
 
     protected HashMap<String, CommandTreeNode> subCommands = new HashMap<>();
 
-    public AbstractCommandTreeNestedNode(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public AbstractCommandTreeNestedNode(FoundationPlugin plugin, CommandTreeNode previousNode) {
+        super(plugin, previousNode);
     }
 
     @Override
-    public boolean onCommand(BedrockChatSender commandSender, String[] args) {
+    public boolean onCommand(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) {
 
-        if (trySubCommands(commandSender, args)) {
+        if (trySubCommands(commandSender, treePath, args)) {
             return true;
         }
 
@@ -37,32 +39,47 @@ public abstract class AbstractCommandTreeNestedNode extends CommandTreeNode {
         return true;
     }
 
-    abstract boolean trySubCommands(BedrockChatSender commandSender, String[] remainingArgs);
+    abstract boolean trySubCommands(BedrockChatSender commandSender, CommandTreePath treePath, String[] remainingArgs);
 
-    public void addCommandHandler(Class<? extends CommandTreeNode> node, String... label) throws CommandInitException {
+    @Override
+    public List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath) {
+        ArrayList<JsonMessage> paths = new ArrayList<>();
+        for (Map.Entry<String, CommandTreeNode> subCommand : subCommands.entrySet()) {
+            CommandTreePath subPath = treePath.clone();
+            subPath.appendCall(subCommand.getKey());
+            paths.addAll(subCommand.getValue().getJsonHelp(sender, subPath));
+        }
+        return paths;
+    }
 
-        CommandTreeNode node createNode(node, label.length == 0 ? "" , this)
+    public <T extends CommandTreeNode> T addCommandHandler(Class<T> nodeClass, String... label) {
+
+        T node = createNode(nodeClass, this);
 
         if (label.length == 0) {
-            this.subCommands.put("", createNode(node, "", this));
-            return;
+            this.subCommands.put("", node);
+            return node;
         }
 
         for (String l : label) {
-            this.subCommands.put(l, createNode(node, l, this));
+            this.subCommands.put(l, node);
         }
+
+        return node;
     }
 
-    public void addCommandHandler(CommandTreeNode node, String label) {
-        this.subCommands.put(label, node);
+    public String[] getSubCommands() {
+        return subCommands.keySet().toArray(String[]::new);
     }
 
-    private CommandTreeNode createNode(Class<? extends CommandTreeNode> node, String label, CommandTreeNode previousNode) throws CommandInitException {
+    private <T extends CommandTreeNode> T createNode(Class<T> nodeClass, CommandTreeNode previousNode) {
         try {
-            Constructor<? extends CommandTreeNode> constructor = node.getConstructor(FoundationPlugin.class, String.class, CommandTreeNode.class);
-            return constructor.newInstance(plugin, label, previousNode);
+            Constructor<T> constructor = nodeClass.getConstructor(FoundationPlugin.class, CommandTreeNode.class);
+            return constructor.newInstance(plugin, previousNode);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            throw new CommandInitException(e);
+            plugin.log(Level.SEVERE, "Initialization of command '"+nodeClass.getName()+"' failed. This shouldn't happen...");
+            e.printStackTrace();
+            return null;
         }
     }
 }

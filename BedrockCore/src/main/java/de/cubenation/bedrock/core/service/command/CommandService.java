@@ -71,9 +71,8 @@ public abstract class CommandService extends AbstractService {
 
         SettingsService settingService = plugin.getSettingService();
         if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
-            CommandTreeNestedNode settingsManager = new CommandTreeNestedNode(plugin, pluginCommandManager);
-            settingsManager.addCommandHandler(new SettingsInfoCommand(plugin, settingsManager), "info", "i");
-            pluginCommandManager.addCommandHandler(settingsManager, "settings");
+            CommandTreeNestedNode settingsManager = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "settings");
+            settingsManager.addCommandHandler(SettingsInfoCommand.class, "info", "i");
         }
     }
 
@@ -83,13 +82,12 @@ public abstract class CommandService extends AbstractService {
     }
 
     private void registerPredefinedCommands() {
-        pluginCommandManager.addCommandHandler(new ReloadCommand(plugin, pluginCommandManager), "reload", "r");
-        pluginCommandManager.addCommandHandler(new VersionCommand(plugin, pluginCommandManager), "version", "v");
-        pluginCommandManager.addCommandHandler(new PermissionListCommand(plugin, pluginCommandManager), "pl", "permslist", "permissionslist");
-        CommandTreeNestedNode regenerateManager = new CommandTreeNestedNode(plugin, pluginCommandManager);
-        regenerateManager.addCommandHandler(new RegenerateLocaleCommand(plugin, regenerateManager), "locale");
-        pluginCommandManager.addCommandHandler(regenerateManager, "regenerate", "regen");
-        pluginCommandManager.addCommandHandler(new PermissionOtherCommand(plugin, pluginCommandManager), "permissions", "perms");
+        pluginCommandManager.addCommandHandler(ReloadCommand.class, "reload", "r");
+        pluginCommandManager.addCommandHandler(VersionCommand.class, "version", "v");
+        pluginCommandManager.addCommandHandler(PermissionListCommand.class, "permissionslist", "permslist", "pl");
+        CommandTreeNestedNode regenerateManager = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "regenerate", "regen");
+        regenerateManager.addCommandHandler(RegenerateLocaleCommand.class, "locale");
+        pluginCommandManager.addCommandHandler(PermissionOtherCommand.class, "permissions", "perms");
     }
 
     protected abstract void registerCommand(CommandTreeNode command, String label) throws ServiceInitException;

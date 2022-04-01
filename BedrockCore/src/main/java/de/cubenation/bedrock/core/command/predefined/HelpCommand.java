@@ -26,8 +26,10 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandPath;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNodeWithHelp;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreePath;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
@@ -44,8 +46,8 @@ import java.util.*;
 @Description("command.bedrock.help.desc")
 public class HelpCommand extends Command {
 
-    public HelpCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public HelpCommand(FoundationPlugin plugin, CommandTreePath treePath, CommandTreeNode previousNode) {
+        super(plugin, previousNode);
     }
 
     public void execute(
@@ -54,98 +56,99 @@ public class HelpCommand extends Command {
             String[] args
     ) {
 
-        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
-            // Display help for all commands
-
-            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
-            printHelp(sender, args, commandComponents);
-
-        } else {
-            // Send help for special command
-            ArrayList<CommandPath> helpList = new ArrayList<>();
-            for (CommandPath commandPath : getHelpCommands()) {
-                if (!(commandPath.getCommand() instanceof HelpCommand) && commandPath.isValidHelpTrigger(args)) {
-                    helpList.add(commandPath);
-                }
-            }
-
-            ArrayList<JsonMessage> jsonList;
-            if (helpList.isEmpty()) {
-                // If no command is valid, show help for all
-                jsonList = getFullHelpList(sender);
-            } else {
-                jsonList = getHelpJsonMessages(sender, helpList);
-            }
-
-            printHelp(sender, args, jsonList);
-        }
+//        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
+//            // Display help for all commands
+//
+//            ArrayList<JsonMessage> commandComponents = getFullHelpList(sender);
+//            printHelp(sender, args, commandComponents);
+//
+//        } else {
+//            // Send help for special command
+//            ArrayList<CommandPath> helpList = new ArrayList<>();
+//
+//            for (CommandPath commandPath : getHelpCommands()) {
+//                if (!(commandPath.getCommand() instanceof HelpCommand) && commandPath.isValidHelpTrigger(args)) {
+//                    helpList.add(commandPath);
+//                }
+//            }
+//
+//            ArrayList<JsonMessage> jsonList;
+//            if (helpList.isEmpty()) {
+//                // If no command is valid, show help for all
+//                jsonList = getFullHelpList(sender);
+//            } else {
+//                jsonList = getHelpJsonMessages(sender, helpList);
+//            }
+//
+//            printHelp(sender, args, jsonList);
+//        }
     }
 
-    public List<CommandPath> getHelpCommands() {
-        ArrayList<CommandPath> helpCommands = new ArrayList<>();
-        for (CommandPath commandPath : this.commandManager.getCommandPaths()) {
-            if (commandPath.displayInHelp()) {
-                helpCommands.add(commandPath);
-            }
-        }
-
-        // Sorting
-        helpCommands.sort(Comparator.comparing(CommandPath::getHelpPriority));
-
-        return helpCommands;
-    }
-
-    private ArrayList<JsonMessage> getFullHelpList(BedrockChatSender sender) {
-        // create help for each subcommand
-        ArrayList<CommandPath> commands = new ArrayList<>() {{
-            addAll(getHelpCommands());
-        }};
-
-        return getHelpJsonMessages(sender, commands);
-    }
-
-    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, ArrayList<CommandPath> helpList) {
-        ArrayList<JsonMessage> jsonList = new ArrayList<>();
-
-        for (CommandPath commandPath : helpList) {
-            JsonMessage jsonHelp = commandPath.getJsonHelp(sender);
-            if (jsonHelp != null) {
-                jsonList.add(jsonHelp);
-            }
-        }
-        return jsonList;
-    }
-
-    public void printHelp(BedrockChatSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
-        HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
-
-        // Preparation for Pagination
-        for (JsonMessage commandComponent : commandComponents) {
-            PageableListStorable<?> msgStoreable = new PageableListStorable<>();
-            msgStoreable.set(commandComponent);
-            helpPageableListService.store(msgStoreable);
-        }
-
-        String managerLabel = getHeader(getPreviousNode().getLabel());
-
-        int number = 1;
-        if (args.length > 0 && StringUtils.isNumeric(args[0])) {
-            int n = Integer.parseInt(args[0]);
-            if(n > 0 && n <= helpPageableListService.getPages())
-                number = n;
-        }
-        helpPageableListService.paginate(sender, "/" + managerLabel + " help %page%", managerLabel, number);
-    }
-
-    private String getHeader(String label) {
-        String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
-
-        return new Translation(
-                plugin,
-                "help.header",
-                new String[]{"plugin", commandHeaderName}
-        ).getTranslation();
-    }
+//    public List<Command> getHelpCommands() {
+//        ArrayList<CommandPath> helpCommands = new ArrayList<>();
+//        for (CommandTreeNode node : ((CommandTreeNestedNodeWithHelp) getPreviousNode()).getSubCommands()) {
+//            if (commandPath.displayInHelp()) {
+//                helpCommands.add(commandPath);
+//            }
+//        }
+//
+//        // Sorting
+//        helpCommands.sort(Comparator.comparing(CommandPath::getHelpPriority));
+//
+//        return helpCommands;
+//    }
+//
+//    private ArrayList<JsonMessage> getFullHelpList(BedrockChatSender sender) {
+//        // create help for each subcommand
+//        ArrayList<CommandPath> commands = new ArrayList<>() {{
+//            addAll(getHelpCommands());
+//        }};
+//
+//        return getHelpJsonMessages(sender, commands);
+//    }
+//
+//    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, ArrayList<CommandPath> helpList) {
+//        ArrayList<JsonMessage> jsonList = new ArrayList<>();
+//
+//        for (CommandPath commandPath : helpList) {
+//            JsonMessage jsonHelp = commandPath.getJsonHelp(sender);
+//            if (jsonHelp != null) {
+//                jsonList.add(jsonHelp);
+//            }
+//        }
+//        return jsonList;
+//    }
+//
+//    public void printHelp(BedrockChatSender sender, String[] args, ArrayList<JsonMessage> commandComponents) {
+//        HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
+//
+//        // Preparation for Pagination
+//        for (JsonMessage commandComponent : commandComponents) {
+//            PageableListStorable<?> msgStoreable = new PageableListStorable<>();
+//            msgStoreable.set(commandComponent);
+//            helpPageableListService.store(msgStoreable);
+//        }
+//
+//        String managerLabel = treePath
+//
+//        int number = 1;
+//        if (args.length > 0 && StringUtils.isNumeric(args[0])) {
+//            int n = Integer.parseInt(args[0]);
+//            if(n > 0 && n <= helpPageableListService.getPages())
+//                number = n;
+//        }
+//        helpPageableListService.paginate(sender, "/" + managerLabel + " help %page%", getHeader(managerLabel), number);
+//    }
+//
+//    private String getHeader(String label) {
+//        String commandHeaderName = Character.toUpperCase(label.charAt(0)) + label.substring(1);
+//
+//        return new Translation(
+//                plugin,
+//                "help.header",
+//                new String[]{"plugin", commandHeaderName}
+//        ).getTranslation();
+//    }
 
 //    @Override
 //    public List<String> getAutoCompletion(String[] args, BedrockChatSender sender) {
