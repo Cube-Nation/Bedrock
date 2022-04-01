@@ -245,17 +245,11 @@ public abstract class Messages {
      * Get a TextComponent with the help for a SubCommand
      *
      * @param sender  the command sender
-     * @param command a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
-    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, Command command) {
+    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, String[] callStack, Command command) {
 
-        // check for permission
-        if (!command.hasPermission(sender)) {
-            return null;
-        }
-
-        String commandHeadline = "/" + command.getCommandManager().getLabel();
+        String commandHeadline = "/" + callStack[0];
 
         BedrockJson helpJson = BedrockJson.JsonWithText("");
         BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.GRAY);
@@ -267,39 +261,35 @@ public abstract class Messages {
         helpJson.addExtra(commandHead);
         helpJson.addExtra(BedrockJson.Space());
 
-        if (command.getSubcommands() != null) {
-            for (String[] commands : command.getSubcommands()) {
-                // sort commands by length
-                Arrays.sort(commands, new LengthComparator());
+        String[] subcommands = Arrays.copyOfRange(callStack, 1, callStack.length);
+        for (String subCmd : subcommands) {
+            BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
 
-                String subCmd = commands[commands.length - 1];
-                BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
+            // Add hover with alias
+            // TODO: subcommand alias
+//            if (commands.length > 1) {
+//                BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd)
+//                        .color(JsonColor.SECONDARY)
+//                        .bold(true);
+//                subCommandHover.addExtra(BedrockJson.NewLine());
+//                String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
+//
+//                subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
+//
+//                for (int i = 0; i < commands.length - 1; i++) {
+//                    subCommandHover.addExtra(BedrockJson.NewLine());
+//                    String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
+//                            "alias", commands[i]
+//                    }).getTranslation();
+//
+//                    subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
+//                }
+//
+//                subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
+//            }
 
-                // Add hover with alias
-                if (commands.length > 1) {
-                    BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd)
-                            .color(JsonColor.SECONDARY)
-                            .bold(true);
-                    subCommandHover.addExtra(BedrockJson.NewLine());
-                    String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
-
-                    subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
-
-                    for (int i = 0; i < commands.length - 1; i++) {
-                        subCommandHover.addExtra(BedrockJson.NewLine());
-                        String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
-                                "alias", commands[i]
-                        }).getTranslation();
-
-                        subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
-                    }
-
-                    subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
-                }
-
-                helpJson.addExtra(subCommand);
-                helpJson.addExtra(BedrockJson.Space());
-            }
+            helpJson.addExtra(subCommand);
+            helpJson.addExtra(BedrockJson.Space());
         }
 
         /*
@@ -327,8 +317,8 @@ public abstract class Messages {
 
         cmdDesc.addExtra(BedrockJson.Space());
 
-        Boolean hasOptional = false;
-        Boolean hasRequired = false;
+        boolean hasOptional = false;
+        boolean hasRequired = false;
 
         // process all Arguments
         for (Argument argument : command.getArguments()) {
@@ -441,20 +431,20 @@ public abstract class Messages {
             }
         }
 
-        ArrayList<BedrockJson> extras = cmdDesc.getExtras();
-        ArrayList<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
-        for (int i = coloredSuggestion.size() - 1; i >= 0; i--) {
-            BedrockJson json = coloredSuggestion.get(i);
-            extras.add(0, json);
-        }
-        cmdDesc.extra(extras);
-
-
-        questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
-        questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
-        commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
-
-        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, command.getStringSuggestion());
+//        ArrayList<BedrockJson> extras = cmdDesc.getExtras();
+//        ArrayList<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
+//        for (int i = coloredSuggestion.size() - 1; i >= 0; i--) {
+//            BedrockJson json = coloredSuggestion.get(i);
+//            extras.add(0, json);
+//        }
+//        cmdDesc.extra(extras);
+//
+//
+//        questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+//        questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+//        commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+//
+//        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, command.getStringSuggestion());
 
         return new JsonMessage(plugin, helpJson);
     }

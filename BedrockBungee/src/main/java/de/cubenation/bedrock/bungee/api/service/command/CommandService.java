@@ -47,7 +47,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
     protected void registerCommand(CommandTreeNode command, String label) throws ServiceInitException {
         try {
             CommandTreeRoot root = new CommandTreeRoot(plugin, command);
-            BungeeCommand bungeeCommand = new BungeeCommand(root, label);
+            BungeeCommand bungeeCommand = new BungeeCommand(plugin, root, label);
             getPlugin().getProxy().getPluginManager().registerCommand(getPlugin(), bungeeCommand);
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,9 +62,8 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
 
     @Override
     protected void registerPlatformSpecificCommands() {
-        CommandTreeNestedNode nestedNode = new CommandTreeNestedNode(plugin, pluginCommandManager);
-        nestedNode.addCommandHandler(new CommandListCommand(plugin, nestedNode), "list", "l");
-        pluginCommandManager.addCommandHandler(nestedNode, "command", "cmd");
+        CommandTreeNestedNode nestedNode = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "command", "cmd");
+        nestedNode.addCommandHandler(CommandListCommand.class, "list", "l");
     }
 }
 

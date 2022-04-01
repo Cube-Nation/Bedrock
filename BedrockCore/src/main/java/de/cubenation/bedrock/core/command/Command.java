@@ -9,12 +9,14 @@ import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.Option;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
+import de.cubenation.bedrock.core.command.tree.CommandTreePath;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.helper.CollectionUtil;
+import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import lombok.Getter;
@@ -51,6 +53,8 @@ public abstract class Command extends CommandTreeNode {
     @Getter
     private boolean isIngameCommandOnly = false;
 
+    private boolean usesCommandTreeContext;
+
     private Method executeMethod;
 
     /**
@@ -59,8 +63,8 @@ public abstract class Command extends CommandTreeNode {
      * Reads all annotations from #execute() and enables features
      * TBD
      */
-    public Command(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public Command(FoundationPlugin plugin, CommandTreeNode previousNode) {
+        super(plugin, previousNode);
 
         // read annotations from execute methods
         try {
@@ -69,6 +73,18 @@ public abstract class Command extends CommandTreeNode {
         } catch (CommandInitException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath) {
+
+        if (!hasPermission(sender)) {
+            return null; // hide command from help
+        }
+
+        // TODO: add arguments to CommandTreePath
+        JsonMessage line = plugin.messages().getHelpForSubCommand(sender, treePath.getCallStack(), this);
+        return Collections.singletonList(line);
     }
 
     /*
@@ -120,6 +136,7 @@ public abstract class Command extends CommandTreeNode {
         if (executeParameters.length == 0 || !executeParameters[0].getType().equals(BedrockChatSender.class)) {
             throw new CommandInitException("Execute method needs to start with BedrockChatSender parameter. Please contact plugin author.");
         }
+        usesCommandTreeContext = (executeParameters.length > 1 && executeParameters[1].getType().equals(CommandTreePath.class));
 
         // remove BedrockChatSender from parameters
         executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
@@ -276,12 +293,12 @@ public abstract class Command extends CommandTreeNode {
      */
 
     @Override
-    public boolean onCommand(BedrockChatSender commandSender, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
-        this.preExecute(commandSender, args);
+    public boolean onCommand(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
+        this.preExecute(commandSender, treePath, args);
         return true;
     }
 
-    public void preExecute(BedrockChatSender commandSender, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void preExecute(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         if (!this.hasPermission(commandSender)) {
             plugin.messages().insufficientPermission(commandSender);
             throw new InsufficientPermissionException();
@@ -306,6 +323,9 @@ public abstract class Command extends CommandTreeNode {
             return;
         }
         executeParameterValues.add(0, commandSender);
+        if (usesCommandTreeContext) {
+            executeParameterValues.add(1, treePath);
+        }
 
         try {
             Object[] params = executeParameterValues.toArray();

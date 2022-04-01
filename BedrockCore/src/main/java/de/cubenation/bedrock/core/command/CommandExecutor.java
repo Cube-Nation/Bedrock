@@ -22,6 +22,7 @@
 
 package de.cubenation.bedrock.core.command;
 
+import de.cubenation.bedrock.core.command.tree.CommandTreePath;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
@@ -33,6 +34,6 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
  */
 public interface CommandExecutor {
 
-    boolean onCommand(BedrockChatSender sender, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException;
+    boolean onCommand(BedrockChatSender sender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException;
 
 }
