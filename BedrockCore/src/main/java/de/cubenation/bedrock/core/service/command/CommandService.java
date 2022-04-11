@@ -71,6 +71,9 @@ public abstract class CommandService extends AbstractService {
         pluginCommandManager = new CommandTreeNestedNode(plugin);
         registerCommand(pluginCommandManager, pluginCommandLabel);
 
+        // Add help command
+        pluginCommandManager.addHelpCommand();
+
         // Add default commands that all plugins are capable of
         registerPredefinedPluginCommands();
 
@@ -82,9 +85,6 @@ public abstract class CommandService extends AbstractService {
 
         // Add platform exclusive commands
         registerPlatformSpecificPluginCommands();
-
-        // Add help command
-        pluginCommandManager.addHelpCommand();
 
         // Register custom commands from CommandConfig
         processCommandConfig();
