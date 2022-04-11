@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class CommandTreeNestedNode extends CommandTreeNode {
 
-    protected HashMap<String, CommandTreePathItem> subCommands = new HashMap<>();
+    protected LinkedHashMap<String, CommandTreePathItem> subCommands = new LinkedHashMap<>();
 
     private HelpCommand helpCommand;
 
@@ -72,17 +72,6 @@ public class CommandTreeNestedNode extends CommandTreeNode {
         return pathItem.getNode().onCommand(commandSender, treePath, remainingArgs);
     }
 
-    @Override
-    public List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath) {
-        ArrayList<JsonMessage> paths = new ArrayList<>();
-        for (Map.Entry<String, CommandTreePathItem> subCommand : subCommands.entrySet()) {
-            CommandTreePath subPath = treePath.clone();
-            subPath.append(subCommand.getValue());
-            paths.addAll(subCommand.getValue().getNode().getJsonHelp(sender, subPath));
-        }
-        return paths;
-    }
-
     public <T extends CommandTreeNode> T addCommandHandler(Class<T> nodeClass, String... labels) {
 
         T node = createNode(nodeClass);
@@ -124,8 +113,6 @@ public class CommandTreeNestedNode extends CommandTreeNode {
 
     @Override
     public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
-        System.out.println(Arrays.toString(args));
-
         Set<String> allSubcommands = this.subCommands.keySet();
         if (args.length == 0) {
             return allSubcommands;
@@ -141,5 +128,23 @@ public class CommandTreeNestedNode extends CommandTreeNode {
 
         // Filter out any that do not match current input
         return allSubcommands.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath) {
+        ArrayList<JsonMessage> paths = new ArrayList<>();
+        Set<CommandTreeNode> uniqueNodes = new HashSet<>();
+        for (Map.Entry<String, CommandTreePathItem> subCommand : subCommands.entrySet()) {
+            // Skip aliases
+            if (uniqueNodes.contains(subCommand.getValue().getNode())) {
+                continue;
+            }
+            uniqueNodes.add(subCommand.getValue().getNode());
+
+            CommandTreePath subPath = treePath.clone();
+            subPath.append(subCommand.getValue());
+            paths.addAll(subCommand.getValue().getNode().getJsonHelp(sender, subPath));
+        }
+        return paths;
     }
 }
