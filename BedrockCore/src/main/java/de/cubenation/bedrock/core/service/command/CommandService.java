@@ -24,6 +24,7 @@ package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandToken;
+import de.cubenation.bedrock.core.annotation.HelpMenu;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
@@ -126,11 +127,48 @@ public abstract class CommandService extends AbstractService {
             return;
         }
 
-        registerCommandNodes(clazz);
+        registerNestedNode(null, clazz);
     }
 
-    public void registerCommandNodes(Class<?> target) throws ServiceInitException {
-        Field[] fields = target.getDeclaredFields();
+    public void registerNestedNode(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException {
+        // Register commands
+        registerCommandNodes(parent, clazz);
+
+        // Register sub-nested-nodes
+        for (Class<?> subClass : clazz.getClasses()) {
+            // Get all labels
+            CommandToken[] commandTokens = subClass.getAnnotationsByType(CommandToken.class);
+            List<String> labels = new ArrayList<>();
+            // ToDo: fix multi level tokens
+            Arrays.stream(commandTokens).forEach(t -> labels.addAll(Arrays.stream(t.value()).toList()));
+            if (labels.isEmpty()) {
+                plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command label.", clazz.getName()));
+                return;
+            }
+
+            // Create NestedNode
+            CommandTreeNestedNode nestedNode;
+            if (parent != null) {
+                nestedNode = parent.addCommandHandler(CommandTreeNestedNode.class, labels.toArray(String[]::new));
+            } else {
+                nestedNode = new CommandTreeNestedNode(plugin);
+                for (String label : labels) {
+                    registerCommand(nestedNode, label);
+                }
+            }
+
+            HelpMenu helpMenu = subClass.getAnnotation(HelpMenu.class);
+            if (helpMenu != null) {
+                nestedNode.addHelpCommand();
+            }
+
+            // Pass on
+            registerNestedNode(nestedNode, subClass);
+        }
+    }
+
+    public void registerCommandNodes(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException {
+        Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             // Only accept field of type Class
             if (!field.getType().equals(Class.class)) {
@@ -154,6 +192,7 @@ public abstract class CommandService extends AbstractService {
             // Get all labels
             CommandToken[] commandTokens = field.getAnnotationsByType(CommandToken.class);
             List<String> labels = new ArrayList<>();
+            // ToDo: fix multi level tokens
             Arrays.stream(commandTokens).forEach(t -> labels.addAll(Arrays.stream(t.value()).toList()));
             if (labels.isEmpty()) {
                 plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command label.", field.getName()));
@@ -161,6 +200,10 @@ public abstract class CommandService extends AbstractService {
             }
 
             // Register commands for labels
+            if (parent != null) {
+                parent.addCommandHandler((Class<? extends CommandTreeNode>) value, labels.toArray(String[]::new));
+                return;
+            }
             registerCommand((Class<? extends CommandTreeNode>) value, labels.toArray(String[]::new));
         }
     }
