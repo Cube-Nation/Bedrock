@@ -43,8 +43,8 @@ import java.util.logging.Level;
 @Permission(Name = "regeneratelocale", Role = Role.ADMIN)
 public class RegenerateLocaleCommand extends Command {
 
-    public RegenerateLocaleCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public RegenerateLocaleCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {

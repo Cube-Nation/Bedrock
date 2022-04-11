@@ -42,8 +42,8 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 @Permission(Name = "permissions.self", Role = Role.USER)
 public class PermissionOtherCommand extends Command {
 
-    public PermissionOtherCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public PermissionOtherCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(

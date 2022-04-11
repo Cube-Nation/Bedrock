@@ -63,8 +63,8 @@ public abstract class Command extends CommandTreeNode {
      * Reads all annotations from #execute() and enables features
      * TBD
      */
-    public Command(FoundationPlugin plugin, CommandTreeNode previousNode) {
-        super(plugin, previousNode);
+    public Command(FoundationPlugin plugin) {
+        super(plugin);
 
         // read annotations from execute methods
         try {
@@ -83,7 +83,7 @@ public abstract class Command extends CommandTreeNode {
         }
 
         // TODO: add arguments to CommandTreePath
-        JsonMessage line = plugin.messages().getHelpForSubCommand(sender, treePath.getCallStack(), this);
+        JsonMessage line = plugin.messages().getHelpForSubCommand(sender, treePath, this);
         return Collections.singletonList(line);
     }
 
@@ -139,7 +139,7 @@ public abstract class Command extends CommandTreeNode {
         usesCommandTreeContext = (executeParameters.length > 1 && executeParameters[1].getType().equals(CommandTreePath.class));
 
         // remove BedrockChatSender from parameters
-        executeParameters = Arrays.copyOfRange(executeParameters, 1, executeParameters.length);
+        executeParameters = Arrays.copyOfRange(executeParameters, usesCommandTreeContext ? 2 : 1, executeParameters.length);
 
         // create argument objects
         for (Parameter executeParameter : executeParameters) {

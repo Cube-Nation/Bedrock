@@ -47,8 +47,8 @@ import java.util.UUID;
 @Permission(Name = "settings.list", Role = Role.ADMIN)
 public class SettingsInfoCommand extends Command {
 
-    public SettingsInfoCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public SettingsInfoCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(

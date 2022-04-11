@@ -27,12 +27,12 @@ import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.Option;
+import de.cubenation.bedrock.core.command.tree.CommandTreePath;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
-import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
-import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockHoverEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
@@ -247,9 +247,11 @@ public abstract class Messages {
      * @param sender  the command sender
      * @return the TextComponent with the help.
      */
-    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, String[] callStack, Command command) {
+    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, CommandTreePath treePath, Command command) {
 
-        String commandHeadline = "/" + callStack[0];
+        CommandTreePathItem[] callStack = treePath.getAll();;
+
+        String commandHeadline = "/" + callStack[0].getCalledLabel();
 
         BedrockJson helpJson = BedrockJson.JsonWithText("");
         BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.GRAY);
@@ -261,32 +263,31 @@ public abstract class Messages {
         helpJson.addExtra(commandHead);
         helpJson.addExtra(BedrockJson.Space());
 
-        String[] subcommands = Arrays.copyOfRange(callStack, 1, callStack.length);
-        for (String subCmd : subcommands) {
-            BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
+        CommandTreePathItem[] subCommands = Arrays.copyOfRange(callStack, 1, callStack.length);
+        for (CommandTreePathItem subCmd : subCommands) {
+            BedrockJson subCommand = BedrockJson.JsonWithText(subCmd.getCalledLabel()).color(JsonColor.SECONDARY);
 
             // Add hover with alias
-            // TODO: subcommand alias
-//            if (commands.length > 1) {
-//                BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd)
-//                        .color(JsonColor.SECONDARY)
-//                        .bold(true);
-//                subCommandHover.addExtra(BedrockJson.NewLine());
-//                String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
-//
-//                subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
-//
-//                for (int i = 0; i < commands.length - 1; i++) {
-//                    subCommandHover.addExtra(BedrockJson.NewLine());
-//                    String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
-//                            "alias", commands[i]
-//                    }).getTranslation();
-//
-//                    subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
-//                }
-//
-//                subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
-//            }
+            if (subCmd.getAliases().length > 0) {
+                BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd.getCalledLabel())
+                        .color(JsonColor.SECONDARY)
+                        .bold(true);
+                subCommandHover.addExtra(BedrockJson.NewLine());
+                String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
+
+                subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
+
+                for (int i = 0; i < subCmd.getAliases().length; i++) {
+                    subCommandHover.addExtra(BedrockJson.NewLine());
+                    String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
+                            "alias", subCmd.getAliases()[i]
+                    }).getTranslation();
+
+                    subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
+                }
+
+                subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
+            }
 
             helpJson.addExtra(subCommand);
             helpJson.addExtra(BedrockJson.Space());

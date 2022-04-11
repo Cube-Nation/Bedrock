@@ -39,8 +39,8 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 @Permission(Name = "reload", Role = Role.ADMIN)
 public class ReloadCommand extends Command {
 
-    public ReloadCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public ReloadCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {

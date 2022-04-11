@@ -55,48 +55,6 @@ import java.util.logging.Level;
         },
         Handlers = { BedrockPlayerInfoCommand.class }
 )
-@Command(
-        Command = {"bla","bli"},
-        Handlers = {
-                @CommandHandler(
-                        SubCommands = {
-                                @SubCommand({ "sub1", "s1" }),
-                                @SubCommand({ "sub2", "s2" }),
-                                @SubCommand({ "sub3", "s3" })
-                        },
-                        Class = BedrockPlayerInfoCommand.class
-                ),
-                @CommandHandler(
-                        SubCommands = {
-                                @SubCommand({ "sub1", "s1" }),
-                                @SubCommand({ "sub2", "s2" }),
-                                @SubCommand({ "sub3", "s3" })
-                        },
-                        Class = BedrockPlayerInfoCommand.class
-                ),
-                @CommandHandler(
-                        SubCommands = {
-                                @SubCommand({ "sub1", "s1" }),
-                                @SubCommand({ "sub2", "s2" }),
-                                @SubCommand({ "sub3", "s3" })
-                        },
-                        Class = BedrockPlayerInfoCommand.class
-                )
-        }
-)
-@CommandHandler(
-        Command = "woloo",
-        Handlers = {
-                BedrockPlayerInfoCommand.class,
-                BedrockPlayerInfoCommand.class,
-                BedrockPlayerInfoCommand.class
-        }
-)
-@CommandHandler({
-                BedrockPlayerInfoCommand.class,
-                BedrockPlayerInfoCommand.class,
-                BedrockPlayerInfoCommand.class
-})
 
 public class BedrockPlugin extends BasePlugin {
 

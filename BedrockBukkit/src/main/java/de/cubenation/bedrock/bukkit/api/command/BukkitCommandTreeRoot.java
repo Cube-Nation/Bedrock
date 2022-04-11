@@ -4,6 +4,7 @@ import de.cubenation.bedrock.bukkit.wrapper.BukkitChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.command.tree.CommandTreeRoot;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
@@ -19,14 +20,14 @@ import java.util.List;
 
 public class BukkitCommandTreeRoot extends CommandTreeRoot implements CommandExecutor, TabCompleter {
 
-    public BukkitCommandTreeRoot(FoundationPlugin plugin, CommandTreeNode entrypoint) {
-        super(plugin, null);
+    public BukkitCommandTreeRoot(FoundationPlugin plugin, CommandTreePathItem entrypoint) {
+        super(plugin, entrypoint);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         try {
-            return onCommand(BukkitChatSender.wrap(sender), new CommandTreePath(label), args);
+            return onCommand(BukkitChatSender.wrap(sender), new CommandTreePath(entrypoint), args);
         } catch (IllegalCommandArgumentException e) {
             e.printStackTrace();
         } catch (InsufficientPermissionException e) {

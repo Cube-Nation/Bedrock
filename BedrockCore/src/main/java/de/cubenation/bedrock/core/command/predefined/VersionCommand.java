@@ -38,8 +38,8 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 @Permission(Name = "version", Role = Role.MODERATOR)
 public class VersionCommand extends Command {
 
-    public VersionCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public VersionCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {

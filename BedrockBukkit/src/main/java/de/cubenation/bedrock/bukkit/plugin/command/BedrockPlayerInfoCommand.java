@@ -45,8 +45,8 @@ import org.bukkit.command.ConsoleCommandSender;
 @Permission(Name = "info.other", Role = Role.ADMIN)
 public class BedrockPlayerInfoCommand extends Command {
 
-    public BedrockPlayerInfoCommand(FoundationPlugin plugin, CommandTreeNestedNode nestedNode) {
-        super(plugin, nestedNode);
+    public BedrockPlayerInfoCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(
