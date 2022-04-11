@@ -9,9 +9,8 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(ArgumentTypes.class)
-public @interface ArgumentType {
+public @interface ArgumentTypes {
 
-    Class<? extends de.cubenation.bedrock.core.command.argument.type.ArgumentType<?>> value();
+    ArgumentType[] value();
 
 }

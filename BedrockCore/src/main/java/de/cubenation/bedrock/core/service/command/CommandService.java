@@ -23,6 +23,8 @@
 package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.CommandToken;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.predefined.*;
@@ -33,8 +35,14 @@ import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import lombok.Getter;
 import lombok.ToString;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
+import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
@@ -76,6 +84,9 @@ public abstract class CommandService extends AbstractService {
 
         // Add help command
         pluginCommandManager.addHelpCommand();
+
+        // Register custom commands from CommandConfig
+        processCommandConfig();
     }
 
     @Override
@@ -92,8 +103,81 @@ public abstract class CommandService extends AbstractService {
         pluginCommandManager.addCommandHandler(PermissionOtherCommand.class, "permissions", "perms");
     }
 
+    private void registerCommand(Class<? extends CommandTreeNode> clazz, String... label) throws ServiceInitException {
+        try {
+            Constructor<? extends CommandTreeNode> constructor = clazz.getConstructor(FoundationPlugin.class);
+            CommandTreeNode nodeInstance = constructor.newInstance(plugin);
+            registerCommand(nodeInstance, label);
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new ServiceInitException(String.format("Command instance '%s' could not be created.", this.getClass().getName()));
+        }
+    }
+
     protected abstract void registerCommand(CommandTreeNode command, String... label) throws ServiceInitException;
 
     protected abstract void registerPlatformSpecificPluginCommands();
+
+    private void processCommandConfig() throws ServiceInitException {
+        Class<?> clazz;
+        try {
+            clazz = getCommandConfigClass();
+        } catch (InstantiationException e) {
+            plugin.log(Level.WARNING, "No command config found. Using default config.");
+            return;
+        }
+
+        registerCommandNodes(clazz);
+    }
+
+    public void registerCommandNodes(Class<?> target) throws ServiceInitException {
+        Field[] fields = target.getDeclaredFields();
+        for (Field field : fields) {
+            // Only accept field of type Class
+            if (!field.getType().equals(Class.class)) {
+                continue;
+            }
+
+            // Check if Value is instance of Command.class
+            Class<?> value;
+            try {
+                value = (Class<?>) field.get(null);
+            } catch (IllegalAccessException e) {
+                continue;
+            } catch (NullPointerException e) {
+                plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to be static.", field.getName()));
+                continue;
+            }
+            if (!Command.class.isAssignableFrom(value)) {
+                continue;
+            }
+
+            // Get all labels
+            CommandToken[] commandTokens = field.getAnnotationsByType(CommandToken.class);
+            List<String> labels = new ArrayList<>();
+            Arrays.stream(commandTokens).forEach(t -> labels.addAll(Arrays.stream(t.value()).toList()));
+            if (labels.isEmpty()) {
+                plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command label.", field.getName()));
+                continue;
+            }
+
+            // Register commands for labels
+            registerCommand((Class<? extends CommandTreeNode>) value, labels.toArray(String[]::new));
+        }
+    }
+
+    private Class<?> getCommandConfigClass() throws InstantiationException {
+        String class_name = String.format("%s.config.CommandConfig", plugin.getClass().getPackage().getName());
+
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(class_name);
+        } catch (ClassNotFoundException e) {
+            throw new InstantiationException(String.format("Could not find class %s in plugin %s",
+                    class_name,
+                    this.getPlugin().getPluginDescription().getName())
+            );
+        }
+        return clazz;
+    }
 }
 

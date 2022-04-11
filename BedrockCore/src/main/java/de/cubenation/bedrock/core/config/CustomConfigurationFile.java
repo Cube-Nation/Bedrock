@@ -20,19 +20,24 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.annotation;
+package de.cubenation.bedrock.core.config;
 
-import java.lang.annotation.*;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import net.cubespace.Yamler.Config.YamlConfig;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface SubCommand {
+public abstract class CustomConfigurationFile extends YamlConfig {
 
-    String[] value();
+    public CustomConfigurationFile() { }
+
+    @SuppressWarnings("unused")
+    public CustomConfigurationFile(FoundationPlugin plugin, String name) { }
+
+    public CustomConfigurationFile get() {
+        return this;
+    }
 
 }
