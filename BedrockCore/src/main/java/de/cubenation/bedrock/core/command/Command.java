@@ -472,7 +472,8 @@ public abstract class Command extends CommandTreeNode {
      * @param sender the sender of the requested auto-completion.
      * @return the auto-completion for argument
      */
-    public List<String> getAutoCompletion(String[] args, BedrockChatSender sender) {
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
 
         ArrayList<String> autoCompletion = new ArrayList<>();
 

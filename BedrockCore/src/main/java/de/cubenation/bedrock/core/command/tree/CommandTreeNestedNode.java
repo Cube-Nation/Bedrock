@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class CommandTreeNestedNode extends CommandTreeNode {
 
@@ -41,7 +42,7 @@ public class CommandTreeNestedNode extends CommandTreeNode {
         }
 
         // Try execute
-        if (trySubCommands(commandSender, treePath, args)) {
+        if (trySubCommandExecution(commandSender, treePath, args)) {
             return true;
         }
 
@@ -60,7 +61,7 @@ public class CommandTreeNestedNode extends CommandTreeNode {
         return true;
     }
 
-    private boolean trySubCommands(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
+    private boolean trySubCommandExecution(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
         String currentSubCommandLabel = args[0];
         String[] remainingArgs = args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length-1);
         CommandTreePathItem pathItem = subCommands.get(currentSubCommandLabel);
@@ -119,5 +120,26 @@ public class CommandTreeNestedNode extends CommandTreeNode {
 
     public String[] getSubCommands() {
         return subCommands.keySet().toArray(String[]::new);
+    }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        System.out.println(Arrays.toString(args));
+
+        Set<String> allSubcommands = this.subCommands.keySet();
+        if (args.length == 0) {
+            return allSubcommands;
+        }
+
+        if (args.length >=2) {
+            CommandTreePathItem next = this.subCommands.get(args[0]);
+            if (next == null) {
+                return List.of();
+            }
+            return next.getNode().onAutoComplete(sender, args);
+        }
+
+        // Filter out any that do not match current input
+        return allSubcommands.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
     }
 }
