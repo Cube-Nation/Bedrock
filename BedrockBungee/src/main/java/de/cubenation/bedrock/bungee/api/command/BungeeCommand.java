@@ -15,6 +15,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BungeeCommand extends Command implements TabExecutor {
 
@@ -44,6 +45,8 @@ public class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return new ArrayList<>();
+        List<String> result = new ArrayList<>();
+        root.onAutoComplete(BungeeChatSender.wrap(sender), args).forEach(result::add);
+        return result;
     }
 }

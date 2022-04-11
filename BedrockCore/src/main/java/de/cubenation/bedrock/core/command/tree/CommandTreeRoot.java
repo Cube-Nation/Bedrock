@@ -29,4 +29,9 @@ public class CommandTreeRoot extends CommandTreeNode {
     public List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath) {
         return entrypoint.getNode().getJsonHelp(sender, treePath);
     }
+
+    @Override
+    public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
+        return entrypoint.getNode().onAutoComplete(sender, args);
+    }
 }

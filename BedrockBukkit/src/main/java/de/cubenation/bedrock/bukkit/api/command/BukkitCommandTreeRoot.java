@@ -16,6 +16,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class BukkitCommandTreeRoot extends CommandTreeRoot implements CommandExecutor, TabCompleter {
@@ -40,7 +42,8 @@ public class BukkitCommandTreeRoot extends CommandTreeRoot implements CommandExe
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        // TODO: TabComplete
-        return null;
+        List<String> result = new ArrayList<>();
+        onAutoComplete(BukkitChatSender.wrap(sender), args).forEach(result::add);
+        return result;
     }
 }

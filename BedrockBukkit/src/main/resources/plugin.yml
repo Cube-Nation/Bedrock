@@ -1,4 +1,4 @@
-author: Cube-Nation, B1acksheep, d1rty
+author: Cube-Nation, B1acksheep, d1rty, Crepez
 description: Comprehensive Plugin API
 main: de.cubenation.bedrock.bukkit.plugin.BedrockPlugin
 database: true
