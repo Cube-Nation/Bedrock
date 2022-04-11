@@ -24,14 +24,14 @@ package de.cubenation.bedrock.core.service.command;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
-import de.cubenation.bedrock.core.command.tree.AbstractCommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
-import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNodeWithHelp;
 import de.cubenation.bedrock.core.command.predefined.*;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.HashMap;
@@ -43,8 +43,10 @@ import java.util.HashMap;
 @ToString
 public abstract class CommandService extends AbstractService {
 
-    protected AbstractCommandTreeNestedNode pluginCommandManager;
-    protected final HashMap<String, CommandTreeNode> commandHandlers = new HashMap<>();
+    protected CommandTreeNestedNode pluginCommandManager;
+
+    @Getter
+    protected final HashMap<String, CommandTreePathItem> commandHandlers = new HashMap<>();
 
     public CommandService(FoundationPlugin plugin) {
         super(plugin);
@@ -55,25 +57,25 @@ public abstract class CommandService extends AbstractService {
         // Get all commands and their handles from CommandHandler annotations
         // TODO: Create commands from config
 
-        // Try to get the plugin-command handler or create a new one
+        // Create plugin command handler
         String pluginCommandLabel = getPlugin().getPluginDescription().getName().toLowerCase();
-        pluginCommandManager = (AbstractCommandTreeNestedNode) commandHandlers.getOrDefault(
-                pluginCommandLabel,
-                new CommandTreeNestedNodeWithHelp(plugin, null)
-                );
+        pluginCommandManager = new CommandTreeNestedNode(plugin);
         registerCommand(pluginCommandManager, pluginCommandLabel);
 
         // Add default commands that all plugins are capable of
-        registerPredefinedCommands();
-
-        // Add platform exclusive commands
-        registerPlatformSpecificCommands();
+        registerPredefinedPluginCommands();
 
         SettingsService settingService = plugin.getSettingService();
         if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
             CommandTreeNestedNode settingsManager = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "settings");
             settingsManager.addCommandHandler(SettingsInfoCommand.class, "info", "i");
         }
+
+        // Add platform exclusive commands
+        registerPlatformSpecificPluginCommands();
+
+        // Add help command
+        pluginCommandManager.addHelpCommand();
     }
 
     @Override
@@ -81,7 +83,7 @@ public abstract class CommandService extends AbstractService {
         // No reloading of commands supported
     }
 
-    private void registerPredefinedCommands() {
+    private void registerPredefinedPluginCommands() {
         pluginCommandManager.addCommandHandler(ReloadCommand.class, "reload", "r");
         pluginCommandManager.addCommandHandler(VersionCommand.class, "version", "v");
         pluginCommandManager.addCommandHandler(PermissionListCommand.class, "permissionslist", "permslist", "pl");
@@ -90,8 +92,8 @@ public abstract class CommandService extends AbstractService {
         pluginCommandManager.addCommandHandler(PermissionOtherCommand.class, "permissions", "perms");
     }
 
-    protected abstract void registerCommand(CommandTreeNode command, String label) throws ServiceInitException;
+    protected abstract void registerCommand(CommandTreeNode command, String... label) throws ServiceInitException;
 
-    protected abstract void registerPlatformSpecificCommands();
+    protected abstract void registerPlatformSpecificPluginCommands();
 }
 

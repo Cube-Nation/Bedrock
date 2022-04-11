@@ -39,8 +39,8 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 @Permission(Name = "permission.list", Role = Role.MODERATOR)
 public class PermissionListCommand extends Command {
 
-    public PermissionListCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public PermissionListCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {

@@ -28,6 +28,7 @@ import de.cubenation.bedrock.bukkit.api.command.predefined.CommandListCommand;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import lombok.ToString;
 import org.bukkit.command.PluginCommand;
@@ -44,23 +45,26 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
     }
 
     @Override
-    protected void registerCommand(CommandTreeNode command, String label) throws ServiceInitException {
-        BukkitCommandTreeRoot root = new BukkitCommandTreeRoot(plugin, command);
-        try {
-            PluginCommand bukkitCommand = ((BasePlugin) this.plugin).getCommand(label);
-            assert bukkitCommand != null;
-            bukkitCommand.setExecutor(root);
-            bukkitCommand.setTabCompleter(root);
-        } catch (Exception e) {
-            throw new ServiceInitException("Please add your pluginname as command in the plugin.yml!");
+    protected void registerCommand(CommandTreeNode command, String... labels) throws ServiceInitException {
+        for (String label : labels) {
+            CommandTreePathItem commandTreePathItem = CommandTreePathItem.create(command, label, labels);
+            BukkitCommandTreeRoot root = new BukkitCommandTreeRoot(plugin, commandTreePathItem);
+            try {
+                PluginCommand bukkitCommand = ((BasePlugin) this.plugin).getCommand(label);
+                assert bukkitCommand != null;
+                bukkitCommand.setExecutor(root);
+                bukkitCommand.setTabCompleter(root);
+            } catch (Exception e) {
+                throw new ServiceInitException("Please add your pluginname as command in the plugin.yml!");
+            }
+            CommandTreePathItem item = CommandTreePathItem.create(root, label);
+            commandHandlers.put(label, item);
         }
-        commandHandlers.put(label, root);
     }
 
     @Override
-    protected void registerPlatformSpecificCommands() {
-        CommandTreeNestedNode nestedNode = new CommandTreeNestedNode(plugin, pluginCommandManager);
-        nestedNode.addCommandHandler(new CommandListCommand(plugin, nestedNode), "list", "l");
-        pluginCommandManager.addCommandHandler(nestedNode, "command", "cmd");
+    protected void registerPlatformSpecificPluginCommands() {
+        CommandTreeNestedNode nestedNode = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "command", "cmd");
+        nestedNode.addCommandHandler(CommandListCommand.class, "list", "l");
     }
 }

@@ -3,6 +3,7 @@ package de.cubenation.bedrock.bungee.api.command;
 import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.command.tree.CommandTreeRoot;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
@@ -12,6 +13,8 @@ import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
+
+import java.util.ArrayList;
 
 public class BungeeCommand extends Command implements TabExecutor {
 
@@ -29,7 +32,7 @@ public class BungeeCommand extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         try {
-            root.onCommand(BungeeChatSender.wrap(sender), new CommandTreePath(getName()), args);
+            root.onCommand(BungeeChatSender.wrap(sender), new CommandTreePath(root.getEntrypoint()), args);
         } catch (IllegalCommandArgumentException e) {
             e.printStackTrace();
         } catch (InsufficientPermissionException e) {
@@ -41,6 +44,6 @@ public class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 }

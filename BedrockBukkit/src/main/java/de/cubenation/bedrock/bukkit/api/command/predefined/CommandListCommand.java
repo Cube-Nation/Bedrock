@@ -42,8 +42,8 @@ import java.util.Map;
 @Permission(Name = "command.list", Role = Role.USER)
 public class CommandListCommand extends Command {
 
-    public CommandListCommand(FoundationPlugin plugin, String label, CommandTreeNode previousNode) {
-        super(plugin, label, previousNode);
+    public CommandListCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {

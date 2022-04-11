@@ -44,23 +44,24 @@ import java.util.HashMap;
 @Permission(Name = "command.list", Role = Role.USER)
 public class CommandListCommand extends Command {
 
-    public CommandListCommand(FoundationPlugin plugin, CommandTreeNode previousNode) {
-        super(plugin, previousNode);
+    public CommandListCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
 
         HashMap<String, String> commandList = new HashMap<>();
 
-        for (CommandTreeNestedNode nestedNode : getPlugin().getCommandService().getCommandManagers()) {
-            if (nestedNode.getLabel().equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
+        for (String label : getPlugin().getCommandService().getCommandHandlers().keySet()) {
+            if (label.equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
                 continue;
             }
-            commandList.put(nestedNode.getLabel(), "");
+            commandList.put(label, "");
         }
 
-        if (commandList.isEmpty())
+        if (commandList.isEmpty()) {
             return;
+        }
 
         plugin.messages().displayCommandList(sender, commandList);
     }

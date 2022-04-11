@@ -14,12 +14,8 @@ public abstract class CommandTreeNode implements CommandExecutor {
     @Getter
     protected final FoundationPlugin plugin;
 
-    @Getter
-    private final CommandTreeNode previousNode;
-
-    public CommandTreeNode(FoundationPlugin plugin, CommandTreeNode previousNode) {
+    public CommandTreeNode(FoundationPlugin plugin) {
         this.plugin = plugin;
-        this.previousNode = previousNode;
     }
 
     public abstract List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath);
