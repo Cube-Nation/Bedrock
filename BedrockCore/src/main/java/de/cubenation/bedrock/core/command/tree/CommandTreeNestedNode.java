@@ -136,7 +136,7 @@ public class CommandTreeNestedNode extends CommandTreeNode {
             if (next == null) {
                 return List.of();
             }
-            return next.getNode().onAutoComplete(sender, args);
+            return next.getNode().onAutoComplete(sender, Arrays.copyOfRange(args, 1, args.length));
         }
 
         // Filter out any that do not match current input
