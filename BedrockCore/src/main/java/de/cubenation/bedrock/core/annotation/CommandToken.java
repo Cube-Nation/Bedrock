@@ -22,8 +22,6 @@
 
 package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.core.command.Command;
-
 import java.lang.annotation.*;
 
 /**
@@ -32,14 +30,10 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Repeatable(CommandHandlers.class)
-public @interface CommandHandler {
+@Target({ ElementType.FIELD, ElementType.TYPE })
+@Repeatable(CommandTokens.class)
+public @interface CommandToken {
 
-    String Command();
-
-    SubCommand[] SubCommands();
-
-    Class<? extends Command>[] Handlers();
+    String[] value();
 
 }

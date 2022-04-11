@@ -25,25 +25,26 @@ package de.cubenation.bedrock.core.service.config;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.configuration.BedrockYaml;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import lombok.ToString;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
+@ToString
 public abstract class ConfigService extends AbstractService {
 
-    private HashMap<Class<?>, CustomConfigurationFile> configuration_files = new HashMap<>();
+    private final HashMap<Class<?>, CustomConfigurationFile> configuration_files = new HashMap<>();
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String do_not_delete_me = "Seriously. Do not delete this";
@@ -105,20 +106,19 @@ public abstract class ConfigService extends AbstractService {
      */
     @Override
     public void reload() throws ServiceReloadException {
-        for (Object o : this.configuration_files.entrySet()) {
-            Map.Entry pair = (Map.Entry) o;
-            Class<?> name = (Class<?>) pair.getKey();
+        for (Map.Entry<Class<?>, CustomConfigurationFile> pair : this.configuration_files.entrySet()) {
+            Class<?> name = pair.getKey();
 
             try {
                 //this.getPlugin().log(Level.INFO, "  config service: Reloading file " + name);
-                ((CustomConfigurationFile) pair.getValue()).reload();
+                pair.getValue().reload();
             } catch (InvalidConfigurationException e) {
                 this.getPlugin().log(Level.SEVERE, "  config service: Could not reload file " + name + ": " + e.getMessage());
 
                 // try re-creating file
                 try {
                     //this.getPlugin().log(Level.INFO, "  config service: Recreating missing file " + name);
-                    ((CustomConfigurationFile) pair.getValue()).init();
+                    pair.getValue().init();
                 } catch (InvalidConfigurationException e1) {
                     this.getPlugin().log(Level.SEVERE, "  config service: Could not recreate missing file " + name, e);
                 }
@@ -148,16 +148,8 @@ public abstract class ConfigService extends AbstractService {
      * @throws InvalidConfigurationException
      */
     private CustomConfigurationFile instantiatePluginConfig() throws InstantiationException, InvalidConfigurationException {
+        Class<?> clazz = getPluginConfigClass();
         String class_name = String.format("%s.config.BedrockDefaults", this.getPlugin().getClass().getPackage().getName());
-        Class<?> clazz;
-        try {
-            clazz = Class.forName(class_name);
-        } catch (ClassNotFoundException e) {
-            throw new InstantiationException(String.format("Could not find class %s in plugin %s",
-                    class_name,
-                    this.getPlugin().getPluginDescription().getName())
-            );
-        }
 
         CustomConfigurationFile config = this.createPluginConfig(
                 this.getPlugin(),
@@ -246,11 +238,18 @@ public abstract class ConfigService extends AbstractService {
         }
     }
 
-    @Override
-    public String toString() {
-        return "ConfigService{" +
-                "configuration_files=" + configuration_files +
-                ", do_not_delete_me='" + do_not_delete_me + '\'' +
-                '}';
+    private Class<?> getPluginConfigClass() throws InstantiationException {
+        String class_name = String.format("%s.config.BedrockDefaults", this.getPlugin().getClass().getPackage().getName());
+
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(class_name);
+        } catch (ClassNotFoundException e) {
+            throw new InstantiationException(String.format("Could not find class %s in plugin %s",
+                    class_name,
+                    this.getPlugin().getPluginDescription().getName())
+            );
+        }
+        return clazz;
     }
 }
