@@ -167,6 +167,7 @@ public abstract class CommandService extends AbstractService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void registerCommandNodes(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
@@ -202,7 +203,7 @@ public abstract class CommandService extends AbstractService {
             // Register commands for labels
             if (parent != null) {
                 parent.addCommandHandler((Class<? extends CommandTreeNode>) value, labels.toArray(String[]::new));
-                return;
+                continue;
             }
             registerCommand((Class<? extends CommandTreeNode>) value, labels.toArray(String[]::new));
         }
