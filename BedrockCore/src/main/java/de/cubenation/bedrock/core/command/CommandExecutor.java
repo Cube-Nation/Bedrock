@@ -34,6 +34,6 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
  */
 public interface CommandExecutor {
 
-    boolean onCommand(BedrockChatSender sender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException;
+    boolean onCommand(BedrockChatSender sender, CommandTreePath treePath, String[] args);
 
 }

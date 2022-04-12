@@ -8,6 +8,7 @@ import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
+import javax.swing.tree.TreePath;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -25,18 +26,33 @@ public class CommandTreeNestedNode extends CommandTreeNode {
     }
 
     @Override
-    public boolean onCommand(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
+    public boolean onCommand(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) {
+        try {
+            return tryExecute(commandSender, treePath, args);
+        } catch (IllegalCommandArgumentException e) {
+            plugin.messages().invalidCommand(commandSender);
+            if (helpCommand != null) {
+                treePath.append(subCommands.get("help"));
+                helpCommand.getJsonHelp(commandSender, treePath).get(0).send(commandSender);
+            }
+            return true;
+        } catch (CommandException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private boolean tryExecute(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws CommandException, IllegalCommandArgumentException {
         // TODO: add possibility for empty subcommand
         if (args.length == 0) {
             if (helpCommand == null) {
-                this.plugin.messages().invalidCommand(commandSender);
-                return false;
+                throw new IllegalCommandArgumentException();
             }
             try {
+                treePath.append(subCommands.get("help"));
                 this.helpCommand.preExecute(commandSender, treePath, args);
             } catch (Exception e) {
-                this.plugin.log(Level.INFO, "Error while executing help command. Shouldn't happen!");
-                e.printStackTrace();
+                throw new CommandException("Help command could not be executed");
             }
             return true;
         }
@@ -48,27 +64,26 @@ public class CommandTreeNestedNode extends CommandTreeNode {
 
         // Check for help
         if (helpCommand == null) {
-            plugin.messages().invalidCommand(commandSender);
-            return true;
+            throw new IllegalCommandArgumentException();
         }
 
         // Display help
         List<JsonMessage> helpList = this.helpCommand.getFullHelpList(commandSender, treePath);
         if (helpList.isEmpty()) {
-            this.plugin.messages().invalidCommand(commandSender);
-            return true;
+            throw new IllegalCommandArgumentException();
         }
         return true;
     }
 
-    private boolean trySubCommandExecution(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
+    private boolean trySubCommandExecution(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException {
         String currentSubCommandLabel = args[0];
         String[] remainingArgs = args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length-1);
         CommandTreePathItem pathItem = subCommands.get(currentSubCommandLabel);
 
         if (pathItem == null) {
-            return false;
+            throw new IllegalCommandArgumentException();
         }
+        treePath.append(pathItem);
         return pathItem.getNode().onCommand(commandSender, treePath, remainingArgs);
     }
 

@@ -17,7 +17,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class BukkitCommandTreeRoot extends CommandTreeRoot implements CommandExecutor, TabCompleter {
@@ -28,16 +27,7 @@ public class BukkitCommandTreeRoot extends CommandTreeRoot implements CommandExe
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        try {
-            return onCommand(BukkitChatSender.wrap(sender), new CommandTreePath(entrypoint), args);
-        } catch (IllegalCommandArgumentException e) {
-            e.printStackTrace();
-        } catch (InsufficientPermissionException e) {
-            e.printStackTrace();
-        } catch (CommandException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return onCommand(BukkitChatSender.wrap(sender), new CommandTreePath(entrypoint), args);
     }
 
     @Override

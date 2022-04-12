@@ -82,7 +82,6 @@ public abstract class Command extends CommandTreeNode {
             return null; // hide command from help
         }
 
-        // TODO: add arguments to CommandTreePath
         JsonMessage line = plugin.messages().getHelpForSubCommand(sender, treePath, this);
         return Collections.singletonList(line);
     }
@@ -293,14 +292,22 @@ public abstract class Command extends CommandTreeNode {
      */
 
     @Override
-    public boolean onCommand(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
-        this.preExecute(commandSender, treePath, args);
+    public boolean onCommand(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) {
+        try {
+            this.preExecute(commandSender, treePath, args);
+        } catch (CommandException e) {
+            e.printStackTrace();
+        } catch (IllegalCommandArgumentException e) {
+            plugin.messages().invalidCommand(commandSender);
+            getJsonHelp(commandSender, treePath).get(0).send(commandSender);
+        } catch (InsufficientPermissionException e) {
+            plugin.messages().insufficientPermission(commandSender);
+        }
         return true;
     }
 
     public void preExecute(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
         if (!this.hasPermission(commandSender)) {
-            plugin.messages().insufficientPermission(commandSender);
             throw new InsufficientPermissionException();
         }
 
