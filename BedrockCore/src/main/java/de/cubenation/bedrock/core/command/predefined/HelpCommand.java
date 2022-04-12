@@ -36,6 +36,7 @@ import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import org.apache.commons.lang.StringUtils;
 
+import javax.swing.tree.TreePath;
 import java.util.*;
 
 /**
@@ -59,9 +60,9 @@ public class HelpCommand extends Command {
         if (args.length == 0 || StringUtils.isNumeric(args[0])) {
             // Display help for all commands
 
-            List<JsonMessage> commandComponents = getFullHelpList(sender, treePath);
-            printHelp(sender, treePath, args, commandComponents);
-
+            CommandTreePath parentTreePath = treePath.getSequence(0, treePath.size()-1);
+            List<JsonMessage> commandComponents = getFullHelpList(sender, parentTreePath);
+            printHelp(sender, parentTreePath, args, commandComponents);
         } else {
             // Send help for special command
             List<CommandTreePathItem> helpList = getHelpCommands(treePath.getSequence(0, treePath.size()-2));
@@ -122,7 +123,7 @@ public class HelpCommand extends Command {
             helpPageableListService.store(msgStoreable);
         }
 
-        String managerLabel = treePath.getCommandAsString(); // TODO: treePath.getSequence(0, treePath.size()-2).getCommandAsString();
+        String managerLabel = treePath.getCommandAsString();
 
         int number = 1;
         if (args.length > 0 && StringUtils.isNumeric(args[0])) {

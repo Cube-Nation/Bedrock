@@ -32,15 +32,7 @@ public class BungeeCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        try {
-            root.onCommand(BungeeChatSender.wrap(sender), new CommandTreePath(root.getEntrypoint()), args);
-        } catch (IllegalCommandArgumentException e) {
-            e.printStackTrace();
-        } catch (InsufficientPermissionException e) {
-            e.printStackTrace();
-        } catch (CommandException e) {
-            e.printStackTrace();
-        }
+        root.onCommand(BungeeChatSender.wrap(sender), new CommandTreePath(root.getEntrypoint()), args);
     }
 
     @Override

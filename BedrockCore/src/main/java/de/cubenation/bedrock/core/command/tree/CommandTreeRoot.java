@@ -21,7 +21,7 @@ public class CommandTreeRoot extends CommandTreeNode {
     }
 
     @Override
-    public boolean onCommand(BedrockChatSender sender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException, InsufficientPermissionException, CommandException {
+    public boolean onCommand(BedrockChatSender sender, CommandTreePath treePath, String[] args) {
         return entrypoint.getNode().onCommand(sender, treePath, args);
     }
 
