@@ -53,68 +53,31 @@ public class HelpCommand extends Command {
     public void execute(
             BedrockChatSender sender,
             CommandTreePath treePath,
+            @Argument(Description = "command.bedrock.filter.desc", Placeholder = "command.bedrock.filter.ph", Optional = true)
+            String filter,
             @Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph", Optional = true)
-            String[] args
+            Integer page
     ) {
-
-        if (args.length == 0 || StringUtils.isNumeric(args[0])) {
-            // Display help for all commands
-
-            CommandTreePath parentTreePath = treePath.getSequence(0, treePath.size()-1);
-            List<JsonMessage> commandComponents = getFullHelpList(sender, parentTreePath);
-            printHelp(sender, parentTreePath, args, commandComponents);
-        } else {
-            // Send help for special command
-            List<CommandTreePathItem> helpList = getHelpCommands(treePath.getSequence(0, treePath.size()-2));
-
-//            for (CommandTreePathItem commandPath : getHelpCommands(treePath.getSequence(0, treePath.size()-2))) {
-//                // TODO: HelpTrigger
-//                if (!(commandPath.getCommand() instanceof HelpCommand) && commandPath.isValidHelpTrigger(args)) {
-//                    helpList.add(commandPath);
-//                }
-//            }
-
-            ArrayList<JsonMessage> jsonList = getHelpJsonMessages(sender, treePath, helpList);
-//            if (helpList.isEmpty()) {
-//                // If no command is valid, show help for all
-//                jsonList = getFullHelpList(sender);
-//            } else {
-//                jsonList = getHelpJsonMessages(sender, helpList);
-//            }
-
-            printHelp(sender, treePath, args, jsonList);
-        }
+        CommandTreePath parentTreePath = treePath.getSequence(0, treePath.size()-1);
+        List<JsonMessage> commandComponents = getHelpJsonMessages(sender, parentTreePath, filter);
+        printHelp(sender, parentTreePath, commandComponents, page);
     }
 
-    public List<CommandTreePathItem> getHelpCommands(CommandTreePath treePath) {
-        ArrayList<CommandTreePathItem> helpCommands = new ArrayList<>();
-        CommandTreePathItem parent = treePath.getParent();
-        helpCommands.add(parent);
-
-        // Sorting
+    public List<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, CommandTreePath treePath, String filter) {
+        List<JsonMessage> jsonList = treePath.getHead().getNode().getJsonHelp(sender, treePath);
+        if (filter == null) {
+            return jsonList;
+        }
         // TODO: HelpPriority: helpCommands.sort(Comparator.comparing(CommandPath::getHelpPriority));
-
-        return helpCommands;
+        return jsonList.stream().filter(j -> j.getTranslation().toLowerCase().contains(filter.toLowerCase())).toList();
     }
 
-    public List<JsonMessage> getFullHelpList(BedrockChatSender sender, CommandTreePath treePath) {
-        return treePath.getHead().getNode().getJsonHelp(sender, treePath);
-    }
-
-    public ArrayList<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, CommandTreePath treePath, List<CommandTreePathItem> helpList) {
-        ArrayList<JsonMessage> jsonList = new ArrayList<>();
-
-        for (CommandTreePathItem helpItem : helpList) {
-            List<JsonMessage> jsonHelp = helpItem.getNode().getJsonHelp(sender, treePath);
-            if (jsonHelp != null) {
-                jsonList.addAll(jsonHelp);
-            }
-        }
-        return jsonList;
-    }
-
-    public void printHelp(BedrockChatSender sender, CommandTreePath treePath, String[] args, List<JsonMessage> commandComponents) {
+    public void printHelp(BedrockChatSender sender, CommandTreePath treePath, List<JsonMessage> commandComponents, Integer page) {
         HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
+
+        if (page == null || page > 0 && page <= helpPageableListService.getPages()) {
+            page = 1;
+        }
 
         // Preparation for Pagination
         for (JsonMessage commandComponent : commandComponents) {
@@ -124,14 +87,7 @@ public class HelpCommand extends Command {
         }
 
         String managerLabel = treePath.getCommandAsString();
-
-        int number = 1;
-        if (args.length > 0 && StringUtils.isNumeric(args[0])) {
-            int n = Integer.parseInt(args[0]);
-            if(n > 0 && n <= helpPageableListService.getPages())
-                number = n;
-        }
-        helpPageableListService.paginate(sender, "/" + managerLabel + " help %page%", getHeader(managerLabel), number);
+        helpPageableListService.paginate(sender, "/" + managerLabel + " help %page%", getHeader(managerLabel), page);
     }
 
     private String getHeader(String label) {
@@ -143,47 +99,5 @@ public class HelpCommand extends Command {
                 new String[]{"plugin", commandHeaderName}
         ).getTranslation();
     }
-
-//    @Override
-//    public List<String> getAutoCompletion(String[] args, BedrockChatSender sender) {
-//
-//        if (args.length > 1) {
-//            // Tab Completion for each command to display special help
-//            // like
-//            // /plugin help version
-//            // /plugin help reload
-//
-//            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(args));
-//            arrayList.remove("help");
-//
-//            ArrayList<String> list = new ArrayList<>();
-//            for (CommandPath commandPath : this.commandManager.getCommandPaths()) {
-//                //Ignore Help Command
-//                if (commandPath.getCommand() instanceof HelpCommand) {
-//                    continue;
-//                }
-//
-//                if (!commandPath.getCommand().hasPermission(sender)) {
-//                    continue;
-//                }
-//
-//                if (!commandPath.displayInHelp()) {
-//                    continue;
-//                }
-//
-//                if (!commandPath.displayInCompletion()) {
-//                    continue;
-//                }
-//
-//                CollectionUtil.addAllIfNotNull(list, commandPath.getAutoCompletion(arrayList.toArray(new String[0]), sender));
-//            }
-//
-//            // Remove duplicates.
-//            Set<String> set = new HashSet<>(list);
-//            return set.isEmpty() ? null : new ArrayList<>(set);
-//        } else {
-//            return super.getAutoCompletion(args, sender);
-//        }
-//    }
 }
 

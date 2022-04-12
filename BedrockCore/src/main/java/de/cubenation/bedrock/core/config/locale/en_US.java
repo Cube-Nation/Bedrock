@@ -244,6 +244,12 @@ public class en_US extends CustomConfigurationFile {
         put("desc", "Page");
     }};
 
+    @Path("command.bedrock.filter")
+    private HashMap<String, String> command_bedrock_filter = new HashMap<>() {{
+        put("ph", "Filter");
+        put("desc", "String to narrow it down");
+    }};
+
     /*
      * PageDesignHelper Messages
     */
