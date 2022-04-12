@@ -4,6 +4,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.IngameCommand;
 import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.Range;
 import de.cubenation.bedrock.core.annotation.condition.AnnotationCondition;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.argument.Argument;
@@ -11,10 +12,7 @@ import de.cubenation.bedrock.core.command.argument.Option;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.CommandInitException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.exception.*;
 import de.cubenation.bedrock.core.helper.CollectionUtil;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -187,6 +185,8 @@ public abstract class Command extends CommandTreeNode {
             clazz = null;
         }
 
+        Range rangeAnnotation = getClass().getAnnotation(Range.class);
+
         // Create argument object
         Argument argument;
         if (!isOption) {
@@ -196,7 +196,8 @@ public abstract class Command extends CommandTreeNode {
                     (argumentAnnotation !=  null && !Objects.equals(argumentAnnotation.Description(), "")) ? argumentAnnotation.Placeholder() : parameter.getName(),
                     argumentAnnotation != null && argumentAnnotation.Optional(),
                     isArray,
-                    clazz
+                    clazz,
+                    rangeAnnotation
             );
         } else {
             argument = new Option(
@@ -204,7 +205,8 @@ public abstract class Command extends CommandTreeNode {
                     optionAnnotation.Key() != null ? optionAnnotation.Key() : parameter.getName().toLowerCase(),
                     !Objects.equals(optionAnnotation.Description(), "") ? optionAnnotation.Description() : "no_description",
                     !Objects.equals(optionAnnotation.Placeholder(), "") ? optionAnnotation.Placeholder() : parameter.getName(),
-                    clazz
+                    clazz,
+                    rangeAnnotation
             );
         }
 
@@ -377,8 +379,8 @@ public abstract class Command extends CommandTreeNode {
                     ArgumentType<?> type = option.getArgumentType();
                     try {
                         value = type.tryCast(args[++i]);
-                    } catch (ClassCastException e) {
-                        type.sendFailureMessage(commandSender, args[i]);
+                    } catch (ArgumentTypeCastException e) {
+                        e.getFailureMessage().send(commandSender);
                         return null;
                     }
                 }
@@ -423,8 +425,8 @@ public abstract class Command extends CommandTreeNode {
                     value = realArgs.length > i ? type.tryCast(realArgs[i]) : null;
                 }
                 result.add(value);
-            } catch (ClassCastException e) {
-                type.sendFailureMessage(commandSender, realArgs[i]);
+            } catch (ArgumentTypeCastException e) {
+                e.getFailureMessage().send(commandSender);
                 return null;
             }
             i++;

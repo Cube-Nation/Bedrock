@@ -122,6 +122,18 @@ public class en_US extends CustomConfigurationFile {
     @Path("no_valid_enum_constant")
     private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid option. Use one of the following:\",\"color\":\"white\"},{\"text\":\" &%constants%\",\"color\":\"&SECONDARY&\"}]}";
 
+    @Path("greater_than")
+    private String greater_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is greater than \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("lower_than")
+    private String lower_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is lower than \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("string_too_long")
+    private String string_too_long = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" must be no longer than \",\"color\":\"white\"},{\"text\":\"%max%\",\"color\":\"&SECONDARY&\"},{\"text\":\" characters.\",\"color\":\"white\"}]}";
+
+    @Path("string_too_short")
+    private String string_too_short = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" must be at least \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\" characters long.\",\"color\":\"white\"}]}";
+
 
     @Path("json.permission.list.header")
     private String json_permission_list_header = "{text:\"%plugin_prefix% \",color:\"white\",extra:[{text:\"All permissions:\",color:\"&SECONDARY&\"}]}";

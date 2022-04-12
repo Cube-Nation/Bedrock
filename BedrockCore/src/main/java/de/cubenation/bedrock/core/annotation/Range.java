@@ -20,38 +20,22 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.helper;
+package de.cubenation.bedrock.core.annotation;
 
-import java.util.*;
+import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
-public class CollectionUtil {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+@SuppressWarnings("unused")
+public @interface Range {
 
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
+    int min() default -9999;
 
-        list.sort(Comparator.comparing(o -> (o.getValue())));
-
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-        return result;
-    }
-
-    public static <T> void addIfNotNull(List<T> list, T input) {
-        if (input != null) {
-            list.add(input);
-        }
-    }
-
-    public static <T> void addAllIfNotNull(List<T> list, List<T> input) {
-        if (input != null) {
-            list.addAll(input);
-        }
-    }
+    int max() default 9999;
 
 }

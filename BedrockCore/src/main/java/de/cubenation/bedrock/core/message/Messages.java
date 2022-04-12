@@ -38,6 +38,7 @@ import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -50,10 +51,11 @@ import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public abstract class Messages {
 
+    @Getter
     private final FoundationPlugin plugin;
 
     private final Error error;
@@ -61,12 +63,6 @@ public abstract class Messages {
     public Messages(FoundationPlugin foundationPlugin) {
         this.plugin = foundationPlugin;
         error = new Error();
-    }
-
-
-
-    public FoundationPlugin getPlugin() {
-        return plugin;
     }
 
     public Error error() {
@@ -94,8 +90,12 @@ public abstract class Messages {
         new JsonMessage(getPlugin(), "must_be_player").send(commandSender);
     }
 
+    public JsonMessage getNoSuchPlayer(String player) {
+        return new JsonMessage(getPlugin(), "no_such_player.specific", "player", player);
+    }
+
     public void noSuchPlayer(BedrockChatSender commandSender, String player) {
-        new JsonMessage(getPlugin(), "no_such_player.specific", "player", player).send(commandSender);
+        getNoSuchPlayer(player).send(commandSender);
     }
 
     public void noSuchPlayer(BedrockChatSender commandSender) {
@@ -114,21 +114,37 @@ public abstract class Messages {
         new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
     }
 
-    public void noValidInt(BedrockChatSender commandSender, String input) {
-        new JsonMessage(plugin, "no_valid_int", "input", input).send(commandSender);
+    public JsonMessage getNoValidInt(String input) {
+        return new JsonMessage(plugin, "no_valid_int", "input", input);
     }
 
-    public void noValidFloat(BedrockChatSender commandSender, String input) {
-        new JsonMessage(plugin, "no_valid_float", "input", input).send(commandSender);
+    public JsonMessage getNoValidFloat(String input) {
+        return new JsonMessage(plugin, "no_valid_float", "input", input);
     }
 
-    public void noValidUuid(BedrockChatSender commandSender, String input) {
-        new JsonMessage(plugin, "no_valid_uuid", "input", input).send(commandSender);
+    public JsonMessage getNoValidUuid(String input) {
+        return new JsonMessage(plugin, "no_valid_uuid", "input", input);
     }
 
-    public void noValidEnumConstant(BedrockChatSender commandSender, String input, List<String> constantList) {
-        String constants = constantList.stream().collect(Collectors.joining(", "));
-        new JsonMessage(plugin, "no_valid_enum_constant", "input", input, "constants", constants).send(commandSender);
+    public JsonMessage getNoValidEnumConstant(String input, List<String> constantList) {
+        String constants = String.join(", ", constantList);
+        return new JsonMessage(plugin, "no_valid_enum_constant", "input", input, "constants", constants);
+    }
+
+    public JsonMessage getGreaterThan(String input, int max) {
+        return new JsonMessage(plugin, "greater_than", "input", input, "max", Integer.toString(max));
+    }
+
+    public JsonMessage getLowerThan(String input, int min) {
+        return new JsonMessage(plugin, "lower_than", "input", input, "min", Integer.toString(min));
+    }
+
+    public JsonMessage getStringTooLong(String input, int max) {
+        return new JsonMessage(plugin, "string_too_long", "input", input, "max", Integer.toString(max));
+    }
+
+    public JsonMessage getStringTooShort(String input, int min) {
+        return new JsonMessage(plugin, "string_too_short", "input", input, "min", Integer.toString(min));
     }
 
     public void reloadComplete(BedrockChatSender sender) {

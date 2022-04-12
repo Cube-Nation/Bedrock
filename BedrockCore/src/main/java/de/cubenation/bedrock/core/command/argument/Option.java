@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.core.command.argument;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.Range;
 import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.translation.Translation;
 import lombok.Getter;
@@ -40,8 +41,8 @@ public class Option extends Argument {
     @Getter @Setter
     private String key = "";
 
-    public Option(FoundationPlugin plugin, String key, String description, String placeholder, Class<?> dataType) throws CommandInitException {
-        super(plugin, description, placeholder, true, false, dataType);
+    public Option(FoundationPlugin plugin, String key, String description, String placeholder, Class<?> dataType, Range rangeAnnotation) throws CommandInitException {
+        super(plugin, description, placeholder, true, false, dataType, rangeAnnotation);
         this.setKey(key);
     }
 

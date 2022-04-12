@@ -2,6 +2,7 @@ package de.cubenation.bedrock.core.command.argument.type;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AutoCompletionExecutor;
+import de.cubenation.bedrock.core.exception.ArgumentTypeCastException;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import lombok.Getter;
 
@@ -20,9 +21,7 @@ public abstract class ArgumentType<T> implements AutoCompletionExecutor {
         this.plugin = plugin;
     }
 
-    public abstract T tryCast(String input) throws ClassCastException;
-
-    public abstract void sendFailureMessage(BedrockChatSender commandSender, String input);
+    public abstract T tryCast(String input) throws ArgumentTypeCastException;
 
     @SuppressWarnings("unchecked")
     public Object toArray(List<Object> list) {

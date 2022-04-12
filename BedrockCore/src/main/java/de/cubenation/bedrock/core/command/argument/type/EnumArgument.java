@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.core.command.argument.type;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.exception.ArgumentTypeCastException;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.Arrays;
@@ -15,17 +16,12 @@ public class EnumArgument<T extends Enum<T>> extends ArgumentType<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public T tryCast(String input) throws ClassCastException {
+    public T tryCast(String input) throws ArgumentTypeCastException {
         try {
             return Enum.valueOf((Class<T>) genericClass, input.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new ClassCastException();
+            throw new ArgumentTypeCastException(plugin.messages().getNoValidEnumConstant(input, getEnumConstants()));
         }
-    }
-
-    @Override
-    public void sendFailureMessage(BedrockChatSender commandSender, String input) {
-        plugin.messages().noValidEnumConstant(commandSender, input, getEnumConstants());
     }
 
     private List<String> getEnumConstants() {

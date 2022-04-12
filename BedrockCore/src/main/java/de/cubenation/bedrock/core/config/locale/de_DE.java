@@ -111,6 +111,20 @@ public class de_DE extends CustomConfigurationFile {
     @Path("no_valid_enum_constant")
     private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Option. Nutze eine der Folgenden:\",\"color\":\"white\"},{\"text\":\" %constants%\",\"color\":\"&SECONDAR&\"}]}";
 
+    @Path("greater_than")
+    private String greater_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist größer als \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("lower_than")
+    private String lower_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist kleiner als \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("string_too_long")
+    private String string_too_long = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" darf maximal \",\"color\":\"white\"},{\"text\":\"%max%\",\"color\":\"&SECONDARY&\"},{\"text\":\" Zeichen lang sein.\",\"color\":\"white\"}]}";
+
+    @Path("string_too_short")
+    private String string_too_short = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" muss mindestens \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\" Zeichen lang sein.\",\"color\":\"white\"}]}";
+
+
+
     /*
      * Help messages
      */

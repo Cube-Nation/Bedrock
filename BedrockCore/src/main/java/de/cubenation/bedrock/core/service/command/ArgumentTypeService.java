@@ -10,6 +10,7 @@ import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class ArgumentTypeService extends AbstractService {
 
     private final FoundationPlugin plugin;
 
-    private HashMap<Class, ArgumentType> types = new HashMap<>();
+    private final HashMap<Class<?>, Class<? extends ArgumentType<?>>> types = new HashMap<>();
 
     public ArgumentTypeService(FoundationPlugin plugin) {
         super(plugin);
@@ -35,21 +36,18 @@ public class ArgumentTypeService extends AbstractService {
         // cannot be reloaded. why should it be anyway?
     }
 
-    private HashMap<Class, ArgumentType> getPredefined() {
+    private HashMap<Class<?>, Class<? extends ArgumentType<?>>> getPredefined() {
         return new HashMap<>() {{
-            put(String.class, new StringArgument(plugin));
-            put(Integer.class, new IntegerArgument(plugin));
-            put(Float.class, new FloatArgument(plugin));
-            put(Double.class, new DoubleArgument(plugin));
-            put(UUID.class, new UuidArgument(plugin));
-            put(BedrockPlayer.class, new BedrockPlayerArgument(plugin));
+            put(String.class, StringArgument.class);
+            put(Integer.class, IntegerArgument.class);
+            put(Float.class, FloatArgument.class);
+            put(Double.class, DoubleArgument.class);
+            put(UUID.class, UuidArgument.class);
+            put(BedrockPlayer.class, BedrockPlayerArgument.class);
         }};
     }
 
-    public ArgumentType getType(Class<?> clazz) {
-        if (!types.containsKey(clazz)) {
-            return null;
-        }
+    public Class<? extends ArgumentType<?>> getType(Class<?> clazz) {
         return types.get(clazz);
     }
 
@@ -65,21 +63,15 @@ public class ArgumentTypeService extends AbstractService {
         }
     }
 
-    private void addArgumentType(Class<? extends ArgumentType> clazz) throws ArgumentTypeAlreadyExistsException, ServiceInitException {
+    private void addArgumentType(Class<? extends ArgumentType<?>> clazz) throws ArgumentTypeAlreadyExistsException, ServiceInitException {
         if (this.exists(clazz))
             throw new ArgumentTypeAlreadyExistsException(clazz.toString());
 
-        ArgumentType instance;
-        try {
-            Constructor<? extends ArgumentType> constructor = clazz.getConstructor(FoundationPlugin.class);
-            instance = constructor.newInstance(plugin);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ServiceInitException(e.getMessage());
-        }
-        this.types.put(instance.getGenericClass(), instance);
+        Class<?> genericClass = (Class<?>) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+        types.put(genericClass, clazz);
     }
 
-    private boolean exists(Class<? extends ArgumentType> clazz) {
-        return this.types.containsKey(clazz);
+    private boolean exists(Class<? extends ArgumentType<?>> clazz) {
+        return this.types.containsValue(clazz);
     }
 }
