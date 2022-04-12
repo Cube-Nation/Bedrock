@@ -4,11 +4,9 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
-import javax.swing.tree.TreePath;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -58,26 +56,12 @@ public class CommandTreeNestedNode extends CommandTreeNode {
         }
 
         // Try execute
-        if (trySubCommandExecution(commandSender, treePath, args)) {
-            return true;
-        }
-
-        // Check for help
-        if (helpCommand == null) {
-            throw new IllegalCommandArgumentException();
-        }
-
-        // Display help
-        List<JsonMessage> helpList = this.helpCommand.getFullHelpList(commandSender, treePath);
-        if (helpList.isEmpty()) {
-            throw new IllegalCommandArgumentException();
-        }
-        return true;
+        return trySubCommandExecution(commandSender, treePath, args);
     }
 
     private boolean trySubCommandExecution(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws IllegalCommandArgumentException {
         String currentSubCommandLabel = args[0];
-        String[] remainingArgs = args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length-1);
+        String[] remainingArgs = args.length == 1 ? new String[0] : Arrays.copyOfRange(args, 1, args.length);
         CommandTreePathItem pathItem = subCommands.get(currentSubCommandLabel);
 
         if (pathItem == null) {
@@ -120,10 +104,6 @@ public class CommandTreeNestedNode extends CommandTreeNode {
 
     public void addHelpCommand() {
         this.helpCommand = addCommandHandler(HelpCommand.class, "help");
-    }
-
-    public String[] getSubCommands() {
-        return subCommands.keySet().toArray(String[]::new);
     }
 
     @Override

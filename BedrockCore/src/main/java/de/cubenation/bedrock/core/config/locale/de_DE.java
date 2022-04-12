@@ -100,7 +100,7 @@ public class de_DE extends CustomConfigurationFile {
     private String no_such_world_empty = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Die Welt wurde nicht gefunden\",\"color\":\"red\"}]}";
 
     @Path("no_valid_int")
-    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Ganzzahl.\",\"color\":\"white\"}]}";
+    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" darf nur Buchstaben enthalten.\",\"color\":\"white\"}]}";
 
     @Path("no_valid_float")
     private String no_valid_float = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Ganzzahl.\",\"color\":\"white\"}]}";
@@ -288,9 +288,15 @@ public class de_DE extends CustomConfigurationFile {
     private String help_args_key_placeholder = "Key";
 
     @Path("command.bedrock.page")
-    private HashMap<String, String> command_bedrock_page = new HashMap<String, String>() {{
+    private HashMap<String, String> command_bedrock_page = new HashMap<>() {{
         put("ph", "Seite");
         put("desc", "Seite");
+    }};
+
+    @Path("command.bedrock.filter")
+    private HashMap<String, String> command_bedrock_filter = new HashMap<>() {{
+        put("ph", "Filter");
+        put("desc", "Zeichenfolge zum Eingrenzen");
     }};
 
     // CommandList
