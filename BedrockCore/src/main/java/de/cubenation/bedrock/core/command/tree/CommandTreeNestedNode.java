@@ -3,6 +3,7 @@ package de.cubenation.bedrock.core.command.tree;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
 import de.cubenation.bedrock.core.exception.CommandException;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
@@ -71,7 +72,7 @@ public class CommandTreeNestedNode extends CommandTreeNode {
         return pathItem.getNode().onCommand(commandSender, treePath, remainingArgs);
     }
 
-    public <T extends CommandTreeNode> T addCommandHandler(Class<T> nodeClass, String... labels) {
+    public <T extends CommandTreeNode> T addCommandHandler(Class<T> nodeClass, String... labels) throws CommandInitException {
 
         T node = createNode(nodeClass);
 
@@ -98,11 +99,14 @@ public class CommandTreeNestedNode extends CommandTreeNode {
         }
     }
 
-    private void addNode(CommandTreeNode node, String label, String... allLabels) {
+    private void addNode(CommandTreeNode node, String label, String... allLabels) throws CommandInitException {
+        if (this.subCommands.containsKey(label)) {
+            throw new CommandInitException(String.format("Cannot register subcommand '%s' since a subcommand by that name is already registered", label));
+        }
         this.subCommands.put(label, CommandTreePathItem.create(node, label, allLabels));
     }
 
-    public void addHelpCommand() {
+    public void addHelpCommand() throws CommandInitException {
         this.helpCommand = addCommandHandler(HelpCommand.class, "help");
     }
 

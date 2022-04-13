@@ -30,6 +30,7 @@ import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.predefined.*;
 import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
@@ -63,31 +64,32 @@ public abstract class CommandService extends AbstractService {
 
     @Override
     public void init() throws ServiceInitException {
-        // Get all commands and their handles from CommandHandler annotations
-        // TODO: Create commands from config
+        try {
+            // Create plugin command handler
+            String pluginCommandLabel = getPlugin().getPluginDescription().getName().toLowerCase();
+            pluginCommandManager = new CommandTreeNestedNode(plugin);
+            registerCommand(pluginCommandManager, pluginCommandLabel);
 
-        // Create plugin command handler
-        String pluginCommandLabel = getPlugin().getPluginDescription().getName().toLowerCase();
-        pluginCommandManager = new CommandTreeNestedNode(plugin);
-        registerCommand(pluginCommandManager, pluginCommandLabel);
+            // Add help command
+            pluginCommandManager.addHelpCommand();
 
-        // Add help command
-        pluginCommandManager.addHelpCommand();
+            // Add default commands that all plugins are capable of
+            registerPredefinedPluginCommands();
 
-        // Add default commands that all plugins are capable of
-        registerPredefinedPluginCommands();
+            SettingsService settingService = plugin.getSettingService();
+            if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
+                CommandTreeNestedNode settingsManager = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "settings");
+                settingsManager.addCommandHandler(SettingsInfoCommand.class, "info", "i");
+            }
 
-        SettingsService settingService = plugin.getSettingService();
-        if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
-            CommandTreeNestedNode settingsManager = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "settings");
-            settingsManager.addCommandHandler(SettingsInfoCommand.class, "info", "i");
+            // Add platform exclusive commands
+            registerPlatformSpecificPluginCommands();
+
+            // Register custom commands from CommandConfig
+            processCommandConfig();
+        } catch (CommandInitException e) {
+            throw new ServiceInitException(e);
         }
-
-        // Add platform exclusive commands
-        registerPlatformSpecificPluginCommands();
-
-        // Register custom commands from CommandConfig
-        processCommandConfig();
     }
 
     @Override
@@ -95,7 +97,7 @@ public abstract class CommandService extends AbstractService {
         // No reloading of commands supported
     }
 
-    private void registerPredefinedPluginCommands() {
+    private void registerPredefinedPluginCommands() throws CommandInitException {
         pluginCommandManager.addCommandHandler(ReloadCommand.class, "reload", "r");
         pluginCommandManager.addCommandHandler(VersionCommand.class, "version", "v");
         pluginCommandManager.addCommandHandler(PermissionListCommand.class, "permissionslist", "permslist", "pl");
@@ -118,7 +120,7 @@ public abstract class CommandService extends AbstractService {
 
     protected abstract void registerPlatformSpecificPluginCommands();
 
-    private void processCommandConfig() throws ServiceInitException {
+    private void processCommandConfig() throws ServiceInitException, CommandInitException {
         Class<?> clazz;
         try {
             clazz = getCommandConfigClass();
@@ -130,7 +132,7 @@ public abstract class CommandService extends AbstractService {
         registerNestedNode(null, clazz);
     }
 
-    public void registerNestedNode(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException {
+    public void registerNestedNode(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException, CommandInitException {
         // Register commands
         registerCommandNodes(parent, clazz);
 
@@ -168,7 +170,7 @@ public abstract class CommandService extends AbstractService {
     }
 
     @SuppressWarnings("unchecked")
-    public void registerCommandNodes(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException {
+    public void registerCommandNodes(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException, CommandInitException {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             // Only accept field of type Class
