@@ -25,6 +25,7 @@ package de.cubenation.bedrock.core.command.predefined;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
+import de.cubenation.bedrock.core.annotation.Option;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
@@ -53,14 +54,14 @@ public class HelpCommand extends Command {
     public void execute(
             BedrockChatSender sender,
             CommandTreePath treePath,
-            @Argument(Description = "command.bedrock.filter.desc", Placeholder = "command.bedrock.filter.ph", Optional = true)
-            String filter,
             @Argument(Description = "command.bedrock.page.desc", Placeholder = "command.bedrock.page.ph", Optional = true)
-            Integer page
+            Integer page,
+            @Option(Description = "command.bedrock.filter.desc", Placeholder = "command.bedrock.filter.ph", Key = "f", Hidden = true)
+            String filter
     ) {
         CommandTreePath parentTreePath = treePath.getSequence(0, treePath.size()-1);
         List<JsonMessage> commandComponents = getHelpJsonMessages(sender, parentTreePath, filter);
-        printHelp(sender, parentTreePath, commandComponents, page);
+        printHelp(sender, parentTreePath, commandComponents, page, filter);
     }
 
     public List<JsonMessage> getHelpJsonMessages(BedrockChatSender sender, CommandTreePath treePath, String filter) {
@@ -69,15 +70,12 @@ public class HelpCommand extends Command {
             return jsonList;
         }
         // TODO: HelpPriority: helpCommands.sort(Comparator.comparing(CommandPath::getHelpPriority));
-        return jsonList.stream().filter(j -> j.getTranslation().toLowerCase().contains(filter.toLowerCase())).toList();
+        return jsonList.stream().filter(j -> j.getPlainText().toLowerCase().contains(filter.toLowerCase())).toList();
     }
 
-    public void printHelp(BedrockChatSender sender, CommandTreePath treePath, List<JsonMessage> commandComponents, Integer page) {
+    @SuppressWarnings("unchecked")
+    public void printHelp(BedrockChatSender sender, CommandTreePath treePath, List<JsonMessage> commandComponents, Integer page, String filter) {
         HelpPageableListService helpPageableListService = new HelpPageableListService(getPlugin());
-
-        if (page == null || page > 0 && page <= helpPageableListService.getPages()) {
-            page = 1;
-        }
 
         // Preparation for Pagination
         for (JsonMessage commandComponent : commandComponents) {
@@ -86,8 +84,26 @@ public class HelpCommand extends Command {
             helpPageableListService.store(msgStoreable);
         }
 
+        // Validate page input
+        if (page == null || page < 1 || page > helpPageableListService.getPages()) {
+            page = 1;
+        }
+
+        // Create paginate command
         String managerLabel = treePath.getCommandAsString();
-        helpPageableListService.paginate(sender, "/" + managerLabel + " help %page%", getHeader(managerLabel), page);
+        StringBuilder command = new StringBuilder();
+        command.append("/");
+        command.append(managerLabel);
+        command.append(" help %page%");
+        if (filter != null) {
+            command.append(" -");
+            command.append(new Translation(plugin, "command.bedrock.filter.key").getTranslation());
+            command.append(" ");
+            command.append(filter);
+        }
+
+        // Print current page
+        helpPageableListService.paginate(sender, command.toString(), getHeader(managerLabel), page);
     }
 
     private String getHeader(String label) {

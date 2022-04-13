@@ -33,6 +33,7 @@ import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
+import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockHoverEvent;
 import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
@@ -332,10 +333,7 @@ public abstract class Messages {
             }
         }
 
-        cmdDesc.addExtra(BedrockJson.Space());
-
-        boolean hasOptional = false;
-        boolean hasRequired = false;
+        cmdDesc.addExtra(BedrockJson.NewLine());
 
         // process all Arguments
         for (Argument argument : command.getArguments()) {
@@ -346,121 +344,55 @@ public abstract class Messages {
 
             cmdDesc.addExtra(BedrockJson.NewLine());
 
-            Boolean optional = argument.isOptional();
-            if (optional) {
-                hasOptional = true;
-                String translation = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
-            } else {
-                hasRequired = true;
-                String translation = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
-            }
-
-            /*
-             * KeyValueArgument
-             *
-             * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
-             * key-value command) we need to prepend the key
-             */
-            if (argument instanceof Option) {
-                Option option = (Option) argument;
-
-                String keyString = "[" + option.getKey() + (!option.hasParameter() ? "]" : "");
-
-                helpJson.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
-                helpJson.addExtra(BedrockJson.Space());
-
-                cmdDesc.addExtra(BedrockJson.Space());
-                cmdDesc.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
+            // Argument placeholder
+            boolean optional = argument.isOptional();
+            StringBuilder argumentContent = new StringBuilder();
+            if (argument instanceof Option option) {
+                argumentContent.append("-");
+                argumentContent.append(option.getKey());
                 if (option.hasParameter()) {
-                    cmdDesc.addExtra(BedrockJson.Space());
+                    argumentContent.append(" ");
+                    argumentContent.append(argument.getRuntimePlaceholder());
                 }
+            } else {
+                argumentContent.append(argument.getRuntimePlaceholder());
             }
 
-            /*
-             * Argument placeholder
-             */
+            BedrockJson argumentJson = BedrockJson.JsonWithText((optional
+                            ? "[" + argumentContent + "]"
+                            : argumentContent.toString())
+                    )
+                    .color(JsonColor.GRAY)
+                    .italic(optional);
 
-            if (!(argument instanceof Option) || ((Option) argument).hasParameter()) {
-                BedrockJson runtimePlaceholder;
-
-                if (argument instanceof Option) {
-                    runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
-                            ? argument.getRuntimePlaceholder() + "]"
-                            : argument.getRuntimePlaceholder()))
-                            .color(JsonColor.GRAY)
-                            .italic(optional);
-                } else {
-                    runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
-                            ? "[" + argument.getRuntimePlaceholder() + "]"
-                            : argument.getRuntimePlaceholder()))
-                            .color(JsonColor.GRAY)
-                            .italic(optional);
-                }
-
-
-                helpJson.addExtra(runtimePlaceholder);
+            // add arg to inline help
+            if (!(argument instanceof Option option && option.isHidden())) {
+                helpJson.addExtra(argumentJson);
                 helpJson.addExtra(BedrockJson.Space());
-
-                cmdDesc.addExtra(BedrockJson.Space());
-                cmdDesc.addExtra(runtimePlaceholder);
             }
 
-            cmdDesc.addExtra(BedrockJson.JsonWithText("  :  ").color(JsonColor.FLAG));
-
+            // add arg to hover help
+            cmdDesc.addExtra(argumentJson);
+            cmdDesc.addExtra(BedrockJson.JsonWithText(" : ").color(JsonColor.FLAG));
             cmdDesc.addExtra(BedrockJson.JsonWithText(argument.getRuntimeDescription())).color(JsonColor.WHITE);
 
         }
 
-        if (command.getArguments() != null && !command.getArguments().isEmpty()) {
-            cmdDesc.addExtra(BedrockJson.NewLine());
-
-            // Apply info for command type
-            if (hasOptional) {
-                cmdDesc.addExtra(BedrockJson.NewLine());
-
-                // Add symbol
-                String symbol = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(symbol).color(JsonColor.FLAG));
-
-                // Add blank
-                cmdDesc.addExtra(BedrockJson.Space());
-
-                // Add explanation
-                String translation = new Translation(plugin, "help.info.arg.optional.desc").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.GRAY));
-            }
-
-            if (hasRequired) {
-                cmdDesc.addExtra(BedrockJson.NewLine());
-
-                // Add symbol
-                String symbol = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(symbol).color(JsonColor.FLAG));
-
-                // Add blank
-                cmdDesc.addExtra(BedrockJson.Space());
-
-                // Add explanation
-                String translation = new Translation(plugin, "help.info.arg.required.desc").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.GRAY));
-            }
-        }
-
+        // TODO: add Command to Command Description
 //        ArrayList<BedrockJson> extras = cmdDesc.getExtras();
-//        ArrayList<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
+//        List<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
 //        for (int i = coloredSuggestion.size() - 1; i >= 0; i--) {
 //            BedrockJson json = coloredSuggestion.get(i);
 //            extras.add(0, json);
 //        }
 //        cmdDesc.extra(extras);
-//
-//
-//        questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
-//        questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
-//        commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
-//
+
+
+        questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+        questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+        commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
+
+        // TODO: add click action
 //        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, command.getStringSuggestion());
 
         return new JsonMessage(plugin, helpJson);
