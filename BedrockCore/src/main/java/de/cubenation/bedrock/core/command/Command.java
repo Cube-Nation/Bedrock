@@ -15,6 +15,7 @@ import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.*;
 import de.cubenation.bedrock.core.helper.CollectionUtil;
 import de.cubenation.bedrock.core.translation.JsonMessage;
+import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
 import lombok.Getter;
@@ -192,8 +193,8 @@ public abstract class Command extends CommandTreeNode {
         if (!isOption) {
             argument = new Argument(
                     this.getPlugin(),
-                    (argumentAnnotation != null && !Objects.equals(argumentAnnotation.Description(), "")) ? argumentAnnotation.Description() : "no_description",
-                    (argumentAnnotation !=  null && !Objects.equals(argumentAnnotation.Description(), "")) ? argumentAnnotation.Placeholder() : parameter.getName(),
+                    (argumentAnnotation != null && !argumentAnnotation.Description().equals("")) ? argumentAnnotation.Description() : "no_description",
+                    (argumentAnnotation !=  null && !argumentAnnotation.Description().equals("")) ? argumentAnnotation.Placeholder() : parameter.getName(),
                     argumentAnnotation != null && argumentAnnotation.Optional(),
                     isArray,
                     clazz,
@@ -203,8 +204,9 @@ public abstract class Command extends CommandTreeNode {
             argument = new Option(
                     this.getPlugin(),
                     optionAnnotation.Key() != null ? optionAnnotation.Key() : parameter.getName().toLowerCase(),
-                    !Objects.equals(optionAnnotation.Description(), "") ? optionAnnotation.Description() : "no_description",
-                    !Objects.equals(optionAnnotation.Placeholder(), "") ? optionAnnotation.Placeholder() : parameter.getName(),
+                    !optionAnnotation.Description().equals("") ? optionAnnotation.Description() : "no_description",
+                    !optionAnnotation.Description().equals("") ? optionAnnotation.Placeholder() : parameter.getName(),
+                    optionAnnotation.Hidden(),
                     clazz,
                     rangeAnnotation
             );
@@ -226,7 +228,7 @@ public abstract class Command extends CommandTreeNode {
         this.addArgument(argument);
         if (isOption) {
             options.put(
-                    optionAnnotation.Key() != null ? optionAnnotation.Key() : parameter.getName().toLowerCase(),
+                    optionAnnotation.Key() != null ? new Translation(plugin, optionAnnotation.Key()).getTranslation() : parameter.getName().toLowerCase(),
                     (Option) argument
             );
         } else {
@@ -399,7 +401,7 @@ public abstract class Command extends CommandTreeNode {
             // use pre-populated option value
             if (argument instanceof Option option) {
                 Object defaultValue = option.getDataType() == null ? false : null;
-                Object value = optionValues.getOrDefault(option.getRuntimeKey(), defaultValue);
+                Object value = optionValues.getOrDefault(option.getKey(), defaultValue);
                 result.add(value);
                 continue;
             }
