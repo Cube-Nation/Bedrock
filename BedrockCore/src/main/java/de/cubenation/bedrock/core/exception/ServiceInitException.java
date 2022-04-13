@@ -24,7 +24,7 @@ package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public class ServiceInitException extends Exception {
 
@@ -32,4 +32,7 @@ public class ServiceInitException extends Exception {
         super(message);
     }
 
+    public ServiceInitException(Exception e) {
+        super(e);
+    }
 }
