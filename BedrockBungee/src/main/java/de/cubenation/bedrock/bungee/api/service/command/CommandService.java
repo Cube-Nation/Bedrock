@@ -30,6 +30,7 @@ import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.command.tree.CommandTreeRoot;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import lombok.ToString;
 
@@ -67,7 +68,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
     }
 
     @Override
-    protected void registerPlatformSpecificPluginCommands() {
+    protected void registerPlatformSpecificPluginCommands() throws CommandInitException {
         CommandTreeNestedNode nestedNode = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "command", "cmd");
         nestedNode.addCommandHandler(CommandListCommand.class, "list", "l");
     }

@@ -118,7 +118,7 @@ public abstract class CommandService extends AbstractService {
 
     protected abstract void registerCommand(CommandTreeNode command, String... label) throws ServiceInitException;
 
-    protected abstract void registerPlatformSpecificPluginCommands();
+    protected abstract void registerPlatformSpecificPluginCommands() throws CommandInitException;
 
     private void processCommandConfig() throws ServiceInitException, CommandInitException {
         Class<?> clazz;
