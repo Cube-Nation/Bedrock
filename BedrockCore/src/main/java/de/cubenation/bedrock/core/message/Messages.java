@@ -270,10 +270,15 @@ public abstract class Messages {
 
         String commandHeadline = "/" + callStack[0].getCalledLabel();
 
+        BedrockJson coloredCommandJson = BedrockJson.JsonWithText("");
+
         BedrockJson helpJson = BedrockJson.JsonWithText("");
         BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.GRAY);
         BedrockJson questionSpace = BedrockJson.Space();
         BedrockJson commandHead = BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY);
+
+        coloredCommandJson.addExtra(commandHead.clone());
+        coloredCommandJson.addExtra(BedrockJson.Space());
 
         helpJson.addExtra(questionMark);
         helpJson.addExtra(questionSpace);
@@ -284,11 +289,15 @@ public abstract class Messages {
         for (CommandTreePathItem subCmd : subCommands) {
             BedrockJson subCommand = BedrockJson.JsonWithText(subCmd.getCalledLabel()).color(JsonColor.SECONDARY);
 
-            // Add hover with alias
+            coloredCommandJson.addExtra(subCommand.clone());
+            coloredCommandJson.addExtra(BedrockJson.Space());
+
+            // Add hover
+            BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd.getCalledLabel())
+                    .color(JsonColor.SECONDARY)
+                    .bold(true);
             if (subCmd.getAliases().length > 0) {
-                BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd.getCalledLabel())
-                        .color(JsonColor.SECONDARY)
-                        .bold(true);
+                // Aliases
                 subCommandHover.addExtra(BedrockJson.NewLine());
                 String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
 
@@ -302,9 +311,8 @@ public abstract class Messages {
 
                     subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
                 }
-
-                subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
             }
+            subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
 
             helpJson.addExtra(subCommand);
             helpJson.addExtra(BedrockJson.Space());
@@ -333,7 +341,7 @@ public abstract class Messages {
             }
         }
 
-        cmdDesc.addExtra(BedrockJson.NewLine());
+        boolean separatorLinePlaced = false;
 
         // process all Arguments
         for (Argument argument : command.getArguments()) {
@@ -344,7 +352,7 @@ public abstract class Messages {
 
             cmdDesc.addExtra(BedrockJson.NewLine());
 
-            // Argument placeholder
+            // Create argument placeholder
             boolean optional = argument.isOptional();
             StringBuilder argumentContent = new StringBuilder();
             if (argument instanceof Option option) {
@@ -362,38 +370,43 @@ public abstract class Messages {
                             ? "[" + argumentContent + "]"
                             : argumentContent.toString())
                     )
-                    .color(JsonColor.GRAY)
-                    .italic(optional);
+                    .color(JsonColor.GRAY);
 
-            // add arg to inline help
+            // Add argument Hover
+            BedrockJson argumentHoverJson = argumentJson.clone();
+            argumentHoverJson.addExtra(BedrockJson.NewLine());
+            argumentHoverJson.addExtra(BedrockJson.JsonWithText(argument.getRuntimeDescription()).color(JsonColor.WHITE));
+            argumentJson.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, argumentHoverJson);
+
+            // Add inline argument
             if (!(argument instanceof Option option && option.isHidden())) {
                 helpJson.addExtra(argumentJson);
                 helpJson.addExtra(BedrockJson.Space());
             }
 
-            // add arg to hover help
+            // Add arg to hover help
+            if (!separatorLinePlaced) {
+                cmdDesc.addExtra(BedrockJson.NewLine());
+                separatorLinePlaced = true;
+            }
             cmdDesc.addExtra(argumentJson);
             cmdDesc.addExtra(BedrockJson.JsonWithText(" : ").color(JsonColor.FLAG));
             cmdDesc.addExtra(BedrockJson.JsonWithText(argument.getRuntimeDescription())).color(JsonColor.WHITE);
 
         }
 
-        // TODO: add Command to Command Description
-//        ArrayList<BedrockJson> extras = cmdDesc.getExtras();
-//        List<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
-//        for (int i = coloredSuggestion.size() - 1; i >= 0; i--) {
-//            BedrockJson json = coloredSuggestion.get(i);
-//            extras.add(0, json);
-//        }
-//        cmdDesc.extra(extras);
+        // Add command in front of command description
+        ArrayList<BedrockJson> extras = cmdDesc.getExtras();
+        extras.add(0, coloredCommandJson);
+        cmdDesc.extra(extras);
 
-
+        // Add hover to base elements
         questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
         questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
         commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
 
-        // TODO: add click action
-//        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, command.getStringSuggestion());
+        // Add click action
+        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, "/"+treePath.getCommandAsString());
 
         return new JsonMessage(plugin, helpJson);
     }

@@ -290,7 +290,7 @@ public class de_DE extends CustomConfigurationFile {
     @Path("command.bedrock.page")
     private HashMap<String, String> command_bedrock_page = new HashMap<>() {{
         put("ph", "Seite");
-        put("desc", "Seite");
+        put("desc", "Seitennummer");
     }};
 
     @Path("command.bedrock.filter")
