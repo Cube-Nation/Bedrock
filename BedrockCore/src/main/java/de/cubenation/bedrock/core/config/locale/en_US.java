@@ -241,7 +241,7 @@ public class en_US extends CustomConfigurationFile {
     @Path("command.bedrock.page")
     private HashMap<String, String> command_bedrock_page = new HashMap<String, String>() {{
         put("ph", "Page");
-        put("desc", "Page");
+        put("desc", "Page number");
     }};
 
     @Path("command.bedrock.filter")
