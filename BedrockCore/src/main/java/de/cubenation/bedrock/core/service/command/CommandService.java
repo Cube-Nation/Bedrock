@@ -129,12 +129,12 @@ public abstract class CommandService extends AbstractService {
             return;
         }
 
-        registerNestedNode(null, clazz);
+        registerNestedNode(null, clazz, 0);
     }
 
-    public void registerNestedNode(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException, CommandInitException {
+    public void registerNestedNode(CommandTreeNestedNode parent, Class<?> clazz, int level) throws ServiceInitException, CommandInitException {
         // Register commands
-        registerCommandNodes(parent, clazz);
+        registerCommandNodes(parent, clazz, level);
 
         // Register sub-nested-nodes
         for (Class<?> subClass : clazz.getClasses()) {
@@ -144,7 +144,7 @@ public abstract class CommandService extends AbstractService {
             // ToDo: fix multi level tokens
             Arrays.stream(commandTokens).forEach(t -> labels.addAll(Arrays.stream(t.value()).toList()));
             if (labels.isEmpty()) {
-                plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command label.", clazz.getName()));
+                plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command token.", clazz.getName()));
                 return;
             }
 
@@ -165,12 +165,12 @@ public abstract class CommandService extends AbstractService {
             }
 
             // Pass on
-            registerNestedNode(nestedNode, subClass);
+            registerNestedNode(nestedNode, subClass, level+1);
         }
     }
 
     @SuppressWarnings("unchecked")
-    public void registerCommandNodes(CommandTreeNestedNode parent, Class<?> clazz) throws ServiceInitException, CommandInitException {
+    public void registerCommandNodes(CommandTreeNestedNode parent, Class<?> clazz, int level) throws ServiceInitException, CommandInitException {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             // Only accept field of type Class
@@ -198,8 +198,12 @@ public abstract class CommandService extends AbstractService {
             // ToDo: fix multi level tokens
             Arrays.stream(commandTokens).forEach(t -> labels.addAll(Arrays.stream(t.value()).toList()));
             if (labels.isEmpty()) {
-                plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command label.", field.getName()));
-                continue;
+                if (level > 0) {
+                    labels.add("");
+                } else {
+                    plugin.log(Level.WARNING, String.format("Skipping '%s' in command config. Needs to have at least one command label.", field.getName()));
+                    continue;
+                }
             }
 
             // Register commands for labels
