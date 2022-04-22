@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.core.command.argument.type;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.exception.ArgumentTypeCastException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
@@ -15,15 +16,16 @@ public class BedrockPlayerArgument extends ArgumentType<BedrockPlayer>{
     }
 
     @Override
-    public BedrockPlayer tryCast(String input) throws ClassCastException {
-        return UUIDUtil.isUUID(input) ?
+    public BedrockPlayer tryCast(String input) throws ArgumentTypeCastException {
+        BedrockPlayer player = UUIDUtil.isUUID(input) ?
                 plugin.getBedrockServer().getPlayer(UUID.fromString(input)) :
                 plugin.getBedrockServer().getPlayer(input);
-    }
 
-    @Override
-    public void sendFailureMessage(BedrockChatSender commandSender, String input) {
-        plugin.messages().noSuchPlayer(commandSender, input);
+        if (player == null) {
+            throw new ArgumentTypeCastException(plugin.messages().getNoSuchPlayer(input));
+        }
+
+        return player;
     }
 
     @Override

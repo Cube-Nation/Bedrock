@@ -20,34 +20,24 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.api.service.command;
+package de.cubenation.bedrock.core.config;
 
-import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
-import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
 import de.cubenation.bedrock.core.FoundationPlugin;
-
-import java.util.ArrayList;
+import net.cubespace.Yamler.Config.YamlConfig;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
-public class ComplexCommandManager
-        extends de.cubenation.bedrock.core.service.command.ComplexCommandManager
-        implements BungeeCommandManager {
+public abstract class CustomConfigurationFile extends YamlConfig {
 
-    public ComplexCommandManager(FoundationPlugin plugin, String label) {
-        super(plugin, label);
+    public CustomConfigurationFile() { }
+
+    @SuppressWarnings("unused")
+    public CustomConfigurationFile(FoundationPlugin plugin, String name) { }
+
+    public CustomConfigurationFile get() {
+        return this;
     }
 
-    @Override
-    public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        onCommand(BungeeChatSender.wrap(sender), args);
-    }
-
-    @Override
-    public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        Iterable<String> res = onAutoComplete(BungeeChatSender.wrap(sender), args);
-        return res != null ? res : new ArrayList<>();
-    }
 }

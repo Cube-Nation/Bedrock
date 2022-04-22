@@ -38,9 +38,8 @@ import java.util.Arrays;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-
 @SuppressWarnings("unused")
 public class JsonMessage {
 
@@ -82,8 +81,7 @@ public class JsonMessage {
         BaseComponent[] components = createBaseComponent();
         if (components == null) return;
 
-        if (commandSender instanceof BedrockPlayer) {
-            BedrockPlayer player = (BedrockPlayer) commandSender;
+        if (commandSender instanceof BedrockPlayer player) {
             sendPlayer(player, components, chatMessageType);
         } else {
             sendConsole(commandSender, components);
@@ -131,11 +129,16 @@ public class JsonMessage {
         // apply colors from color scheme to message
         json = colorScheme.applyColorSchemeForJson(json);
 
-        BaseComponent[] components = ComponentSerializer.parse(json);
+        return ComponentSerializer.parse(json);
+    }
+
+    public String getPlainText() {
+        BaseComponent[] components = createBaseComponent();
         if (components == null) {
-            return null;
+            return "";
         }
-        return components;
+
+        return BaseComponent.toPlainText(components);
     }
 
     public String getTranslation() {

@@ -28,9 +28,8 @@ import java.util.ArrayList;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-
 @SuppressWarnings({"WeakerAccess", "unchecked", "UnusedReturnValue", "unused", "SameParameterValue"})
 public class BedrockJson extends JSONObject {
 
@@ -162,6 +161,11 @@ public class BedrockJson extends JSONObject {
 
     public static BedrockJson NewLine() {
         return BedrockJson.JsonWithText("\n");
+    }
+
+    @Override
+    public BedrockJson clone() {
+        return (BedrockJson) super.clone();
     }
 
 }

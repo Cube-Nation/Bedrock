@@ -26,13 +26,14 @@ import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface CommandHandlers {
+@Target({ ElementType.FIELD, ElementType.TYPE })
+@Repeatable(CommandTokens.class)
+public @interface CommandToken {
 
-    CommandHandler[] value();
+    String[] value();
 
 }

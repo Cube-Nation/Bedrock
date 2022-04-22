@@ -22,7 +22,7 @@ public class BukkitServer implements BedrockServer {
 
     public BukkitPlayer getPlayer(UUID uuid) {
         Player player = Bukkit.getPlayer(uuid);
-        if(player == null)
+        if (player == null)
             return null;
         return BukkitPlayer.wrap(player);
     }

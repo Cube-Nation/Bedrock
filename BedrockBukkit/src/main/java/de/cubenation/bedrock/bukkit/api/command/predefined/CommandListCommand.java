@@ -23,15 +23,12 @@
 package de.cubenation.bedrock.bukkit.api.command.predefined;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 import java.util.HashMap;
@@ -39,19 +36,17 @@ import java.util.Map;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Description("command.bedrock.cmd.list.desc")
 @Permission(Name = "command.list", Role = Role.USER)
-@SubCommand({"command", "cmd"})
-@SubCommand({"list", "l"})
 public class CommandListCommand extends Command {
 
-    public CommandListCommand(BasePlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public CommandListCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
-    public void execute(BedrockChatSender sender) throws CommandException, IllegalCommandArgumentException, InsufficientPermissionException {
+    public void execute(BedrockChatSender sender) {
 
         HashMap<String, String> commandList = new HashMap<>();
 

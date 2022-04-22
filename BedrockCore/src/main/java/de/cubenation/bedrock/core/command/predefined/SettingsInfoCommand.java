@@ -26,10 +26,9 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -46,12 +45,10 @@ import java.util.UUID;
  */
 @Description("command.bedrock.info.desc")
 @Permission(Name = "settings.list", Role = Role.ADMIN)
-@SubCommand({ "settings" })
-@SubCommand({ "info", "i" })
 public class SettingsInfoCommand extends Command {
 
-    public SettingsInfoCommand(FoundationPlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public SettingsInfoCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(

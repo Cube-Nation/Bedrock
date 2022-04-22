@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.config.locale;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Path;
 
@@ -121,6 +121,18 @@ public class en_US extends CustomConfigurationFile {
 
     @Path("no_valid_enum_constant")
     private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is not a valid option. Use one of the following:\",\"color\":\"white\"},{\"text\":\" &%constants%\",\"color\":\"&SECONDARY&\"}]}";
+
+    @Path("greater_than")
+    private String greater_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is greater than \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("lower_than")
+    private String lower_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" is lower than \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("string_too_long")
+    private String string_too_long = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" must be no longer than \",\"color\":\"white\"},{\"text\":\"%max%\",\"color\":\"&SECONDARY&\"},{\"text\":\" characters.\",\"color\":\"white\"}]}";
+
+    @Path("string_too_short")
+    private String string_too_short = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" must be at least \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\" characters long.\",\"color\":\"white\"}]}";
 
 
     @Path("json.permission.list.header")
@@ -229,7 +241,13 @@ public class en_US extends CustomConfigurationFile {
     @Path("command.bedrock.page")
     private HashMap<String, String> command_bedrock_page = new HashMap<String, String>() {{
         put("ph", "Page");
-        put("desc", "Page");
+        put("desc", "Page number");
+    }};
+
+    @Path("command.bedrock.filter")
+    private HashMap<String, String> command_bedrock_filter = new HashMap<>() {{
+        put("ph", "Filter");
+        put("desc", "String to narrow it down");
     }};
 
     /*

@@ -24,148 +24,53 @@ package de.cubenation.bedrock.bungee.api.service.command;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.api.command.BungeeCommand;
-import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
 import de.cubenation.bedrock.bungee.api.command.predefined.CommandListCommand;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.annotation.CommandHandler;
-import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
+import de.cubenation.bedrock.core.command.tree.CommandTreeRoot;
+import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.logging.Level;
+import lombok.ToString;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
-@SuppressWarnings("Duplicates")
+@ToString
 public class CommandService extends de.cubenation.bedrock.core.service.command.CommandService {
-
-    private ArrayList<CommandManager> commandManagers = new ArrayList<>();
-
-    private ArrayList<BungeeCommand> commands = new ArrayList<>();
 
     public CommandService(FoundationPlugin plugin) {
         super(plugin);
     }
 
     @Override
-    public void init() throws ServiceInitException {
-        // Get all commands and their handles from CommandHandler annotations
-        for (CommandHandler commandHandler : this.getPlugin().getClass().getAnnotationsByType(CommandHandler.class)) {
-            this.addCommandManager(commandHandler.Command(), commandHandler.Handlers());
-        }
-
-        // Try to get plugin command manager
-        ComplexCommandManager pluginCommandManager = null;
-        for (CommandManager commandManager : commandManagers) {
-            if (commandManager.getLabel().equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
-                pluginCommandManager = (ComplexCommandManager) commandManager;
-                break;
-            }
-        }
-
-        // Add plugin command manager in case it's missing
-        if (pluginCommandManager == null) {
-            String commandName = this.getPlugin().getPluginDescription().getName();
-
-            pluginCommandManager = new ComplexCommandManager(this.getPlugin(), commandName);
-
-            // Add default commands that all plugins are capable of
-            for (Command predefinedCommand : getPredefinedCommands(pluginCommandManager)) {
-                pluginCommandManager.addCommand(predefinedCommand);
-            }
-
-            // Add bungee exclusive commands
-            pluginCommandManager.addCommand(new CommandListCommand(getPlugin(), pluginCommandManager));
-
-            registerCommand(commandName, pluginCommandManager);
-        }
-    }
-
-    private void addCommandManager(String command, Class<? extends Command>[] handlers) throws ServiceInitException {
-        // Invalid command
-        if (handlers.length == 0) {
-            this.getPlugin().log(
-                    Level.WARNING,
-                    "CommandService: Not registering command " + command + " (no handlers assigned)"
-            );
-            return;
-        }
-
-        // Register command manager
-        BungeeCommandManager commandManager;
-        if(handlers.length == 1) {
-            // Simple command
-            commandManager = new SimpleCommandManager(this.getPlugin(), command);
-
-            Class<?> handler = handlers[0];
+    protected void registerCommand(CommandTreeNode command, String... labels) throws ServiceInitException {
+        for (String label: labels) {
+            CommandTreePathItem commandTreePathItem = CommandTreePathItem.create(command, label, labels);
+            CommandTreeRoot root = new CommandTreeRoot(plugin, commandTreePathItem);
             try {
-                Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                Command instance = (Command) constructor.newInstance(plugin, commandManager);
-                ((SimpleCommandManager) commandManager).setCommand(instance);
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                BungeeCommand bungeeCommand = new BungeeCommand(plugin, root, label);
+                getPlugin().getProxy().getPluginManager().registerCommand(getPlugin(), bungeeCommand);
+            } catch (Exception e) {
                 e.printStackTrace();
+                throw new ServiceInitException("Can't setup command tree for " + label);
             }
-        } else {
-            // Complex command
-            commandManager = new ComplexCommandManager(this.getPlugin(), command);
-
-            for (Class<?> handler : handlers) {
-                try {
-                    Constructor<?> constructor = handler.getConstructor(FoundationPlugin.class, CommandManager.class);
-                    Command instance = (Command) constructor.newInstance(plugin, commandManager);
-                    ((ComplexCommandManager) commandManager).addCommand(instance);
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        registerCommand(command, commandManager);
-    }
-
-    private void registerCommand(String commandName, BungeeCommandManager commandManager) throws ServiceInitException {
-        try {
-            BungeeCommand bungeeCommand = new BungeeCommand(getPlugin(), commandManager, commandName);
-
-            this.addCommand(bungeeCommand);
-            this.addCommandManager(commandManager);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServiceInitException("Can't setup command manager for " + commandName);
+            CommandTreePathItem item = CommandTreePathItem.create(root, label, labels);
+            commandHandlers.put(label, item);
         }
     }
 
     @Override
-    protected BasePlugin getPlugin() {
-        return (BasePlugin) super.getPlugin();
-    }
-
-    protected void addCommandManager(CommandManager manager) {
-        this.commandManagers.add(manager);
-    }
-
-    protected void addCommand(BungeeCommand command) {
-        getPlugin().getProxy().getPluginManager().registerCommand(getPlugin(), command);
-
-        this.commands.add(command);
+    public BasePlugin getPlugin() {
+        return ((BasePlugin) plugin);
     }
 
     @Override
-    public ArrayList<CommandManager> getCommandManagers() {
-        return commandManagers;
-    }
-
-    @Override
-    public String toString() {
-        return "CommandService{" +
-                "commandManagers=" + commandManagers +
-                ", commands=" + commands +
-                '}';
+    protected void registerPlatformSpecificPluginCommands() throws CommandInitException {
+        CommandTreeNestedNode nestedNode = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "command", "cmd");
+        nestedNode.addCommandHandler(CommandListCommand.class, "list", "l");
     }
 }
 
