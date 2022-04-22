@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.core.command.tree;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.predefined.HelpCommand;
 import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.CommandInitException;
@@ -42,17 +43,25 @@ public class CommandTreeNestedNode extends CommandTreeNode {
     }
 
     private boolean tryExecute(BedrockChatSender commandSender, CommandTreePath treePath, String[] args) throws CommandException, IllegalCommandArgumentException {
-        // TODO: add possibility for empty subcommand
         if (args.length == 0) {
+            // Execute root command if present
+            CommandTreePathItem rootCommandPath = subCommands.get("");
+            if (rootCommandPath != null) {
+                rootCommandPath.getNode().onCommand(commandSender, treePath, args);
+                return true;
+            }
+
+            // Execute help command if present
             if (helpCommand == null) {
                 throw new IllegalCommandArgumentException();
             }
             try {
                 treePath.append(subCommands.get("help"));
-                this.helpCommand.preExecute(commandSender, treePath, args);
+                helpCommand.preExecute(commandSender, treePath, args);
             } catch (Exception e) {
                 throw new CommandException("Help command could not be executed");
             }
+
             return true;
         }
 
@@ -100,40 +109,57 @@ public class CommandTreeNestedNode extends CommandTreeNode {
     }
 
     private void addNode(CommandTreeNode node, String label, String... allLabels) throws CommandInitException {
-        if (this.subCommands.containsKey(label)) {
+        if (subCommands.containsKey(label)) {
             throw new CommandInitException(String.format("Cannot register subcommand '%s' since a subcommand by that name is already registered", label));
         }
-        this.subCommands.put(label, CommandTreePathItem.create(node, label, allLabels));
+        if (label.equals("") && !(node instanceof Command)) {
+            throw new CommandInitException(String.format("Cannot register token less subcommand. Class has to extend %s", Command.class.getName()));
+        }
+        subCommands.put(label, CommandTreePathItem.create(node, label, allLabels));
     }
 
     public void addHelpCommand() throws CommandInitException {
-        this.helpCommand = addCommandHandler(HelpCommand.class, "help");
+        helpCommand = addCommandHandler(HelpCommand.class, "help");
     }
 
     @Override
     public Iterable<String> onAutoComplete(BedrockChatSender sender, String[] args) {
-        Set<String> allSubcommands = this.subCommands.keySet();
+        Set<String> allCompletions = subCommands.keySet().stream().filter(s -> !s.equals("")).collect(Collectors.toSet());
         if (args.length == 0) {
-            return allSubcommands;
+            return allCompletions;
         }
 
         if (args.length >=2) {
-            CommandTreePathItem next = this.subCommands.get(args[0]);
+            CommandTreePathItem next = subCommands.get(args[0]);
             if (next == null) {
                 return List.of();
             }
             return next.getNode().onAutoComplete(sender, Arrays.copyOfRange(args, 1, args.length));
         }
 
+        // Add token less completion if applicable
+        CommandTreePathItem rootPathItem = subCommands.get("");
+        if (rootPathItem != null) {
+            rootPathItem.getNode().onAutoComplete(sender, args).forEach(allCompletions::add);
+        }
+
         // Filter out any that do not match current input
-        return allSubcommands.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+        return allCompletions.stream().filter(s -> s.toLowerCase().startsWith(args[0].toLowerCase())).collect(Collectors.toList());
     }
 
     @Override
     public List<JsonMessage> getJsonHelp(BedrockChatSender sender, CommandTreePath treePath) {
         ArrayList<JsonMessage> paths = new ArrayList<>();
         Set<CommandTreeNode> uniqueNodes = new HashSet<>();
+
+        // Add all subcommands as separate lines
         for (Map.Entry<String, CommandTreePathItem> subCommand : subCommands.entrySet()) {
+            // Handle token less subcommand separately
+            if (subCommand.getKey().equals("")) {
+                paths.addAll(0, subCommand.getValue().getNode().getJsonHelp(sender, treePath));
+                continue;
+            }
+
             // Skip aliases
             if (uniqueNodes.contains(subCommand.getValue().getNode())) {
                 continue;
@@ -144,6 +170,7 @@ public class CommandTreeNestedNode extends CommandTreeNode {
             subPath.append(subCommand.getValue());
             paths.addAll(subCommand.getValue().getNode().getJsonHelp(sender, subPath));
         }
+
         return paths;
     }
 }
