@@ -22,22 +22,19 @@
 
 package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.core.command.Command;
+import de.cubenation.bedrock.core.annotation.Permission;
 
 import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@Repeatable(CommandHandlers.class)
-public @interface CommandHandler {
+@Target({ ElementType.FIELD, ElementType.TYPE })
+public @interface CommandTokens {
 
-    String Command();
-
-    Class<? extends Command>[] Handlers();
+    CommandToken[] value();
 
 }

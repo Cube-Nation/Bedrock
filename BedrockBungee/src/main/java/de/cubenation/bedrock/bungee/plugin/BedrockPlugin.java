@@ -71,7 +71,7 @@ public class BedrockPlugin extends BasePlugin {
     @Override
     public List<Class<?>> getDatabaseClasses() {
         return new ArrayList<Class<?>>() {{
-            add(BedrockOfflinePlayer.class);
+//            add(BedrockOfflinePlayer.class);
         }};
     }
 

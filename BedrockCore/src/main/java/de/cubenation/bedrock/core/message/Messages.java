@@ -27,8 +27,9 @@ import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.argument.Argument;
 import de.cubenation.bedrock.core.command.argument.Option;
+import de.cubenation.bedrock.core.command.tree.CommandTreePath;
+import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
-import de.cubenation.bedrock.core.helper.LengthComparator;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
@@ -38,6 +39,7 @@ import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -50,10 +52,11 @@ import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
 public abstract class Messages {
 
+    @Getter
     private final FoundationPlugin plugin;
 
     private final Error error;
@@ -61,12 +64,6 @@ public abstract class Messages {
     public Messages(FoundationPlugin foundationPlugin) {
         this.plugin = foundationPlugin;
         error = new Error();
-    }
-
-
-
-    public FoundationPlugin getPlugin() {
-        return plugin;
     }
 
     public Error error() {
@@ -94,8 +91,12 @@ public abstract class Messages {
         new JsonMessage(getPlugin(), "must_be_player").send(commandSender);
     }
 
+    public JsonMessage getNoSuchPlayer(String player) {
+        return new JsonMessage(getPlugin(), "no_such_player.specific", "player", player);
+    }
+
     public void noSuchPlayer(BedrockChatSender commandSender, String player) {
-        new JsonMessage(getPlugin(), "no_such_player.specific", "player", player).send(commandSender);
+        getNoSuchPlayer(player).send(commandSender);
     }
 
     public void noSuchPlayer(BedrockChatSender commandSender) {
@@ -114,21 +115,37 @@ public abstract class Messages {
         new JsonMessage(plugin, "no_such_world_empty").send(commandSender);
     }
 
-    public void noValidInt(BedrockChatSender commandSender, String input) {
-        new JsonMessage(plugin, "no_valid_int", "input", input).send(commandSender);
+    public JsonMessage getNoValidInt(String input) {
+        return new JsonMessage(plugin, "no_valid_int", "input", input);
     }
 
-    public void noValidFloat(BedrockChatSender commandSender, String input) {
-        new JsonMessage(plugin, "no_valid_float", "input", input).send(commandSender);
+    public JsonMessage getNoValidFloat(String input) {
+        return new JsonMessage(plugin, "no_valid_float", "input", input);
     }
 
-    public void noValidUuid(BedrockChatSender commandSender, String input) {
-        new JsonMessage(plugin, "no_valid_uuid", "input", input).send(commandSender);
+    public JsonMessage getNoValidUuid(String input) {
+        return new JsonMessage(plugin, "no_valid_uuid", "input", input);
     }
 
-    public void noValidEnumConstant(BedrockChatSender commandSender, String input, List<String> constantList) {
-        String constants = constantList.stream().collect(Collectors.joining(", "));
-        new JsonMessage(plugin, "no_valid_enum_constant", "input", input, "constants", constants).send(commandSender);
+    public JsonMessage getNoValidEnumConstant(String input, List<String> constantList) {
+        String constants = String.join(", ", constantList);
+        return new JsonMessage(plugin, "no_valid_enum_constant", "input", input, "constants", constants);
+    }
+
+    public JsonMessage getGreaterThan(String input, int max) {
+        return new JsonMessage(plugin, "greater_than", "input", input, "max", Integer.toString(max));
+    }
+
+    public JsonMessage getLowerThan(String input, int min) {
+        return new JsonMessage(plugin, "lower_than", "input", input, "min", Integer.toString(min));
+    }
+
+    public JsonMessage getStringTooLong(String input, int max) {
+        return new JsonMessage(plugin, "string_too_long", "input", input, "max", Integer.toString(max));
+    }
+
+    public JsonMessage getStringTooShort(String input, int min) {
+        return new JsonMessage(plugin, "string_too_short", "input", input, "min", Integer.toString(min));
     }
 
     public void reloadComplete(BedrockChatSender sender) {
@@ -245,61 +262,60 @@ public abstract class Messages {
      * Get a TextComponent with the help for a SubCommand
      *
      * @param sender  the command sender
-     * @param command a class that is abstracted from AbstractCommand
      * @return the TextComponent with the help.
      */
-    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, Command command) {
+    public JsonMessage getHelpForSubCommand(BedrockChatSender sender, CommandTreePath treePath, Command command) {
 
-        // check for permission
-        if (!command.hasPermission(sender)) {
-            return null;
-        }
+        CommandTreePathItem[] callStack = treePath.getAll();;
 
-        String commandHeadline = "/" + command.getCommandManager().getLabel();
+        String commandHeadline = "/" + callStack[0].getCalledLabel();
+
+        BedrockJson coloredCommandJson = BedrockJson.JsonWithText("");
 
         BedrockJson helpJson = BedrockJson.JsonWithText("");
         BedrockJson questionMark = BedrockJson.JsonWithText("<?>").color(JsonColor.GRAY);
         BedrockJson questionSpace = BedrockJson.Space();
         BedrockJson commandHead = BedrockJson.JsonWithText(commandHeadline).color(JsonColor.PRIMARY);
 
+        coloredCommandJson.addExtra(commandHead.clone());
+        coloredCommandJson.addExtra(BedrockJson.Space());
+
         helpJson.addExtra(questionMark);
         helpJson.addExtra(questionSpace);
         helpJson.addExtra(commandHead);
         helpJson.addExtra(BedrockJson.Space());
 
-        if (command.getSubcommands() != null) {
-            for (String[] commands : command.getSubcommands()) {
-                // sort commands by length
-                Arrays.sort(commands, new LengthComparator());
+        CommandTreePathItem[] subCommands = Arrays.copyOfRange(callStack, 1, callStack.length);
+        for (CommandTreePathItem subCmd : subCommands) {
+            BedrockJson subCommand = BedrockJson.JsonWithText(subCmd.getCalledLabel()).color(JsonColor.SECONDARY);
 
-                String subCmd = commands[commands.length - 1];
-                BedrockJson subCommand = BedrockJson.JsonWithText(subCmd).color(JsonColor.SECONDARY);
+            coloredCommandJson.addExtra(subCommand.clone());
+            coloredCommandJson.addExtra(BedrockJson.Space());
 
-                // Add hover with alias
-                if (commands.length > 1) {
-                    BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd)
-                            .color(JsonColor.SECONDARY)
-                            .bold(true);
+            // Add hover
+            BedrockJson subCommandHover = BedrockJson.JsonWithText(subCmd.getCalledLabel())
+                    .color(JsonColor.SECONDARY)
+                    .bold(true);
+            if (subCmd.getAliases().length > 0) {
+                // Aliases
+                subCommandHover.addExtra(BedrockJson.NewLine());
+                String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
+
+                subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
+
+                for (int i = 0; i < subCmd.getAliases().length; i++) {
                     subCommandHover.addExtra(BedrockJson.NewLine());
-                    String aliasDesc = new Translation(plugin, "help.subcommand.alias.desc").getTranslation();
+                    String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
+                            "alias", subCmd.getAliases()[i]
+                    }).getTranslation();
 
-                    subCommandHover.addExtra(BedrockJson.JsonWithText(aliasDesc).color(JsonColor.GRAY));
-
-                    for (int i = 0; i < commands.length - 1; i++) {
-                        subCommandHover.addExtra(BedrockJson.NewLine());
-                        String alias = new Translation(plugin, "help.subcommand.alias.value", new String[]{
-                                "alias", commands[i]
-                        }).getTranslation();
-
-                        subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
-                    }
-
-                    subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
+                    subCommandHover.addExtra(BedrockJson.JsonWithText(alias).color(JsonColor.WHITE));
                 }
-
-                helpJson.addExtra(subCommand);
-                helpJson.addExtra(BedrockJson.Space());
             }
+            subCommand.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, subCommandHover);
+
+            helpJson.addExtra(subCommand);
+            helpJson.addExtra(BedrockJson.Space());
         }
 
         /*
@@ -325,10 +341,7 @@ public abstract class Messages {
             }
         }
 
-        cmdDesc.addExtra(BedrockJson.Space());
-
-        Boolean hasOptional = false;
-        Boolean hasRequired = false;
+        boolean separatorLinePlaced = false;
 
         // process all Arguments
         for (Argument argument : command.getArguments()) {
@@ -339,122 +352,61 @@ public abstract class Messages {
 
             cmdDesc.addExtra(BedrockJson.NewLine());
 
-            Boolean optional = argument.isOptional();
-            if (optional) {
-                hasOptional = true;
-                String translation = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
-            } else {
-                hasRequired = true;
-                String translation = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.FLAG));
-            }
-
-            /*
-             * KeyValueArgument
-             *
-             * In case the argument is an instanceof the KeyValueArgument class (which is kind of a
-             * key-value command) we need to prepend the key
-             */
-            if (argument instanceof Option) {
-                Option option = (Option) argument;
-
-                String keyString = "[" + option.getKey() + (!option.hasParameter() ? "]" : "");
-
-                helpJson.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
-                helpJson.addExtra(BedrockJson.Space());
-
-                cmdDesc.addExtra(BedrockJson.Space());
-                cmdDesc.addExtra(BedrockJson.JsonWithText(keyString).color(JsonColor.SECONDARY));
+            // Create argument placeholder
+            boolean optional = argument.isOptional();
+            StringBuilder argumentContent = new StringBuilder();
+            if (argument instanceof Option option) {
+                argumentContent.append("-");
+                argumentContent.append(option.getKey());
                 if (option.hasParameter()) {
-                    cmdDesc.addExtra(BedrockJson.Space());
+                    argumentContent.append(" ");
+                    argumentContent.append(argument.getRuntimePlaceholder());
                 }
+            } else {
+                argumentContent.append(argument.getRuntimePlaceholder());
             }
 
-            /*
-             * Argument placeholder
-             */
+            BedrockJson argumentJson = BedrockJson.JsonWithText((optional
+                            ? "[" + argumentContent + "]"
+                            : argumentContent.toString())
+                    )
+                    .color(JsonColor.GRAY);
 
-            if (!(argument instanceof Option) || ((Option) argument).hasParameter()) {
-                BedrockJson runtimePlaceholder;
+            // Add argument Hover
+            BedrockJson argumentHoverJson = argumentJson.clone();
+            argumentHoverJson.addExtra(BedrockJson.NewLine());
+            argumentHoverJson.addExtra(BedrockJson.JsonWithText(argument.getRuntimeDescription()).color(JsonColor.WHITE));
+            argumentJson.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, argumentHoverJson);
 
-                if (argument instanceof Option) {
-                    runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
-                            ? argument.getRuntimePlaceholder() + "]"
-                            : argument.getRuntimePlaceholder()))
-                            .color(JsonColor.GRAY)
-                            .italic(optional);
-                } else {
-                    runtimePlaceholder = BedrockJson.JsonWithText((argument.isOptional()
-                            ? "[" + argument.getRuntimePlaceholder() + "]"
-                            : argument.getRuntimePlaceholder()))
-                            .color(JsonColor.GRAY)
-                            .italic(optional);
-                }
-
-
-                helpJson.addExtra(runtimePlaceholder);
+            // Add inline argument
+            if (!(argument instanceof Option option && option.isHidden())) {
+                helpJson.addExtra(argumentJson);
                 helpJson.addExtra(BedrockJson.Space());
-
-                cmdDesc.addExtra(BedrockJson.Space());
-                cmdDesc.addExtra(runtimePlaceholder);
             }
 
-            cmdDesc.addExtra(BedrockJson.JsonWithText("  :  ").color(JsonColor.FLAG));
-
+            // Add arg to hover help
+            if (!separatorLinePlaced) {
+                cmdDesc.addExtra(BedrockJson.NewLine());
+                separatorLinePlaced = true;
+            }
+            cmdDesc.addExtra(argumentJson);
+            cmdDesc.addExtra(BedrockJson.JsonWithText(" : ").color(JsonColor.FLAG));
             cmdDesc.addExtra(BedrockJson.JsonWithText(argument.getRuntimeDescription())).color(JsonColor.WHITE);
 
         }
 
-        if (command.getArguments() != null && !command.getArguments().isEmpty()) {
-            cmdDesc.addExtra(BedrockJson.NewLine());
-
-            // Apply info for command type
-            if (hasOptional) {
-                cmdDesc.addExtra(BedrockJson.NewLine());
-
-                // Add symbol
-                String symbol = new Translation(plugin, "help.info.arg.optional.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(symbol).color(JsonColor.FLAG));
-
-                // Add blank
-                cmdDesc.addExtra(BedrockJson.Space());
-
-                // Add explanation
-                String translation = new Translation(plugin, "help.info.arg.optional.desc").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.GRAY));
-            }
-
-            if (hasRequired) {
-                cmdDesc.addExtra(BedrockJson.NewLine());
-
-                // Add symbol
-                String symbol = new Translation(plugin, "help.info.arg.required.symbol").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(symbol).color(JsonColor.FLAG));
-
-                // Add blank
-                cmdDesc.addExtra(BedrockJson.Space());
-
-                // Add explanation
-                String translation = new Translation(plugin, "help.info.arg.required.desc").getTranslation();
-                cmdDesc.addExtra(BedrockJson.JsonWithText(translation).color(JsonColor.GRAY));
-            }
-        }
-
+        // Add command in front of command description
         ArrayList<BedrockJson> extras = cmdDesc.getExtras();
-        ArrayList<BedrockJson> coloredSuggestion = command.getColoredSuggestion(true);
-        for (int i = coloredSuggestion.size() - 1; i >= 0; i--) {
-            BedrockJson json = coloredSuggestion.get(i);
-            extras.add(0, json);
-        }
+        extras.add(0, coloredCommandJson);
         cmdDesc.extra(extras);
 
-
+        // Add hover to base elements
         questionMark.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
         questionSpace.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
         commandHead.hoverAction(BedrockHoverEvent.Action.SHOW_TEXT, cmdDesc);
 
-        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, command.getStringSuggestion());
+        // Add click action
+        helpJson.clickAction(BedrockClickEvent.Action.SUGGEST_COMMAND, "/"+treePath.getCommandAsString());
 
         return new JsonMessage(plugin, helpJson);
     }

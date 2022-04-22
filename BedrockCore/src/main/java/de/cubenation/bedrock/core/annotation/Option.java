@@ -39,4 +39,6 @@ public @interface Option {
 
     String Placeholder();
 
+    boolean Hidden() default false;
+
 }

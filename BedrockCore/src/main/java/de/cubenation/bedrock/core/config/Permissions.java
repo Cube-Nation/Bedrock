@@ -24,7 +24,6 @@ package de.cubenation.bedrock.core.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.authorization.Role;
-import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.authorization.Permission;
 import net.cubespace.Yamler.Config.Path;
 

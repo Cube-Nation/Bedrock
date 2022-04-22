@@ -20,34 +20,22 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.api.service.command;
+package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.bungee.api.command.BungeeCommandManager;
-import de.cubenation.bedrock.bungee.wrapper.BungeeChatSender;
-import de.cubenation.bedrock.core.FoundationPlugin;
-
-import java.util.ArrayList;
+import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
-public class SimpleCommandManager
-        extends de.cubenation.bedrock.core.service.command.SimpleCommandManager
-        implements BungeeCommandManager {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+@SuppressWarnings("unused")
+public @interface Range {
 
-    public SimpleCommandManager(FoundationPlugin plugin, String label) {
-        super(plugin, label);
-    }
+    int min() default -9999;
 
-    @Override
-    public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        onCommand(BungeeChatSender.wrap(sender), args);
-    }
+    int max() default 9999;
 
-    @Override
-    public Iterable<String> onTabComplete(net.md_5.bungee.api.CommandSender sender, String[] args) {
-        Iterable<String> res = onAutoComplete(BungeeChatSender.wrap(sender), args);
-        return res != null ? res : new ArrayList<>();
-    }
 }

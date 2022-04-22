@@ -42,6 +42,12 @@ public class CollectionUtil {
         return result;
     }
 
+    public static <T> void addIfNotNull(List<T> list, T input) {
+        if (input != null) {
+            list.add(input);
+        }
+    }
+
     public static <T> void addAllIfNotNull(List<T> list, List<T> input) {
         if (input != null) {
             list.addAll(input);

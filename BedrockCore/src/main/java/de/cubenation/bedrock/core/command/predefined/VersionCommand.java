@@ -25,10 +25,9 @@ package de.cubenation.bedrock.core.command.predefined;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
-import de.cubenation.bedrock.core.annotation.SubCommand;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.CommandManager;
+import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 
 /**
@@ -37,11 +36,10 @@ import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
  */
 @Description("command.bedrock.version.desc")
 @Permission(Name = "version", Role = Role.MODERATOR)
-@SubCommand({ "version", "v" })
 public class VersionCommand extends Command {
 
-    public VersionCommand(FoundationPlugin plugin, CommandManager commandManager) {
-        super(plugin, commandManager);
+    public VersionCommand(FoundationPlugin plugin) {
+        super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {

@@ -24,7 +24,6 @@ package de.cubenation.bedrock.core.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.database.DatabaseConfiguration;
-import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
 import net.cubespace.Yamler.Config.Path;

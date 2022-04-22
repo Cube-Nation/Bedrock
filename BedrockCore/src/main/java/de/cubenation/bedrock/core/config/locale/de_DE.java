@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.config.locale;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.service.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
@@ -100,7 +100,7 @@ public class de_DE extends CustomConfigurationFile {
     private String no_such_world_empty = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"Die Welt wurde nicht gefunden\",\"color\":\"red\"}]}";
 
     @Path("no_valid_int")
-    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Ganzzahl.\",\"color\":\"white\"}]}";
+    private String no_valid_int = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" darf nur Buchstaben enthalten.\",\"color\":\"white\"}]}";
 
     @Path("no_valid_float")
     private String no_valid_float = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Ganzzahl.\",\"color\":\"white\"}]}";
@@ -110,6 +110,20 @@ public class de_DE extends CustomConfigurationFile {
 
     @Path("no_valid_enum_constant")
     private String no_valid_enum_constant = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist keine gültige Option. Nutze eine der Folgenden:\",\"color\":\"white\"},{\"text\":\" %constants%\",\"color\":\"&SECONDAR&\"}]}";
+
+    @Path("greater_than")
+    private String greater_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist größer als \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("lower_than")
+    private String lower_than = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" ist kleiner als \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\".\",\"color\":\"white\"}]}";
+
+    @Path("string_too_long")
+    private String string_too_long = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" darf maximal \",\"color\":\"white\"},{\"text\":\"%max%\",\"color\":\"&SECONDARY&\"},{\"text\":\" Zeichen lang sein.\",\"color\":\"white\"}]}";
+
+    @Path("string_too_short")
+    private String string_too_short = "{\"text\":\"%plugin_prefix%\",\"color\":\"white\",\"extra\":[{\"text\":\" \",\"color\":\"white\"},{\"text\":\"%input%\",\"color\":\"&SECONDARY&\"},{\"text\":\" muss mindestens \",\"color\":\"white\"},{\"text\":\"%min%\",\"color\":\"&SECONDARY&\"},{\"text\":\" Zeichen lang sein.\",\"color\":\"white\"}]}";
+
+
 
     /*
      * Help messages
@@ -274,9 +288,15 @@ public class de_DE extends CustomConfigurationFile {
     private String help_args_key_placeholder = "Key";
 
     @Path("command.bedrock.page")
-    private HashMap<String, String> command_bedrock_page = new HashMap<String, String>() {{
+    private HashMap<String, String> command_bedrock_page = new HashMap<>() {{
         put("ph", "Seite");
-        put("desc", "Seite");
+        put("desc", "Seitennummer");
+    }};
+
+    @Path("command.bedrock.filter")
+    private HashMap<String, String> command_bedrock_filter = new HashMap<>() {{
+        put("ph", "Filter");
+        put("desc", "Zeichenfolge zum Eingrenzen");
     }};
 
     // CommandList
