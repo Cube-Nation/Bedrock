@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.bukkit.wrapper;
 
+import de.cubenation.bedrock.core.model.MappedModel;
 import de.cubenation.bedrock.core.model.wrapper.BedrockDimension;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 @ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BukkitDimension implements BedrockDimension {
+public class BukkitDimension extends MappedModel implements BedrockDimension {
 
     @Getter
     private final World world;

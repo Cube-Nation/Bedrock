@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.bungee.wrapper;
 
+import de.cubenation.bedrock.core.model.MappedModel;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPosition;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Objects;
  */
 @ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BungeePosition implements BedrockPosition {
+public class BungeePosition extends MappedModel implements BedrockPosition {
 
     @Getter
     private final BungeeDimension dimension;

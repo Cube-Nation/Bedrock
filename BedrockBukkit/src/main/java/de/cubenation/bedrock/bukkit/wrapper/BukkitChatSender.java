@@ -22,6 +22,7 @@
 
 package de.cubenation.bedrock.bukkit.wrapper;
 
+import de.cubenation.bedrock.core.model.MappedModel;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,7 +41,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 @ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BukkitChatSender implements BedrockChatSender {
+public class BukkitChatSender extends MappedModel implements BedrockChatSender {
 
     @Getter
     private final org.bukkit.command.CommandSender commandSender;
