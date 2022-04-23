@@ -22,6 +22,7 @@
 
 package de.cubenation.bedrock.bungee.wrapper;
 
+import de.cubenation.bedrock.core.model.MappedModel;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -33,7 +34,7 @@ import java.util.Objects;
  * @author Cube-Nation
  * @version 2.0
  */
-public class BungeeChatSender implements BedrockChatSender {
+public class BungeeChatSender extends MappedModel implements BedrockChatSender {
 
     private final net.md_5.bungee.api.CommandSender commandSender;
 

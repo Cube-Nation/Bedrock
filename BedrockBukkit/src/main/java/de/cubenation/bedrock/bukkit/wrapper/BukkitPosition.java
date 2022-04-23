@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.bukkit.wrapper;
 
+import de.cubenation.bedrock.core.model.MappedModel;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPosition;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 @ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class BukkitPosition implements BedrockPosition {
+public class BukkitPosition extends MappedModel implements BedrockPosition {
 
     @Getter
     private final Location location;

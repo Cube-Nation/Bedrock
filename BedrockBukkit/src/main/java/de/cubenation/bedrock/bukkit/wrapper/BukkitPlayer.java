@@ -85,7 +85,6 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
 
     @Override
     public void teleport(BedrockPosition pos) {
-        System.out.println("teleport");
         player.teleport(((BukkitPosition) pos).getLocation());
     }
 
