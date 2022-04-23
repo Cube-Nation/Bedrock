@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.service.confirm;
 
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 
 import java.util.HashMap;
 

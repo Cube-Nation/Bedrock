@@ -1,60 +1,53 @@
 package de.cubenation.bedrock.bungee.wrapper;
 
-import de.cubenation.bedrock.core.wrapper.BedrockPosition;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPosition;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+
+import java.util.Objects;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
+@ToString
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class BungeePosition implements BedrockPosition {
 
-    private BungeeDimension dimension;
-    private double x = 0.0d, y = 0.0d, z = 0.0d;
-    private float yaw = 0.0f, pitch = 0.0f;
+    @Getter
+    private final BungeeDimension dimension;
+    @Getter
+    private final double x;
+    @Getter
+    private final double y;
+    @Getter
+    private final double z;
+    @Getter
+    private final float yaw;
+    @Getter
+    private final float pitch;
 
-    protected BungeePosition(BungeeDimension dimension, double x, double y, double z, float yaw, float pitch) {
-        this.dimension = dimension;
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.yaw = yaw;
-        this.pitch = pitch;
-    }
-
+    @SuppressWarnings("unused")
     public static BungeePosition wrap(BungeeDimension dimension, double x, double y, double z, float yaw, float pitch) {
         return new BungeePosition(dimension, x, y, z, yaw, pitch);
     }
 
     @Override
-    public BungeeDimension getDimension() {
-        return dimension;
+    public String toPrintableString() {
+        return String.format("%s (%s, %s, %s)", dimension.toPrintableString(), Math.floor(x), Math.floor(y), Math.floor(z));
     }
 
     @Override
-    public String getPrettyToString() {
-        return dimension.getName()+", "+
-                x+", "+
-                y+", "+
-                z;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BungeePosition that)) return false;
+        return Double.compare(that.x, x) == 0 && Double.compare(that.y, y) == 0 && Double.compare(that.z, z) == 0 && Float.compare(that.yaw, yaw) == 0 && Float.compare(that.pitch, pitch) == 0 && dimension.equals(that.dimension);
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getZ() {
-        return z;
-    }
-
-    public float getYaw() {
-        return yaw;
-    }
-
-    public float getPitch() {
-        return pitch;
+    @Override
+    public int hashCode() {
+        return Objects.hash(dimension, x, y, z, yaw, pitch);
     }
 }

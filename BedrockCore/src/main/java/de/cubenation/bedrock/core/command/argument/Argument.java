@@ -29,7 +29,7 @@ import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentTypeWithRange;
 import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.translation.Translation;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

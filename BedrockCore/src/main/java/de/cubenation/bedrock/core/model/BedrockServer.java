@@ -1,6 +1,6 @@
-package de.cubenation.bedrock.core;
+package de.cubenation.bedrock.core.model;
 
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 
 import java.util.Collection;
 import java.util.UUID;
@@ -9,18 +9,19 @@ import java.util.UUID;
  * @author Cube-Nation
  * @version 2.0
  */
+@SuppressWarnings("unused")
 public interface BedrockServer {
 
     /**
      * Gets the player for a given username
-     * @param username
+     * @param username name to be looked up
      * @return corresponding BedrockPlayer
      */
     BedrockPlayer getPlayer(String username);
 
     /**
      * Gets the player for a given UUID
-     * @param uuid
+     * @param uuid UUID to be looked up
      * @return corresponding BedrockPlayer
      */
     BedrockPlayer getPlayer(UUID uuid);

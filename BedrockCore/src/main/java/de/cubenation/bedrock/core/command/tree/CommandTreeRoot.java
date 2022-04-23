@@ -1,11 +1,8 @@
 package de.cubenation.bedrock.core.command.tree;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
 import de.cubenation.bedrock.core.translation.JsonMessage;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import lombok.Getter;
 
 import java.util.List;

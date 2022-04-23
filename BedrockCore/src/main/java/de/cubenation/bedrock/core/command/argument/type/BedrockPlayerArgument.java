@@ -3,8 +3,8 @@ package de.cubenation.bedrock.core.command.argument.type;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.exception.ArgumentTypeCastException;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 
 import java.util.UUID;
 import java.util.stream.Collectors;

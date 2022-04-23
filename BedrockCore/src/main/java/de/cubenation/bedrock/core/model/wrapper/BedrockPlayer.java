@@ -20,9 +20,7 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.wrapper;
-
-import de.cubenation.bedrock.core.exception.WrongBedrockImplementationException;
+package de.cubenation.bedrock.core.model.wrapper;
 
 import java.util.UUID;
 
@@ -30,7 +28,8 @@ import java.util.UUID;
  * @author Cube-Nation
  * @version 2.0
  */
-public interface BedrockPlayer extends BedrockChatSender {
+@SuppressWarnings("unused")
+public interface BedrockPlayer extends BedrockChatSender{
 
     /**
      * Gets the "friendly" name to display of this player. This may include
@@ -102,4 +101,5 @@ public interface BedrockPlayer extends BedrockChatSender {
      * @return the BedrockPosition of the player
      */
     BedrockPosition getPosition();
+
 }

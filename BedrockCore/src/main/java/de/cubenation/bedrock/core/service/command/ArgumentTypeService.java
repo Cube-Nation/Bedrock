@@ -6,10 +6,8 @@ import de.cubenation.bedrock.core.exception.ArgumentTypeAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.UUID;

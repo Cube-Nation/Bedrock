@@ -23,8 +23,7 @@
 package de.cubenation.bedrock.core.authorization;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import de.cubenation.bedrock.core.authorization.Role;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 
 /**
  * The Permission class

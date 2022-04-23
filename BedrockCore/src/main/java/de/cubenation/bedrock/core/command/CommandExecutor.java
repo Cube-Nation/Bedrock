@@ -23,10 +23,7 @@
 package de.cubenation.bedrock.core.command;
 
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
-import de.cubenation.bedrock.core.exception.CommandException;
-import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
-import de.cubenation.bedrock.core.exception.InsufficientPermissionException;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 
 /**
  * @author Cube-Nation
