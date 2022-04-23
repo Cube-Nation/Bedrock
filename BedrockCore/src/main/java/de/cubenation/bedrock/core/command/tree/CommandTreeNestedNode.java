@@ -7,7 +7,7 @@ import de.cubenation.bedrock.core.exception.CommandException;
 import de.cubenation.bedrock.core.exception.CommandInitException;
 import de.cubenation.bedrock.core.exception.IllegalCommandArgumentException;
 import de.cubenation.bedrock.core.translation.JsonMessage;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -1,8 +1,8 @@
 package de.cubenation.bedrock.bukkit.api;
 
 import de.cubenation.bedrock.bukkit.wrapper.BukkitPlayer;
-import de.cubenation.bedrock.core.BedrockServer;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.BedrockServer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

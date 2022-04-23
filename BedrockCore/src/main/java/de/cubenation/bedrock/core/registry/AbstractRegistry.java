@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.registry;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import org.apache.commons.lang.StringUtils;
 

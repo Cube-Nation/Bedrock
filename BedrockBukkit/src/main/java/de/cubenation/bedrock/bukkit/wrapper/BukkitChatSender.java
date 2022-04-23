@@ -22,26 +22,28 @@
 
 package de.cubenation.bedrock.bukkit.wrapper;
 
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Objects;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
+@SuppressWarnings("unused")
+@ToString
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class BukkitChatSender implements BedrockChatSender {
 
+    @Getter
     private final org.bukkit.command.CommandSender commandSender;
-
-    protected BukkitChatSender(org.bukkit.command.CommandSender original) {
-        this.commandSender = original;
-    }
-
-    public org.bukkit.command.CommandSender getCommandSender() {
-        return commandSender;
-    }
 
     public static BukkitChatSender wrap(CommandSender sender) {
         if(sender instanceof Player)
@@ -84,4 +86,15 @@ public class BukkitChatSender implements BedrockChatSender {
         commandSender.spigot().sendMessage(components);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BukkitChatSender that)) return false;
+        return commandSender.equals(that.commandSender);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commandSender);
+    }
 }

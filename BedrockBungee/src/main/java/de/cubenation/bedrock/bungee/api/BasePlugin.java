@@ -25,7 +25,7 @@ package de.cubenation.bedrock.bungee.api;
 import de.cubenation.bedrock.bungee.api.message.Messages;
 import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
-import de.cubenation.bedrock.core.BedrockServer;
+import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;

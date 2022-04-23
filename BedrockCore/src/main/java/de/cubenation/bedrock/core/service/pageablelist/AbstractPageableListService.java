@@ -23,7 +23,7 @@
 package de.cubenation.bedrock.core.service.pageablelist;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.helper.desgin.PageableMessageHelper;
 import de.cubenation.bedrock.core.registry.Registerable;
 import de.cubenation.bedrock.core.service.AbstractService;

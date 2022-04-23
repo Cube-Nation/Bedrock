@@ -24,7 +24,7 @@ package de.cubenation.bedrock.core.service.permission;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.authorization.Permission;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.config.Permissions;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
