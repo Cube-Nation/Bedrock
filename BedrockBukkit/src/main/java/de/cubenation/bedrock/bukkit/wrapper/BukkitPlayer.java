@@ -22,29 +22,31 @@
 
 package de.cubenation.bedrock.bukkit.wrapper;
 
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
-import de.cubenation.bedrock.core.wrapper.BedrockPosition;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPosition;
+import lombok.Getter;
+import lombok.ToString;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
+@SuppressWarnings("unused")
+@ToString
 public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
 
+    @Getter
     private final Player player;
 
     protected BukkitPlayer(Player player) {
         super(player);
         this.player = player;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     public static BukkitPlayer wrap(Player player) {
@@ -83,7 +85,6 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
 
     @Override
     public void teleport(BedrockPosition pos) {
-        System.out.println("teleport");
         player.teleport(((BukkitPosition) pos).getLocation());
     }
 
@@ -96,5 +97,4 @@ public class BukkitPlayer extends BukkitChatSender implements BedrockPlayer {
     public BedrockPosition getPosition() {
         return new BukkitPosition(player.getLocation());
     }
-
 }

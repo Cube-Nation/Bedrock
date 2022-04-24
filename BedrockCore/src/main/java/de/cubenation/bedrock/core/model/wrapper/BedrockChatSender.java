@@ -20,12 +20,13 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.wrapper;
+package de.cubenation.bedrock.core.model.wrapper;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
+@SuppressWarnings("unused")
 public interface BedrockChatSender {
 
     /**

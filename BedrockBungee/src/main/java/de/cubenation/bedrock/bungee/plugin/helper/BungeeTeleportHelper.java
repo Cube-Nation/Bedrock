@@ -4,7 +4,6 @@ import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.io.OutgoingPluginMessage;
 import de.cubenation.bedrock.bungee.wrapper.BungeePlayer;
 import de.cubenation.bedrock.bungee.wrapper.BungeePosition;
-import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

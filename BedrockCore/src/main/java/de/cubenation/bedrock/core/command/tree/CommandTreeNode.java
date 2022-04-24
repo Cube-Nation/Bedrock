@@ -4,7 +4,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AutoCompletionExecutor;
 import de.cubenation.bedrock.core.command.CommandExecutor;
 import de.cubenation.bedrock.core.translation.JsonMessage;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import lombok.Getter;
 
 import java.util.List;

@@ -3,7 +3,6 @@ package de.cubenation.bedrock.core.command.argument.type;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.command.AutoCompletionExecutor;
 import de.cubenation.bedrock.core.exception.ArgumentTypeCastException;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
 import lombok.Getter;
 
 import java.lang.reflect.Array;

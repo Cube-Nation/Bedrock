@@ -32,7 +32,7 @@ import de.cubenation.bedrock.core.callback.FailureCallback;
 import de.cubenation.bedrock.core.callback.SuccessCallback;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 

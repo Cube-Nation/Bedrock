@@ -1,8 +1,8 @@
 package de.cubenation.bedrock.bungee.api;
 
 import de.cubenation.bedrock.bungee.wrapper.BungeePlayer;
-import de.cubenation.bedrock.core.BedrockServer;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.BedrockServer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.Collection;
