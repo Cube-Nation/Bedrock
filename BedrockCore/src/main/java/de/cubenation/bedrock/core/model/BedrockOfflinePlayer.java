@@ -2,7 +2,7 @@ package de.cubenation.bedrock.core.model;
 
 import com.avaje.ebean.EbeanServer;
 import com.avaje.ebean.validation.NotNull;
-import de.cubenation.bedrock.core.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 import lombok.*;
 
 import javax.persistence.*;

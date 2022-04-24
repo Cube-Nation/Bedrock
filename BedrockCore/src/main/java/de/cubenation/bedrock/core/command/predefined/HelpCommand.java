@@ -27,17 +27,13 @@ import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Option;
 import de.cubenation.bedrock.core.command.Command;
-import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
-import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.helper.HelpPageableListService;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
-import org.apache.commons.lang.StringUtils;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 
-import javax.swing.tree.TreePath;
 import java.util.*;
 
 /**

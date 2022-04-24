@@ -22,16 +22,19 @@
 
 package de.cubenation.bedrock.bungee.wrapper;
 
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.MappedModel;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+
+import java.util.Objects;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
-public class BungeeChatSender implements BedrockChatSender {
+public class BungeeChatSender extends MappedModel implements BedrockChatSender {
 
     private final net.md_5.bungee.api.CommandSender commandSender;
 
@@ -50,9 +53,10 @@ public class BungeeChatSender implements BedrockChatSender {
         return new BungeeChatSender(sender);
     }
 
+    @Deprecated
     @Override
     public boolean isOp() {
-        return false;
+        return false; // There is nothing like op on Bungee
     }
 
     @Override
@@ -97,5 +101,16 @@ public class BungeeChatSender implements BedrockChatSender {
         commandSender.sendMessage(components);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BungeeChatSender that)) return false;
+        return commandSender.equals(that.commandSender);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commandSender);
+    }
 }
 

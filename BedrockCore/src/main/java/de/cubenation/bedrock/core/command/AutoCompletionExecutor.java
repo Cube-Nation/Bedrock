@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core.command;
 
-import de.cubenation.bedrock.core.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 
 /**
  * @author Cube-Nation
