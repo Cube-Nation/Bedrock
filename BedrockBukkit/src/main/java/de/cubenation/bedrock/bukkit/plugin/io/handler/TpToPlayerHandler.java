@@ -17,8 +17,9 @@ public class TpToPlayerHandler implements PluginMessageHandler {
         UUID targetUuid = UUID.fromString(data.readUTF());
 
         BukkitPlayer target = (BukkitPlayer) BedrockPlugin.getInstance().getBedrockServer().getPlayer(targetUuid);
-        if (target == null)
+        if (target == null) {
             return;
+        }
 
         BukkitPosition loc = (BukkitPosition) target.getPosition();
         BungeeTeleportManager.getInstance().scheduleTeleport(playerUuid, loc);

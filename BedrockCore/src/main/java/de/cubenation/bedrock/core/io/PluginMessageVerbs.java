@@ -1,4 +1,4 @@
-package de.cubenation.bedrock.bukkit.plugin.io;
+package de.cubenation.bedrock.core.io;
 
 /**
  * @author Cube-Nation

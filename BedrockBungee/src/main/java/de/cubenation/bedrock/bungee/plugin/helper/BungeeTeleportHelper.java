@@ -1,9 +1,9 @@
 package de.cubenation.bedrock.bungee.plugin.helper;
 
-import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.io.OutgoingPluginMessage;
 import de.cubenation.bedrock.bungee.wrapper.BungeePlayer;
 import de.cubenation.bedrock.bungee.wrapper.BungeePosition;
+import de.cubenation.bedrock.core.io.PluginMessageVerbs;
 import de.cubenation.bedrock.core.wrapper.BedrockPosition;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -24,7 +24,7 @@ public class BungeeTeleportHelper {
     public static void executeTeleport(BungeePlayer player, BungeePosition to) {
         silentServerSwitch(player.getPlayer(), ProxyServer.getInstance().getServerInfo(to.getDimension().getServer()));
 
-        OutgoingPluginMessage msg = new OutgoingPluginMessage(IOVerbs.TP_TO_LOCATION, ProxyServer.getInstance().getServerInfo(to.getDimension().getServer()));
+        OutgoingPluginMessage msg = new OutgoingPluginMessage(PluginMessageVerbs.TP_TO_LOCATION, ProxyServer.getInstance().getServerInfo(to.getDimension().getServer()));
         msg.write(player.getName());
         msg.write(to.getDimension().getServer()).write(to.getDimension().getWorld()).write(to.getX()).write(to.getY()).write(to.getZ());
         msg.write(to.getYaw()).write(to.getPitch());
@@ -35,7 +35,7 @@ public class BungeeTeleportHelper {
         ServerInfo targetServerInfo = to.getPlayer().getServer().getInfo();
         silentServerSwitch(player.getPlayer(), targetServerInfo);
 
-        OutgoingPluginMessage msg = new OutgoingPluginMessage(IOVerbs.TP_TO_PLAYER, targetServerInfo);
+        OutgoingPluginMessage msg = new OutgoingPluginMessage(PluginMessageVerbs.TP_TO_PLAYER, targetServerInfo);
         msg.write(player.getUniqueId().toString());
         msg.write(to.getUniqueId().toString());
         msg.send();

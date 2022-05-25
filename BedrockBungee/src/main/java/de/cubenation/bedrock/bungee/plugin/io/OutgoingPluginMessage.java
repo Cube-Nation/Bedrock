@@ -1,5 +1,6 @@
 package de.cubenation.bedrock.bungee.plugin.io;
 
+import de.cubenation.bedrock.core.io.PluginMessageVerbs;
 import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.ByteArrayOutputStream;
@@ -72,7 +73,7 @@ public class OutgoingPluginMessage {
     }
 
     public void send() {
-        server.sendData(IOVerbs.CHANNEL, getMessage());
+        server.sendData(PluginMessageVerbs.CHANNEL, getMessage());
     }
 
     public ServerInfo getServer() {

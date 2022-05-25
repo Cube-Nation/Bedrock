@@ -24,7 +24,7 @@ package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
 import de.cubenation.bedrock.bukkit.plugin.io.BungeeMessageListener;
-import de.cubenation.bedrock.bukkit.plugin.io.PluginMessageVerbs;
+import de.cubenation.bedrock.core.io.PluginMessageVerbs;
 import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;

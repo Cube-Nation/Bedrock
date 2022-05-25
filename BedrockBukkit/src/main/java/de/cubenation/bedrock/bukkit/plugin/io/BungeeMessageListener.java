@@ -4,6 +4,7 @@ import de.cubenation.bedrock.bukkit.plugin.io.handler.PluginMessageHandler;
 import de.cubenation.bedrock.bukkit.plugin.io.handler.TpToLocationHandler;
 import de.cubenation.bedrock.bukkit.plugin.io.handler.TpToPlayerHandler;
 import de.cubenation.bedrock.core.exception.IllegalPluginMessageException;
+import de.cubenation.bedrock.core.io.PluginMessageVerbs;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -21,11 +22,11 @@ public class BungeeMessageListener implements PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] bytes) {
-        if (!channel.equals(PluginMessageVerbs.CHANNEL))
+        if (!channel.equals(PluginMessageVerbs.CHANNEL)) {
             return;
+        }
 
         DataInputStream stream = new DataInputStream(new ByteArrayInputStream(bytes));
-
         try {
             byte type = stream.readByte();
 
