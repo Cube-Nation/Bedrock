@@ -23,9 +23,8 @@
 package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
-import de.cubenation.bedrock.bukkit.plugin.io.BungeeTeleportInputHandler;
-import de.cubenation.bedrock.bukkit.plugin.io.IOVerbs;
+import de.cubenation.bedrock.bukkit.plugin.io.BungeeMessageListener;
+import de.cubenation.bedrock.bukkit.plugin.io.PluginMessageVerbs;
 import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
@@ -84,7 +83,7 @@ public class BedrockPlugin extends BasePlugin {
         this.getServer().getPluginManager().registerEvents(new EbeanListener(), this);
         // register events for bungee support
         this.getServer().getPluginManager().registerEvents(new BungeeTeleportListener(), this);
-        this.getServer().getMessenger().registerIncomingPluginChannel(this, IOVerbs.CHANNEL, new BungeeTeleportInputHandler());
+        this.getServer().getMessenger().registerIncomingPluginChannel(this, PluginMessageVerbs.CHANNEL, new BungeeMessageListener());
     }
 
     /**

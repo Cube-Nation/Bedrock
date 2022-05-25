@@ -4,7 +4,7 @@ package de.cubenation.bedrock.bukkit.plugin.io;
  * @author Cube-Nation
  * @version 2.0
  */
-public final class IOVerbs {
+public final class PluginMessageVerbs {
 
     public static final String CHANNEL = "bedrock:core";
 
