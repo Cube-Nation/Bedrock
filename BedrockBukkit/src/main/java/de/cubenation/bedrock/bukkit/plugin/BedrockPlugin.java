@@ -42,7 +42,7 @@ import java.util.logging.Level;
  * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
-
+@ConfigurationFile(DatastoreConfig.class)
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;
@@ -66,14 +66,6 @@ public class BedrockPlugin extends BasePlugin {
             this.disable(e);
         }
 
-        // install database table
-        try {
-            this.getDatabase().find(BedrockOfflinePlayer.class).findRowCount();
-        } catch (PersistenceException e) {
-            getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
-            installDDL();
-        }
-
         // register events for creation of
         //  - a BedrockPlayer - fired when a player joins the server
         //  - a Bedrockorld - fired when a world is loaded
@@ -83,18 +75,6 @@ public class BedrockPlugin extends BasePlugin {
         this.getServer().getMessenger().registerIncomingPluginChannel(this, IOVerbs.CHANNEL, new BungeeTeleportInputHandler());
 
 
-    }
-
-    /**
-     * Returns the database class that handles player mapping
-     *
-     * @return A list of database classes.
-     */
-    @Override
-    public List<Class<?>> getDatabaseClasses() {
-        return new ArrayList<Class<?>>() {{
-            add(BedrockOfflinePlayer.class);
-        }};
     }
 
 }

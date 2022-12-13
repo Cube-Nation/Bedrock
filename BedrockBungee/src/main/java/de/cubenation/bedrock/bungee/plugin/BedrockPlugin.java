@@ -34,6 +34,7 @@ import de.cubenation.bedrock.core.config.locale.de_DE;
  * @version 1.0
  */
 @ConfigurationFile(de_DE.class)
+@ConfigurationFile(DatastoreConfig.class)
 public class BedrockPlugin extends BasePlugin {
 
     public static BedrockPlugin instance;
