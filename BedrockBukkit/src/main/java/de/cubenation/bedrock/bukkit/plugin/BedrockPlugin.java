@@ -23,20 +23,16 @@
 package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
 import de.cubenation.bedrock.bukkit.plugin.io.BungeeTeleportInputHandler;
 import de.cubenation.bedrock.bukkit.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.DatastoreConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
-import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
-import javax.persistence.PersistenceException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -85,6 +81,8 @@ public class BedrockPlugin extends BasePlugin {
         // register events for bungee support
         this.getServer().getPluginManager().registerEvents(new BungeeTeleportListener(), this);
         this.getServer().getMessenger().registerIncomingPluginChannel(this, IOVerbs.CHANNEL, new BungeeTeleportInputHandler());
+
+
     }
 
     /**

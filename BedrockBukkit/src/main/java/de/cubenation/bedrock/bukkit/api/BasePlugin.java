@@ -40,6 +40,8 @@ import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.datastore.DatastoreService;
+import de.cubenation.bedrock.core.service.ebean.EbeanService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -62,7 +64,7 @@ import java.util.logging.Logger;
  * @author Cube-Nation
  * @version 1.0
  */
-public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin {
+public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin {
 
     public static final String PLUGIN_NAME = "Bedrock";
     /**
@@ -114,6 +116,8 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
             // DO NOT MODIFY THIS ORDER!
             serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
+            serviceManager.registerService(DatastoreService.class);
+            serviceManager.registerService(EbeanService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
@@ -130,14 +134,6 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
 
         this.messages = new Messages(this);
 
-        try {
-            BedrockDefaults bedrockDefaults = (BedrockDefaults) getConfigService().getConfig(BedrockDefaults.class);
-            setupDatabase(bedrockDefaults.getDatabaseConfiguration());
-        } catch (Exception e) {
-            this.disable(e);
-            return;
-        }
-
         // enable bStats metrics
         new MetricsLite(this);
 
@@ -147,11 +143,6 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
         } catch (Exception e) {
             this.disable(e);
         }
-    }
-
-    @Override
-    public Boolean isDatabaseEnabled() {
-        return true;
     }
 
     /**
@@ -377,6 +368,16 @@ public abstract class BasePlugin extends EbeanPlugin implements FoundationPlugin
      */
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
+    }
+
+    @Override
+    public EbeanService getEbeanService() {
+        return (EbeanService) this.getServiceManager().getService(EbeanService.class);
+    }
+
+    @Override
+    public DatastoreService getDatastoreService() {
+        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
     }
 
     /**

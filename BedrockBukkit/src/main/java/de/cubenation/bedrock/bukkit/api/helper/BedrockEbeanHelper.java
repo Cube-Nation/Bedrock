@@ -22,8 +22,6 @@
 
 package de.cubenation.bedrock.bukkit.api.helper;
 
-import com.avaje.ebean.RawSql;
-import com.avaje.ebean.RawSqlBuilder;
 import de.cubenation.bedrock.bukkit.api.exception.BedrockEbeanEntityAlreadyExistsException;
 import de.cubenation.bedrock.bukkit.api.exception.BedrockEbeanEntityNotFoundException;
 import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
@@ -33,10 +31,16 @@ import de.cubenation.bedrock.core.callback.SuccessCallback;
 import de.cubenation.bedrock.core.helper.UUIDUtil;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
+import io.ebean.RawSql;
+import io.ebean.RawSqlBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -143,11 +147,11 @@ public class BedrockEbeanHelper {
             @Override
             public void run() {
 
-                final BedrockOfflinePlayer player = BedrockPlugin.getInstance().getDatabase()
+                final BedrockOfflinePlayer player = BedrockPlugin.getInstance().getEbeanService().getDatabase()
                         .find(BedrockOfflinePlayer.class)
                         .where()
                         .eq("uuid", uuid)
-                        .findUnique();
+                        .findOne();
 
                 Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
                     if (player == null) {
@@ -189,7 +193,7 @@ public class BedrockEbeanHelper {
                         "WHERE uuid IN ('" + StringUtils.join(uuids, "','") + "');";
 
                 RawSql rawSql = RawSqlBuilder.parse(oql).create();
-                List<BedrockOfflinePlayer> list = BedrockPlugin.getInstance().getDatabase().find(BedrockOfflinePlayer.class).setRawSql(rawSql).findList();
+                List<BedrockOfflinePlayer> list = BedrockPlugin.getInstance().getEbeanService().getDatabase().find(BedrockOfflinePlayer.class).setRawSql(rawSql).findList();
 
                 Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
                     if (list == null || list.isEmpty()) {
@@ -232,7 +236,7 @@ public class BedrockEbeanHelper {
             @Override
             public void run() {
 
-                final List<BedrockOfflinePlayer> foundPlayers = BedrockPlugin.getInstance().getDatabase().find(BedrockOfflinePlayer.class)
+                final List<BedrockOfflinePlayer> foundPlayers = BedrockPlugin.getInstance().getEbeanService().getDatabase().find(BedrockOfflinePlayer.class)
                         .where()
                         .like("username", username + (exact ? "" : "%"))
                         .orderBy().desc("lastlogin")
@@ -299,7 +303,7 @@ public class BedrockEbeanHelper {
                             StringUtils.join(names, " OR ");
 
                     RawSql rawSql = RawSqlBuilder.parse(oql).create();
-                    List<BedrockOfflinePlayer> list = BedrockPlugin.getInstance().getDatabase().find(BedrockOfflinePlayer.class).setRawSql(rawSql).findList();
+                    List<BedrockOfflinePlayer> list = BedrockPlugin.getInstance().getEbeanService().getDatabase().find(BedrockOfflinePlayer.class).setRawSql(rawSql).findList();
 
                     for (String name : usernames) {
                         for (BedrockOfflinePlayer bedrockPlayer : list) {
@@ -373,11 +377,11 @@ public class BedrockEbeanHelper {
         Bukkit.getScheduler().runTaskAsynchronously(BedrockPlugin.getInstance(), new Runnable() {
             @Override
             public void run() {
-                final BedrockOfflinePlayer player = BedrockPlugin.getInstance().getDatabase()
+                final BedrockOfflinePlayer player = BedrockPlugin.getInstance().getEbeanService().getDatabase()
                         .find(BedrockOfflinePlayer.class)
                         .where()
                         .eq("id", id)
-                        .findUnique();
+                        .findOne();
 
                 Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
                     if (player == null) {
@@ -419,7 +423,7 @@ public class BedrockEbeanHelper {
                         "WHERE id IN ('" + StringUtils.join(ids, "','") + "');";
 
                 RawSql rawSql = RawSqlBuilder.parse(oql).create();
-                List<BedrockOfflinePlayer> list = BedrockPlugin.getInstance().getDatabase().find(BedrockOfflinePlayer.class).setRawSql(rawSql).findList();
+                List<BedrockOfflinePlayer> list = BedrockPlugin.getInstance().getEbeanService().getDatabase().find(BedrockOfflinePlayer.class).setRawSql(rawSql).findList();
 
                 Bukkit.getScheduler().callSyncMethod(BedrockPlugin.getInstance(), (Callable<Void>) () -> {
                     if (list == null || list.isEmpty()) {
@@ -447,18 +451,18 @@ public class BedrockEbeanHelper {
      * @throws BedrockEbeanEntityAlreadyExistsException if the player already exists.
      */
     public static BedrockOfflinePlayer createBedrockPlayer(UUID uuid, String playername) throws BedrockEbeanEntityAlreadyExistsException {
-        BedrockOfflinePlayer player = BedrockPlugin.getInstance().getDatabase()
+        BedrockOfflinePlayer player = BedrockPlugin.getInstance().getEbeanService().getDatabase()
                 .find(BedrockOfflinePlayer.class)
                 .where()
                 .eq("uuid", uuid.toString())
-                .findUnique();
+                .findOne();
 
         if (player != null) {
             throw new BedrockEbeanEntityAlreadyExistsException(BedrockOfflinePlayer.class, uuid.toString());
         }
 
         BedrockOfflinePlayer bedrockPlayer = new BedrockOfflinePlayer(uuid.toString(), playername, null, null);
-        bedrockPlayer.save(BedrockPlugin.getInstance().getDatabase());
+        bedrockPlayer.save(BedrockPlugin.getInstance().getEbeanService().getDatabase());
 
         return bedrockPlayer;
     }
