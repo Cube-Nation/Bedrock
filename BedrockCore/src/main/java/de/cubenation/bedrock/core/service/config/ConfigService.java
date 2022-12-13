@@ -84,19 +84,6 @@ public abstract class ConfigService extends AbstractService {
                 e.printStackTrace();
             }
         });
-
-        /*
-         * now try reading the service.config.do_not_delete_me value. If it does not exist, is empty or has been changed
-         * ths default config file will be overwritten merciless *muhaha*
-         */
-        if (!this.isValidPluginConfiguration()) {
-            this.getPlugin().log(Level.WARNING, "The plugin configuration file bedrock.yaml became invalid and will be recreated from scratch");
-            try {
-                this.registerFile(BedrockDefaults.class, this.instantiatePluginConfig());
-            } catch (InstantiationException | InvalidConfigurationException e) {
-                throw new ServiceInitException(e.getMessage());
-            }
-        }
     }
 
     /**
@@ -229,14 +216,6 @@ public abstract class ConfigService extends AbstractService {
     public abstract BedrockYaml getReadOnlyConfig();
 
     public abstract BedrockYaml getReadOnlyConfig(String name);
-
-    private boolean isValidPluginConfiguration() {
-        try {
-            return (this.getConfigurationValue("service.config.do_not_delete_me", null).equals(this.do_not_delete_me));
-        } catch (NullPointerException e) {
-            return false;
-        }
-    }
 
     private Class<?> getPluginConfigClass() throws InstantiationException {
         String class_name = String.format("%s.config.BedrockDefaults", this.getPlugin().getClass().getPackage().getName());

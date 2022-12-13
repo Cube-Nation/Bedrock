@@ -83,6 +83,7 @@ public class ServiceManager {
         }
 
         service.init();
+        service.setInitialized(true);
         this.services.put(clazz, service);
     }
 

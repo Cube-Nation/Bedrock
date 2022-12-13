@@ -56,16 +56,16 @@ public class EbeanListener implements Listener {
                 BedrockPlugin plugin = BedrockPlugin.getInstance();
 
                 String uuid = event.getPlayer().getUniqueId().toString();
-                BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getDatabase()
+                BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getEbeanService().getDatabase()
                         .find(BedrockOfflinePlayer.class)
                         .where()
                         .eq("uuid", uuid)
-                        .findUnique();
+                        .findOne();
 
                 String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
                 if (bp == null) {
                     bp = new BedrockOfflinePlayer(uuid, event.getPlayer().getName(), ip, new Date());
-                    bp.save(plugin.getDatabase());
+                    bp.save(plugin.getEbeanService().getDatabase());
                 } else {
                     // check if username changed
                     if (!bp.getUsername().equals(event.getPlayer().getName())) {
@@ -82,7 +82,7 @@ public class EbeanListener implements Listener {
                         bp.setUsername(event.getPlayer().getName());
                     }
 
-                    List<BedrockOfflinePlayer> bedrockPlayers = plugin.getDatabase().find(BedrockOfflinePlayer.class).where()
+                    List<BedrockOfflinePlayer> bedrockPlayers = plugin.getEbeanService().getDatabase().find(BedrockOfflinePlayer.class).where()
                             .like("ip", ip)
                             .findList();
 
@@ -103,7 +103,7 @@ public class EbeanListener implements Listener {
 
                     // update timestamp
                     bp.setLastlogin(new Date());
-                    bp.update(plugin.getDatabase());
+                    bp.update(plugin.getEbeanService().getDatabase());
                 }
             }
 

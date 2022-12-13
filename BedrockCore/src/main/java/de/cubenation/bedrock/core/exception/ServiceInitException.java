@@ -35,4 +35,8 @@ public class ServiceInitException extends Exception {
     public ServiceInitException(Exception e) {
         super(e);
     }
+
+    public ServiceInitException(String message, Exception e) {
+        super(message, e);
+    }
 }

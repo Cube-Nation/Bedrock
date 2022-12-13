@@ -25,6 +25,8 @@ package de.cubenation.bedrock.core.service;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.logging.Level;
 
@@ -35,6 +37,14 @@ import java.util.logging.Level;
 public abstract class AbstractService {
 
     protected FoundationPlugin plugin;
+
+    /**
+     * If true, the service was successfully initialized.
+     * Has to be set manually, if service is not registered via {@link ServiceManager#registerService(Class)}.
+     */
+    @Getter
+    @Setter
+    protected boolean initialized = false;
 
     public AbstractService(FoundationPlugin plugin) {
         this.setPlugin(plugin);
