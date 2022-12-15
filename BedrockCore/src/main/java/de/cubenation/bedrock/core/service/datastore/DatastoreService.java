@@ -1,9 +1,11 @@
 package de.cubenation.bedrock.core.service.datastore;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.DatastoreConfig;
+import de.cubenation.bedrock.core.datastore.Datastore;
+import de.cubenation.bedrock.core.datastore.DatastoreSession;
+import de.cubenation.bedrock.core.datastore.HibernateOrmDatastore;
+import de.cubenation.bedrock.core.exception.DatastoreInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
@@ -27,7 +29,7 @@ public class DatastoreService extends AbstractService {
     private static final String DRIVER_PATH = "config/drivers";
     private final Path driverDirectory = Paths.get(plugin.getFallbackBedrockPlugin().getDataFolder().getAbsolutePath(), DRIVER_PATH);
 
-    private final HashMap<String, HikariDataSource> dataSources = new HashMap<>();
+    private final HashMap<String, Datastore> datastores = new HashMap<>();
 
     public DatastoreService(FoundationPlugin plugin) {
         super(plugin);
@@ -35,7 +37,7 @@ public class DatastoreService extends AbstractService {
 
     @Override
     public void init() throws ServiceInitException {
-        this.dataSources.clear();
+        clear();
 
         try {
             Files.createDirectories(driverDirectory);
@@ -43,33 +45,29 @@ public class DatastoreService extends AbstractService {
             throw new ServiceInitException("Could not create driver directory", e);
         }
 
-        loadDrivers();
+        // TODO: loadDrivers();
 
-        DatastoreConfig datastoreConfig = (DatastoreConfig) this.plugin.getConfigService().getConfig(DatastoreConfig.class);
-        HashMap<String, StorageCredentials> instances = (HashMap<String, StorageCredentials>) datastoreConfig.getDataStores();
+        // TODO: DatastoreConfig datastoreConfig = (DatastoreConfig) this.plugin.getConfigService().getConfig(DatastoreConfig.class);
 
-        instances.forEach((identifier, storageCredentials) -> {
-            try {
-                Class.forName(storageCredentials.driver());
-            } catch (ClassNotFoundException e) {
-                this.plugin.log(Level.SEVERE, "Could not find datastore driver '" + identifier + "'. Skipping!");
-                return; //skips to next forEach iteration
+        for (de.cubenation.bedrock.core.annotation.Datastore annotation : plugin.getClass().getAnnotationsByType(de.cubenation.bedrock.core.annotation.Datastore.class)) {
+            String id = annotation.name();
+            if (id == null || annotation.name().trim().length() == 0) {
+                // TODO: Sanitize
+                throw new ServiceInitException(new DatastoreInitException("Datastore identifier cannot be empty or null"));
             }
 
-            HikariConfig config = new HikariConfig();
-            //config.setDataSourceClassName(storageCredentials.driver());
-            config.setJdbcUrl(storageCredentials.url());
-            config.setUsername(storageCredentials.username());
-            config.setPassword(storageCredentials.password());
-            config.setPoolName(identifier);
-            config.setMaximumPoolSize(storageCredentials.maxPoolSize());
-            config.setMinimumIdle(storageCredentials.minIdleConnections());
-            config.setKeepaliveTime(storageCredentials.keepAliveTime());
-            config.setConnectionTimeout(storageCredentials.connectionTimeout());
-            storageCredentials.properties().forEach(config::addDataSourceProperty);
+            int entityCount = annotation.entities() != null ? annotation.entities().length : 0;
+            plugin.log(Level.INFO, String.format("Initializing datastore '%s' with %s entities...", annotation.name(), entityCount));
 
-            dataSources.put(identifier, new HikariDataSource(config));
-        });
+            Datastore datastore = new HibernateOrmDatastore();
+            try {
+                datastore.init(annotation.entities());
+            } catch (DatastoreInitException e) {
+                throw new ServiceInitException(e);
+            }
+
+            datastores.put(id, datastore);
+        }
     }
 
     @Override
@@ -77,47 +75,16 @@ public class DatastoreService extends AbstractService {
         try {
             this.init();
         } catch (ServiceInitException e) {
-            throw new ServiceReloadException(e.getMessage());
+            throw new ServiceReloadException(e.getMessage(), e.getCause());
         }
     }
 
-    /**
-     * Retrieves the data source associated with the identifier.<br>
-     * Returns null if identifier is unknown.
-     *
-     * @param identifier Identifier of the connection pool
-     * @return Data source associated with the identifier
-     */
-    public HikariDataSource getDataSource(final String identifier) {
-        return dataSources.get(identifier);
-    }
-
-    /**
-     * Retrieves an unused connection from the connection pool associated with the identifier.<br>
-     * Returns null if identifier is unknown.
-     *
-     * @param identifier Identifier of the connection pool
-     * @return Connection to the specified data source
-     */
-    public Connection getConnection(final String identifier) throws SQLException {
-        final HikariDataSource dataSource = getDataSource(identifier);
-
-        if (dataSource == null) {
-            plugin.log(Level.SEVERE, "Data source '" + identifier + "' is unknown!");
-            return null;
+    public DatastoreSession openSession(String dbIdentifier) {
+        String id = dbIdentifier.toLowerCase();
+        if (!datastores.containsKey(id)) {
+            throw new IllegalArgumentException(id + " is not a valid datastore identifier");
         }
-
-        return dataSource.getConnection();
-    }
-
-    public StorageType getStorageType(String identifier){
-        for (StorageType storageType : StorageType.values()) {
-            if (storageType.getPattern().matcher(this.getDataSource(identifier).getJdbcUrl()).group(1).equalsIgnoreCase(storageType.name())) {
-                return storageType;
-            }
-        }
-
-        return null;
+        return datastores.get(id).openSession();
     }
 
     public boolean loadDrivers() throws ServiceInitException {
@@ -140,5 +107,15 @@ public class DatastoreService extends AbstractService {
         }
 
         return true;
+    }
+
+    private void clear() {
+        datastores.values().forEach(datastore -> {
+            try {
+                datastore.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

@@ -32,7 +32,6 @@ import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.command.CommandService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
 import de.cubenation.bedrock.core.service.datastore.DatastoreService;
-import de.cubenation.bedrock.core.service.ebean.EbeanService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
@@ -132,15 +131,6 @@ public interface FoundationPlugin {
      * @see LocalizationService
      */
     LocalizationService getLocalizationService();
-
-    /**
-     * Returns the Bedrock EbeanService object instance.
-     * If the EbeanService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock EbeanService
-     * @see EbeanService
-     */
-    EbeanService getEbeanService();
 
     /**
      * Returns the Bedrock DatastoreService object instance.

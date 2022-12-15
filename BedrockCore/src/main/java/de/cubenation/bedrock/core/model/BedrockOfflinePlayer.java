@@ -1,20 +1,16 @@
 package de.cubenation.bedrock.core.model;
 
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.datastore.DatastoreSession;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
-import io.ebean.Database;
-import io.ebean.annotation.NotNull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -40,7 +36,6 @@ public class BedrockOfflinePlayer {
     private String uuid;
 
     @Getter @Setter
-    @NotNull
     private String username;
 
     @Getter @Setter
@@ -75,14 +70,13 @@ public class BedrockOfflinePlayer {
         this.uuid = uuid;
     }
 
-    public void save(Database database) {
-        database.save(this);
+    public void persist(FoundationPlugin plugin) throws IOException {
+        try (DatastoreSession session = plugin.getDatastoreService().openSession("bedrock")) {
+            session.beginTransaction();
+            session.persist(this);
+            session.commitTransaction();
+        }
     }
-
-    public void update(Database database) {
-        database.update(this);
-    }
-
 
     public boolean isEqual(BedrockPlayer player) {
         return this.getUUID().equals(player.getUniqueId());

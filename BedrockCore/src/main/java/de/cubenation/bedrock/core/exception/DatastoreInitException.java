@@ -24,15 +24,15 @@ package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class ServiceReloadException extends Exception {
+public class DatastoreInitException extends Exception {
 
-    public ServiceReloadException(String message) {
+    public DatastoreInitException(String message) {
         super(message);
     }
 
-    public ServiceReloadException(String message, Throwable cause) {
-        super(message, cause);
+    public DatastoreInitException(Exception exception) {
+        super(exception);
     }
 }
