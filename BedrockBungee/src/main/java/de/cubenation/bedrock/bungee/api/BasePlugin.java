@@ -36,7 +36,6 @@ import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.datastore.DatastoreService;
-import de.cubenation.bedrock.core.service.ebean.EbeanService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
@@ -99,7 +98,6 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
             serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.registerService(DatastoreService.class);
-            serviceManager.registerService(EbeanService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
@@ -200,11 +198,6 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     @Override
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
-    }
-
-    @Override
-    public EbeanService getEbeanService() {
-        return (EbeanService) this.getServiceManager().getService(EbeanService.class);
     }
 
     @Override

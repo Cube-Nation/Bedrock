@@ -52,15 +52,6 @@ public class DatastoreConfig extends CustomConfigurationFile {
     }};
 
     /**
-     * Retrieve all specified connections as HashMaps inside a HashMap.
-     *
-     * @return Map of HashMaps with connection parameters
-     */
-    public Map<String, HashMap<String, String>> getDataStoresAsMaps() {
-        return dataStores;
-    }
-
-    /**
      * Retrieves datastore as HashMap.
      *
      * @param identifier Identifier of the datastore

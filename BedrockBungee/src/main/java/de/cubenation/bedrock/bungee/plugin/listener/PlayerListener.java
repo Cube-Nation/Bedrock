@@ -4,11 +4,15 @@ import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.BedrockPlugin;
 import de.cubenation.bedrock.bungee.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bungee.plugin.event.PlayerChangeNameEvent;
+import de.cubenation.bedrock.core.datastore.HibernateOrmSession;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
+import jakarta.persistence.NoResultException;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import org.hibernate.Session;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,42 +27,55 @@ public class PlayerListener implements Listener {
         this.plugin = plugin;
     }
 
-
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+            BedrockOfflinePlayer bp;
+            try (HibernateOrmSession session = ((HibernateOrmSession) plugin.getDatastoreService().openSession("bedrock"))) {
+                Session hibernateSession = session.getHibernateSession();
 
-            String uuid = event.getPlayer().getUniqueId().toString();
-            BedrockOfflinePlayer bp = BedrockPlugin.getInstance().getEbeanService().getDatabase()
-                    .find(BedrockOfflinePlayer.class)
-                    .where()
-                    .eq("uuid", uuid)
-                    .findOne();
+                String uuid = event.getPlayer().getUniqueId().toString();
+                String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
+                try {
+                    bp = hibernateSession.createQuery(
+                            "select p from BedrockOfflinePlayer p where p.uuid = :uuid",
+                            BedrockOfflinePlayer.class
+                    ).setParameter("uuid", uuid).getSingleResult();
 
-            String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
-            if (bp == null) {
-                bp = new BedrockOfflinePlayer(uuid, event.getPlayer().getName(), ip, new Date());
-                bp.save(plugin.getEbeanService().getDatabase());
-            } else {
-                // check if username changed
-                if (!bp.getUsername().equals(event.getPlayer().getName())) {
-                    plugin.log(Level.INFO, String.format("BedrockPlayer: %s changed name to %s",
-                            bp.getUsername(), event.getPlayer().getName()));
-                    // fire name change event
-                    PlayerChangeNameEvent changeNameEvent = new PlayerChangeNameEvent(
-                            event.getPlayer().getUniqueId(),
-                            bp.getUsername(),
-                            event.getPlayer().getName());
-                    plugin.getProxy().getPluginManager().callEvent(changeNameEvent);
+                    // check if username changed
+                    if (!bp.getUsername().equals(event.getPlayer().getName())) {
+                        plugin.log(Level.INFO, String.format("BedrockPlayer: %s changed name to %s",
+                                bp.getUsername(), event.getPlayer().getName()));
+                        // fire name change event
+                        PlayerChangeNameEvent changeNameEvent = new PlayerChangeNameEvent(
+                                event.getPlayer().getUniqueId(),
+                                bp.getUsername(),
+                                event.getPlayer().getName());
+                        plugin.getProxy().getPluginManager().callEvent(changeNameEvent);
 
-                    // update username
-                    bp.setUsername(event.getPlayer().getName());
+                        // update username
+                        bp.setUsername(event.getPlayer().getName());
+                    }
+
+                    // update ip
+                    bp.setIp(ip);
+
+                    // update timestamp
+                    bp.setLastlogin(new Date());
+                    try {
+                        bp.persist(plugin);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } catch (NoResultException e) {
+                    bp = new BedrockOfflinePlayer(uuid, event.getPlayer().getName(), ip, new Date());
                 }
 
-                List<BedrockOfflinePlayer> bedrockPlayers = plugin.getEbeanService().getDatabase().find(BedrockOfflinePlayer.class).where()
-                        .like("ip", ip)
-                        .findList();
-
+                // Check for multi accounts
+                List<BedrockOfflinePlayer> bedrockPlayers = hibernateSession.createQuery(
+                        "select p from BedrockOfflinePlayer p where p.ip like :ip",
+                        BedrockOfflinePlayer.class
+                ).setParameter("ip", ip).getResultList();
                 if (bedrockPlayers != null) {
                     // Remove self
                     bedrockPlayers = bedrockPlayers.stream()
@@ -70,13 +87,13 @@ public class PlayerListener implements Listener {
                         plugin.getProxy().getPluginManager().callEvent(joinEvent);
                     }
                 }
+            }
 
-                // update ip
-                bp.setIp(ip);
-
-                // update timestamp
-                bp.setLastlogin(new Date());
-                bp.update(plugin.getEbeanService().getDatabase());
+            // persist BedrockOfflinePlayer object
+            try {
+                bp.persist(plugin);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         });
 

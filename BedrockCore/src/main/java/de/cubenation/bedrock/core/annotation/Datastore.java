@@ -20,19 +20,23 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.exception;
+package de.cubenation.bedrock.core.annotation;
+
+
+import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class ServiceReloadException extends Exception {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Repeatable(Datastores.class)
+public @interface Datastore {
 
-    public ServiceReloadException(String message) {
-        super(message);
-    }
+    String name();
 
-    public ServiceReloadException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    Class<?>[] entities();
+
 }
