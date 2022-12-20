@@ -211,4 +211,9 @@ public interface FoundationPlugin {
 
     BedrockServer getBedrockServer();
 
+    /**
+     * Gracefully disable the plugin.
+     */
+    void disable();
+
 }

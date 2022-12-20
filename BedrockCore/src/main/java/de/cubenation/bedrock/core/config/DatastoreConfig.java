@@ -1,15 +1,14 @@
 package de.cubenation.bedrock.core.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.exception.DatastoreInitException;
 import de.cubenation.bedrock.core.helper.CastUtil;
-import de.cubenation.bedrock.core.service.datastore.StorageCredentials;
+import net.cubespace.Yamler.Config.Comment;
+import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DatastoreConfig extends CustomConfigurationFile {
@@ -22,15 +21,24 @@ public class DatastoreConfig extends CustomConfigurationFile {
         return "datastore.yml";
     }
 
-    private static final ArrayList<String> reservedKeywords = new ArrayList<>() {{
-        add("driver");
-        add("url");
-        add("username");
-        add("password");
-        add("maxpoolsize");
-        add("minidleconnections");
-        add("keepalivetime");
-        add("connectiontimeout");
+    /**
+     * Reserved keywords to shorten some of the most common config options.
+     */
+    private static final Map<String, String> reservedKeywords = new HashMap<>() {{
+        put("datasource", "hibernate.hikari.dataSourceClassName");
+        put("url", "hibernate.hikari.dataSource.url");
+        put("username", "hibernate.hikari.dataSource.user");
+        put("password", "hibernate.hikari.dataSource.password");
+    }};
+
+    /**
+     * Default values for initialization of new datastore configs.
+     */
+    private static final Map<String, Object> defaultConfigMap = new LinkedHashMap<>() {{
+        put("datasource", "");
+        put("url", "");
+        put("username", "");
+        put("password", "");
     }};
 
     public DatastoreConfig() {
@@ -38,77 +46,58 @@ public class DatastoreConfig extends CustomConfigurationFile {
     }
 
     @Path("datastores")
-    private HashMap<String, HashMap<String, String>> dataStores = new HashMap<>() {{
-        put("myDatabase", new HashMap<>() {{
-            put("driver", "com.mysql.jdbc.Driver");
-            put("url", "jdbc:mysql:127.0.0.1:3306/minecraft");
-            put("username", "root");
-            put("password", "root");
-            put("maxpoolsize", "16");
-            put("minidleconnections", "1");
-            put("keepalivetime", "60000");
-            put("connectiontimeout", "5000");
-        }});
-    }};
+    @Comment("For help on how to configure your datastores view https://tbd/") // TODO: correct url
+    private HashMap<String, Map<String, Object>> dataStores = new HashMap<>();
 
     /**
-     * Retrieves datastore as HashMap.
-     *
-     * @param identifier Identifier of the datastore
-     * @return Datastore as Map
+     * Get the config map for the datasource with a specific identifier. </p>
+     * Initialize in case of no config is found for the specified identifier.
+     * @param identifier identifier of the datasource
+     * @return config map
      */
-    public Map<String, String> getDataStoreAsMap(final String identifier) {
-        return dataStores.get(identifier);
+    public Map<String, Object> getDataSourceConfigMapOrInit(final String identifier) {
+        Map<String, Object> configMap = getDataSourceConfigMap(identifier);
+        if (configMap == null) {
+            // init the datastore config with default values
+            configMap = new LinkedHashMap<>(defaultConfigMap);
+            dataStores.put(identifier, configMap);
+            try {
+                save();
+            } catch (InvalidConfigurationException e) {
+                // should not happen, but throw it just in case anyways
+                throw new RuntimeException(e);
+            }
+        }
+        return configMap;
     }
 
     /**
-     * Retrieve all specified connections as {@link StorageCredentials}.
-     *
-     * @return Map of StorageCredentials
+     * Get the config map for the datasource with a specific identifier. </p>
+     * Return {@link null} in case of no config is found for the specified identifier.
+     * @param identifier identifier of the datasource
+     * @return config map or {@link null}
      */
-    public Map<String, StorageCredentials> getDataStores() {
-        return dataStores.keySet().stream().map(
-                e -> new AbstractMap.SimpleEntry<>(e, getDataStore(e))
-        ).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+    public Map<String, Object> getDataSourceConfigMap(final String identifier) {
+        return replaceReservedKeywords(dataStores.get(identifier));
     }
 
     /**
-     * @param identifier Identifier of the datastore.
-     * @return Datastore as {@link StorageCredentials}
+     * Replaces all reserved keywords of a config map with their full-length equivalents.
+     * @param input config map
+     * @return config map without reserved keywords
      */
-    public StorageCredentials getDataStore(final String identifier) {
-        final HashMap<String, String> ds = dataStores.get(identifier);
-
-        if (ds == null) {
+    private static Map<String, Object> replaceReservedKeywords(final Map<String, Object> input) {
+        if (input == null) {
             return null;
         }
 
-        return new StorageCredentials(
-                ds.get("driver"),
-                ds.get("url"),
-                ds.get("username"),
-                ds.get("password"),
-                CastUtil.fromStringToInt(ds.get("maxpoolsize"), 16),
-                CastUtil.fromStringToInt(ds.get("minidleconnections"), 1),
-                CastUtil.fromStringToInt(ds.get("keepalivetime"), 60000),
-                CastUtil.fromStringToInt(ds.get("connectiontimeout"), 5000),
-                getDatastoreProperties(identifier)
-        );
-    }
-
-    /**
-     * Filters out all non-reserved keywords, e.g. the extra properties for the JDBC driver.
-     *
-     * @param identifier Identifier of the datastore
-     * @return Map containing only JDBC properties
-     */
-    private Map<String, String> getDatastoreProperties(final String identifier) {
-        final Map<String, String> dataStore = getDataStoreAsMap(identifier);
-
-        if (dataStore == null) {
-            return null;
+        HashMap<String, Object> output = new HashMap<>();
+        for (Map.Entry<String, Object> entry : input.entrySet()) {
+            String key = reservedKeywords.containsKey(entry.getKey()) ?
+                    reservedKeywords.get(entry.getKey()) :
+                    entry.getKey();
+            output.put(key, entry.getValue());
         }
-
-        return dataStore.entrySet().stream().filter(e -> !reservedKeywords.contains(e.getKey())).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return output;
     }
 }
