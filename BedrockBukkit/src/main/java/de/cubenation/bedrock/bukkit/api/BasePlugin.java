@@ -41,7 +41,6 @@ import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.datastore.DatastoreService;
-import de.cubenation.bedrock.core.service.ebean.EbeanService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -117,7 +116,6 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
             serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.registerService(DatastoreService.class);
-            serviceManager.registerService(EbeanService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
@@ -295,8 +293,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
                         : e.getMessage()
         ));
         e.printStackTrace();
-        log(Level.SEVERE, "Disabling plugin");
-        this.getPluginLoader().disablePlugin(this);
+        disable();
     }
 
     /**
@@ -312,7 +309,13 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @SuppressWarnings("unused")
     public void disable(Exception e, CommandSender sender) {
         sender.sendMessage(this.getMessagePrefix() + "Unrecoverable error. Disabling plugin");
-        this.disable(e);
+        disable(e);
+    }
+
+    @Override
+    public void disable() {
+        log(Level.SEVERE, "Disabling plugin");
+        this.getPluginLoader().disablePlugin(this);
     }
 
     /**
@@ -368,11 +371,6 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
      */
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
-    }
-
-    @Override
-    public EbeanService getEbeanService() {
-        return (EbeanService) this.getServiceManager().getService(EbeanService.class);
     }
 
     @Override

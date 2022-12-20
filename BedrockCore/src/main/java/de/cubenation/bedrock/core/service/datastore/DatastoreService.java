@@ -59,7 +59,7 @@ public class DatastoreService extends AbstractService {
             int entityCount = annotation.entities() != null ? annotation.entities().length : 0;
             plugin.log(Level.INFO, String.format("Initializing datastore '%s' with %s entities...", annotation.name(), entityCount));
 
-            Datastore datastore = new HibernateOrmDatastore();
+            Datastore datastore = new HibernateOrmDatastore(plugin, id);
             try {
                 datastore.init(annotation.entities());
             } catch (DatastoreInitException e) {

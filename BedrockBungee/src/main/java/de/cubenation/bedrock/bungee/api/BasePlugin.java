@@ -146,8 +146,13 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
                         : e.getMessage()
         ));
         e.printStackTrace();
-        log(Level.SEVERE, "Disabling plugin");
+        disable();
+    }
 
+    @Override
+    public void disable() {
+        log(Level.SEVERE, "Disabling plugin");
+        onDisable();
         // TODO: tbd disable
     }
 
@@ -311,5 +316,4 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
         // TODO: ugly
         return new BungeeServer(this);
     }
-
 }
