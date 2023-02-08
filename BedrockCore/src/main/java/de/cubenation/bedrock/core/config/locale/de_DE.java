@@ -41,7 +41,7 @@ public class de_DE extends CustomConfigurationFile {
     }
 
     public de_DE(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
+        CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
     }
 
 

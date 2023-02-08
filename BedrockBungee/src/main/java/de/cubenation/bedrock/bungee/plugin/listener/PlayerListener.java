@@ -1,10 +1,8 @@
 package de.cubenation.bedrock.bungee.plugin.listener;
 
 import de.cubenation.bedrock.bungee.api.BasePlugin;
-import de.cubenation.bedrock.bungee.plugin.BedrockPlugin;
 import de.cubenation.bedrock.bungee.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bungee.plugin.event.PlayerChangeNameEvent;
-import de.cubenation.bedrock.core.datastore.HibernateOrmSession;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import jakarta.persistence.NoResultException;
 import net.md_5.bungee.api.event.PostLoginEvent;

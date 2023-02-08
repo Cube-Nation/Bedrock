@@ -121,8 +121,8 @@ public abstract class ConfigService extends AbstractService {
      */
     private void createDataFolder() throws ServiceInitException {
         // check if plugin data folder exists and create if not
-        if (!this.getPlugin().getDataFolder().exists() && !this.getPlugin().getDataFolder().mkdirs())
-            throw new ServiceInitException("Could not create folder " + this.getPlugin().getDataFolder().getName());
+        if (!this.getPlugin().getPluginFolder().exists() && !this.getPlugin().getPluginFolder().mkdirs())
+            throw new ServiceInitException("Could not create folder " + this.getPlugin().getPluginFolder().getName());
     }
 
 

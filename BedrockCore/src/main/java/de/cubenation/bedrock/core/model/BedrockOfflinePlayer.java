@@ -1,7 +1,6 @@
 package de.cubenation.bedrock.core.model;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.datastore.DatastoreSession;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.io.IOException;
 import java.util.Date;
@@ -71,10 +72,10 @@ public class BedrockOfflinePlayer {
     }
 
     public void persist(FoundationPlugin plugin) throws IOException {
-        try (DatastoreSession session = plugin.getDatastoreService().openSession("bedrock")) {
-            session.beginTransaction();
+        try (Session session = plugin.getDatastoreService().openSession("bedrock")) {
+            Transaction transaction = session.beginTransaction();
             session.persist(this);
-            session.commitTransaction();
+            transaction.commit();
         }
     }
 

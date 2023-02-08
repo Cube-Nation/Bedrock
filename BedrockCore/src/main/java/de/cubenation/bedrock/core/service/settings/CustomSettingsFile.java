@@ -46,7 +46,7 @@ public abstract class CustomSettingsFile extends YamlConfig {
     }
 
     private void setConfigFile(String name) {
-        File settingsDir = new File(this.plugin.getDataFolder(), SettingsService.SETTINGSDIR);
+        File settingsDir = new File(this.plugin.getPluginFolder(), SettingsService.SETTINGSDIR);
         if (!settingsDir.exists()) {
             settingsDir.mkdir();
         }

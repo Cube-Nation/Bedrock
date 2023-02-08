@@ -31,7 +31,7 @@ import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.service.command.CommandService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
-import de.cubenation.bedrock.core.service.datastore.DatastoreService;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
@@ -137,9 +137,9 @@ public interface FoundationPlugin {
      * If the EbeanService is not ready, <code>null</code> is returned.
      *
      * @return The Bedrock DatastoreService
-     * @see DatastoreService
+     * @see DatabaseService
      */
-    DatastoreService getDatastoreService();
+    DatabaseService getDatastoreService();
 
     /**
      * Returns the Bedrock SettingsService object instance.
@@ -199,7 +199,7 @@ public interface FoundationPlugin {
 
     Messages messages();
 
-    File getDataFolder();
+    File getPluginFolder();
 
     PluginDescription getPluginDescription();
 

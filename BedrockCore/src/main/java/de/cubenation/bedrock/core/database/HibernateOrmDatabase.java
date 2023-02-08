@@ -1,9 +1,10 @@
-package de.cubenation.bedrock.core.datastore;
+package de.cubenation.bedrock.core.database;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.DatastoreConfig;
+import de.cubenation.bedrock.core.config.DataPersistenceConfig;
 import de.cubenation.bedrock.core.exception.DatastoreInitException;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataBuilder;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class HibernateOrmDatastore extends AbstractDatastore {
+public class HibernateOrmDatabase extends AbstractDatabase {
 
 //    private static final HashMap<String, Object> settingsMap = new HashMap<>(){{
 //        put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
@@ -46,7 +47,7 @@ public class HibernateOrmDatastore extends AbstractDatastore {
 
     private SessionFactory sessionFactory;
 
-    public HibernateOrmDatastore(FoundationPlugin plugin, String identifier) {
+    public HibernateOrmDatabase(FoundationPlugin plugin, String identifier) {
         super(plugin, identifier);
     }
 
@@ -84,24 +85,19 @@ public class HibernateOrmDatastore extends AbstractDatastore {
     }
 
     /**
-     * Get config map of {@link #hiddenDefaultConfig} merged with actual values from {@link DatastoreConfig}
+     * Get config map of {@link #hiddenDefaultConfig} merged with actual values from {@link DataPersistenceConfig}
      * @return config map
      */
     private Map<String, Object> getConfigMap() {
-        DatastoreConfig config = (DatastoreConfig) plugin.getConfigService().getConfig(DatastoreConfig.class);
+        DataPersistenceConfig config = (DataPersistenceConfig) plugin.getConfigService().getConfig(DataPersistenceConfig.class);
         HashMap<String, Object> configMap = new HashMap<>(hiddenDefaultConfig);
-        configMap.putAll(config.getDataSourceConfigMapOrInit(identifier));
+        configMap.putAll(config.getDatabaseConfigMapOrInit(identifier));
         return configMap;
     }
 
     @Override
-    public DatastoreType getType() {
-        return DatastoreType.SQL;
-    }
-
-    @Override
-    public DatastoreSession openSession() {
-        return new HibernateOrmSession(sessionFactory);
+    public Session openSession() {
+        return sessionFactory.openSession();
     }
 
     @Override

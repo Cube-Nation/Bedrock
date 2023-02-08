@@ -32,8 +32,8 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(Datastores.class)
-public @interface Datastore {
+@Repeatable(Databases.class)
+public @interface Database {
 
     String name();
 

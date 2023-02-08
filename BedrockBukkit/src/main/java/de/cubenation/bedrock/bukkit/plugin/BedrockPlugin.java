@@ -29,7 +29,7 @@ import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.config.BedrockDefaults;
-import de.cubenation.bedrock.core.config.DatastoreConfig;
+import de.cubenation.bedrock.core.config.DataPersistenceConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
@@ -42,7 +42,7 @@ import java.util.logging.Level;
  * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
-@ConfigurationFile(DatastoreConfig.class)
+@ConfigurationFile(DataPersistenceConfig.class)
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;

@@ -47,7 +47,7 @@ public class Permissions extends CustomConfigurationFile {
     }
 
     public Permissions(FoundationPlugin plugin) throws IOException {
-        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
+        CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
     }
 
     @Path("permissions")

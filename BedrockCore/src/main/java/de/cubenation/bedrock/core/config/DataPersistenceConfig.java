@@ -1,20 +1,17 @@
 package de.cubenation.bedrock.core.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.exception.DatastoreInitException;
-import de.cubenation.bedrock.core.helper.CastUtil;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.cubespace.Yamler.Config.Path;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class DatastoreConfig extends CustomConfigurationFile {
+public class DataPersistenceConfig extends CustomConfigurationFile {
 
-    public DatastoreConfig(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
+    public DataPersistenceConfig(FoundationPlugin plugin) {
+        CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
     }
 
     public static String getFilename() {
@@ -41,26 +38,26 @@ public class DatastoreConfig extends CustomConfigurationFile {
         put("password", "");
     }};
 
-    public DatastoreConfig() {
+    public DataPersistenceConfig() {
         super();
     }
 
-    @Path("datastores")
-    @Comment("For help on how to configure your datastores view https://tbd/") // TODO: correct url
-    private HashMap<String, Map<String, Object>> dataStores = new HashMap<>();
+    @Path("databases")
+    @Comment("For help on how to configure your databases view https://tbd/") // TODO: correct url
+    private HashMap<String, Map<String, Object>> databases = new HashMap<>();
 
     /**
-     * Get the config map for the datasource with a specific identifier. </p>
+     * Get the config map for the database with a specific identifier. </p>
      * Initialize in case of no config is found for the specified identifier.
-     * @param identifier identifier of the datasource
+     * @param identifier identifier of the database
      * @return config map
      */
-    public Map<String, Object> getDataSourceConfigMapOrInit(final String identifier) {
-        Map<String, Object> configMap = getDataSourceConfigMap(identifier);
+    public Map<String, Object> getDatabaseConfigMapOrInit(final String identifier) {
+        Map<String, Object> configMap = getDatabaseConfigMap(identifier);
         if (configMap == null) {
-            // init the datastore config with default values
+            // init the database config with default values
             configMap = new LinkedHashMap<>(defaultConfigMap);
-            dataStores.put(identifier, configMap);
+            databases.put(identifier, configMap);
             try {
                 save();
             } catch (InvalidConfigurationException e) {
@@ -72,13 +69,13 @@ public class DatastoreConfig extends CustomConfigurationFile {
     }
 
     /**
-     * Get the config map for the datasource with a specific identifier. </p>
+     * Get the config map for the database with a specific identifier. </p>
      * Return {@link null} in case of no config is found for the specified identifier.
-     * @param identifier identifier of the datasource
+     * @param identifier identifier of the database
      * @return config map or {@link null}
      */
-    public Map<String, Object> getDataSourceConfigMap(final String identifier) {
-        return replaceReservedKeywords(dataStores.get(identifier));
+    public Map<String, Object> getDatabaseConfigMap(final String identifier) {
+        return replaceReservedKeywords(databases.get(identifier));
     }
 
     /**

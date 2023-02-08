@@ -49,7 +49,7 @@ public class ConfigService extends de.cubenation.bedrock.core.service.config.Con
 
     @Override
     public BedrockYaml getReadOnlyConfig(String name) {
-        File file = new File(this.getPlugin().getDataFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
+        File file = new File(this.getPlugin().getPluginFolder().getAbsolutePath() + System.getProperty("file.separator") + name);
 
         try {
             Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);

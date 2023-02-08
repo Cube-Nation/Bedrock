@@ -50,7 +50,7 @@ public class RegenerateLocaleCommand extends Command {
         LocalizationService localizationService = getPlugin().getLocalizationService();
 
         File localeFile = new File(
-                getPlugin().getDataFolder().getAbsolutePath(),
+                getPlugin().getPluginFolder().getAbsolutePath(),
                 localizationService.getRelativeLocaleFile()
         );
         if (localeFile.exists() && !localeFile.delete()) {

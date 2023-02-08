@@ -26,8 +26,8 @@ import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.listener.PlayerListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
-import de.cubenation.bedrock.core.annotation.Datastore;
-import de.cubenation.bedrock.core.config.DatastoreConfig;
+import de.cubenation.bedrock.core.annotation.Database;
+import de.cubenation.bedrock.core.config.DataPersistenceConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 
@@ -36,8 +36,8 @@ import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
  * @version 1.0
  */
 @ConfigurationFile(de_DE.class)
-@ConfigurationFile(DatastoreConfig.class)
-@Datastore(name = "bedrock", entities = {
+@ConfigurationFile(DataPersistenceConfig.class)
+@Database(name = "bedrock", entities = {
         BedrockOfflinePlayer.class
 })
 public class BedrockPlugin extends BasePlugin {
