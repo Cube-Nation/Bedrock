@@ -42,7 +42,7 @@ public class en_US extends CustomConfigurationFile {
     }
 
     public en_US(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
+        CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
     }
 
     @Deprecated

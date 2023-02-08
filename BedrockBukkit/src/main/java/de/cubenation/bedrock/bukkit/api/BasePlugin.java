@@ -40,7 +40,7 @@ import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
-import de.cubenation.bedrock.core.service.datastore.DatastoreService;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -115,7 +115,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
             // DO NOT MODIFY THIS ORDER!
             serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
-            serviceManager.registerService(DatastoreService.class);
+            serviceManager.registerService(DatabaseService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
@@ -374,8 +374,8 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     }
 
     @Override
-    public DatastoreService getDatastoreService() {
-        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
+    public DatabaseService getDatastoreService() {
+        return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
     }
 
     /**

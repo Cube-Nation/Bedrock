@@ -1,14 +1,13 @@
-package de.cubenation.bedrock.core.service.datastore;
+package de.cubenation.bedrock.core.service.database;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.DatastoreConfig;
-import de.cubenation.bedrock.core.datastore.Datastore;
-import de.cubenation.bedrock.core.datastore.DatastoreSession;
-import de.cubenation.bedrock.core.datastore.HibernateOrmDatastore;
+import de.cubenation.bedrock.core.database.Database;
+import de.cubenation.bedrock.core.database.HibernateOrmDatabase;
 import de.cubenation.bedrock.core.exception.DatastoreInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import org.hibernate.Session;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,22 +15,20 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-public class DatastoreService extends AbstractService {
+public class DatabaseService extends AbstractService {
 
     /**
-     * Path to directory containing datasource drivers in the plugins directory.
+     * Path to directory containing database drivers in the plugins directory.
      */
-    private static final String DRIVER_PATH = "config/drivers";
-    private final Path driverDirectory = Paths.get(plugin.getFallbackBedrockPlugin().getDataFolder().getAbsolutePath(), DRIVER_PATH);
+    private static final String DRIVER_PATH = "lib";
+    private final Path driverDirectory = Paths.get(plugin.getFallbackBedrockPlugin().getPluginFolder().getAbsolutePath(), DRIVER_PATH);
 
-    private final HashMap<String, Datastore> datastores = new HashMap<>();
+    private final HashMap<String, Database> databases = new HashMap<>();
 
-    public DatastoreService(FoundationPlugin plugin) {
+    public DatabaseService(FoundationPlugin plugin) {
         super(plugin);
     }
 
@@ -49,24 +46,24 @@ public class DatastoreService extends AbstractService {
 
         // TODO: DatastoreConfig datastoreConfig = (DatastoreConfig) this.plugin.getConfigService().getConfig(DatastoreConfig.class);
 
-        for (de.cubenation.bedrock.core.annotation.Datastore annotation : plugin.getClass().getAnnotationsByType(de.cubenation.bedrock.core.annotation.Datastore.class)) {
+        for (de.cubenation.bedrock.core.annotation.Database annotation : plugin.getClass().getAnnotationsByType(de.cubenation.bedrock.core.annotation.Database.class)) {
             String id = annotation.name();
             if (id == null || annotation.name().trim().length() == 0) {
                 // TODO: Sanitize
-                throw new ServiceInitException(new DatastoreInitException("Datastore identifier cannot be empty or null"));
+                throw new ServiceInitException(new DatastoreInitException("Database identifier cannot be empty or null"));
             }
 
             int entityCount = annotation.entities() != null ? annotation.entities().length : 0;
-            plugin.log(Level.INFO, String.format("Initializing datastore '%s' with %s entities...", annotation.name(), entityCount));
+            plugin.log(Level.INFO, String.format("Initializing database '%s' with %s entities...", annotation.name(), entityCount));
 
-            Datastore datastore = new HibernateOrmDatastore(plugin, id);
+            Database database = new HibernateOrmDatabase(plugin, id);
             try {
-                datastore.init(annotation.entities());
+                database.init(annotation.entities());
             } catch (DatastoreInitException e) {
                 throw new ServiceInitException(e);
             }
 
-            datastores.put(id, datastore);
+            databases.put(id, database);
         }
     }
 
@@ -79,17 +76,17 @@ public class DatastoreService extends AbstractService {
         }
     }
 
-    public DatastoreSession openSession(String dbIdentifier) {
+    public Session openSession(String dbIdentifier) {
         String id = dbIdentifier.toLowerCase();
-        if (!datastores.containsKey(id)) {
-            throw new IllegalArgumentException(id + " is not a valid datastore identifier");
+        if (!databases.containsKey(id)) {
+            throw new IllegalArgumentException(id + " is not a valid database identifier");
         }
-        return datastores.get(id).openSession();
+        return databases.get(id).openSession();
     }
 
     public boolean loadDrivers() throws ServiceInitException {
         if(!Files.isDirectory(driverDirectory)){
-            plugin.log(Level.SEVERE, "Could not load data source connectors since the specified directory '" + DRIVER_PATH + "' does not exist inside the plugin's directory.");
+            plugin.log(Level.SEVERE, "Could not load database driver since the specified directory '" + DRIVER_PATH + "' does not exist inside the plugin's directory.");
             return false;
         }
 
@@ -99,7 +96,7 @@ public class DatastoreService extends AbstractService {
                 try (URLClassLoader classLoader = new URLClassLoader(new URL[]{path.toUri().toURL()}, getClass().getClassLoader())) {
                     Class.forName("com.mysql.cj.jdbc.Driver");
                 } catch (ClassNotFoundException | IOException e) {
-                    plugin.log(Level.SEVERE, "Could not load data source connector: " + e.getMessage(), e);
+                    plugin.log(Level.SEVERE, "Could not load database driver: " + e.getMessage(), e);
                 }
             });
         } catch (IOException e) {
@@ -110,9 +107,9 @@ public class DatastoreService extends AbstractService {
     }
 
     private void clear() {
-        datastores.values().forEach(datastore -> {
+        databases.values().forEach(database -> {
             try {
-                datastore.close();
+                database.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

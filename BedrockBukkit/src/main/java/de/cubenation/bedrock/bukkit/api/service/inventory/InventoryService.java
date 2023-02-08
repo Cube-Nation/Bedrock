@@ -51,7 +51,7 @@ public class InventoryService extends AbstractService {
 
     public InventoryService(FoundationPlugin plugin) {
         super(plugin);
-        this.inventoryDirectory = new File(plugin.getDataFolder() + File.separator + "inventories");
+        this.inventoryDirectory = new File(plugin.getPluginFolder() + File.separator + "inventories");
     }
 
     /**

@@ -84,7 +84,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
     }
 
     public BedrockDefaults(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
+        CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
         CONFIG_HEADER = getHeader();
     }
 

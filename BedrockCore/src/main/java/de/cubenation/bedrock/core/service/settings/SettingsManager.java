@@ -63,7 +63,7 @@ public class SettingsManager {
      * @throws ServiceInitException
      */
     private void createDataFolder() throws ServiceInitException {
-        File settingsDir = new File(this.plugin.getDataFolder(), SettingsService.SETTINGSDIR);
+        File settingsDir = new File(this.plugin.getPluginFolder(), SettingsService.SETTINGSDIR);
         if (!settingsDir.exists()) {
             if (!settingsDir.mkdir()) {
                 throw new ServiceInitException("Could not create folder " + settingsDir.getName());
