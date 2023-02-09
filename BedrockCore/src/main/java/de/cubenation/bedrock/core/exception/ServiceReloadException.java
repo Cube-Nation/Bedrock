@@ -22,6 +22,8 @@
 
 package de.cubenation.bedrock.core.exception;
 
+import java.io.IOException;
+
 /**
  * @author Cube-Nation
  * @version 1.0
@@ -34,5 +36,9 @@ public class ServiceReloadException extends Exception {
 
     public ServiceReloadException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public ServiceReloadException(Throwable e) {
+        super(e);
     }
 }

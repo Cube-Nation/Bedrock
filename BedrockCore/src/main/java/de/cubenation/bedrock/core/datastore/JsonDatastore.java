@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class JsonDatastore<Entity> extends AbstractDatastore<Entity> {
+public class JsonDatastore<Entity> extends Datastore<Entity> {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -20,7 +20,7 @@ public class JsonDatastore<Entity> extends AbstractDatastore<Entity> {
     @Override
     void executeLoad(String key) throws IOException {
         Path path = getPathForKey(key);
-        if (!Files.notExists(path)) {
+        if (Files.notExists(path)) {
             Files.createFile(path);
         }
         File file = path.toFile();
