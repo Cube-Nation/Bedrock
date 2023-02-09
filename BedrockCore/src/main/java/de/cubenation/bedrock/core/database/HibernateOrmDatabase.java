@@ -1,7 +1,7 @@
 package de.cubenation.bedrock.core.database;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.DataPersistenceConfig;
+import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.exception.DatastoreInitException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -56,7 +56,7 @@ public class HibernateOrmDatabase extends AbstractDatabase {
             initDatabase(entities);
         } catch (ServiceException e) {
             if (e.getCause() instanceof HibernateException && e.getCause().getCause() instanceof IllegalArgumentException) {
-                plugin.log(Level.SEVERE, "Datastore could not be initialized: Config or credentials are invalid!");
+                plugin.log(Level.SEVERE, "Database could not be initialized: Config or credentials are invalid!");
                 plugin.disable();
             } else {
                 throw new DatastoreInitException(e);
@@ -85,11 +85,11 @@ public class HibernateOrmDatabase extends AbstractDatabase {
     }
 
     /**
-     * Get config map of {@link #hiddenDefaultConfig} merged with actual values from {@link DataPersistenceConfig}
+     * Get config map of {@link #hiddenDefaultConfig} merged with actual values from {@link DatabaseConfig}
      * @return config map
      */
     private Map<String, Object> getConfigMap() {
-        DataPersistenceConfig config = (DataPersistenceConfig) plugin.getConfigService().getConfig(DataPersistenceConfig.class);
+        DatabaseConfig config = (DatabaseConfig) plugin.getConfigService().getConfig(DatabaseConfig.class);
         HashMap<String, Object> configMap = new HashMap<>(hiddenDefaultConfig);
         configMap.putAll(config.getDatabaseConfigMapOrInit(identifier));
         return configMap;

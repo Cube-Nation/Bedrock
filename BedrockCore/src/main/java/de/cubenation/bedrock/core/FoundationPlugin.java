@@ -22,7 +22,7 @@
 
 package de.cubenation.bedrock.core;
 
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -215,7 +215,7 @@ public interface FoundationPlugin {
 
     boolean isFallbackBedrockPlugin();
 
-    BedrockDefaults getBedrockDefaults();
+    BedrockDefaultsConfig getBedrockDefaults();
 
     BedrockServer getBedrockServer();
 

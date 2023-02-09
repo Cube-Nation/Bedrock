@@ -27,7 +27,9 @@ import de.cubenation.bedrock.bungee.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bungee.plugin.listener.PlayerListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
 import de.cubenation.bedrock.core.annotation.Database;
-import de.cubenation.bedrock.core.config.DataPersistenceConfig;
+import de.cubenation.bedrock.core.annotation.Datastore;
+import de.cubenation.bedrock.core.config.DatabaseConfig;
+import de.cubenation.bedrock.core.config.DatastoreConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 

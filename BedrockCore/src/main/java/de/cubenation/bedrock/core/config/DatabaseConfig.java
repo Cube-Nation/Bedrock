@@ -8,14 +8,14 @@ import net.cubespace.Yamler.Config.Path;
 import java.io.File;
 import java.util.*;
 
-public class DataPersistenceConfig extends CustomConfigurationFile {
+public class DatabaseConfig extends CustomConfigurationFile {
 
-    public DataPersistenceConfig(FoundationPlugin plugin) {
+    public DatabaseConfig(FoundationPlugin plugin) {
         CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
     }
 
     public static String getFilename() {
-        return "datastore.yml";
+        return "config/_databases.yaml";
     }
 
     /**
@@ -29,7 +29,7 @@ public class DataPersistenceConfig extends CustomConfigurationFile {
     }};
 
     /**
-     * Default values for initialization of new datastore configs.
+     * Default values for initialization of new database configs.
      */
     private static final Map<String, Object> defaultConfigMap = new LinkedHashMap<>() {{
         put("datasource", "");
@@ -38,7 +38,7 @@ public class DataPersistenceConfig extends CustomConfigurationFile {
         put("password", "");
     }};
 
-    public DataPersistenceConfig() {
+    public DatabaseConfig() {
         super();
     }
 
@@ -61,7 +61,7 @@ public class DataPersistenceConfig extends CustomConfigurationFile {
             try {
                 save();
             } catch (InvalidConfigurationException e) {
-                // should not happen, but throw it just in case anyways
+                // should not happen, but throw it just in case anyway
                 throw new RuntimeException(e);
             }
         }

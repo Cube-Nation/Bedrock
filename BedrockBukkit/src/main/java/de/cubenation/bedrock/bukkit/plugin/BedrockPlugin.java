@@ -28,8 +28,8 @@ import de.cubenation.bedrock.bukkit.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
-import de.cubenation.bedrock.core.config.DataPersistenceConfig;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
+import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
@@ -42,7 +42,7 @@ import java.util.logging.Level;
  * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
-@ConfigurationFile(DataPersistenceConfig.class)
+@ConfigurationFile(DatabaseConfig.class)
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;
@@ -59,10 +59,10 @@ public class BedrockPlugin extends BasePlugin {
     public void onPostEnable() {
         // create default configuration
         try {
-            BedrockDefaults bd = new BedrockDefaults(this);
+            BedrockDefaultsConfig bd = new BedrockDefaultsConfig(this);
             bd.init();
         } catch (InvalidConfigurationException e) {
-            this.log(Level.SEVERE, "Error creating " + BedrockDefaults.getFilename(), e);
+            this.log(Level.SEVERE, "Error creating " + BedrockDefaultsConfig.getFilename(), e);
             this.disable(e);
         }
 

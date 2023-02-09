@@ -26,7 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.authorization.Role;
-import de.cubenation.bedrock.core.config.Permissions;
+import de.cubenation.bedrock.core.config.PermissionsConfig;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -69,8 +69,8 @@ public class PermissionService extends AbstractService {
 
         try {
             this.configService.registerFile(
-                    Permissions.class,
-                    new Permissions(this.getPlugin())
+                    PermissionsConfig.class,
+                    new PermissionsConfig(this.getPlugin())
             );
         } catch (Exception e) {
             throw new ServiceInitException(e.getMessage());
@@ -149,7 +149,7 @@ public class PermissionService extends AbstractService {
         The YamlConfiguration object would not know about the move/remove and would still have the permission
         in it's cache, so the move/remove would not be recognized.
         */
-        Permissions permissions = (Permissions) this.configService.getConfig(Permissions.class);
+        PermissionsConfig permissions = (PermissionsConfig) this.configService.getConfig(PermissionsConfig.class);
         try {
             permissions.reload();
 
@@ -190,7 +190,7 @@ public class PermissionService extends AbstractService {
         this.savePermissions(permissions);
     }
 
-    private void savePermissions(Permissions permissions) {
+    private void savePermissions(PermissionsConfig permissions) {
         // clean up default role - will be restored if necessary
         permissions.removeRole(Role.NO_ROLE);
 
@@ -225,7 +225,7 @@ public class PermissionService extends AbstractService {
         }
 
         // check again with full permission node (including permission prefix for role)
-        Role role = ((Permissions) plugin.getConfigService().getConfig(Permissions.class)).getRoleForPermission(permission.getName());
+        Role role = ((PermissionsConfig) plugin.getConfigService().getConfig(PermissionsConfig.class)).getRoleForPermission(permission.getName());
         if (role != null) {
             if (sender.hasPermission(String.format("%s.%s.%s", this.getPermissionPrefix(), role.getType().toLowerCase(), permission.getName()))) {
                 return true;

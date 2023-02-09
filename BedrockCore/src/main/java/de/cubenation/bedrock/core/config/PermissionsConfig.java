@@ -40,13 +40,13 @@ import java.util.stream.Collectors;
  * @version 1.0
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class Permissions extends CustomConfigurationFile {
+public class PermissionsConfig extends CustomConfigurationFile {
 
     public static String getFilename() {
-        return "permissions.yaml";
+        return "config/_permissions.yaml";
     }
 
-    public Permissions(FoundationPlugin plugin) throws IOException {
+    public PermissionsConfig(FoundationPlugin plugin) throws IOException {
         CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
     }
 

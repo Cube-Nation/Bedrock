@@ -36,10 +36,10 @@ import java.io.File;
  */
 
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class BedrockDefaults extends CustomConfigurationFile {
+public class BedrockDefaultsConfig extends CustomConfigurationFile {
 
     public static String getFilename() {
-        return "bedrock.yaml";
+        return "config/_bedrock.yaml";
     }
 
     public String[] getHeader() {
@@ -80,10 +80,10 @@ public class BedrockDefaults extends CustomConfigurationFile {
         };
     }
 
-    public BedrockDefaults() {
+    public BedrockDefaultsConfig() {
     }
 
-    public BedrockDefaults(FoundationPlugin plugin) {
+    public BedrockDefaultsConfig(FoundationPlugin plugin) {
         CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
         CONFIG_HEADER = getHeader();
     }

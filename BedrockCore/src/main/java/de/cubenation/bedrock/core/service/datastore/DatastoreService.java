@@ -73,7 +73,9 @@ public class DatastoreService extends AbstractService {
     public void registerDatastore(String identifier, Class<?> entityClass) {
         plugin.log(Level.INFO, String.format("Initializing datastore '%s'...", identifier));
 
-        Datastore<?> datastore = new JsonDatastore<>(plugin, identifier, entityClass);
+        Datastore<?> datastore;
+
+        datastore = new JsonDatastore<>(plugin, identifier, entityClass);
 
         datastores.put(identifier, datastore);
     }

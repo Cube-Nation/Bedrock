@@ -24,7 +24,7 @@ package de.cubenation.bedrock.bukkit.api.service.config;
 
 import de.cubenation.bedrock.bukkit.api.configuration.BedrockYaml;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -41,7 +41,7 @@ public class ConfigService extends de.cubenation.bedrock.core.service.config.Con
 
     @Override
     public BedrockYaml getReadOnlyConfig() {
-        return getReadOnlyConfig(BedrockDefaults.getFilename());
+        return getReadOnlyConfig(BedrockDefaultsConfig.getFilename());
     }
 
     @Override
