@@ -27,7 +27,7 @@ import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -316,10 +316,10 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     }
 
     @Override
-    public BedrockDefaults getBedrockDefaults() {
-        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
-        if (config instanceof BedrockDefaults) {
-            return (BedrockDefaults) config;
+    public BedrockDefaultsConfig getBedrockDefaults() {
+        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaultsConfig.class);
+        if (config instanceof BedrockDefaultsConfig) {
+            return (BedrockDefaultsConfig) config;
         }
         return null;
     }

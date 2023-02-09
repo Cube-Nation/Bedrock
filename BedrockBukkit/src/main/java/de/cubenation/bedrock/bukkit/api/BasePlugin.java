@@ -27,9 +27,10 @@ import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
 import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
+import de.cubenation.bedrock.core.config.DatastoreConfig;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import de.cubenation.bedrock.core.exception.DependencyException;
 import de.cubenation.bedrock.core.exception.NoSuchPluginException;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
@@ -41,6 +42,7 @@ import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.database.DatabaseService;
+import de.cubenation.bedrock.core.service.datastore.DatastoreService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
@@ -52,6 +54,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -241,10 +244,10 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
         return messages;
     }
 
-    public BedrockDefaults getBedrockDefaults() {
-        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
-        if (config instanceof BedrockDefaults) {
-            return (BedrockDefaults) config;
+    public BedrockDefaultsConfig getBedrockDefaults() {
+        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaultsConfig.class);
+        if (config instanceof BedrockDefaultsConfig) {
+            return (BedrockDefaultsConfig) config;
         }
         return null;
     }
@@ -376,6 +379,11 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @Override
     public DatabaseService getDatabaseService() {
         return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
+    }
+
+    @Override
+    public DatastoreService getDatastoreService() {
+        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
     }
 
     /**
@@ -513,5 +521,10 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     public BedrockServer getBedrockServer() {
         // TODO: ugly
         return new BukkitServer();
+    }
+
+    @Override
+    public File getPluginFolder() {
+        return getDataFolder();
     }
 }

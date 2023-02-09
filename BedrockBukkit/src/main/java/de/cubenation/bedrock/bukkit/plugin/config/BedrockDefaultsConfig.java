@@ -30,10 +30,10 @@ import java.io.File;
  * @author Cube-Nation
  * @version 1.0
  */
-public class BedrockDefaults extends de.cubenation.bedrock.core.config.BedrockDefaults {
+public class BedrockDefaultsConfig extends de.cubenation.bedrock.core.config.BedrockDefaultsConfig {
 
-    public BedrockDefaults(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getPluginFolder(), de.cubenation.bedrock.core.config.BedrockDefaults.getFilename());
+    public BedrockDefaultsConfig(FoundationPlugin plugin) {
+        CONFIG_FILE = new File(plugin.getPluginFolder(), de.cubenation.bedrock.core.config.BedrockDefaultsConfig.getFilename());
         CONFIG_HEADER = getHeader();
 
         this.setColorSchemeName("RED");

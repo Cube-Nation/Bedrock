@@ -24,7 +24,7 @@ package de.cubenation.bedrock.core.service.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.configuration.BedrockYaml;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
@@ -65,12 +65,12 @@ public abstract class ConfigService extends AbstractService {
 
         // try to create the plugin bedrock.yaml
         try {
-            this.registerFile(BedrockDefaults.class, this.instantiatePluginConfig());
+            this.registerFile(BedrockDefaultsConfig.class, this.instantiatePluginConfig());
         } catch (InstantiationException | InvalidConfigurationException ignored) {
 
             // try to create the bedrock.yaml from Bedrock (yes, for this plugin)
             try {
-                this.registerFile(BedrockDefaults.class, this.instantiateBedrockConfig());
+                this.registerFile(BedrockDefaultsConfig.class, this.instantiateBedrockConfig());
             } catch (InstantiationException | InvalidConfigurationException e) {
                 throw new ServiceInitException(e.getMessage());
             }
@@ -156,7 +156,7 @@ public abstract class ConfigService extends AbstractService {
     private CustomConfigurationFile instantiateBedrockConfig() throws InstantiationException, InvalidConfigurationException {
         CustomConfigurationFile config = this.createPluginConfig(
                 this.getPlugin(),
-                BedrockDefaults.class
+                BedrockDefaultsConfig.class
         );
         config.init();
         return config;

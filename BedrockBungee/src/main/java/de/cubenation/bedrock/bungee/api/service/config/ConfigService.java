@@ -24,7 +24,7 @@ package de.cubenation.bedrock.bungee.api.service.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.bungee.api.configuration.BedrockYaml;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -44,7 +44,7 @@ public class ConfigService extends de.cubenation.bedrock.core.service.config.Con
 
     @Override
     public BedrockYaml getReadOnlyConfig() {
-        return getReadOnlyConfig(BedrockDefaults.getFilename());
+        return getReadOnlyConfig(BedrockDefaultsConfig.getFilename());
     }
 
     @Override
