@@ -29,9 +29,7 @@ public class PlayerListener implements Listener {
     public void onPostLogin(PostLoginEvent event) {
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             BedrockOfflinePlayer bp;
-            try (HibernateOrmSession session = ((HibernateOrmSession) plugin.getDatastoreService().openSession("bedrock"))) {
-                Session hibernateSession = session.getHibernateSession();
-
+            try (Session hibernateSession = plugin.getDatabaseService().openSession("bedrock")) {
                 String uuid = event.getPlayer().getUniqueId().toString();
                 String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
                 try {
