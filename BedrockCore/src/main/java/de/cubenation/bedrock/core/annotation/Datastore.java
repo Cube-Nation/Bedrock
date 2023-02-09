@@ -23,6 +23,8 @@
 package de.cubenation.bedrock.core.annotation;
 
 
+import de.cubenation.bedrock.core.datastore.ReloadPolicy;
+
 import java.lang.annotation.*;
 
 /**
@@ -38,5 +40,7 @@ public @interface Datastore {
     String name();
 
     Class<?> value();
+
+    ReloadPolicy reloadPolicy() default ReloadPolicy.RELOAD;
 
 }
