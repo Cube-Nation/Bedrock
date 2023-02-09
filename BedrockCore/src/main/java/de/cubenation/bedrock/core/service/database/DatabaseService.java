@@ -7,6 +7,7 @@ import de.cubenation.bedrock.core.exception.DatastoreInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class DatabaseService extends AbstractService {
 
         for (de.cubenation.bedrock.core.annotation.Database annotation : plugin.getClass().getAnnotationsByType(de.cubenation.bedrock.core.annotation.Database.class)) {
             String id = annotation.name();
-            if (id == null || annotation.name().trim().length() == 0) {
+            if (id == null || StringUtils.isBlank(id)) {
                 // TODO: Sanitize
                 throw new ServiceInitException(new DatastoreInitException("Database identifier cannot be empty or null"));
             }

@@ -36,12 +36,14 @@ import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
 import de.cubenation.bedrock.core.service.database.DatabaseService;
+import de.cubenation.bedrock.core.service.datastore.DatastoreService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -98,6 +100,7 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
             serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
             serviceManager.registerService(DatabaseService.class);
+            serviceManager.registerService(DatastoreService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
@@ -206,8 +209,13 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     }
 
     @Override
-    public DatabaseService getDatastoreService() {
+    public DatabaseService getDatabaseService() {
         return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
+    }
+
+    @Override
+    public DatastoreService getDatastoreService() {
+        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
     }
 
     @Override
@@ -278,6 +286,11 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     @Override
     public Messages messages() {
         return messages;
+    }
+
+    @Override
+    public File getPluginFolder() {
+        return getDataFolder();
     }
 
     @Override

@@ -374,7 +374,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     }
 
     @Override
-    public DatabaseService getDatastoreService() {
+    public DatabaseService getDatabaseService() {
         return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
     }
 

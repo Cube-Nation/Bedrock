@@ -72,7 +72,7 @@ public class BedrockOfflinePlayer {
     }
 
     public void persist(FoundationPlugin plugin) throws IOException {
-        try (Session session = plugin.getDatastoreService().openSession("bedrock")) {
+        try (Session session = plugin.getDatabaseService().openSession("bedrock")) {
             Transaction transaction = session.beginTransaction();
             session.persist(this);
             transaction.commit();
