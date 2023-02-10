@@ -20,25 +20,24 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.exception;
+package de.cubenation.bedrock.bungee.plugin.config;
 
-import java.io.IOException;
+import de.cubenation.bedrock.core.FoundationPlugin;
+
+import java.io.File;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public class ServiceReloadException extends Exception {
+public class BedrockDefaultsConfig extends de.cubenation.bedrock.core.config.BedrockDefaultsConfig {
 
-    public ServiceReloadException(String message) {
-        super(message);
+    public BedrockDefaultsConfig(FoundationPlugin plugin) {
+        CONFIG_FILE = new File(plugin.getPluginFolder(), de.cubenation.bedrock.core.config.BedrockDefaultsConfig.getFilename());
+        CONFIG_HEADER = getHeader();
+
+        this.setColorSchemeName("RED");
+        this.setLocalizationLocale("de_DE");
     }
 
-    public ServiceReloadException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ServiceReloadException(Throwable e) {
-        super(e);
-    }
 }

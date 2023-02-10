@@ -1,11 +1,17 @@
 package de.cubenation.bedrock.core.model;
 
-import com.avaje.ebean.EbeanServer;
-import com.avaje.ebean.validation.NotNull;
+import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
-import javax.persistence.*;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -31,7 +37,6 @@ public class BedrockOfflinePlayer {
     private String uuid;
 
     @Getter @Setter
-    @NotNull
     private String username;
 
     @Getter @Setter
@@ -66,14 +71,13 @@ public class BedrockOfflinePlayer {
         this.uuid = uuid;
     }
 
-    public void save(EbeanServer database) {
-        database.save(this);
+    public void persist(FoundationPlugin plugin) throws IOException {
+        try (Session session = plugin.getDatabaseService().openSession("bedrock")) {
+            Transaction transaction = session.beginTransaction();
+            session.merge(this);
+            transaction.commit();
+        }
     }
-
-    public void update(EbeanServer database) {
-        database.update(this);
-    }
-
 
     public boolean isEqual(BedrockPlayer player) {
         return this.getUUID().equals(player.getUniqueId());

@@ -27,7 +27,7 @@ import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -35,12 +35,15 @@ import de.cubenation.bedrock.core.service.ServiceManager;
 import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
+import de.cubenation.bedrock.core.service.datastore.DatastoreService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
@@ -48,7 +51,7 @@ import java.util.logging.Level;
  * @author Cube-Nation
  * @version 1.0
  */
-public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
+public class BasePlugin extends Plugin implements FoundationPlugin {
 
     public static final String PLUGIN_NAME = "BungeeBedrock";
 
@@ -69,7 +72,7 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
      * @see Plugin
      */
     public BasePlugin() {
-        super();
+
     }
 
     /**
@@ -96,6 +99,8 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
             // DO NOT MODIFY THIS ORDER!
             serviceManager.registerService(ConfigService.class);
             serviceManager.registerService(ColorSchemeService.class);
+            serviceManager.registerService(DatabaseService.class);
+            serviceManager.registerService(DatastoreService.class);
             serviceManager.setIntentionallyReady(true);
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
@@ -112,15 +117,6 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
 
         this.messages = new Messages(this);
 
-        try {
-            BedrockDefaults bedrockDefaults = getBedrockDefaults();
-            log(Level.INFO, bedrockDefaults.toString());
-            setupDatabase(bedrockDefaults.getDatabaseConfiguration());
-        } catch (Exception e) {
-            this.disable(e);
-            return;
-        }
-
         // call onPostEnable after we've set everything up
         try {
             this.onPostEnable();
@@ -135,11 +131,6 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
      * @throws Exception if any error occurs.
      */
     public void onPostEnable() throws Exception {
-    }
-
-    @Override
-    public Boolean isDatabaseEnabled() {
-        return true;
     }
 
 
@@ -158,8 +149,13 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
                         : e.getMessage()
         ));
         e.printStackTrace();
-        log(Level.SEVERE, "Disabling plugin");
+        disable();
+    }
 
+    @Override
+    public void disable() {
+        log(Level.SEVERE, "Disabling plugin");
+        onDisable();
         // TODO: tbd disable
     }
 
@@ -210,6 +206,16 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     @Override
     public LocalizationService getLocalizationService() {
         return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
+    }
+
+    @Override
+    public DatabaseService getDatabaseService() {
+        return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
+    }
+
+    @Override
+    public DatastoreService getDatastoreService() {
+        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
     }
 
     @Override
@@ -283,6 +289,11 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
+    public File getPluginFolder() {
+        return getDataFolder();
+    }
+
+    @Override
     public PluginDescription getPluginDescription() {
         return new PluginDescription(getDescription().getName(),
                 getDescription().getMain(),
@@ -305,10 +316,10 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
     }
 
     @Override
-    public BedrockDefaults getBedrockDefaults() {
-        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaults.class);
-        if (config instanceof BedrockDefaults) {
-            return (BedrockDefaults) config;
+    public BedrockDefaultsConfig getBedrockDefaults() {
+        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaultsConfig.class);
+        if (config instanceof BedrockDefaultsConfig) {
+            return (BedrockDefaultsConfig) config;
         }
         return null;
     }
@@ -318,5 +329,4 @@ public class BasePlugin extends EbeanPlugin implements FoundationPlugin {
         // TODO: ugly
         return new BungeeServer(this);
     }
-
 }

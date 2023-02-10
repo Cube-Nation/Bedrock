@@ -20,37 +20,24 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.core.plugin;
+package de.cubenation.bedrock.bukkit.plugin.config;
 
-import com.avaje.ebean.config.ServerConfig;
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.database.DatabaseConfiguration;
-import de.cubenation.bedrock.core.exception.DatabaseSetupException;
 
-import java.util.List;
+import java.io.File;
 
 /**
  * @author Cube-Nation
  * @version 1.0
  */
-public interface DatabasePlugin extends FoundationPlugin {
+public class BedrockDefaultsConfig extends de.cubenation.bedrock.core.config.BedrockDefaultsConfig {
 
-    /**
-     * Provides a list of all classes that should be persisted in the database
-     *
-     * @return List of Classes that are Ebeans
-     */
-    List<Class<?>> getDatabaseClasses();
+    public BedrockDefaultsConfig(FoundationPlugin plugin) {
+        CONFIG_FILE = new File(plugin.getPluginFolder(), de.cubenation.bedrock.core.config.BedrockDefaultsConfig.getFilename());
+        CONFIG_HEADER = getHeader();
 
-    void setupDatabase(DatabaseConfiguration configuration) throws Exception;
+        this.setColorSchemeName("RED");
+        this.setLocalizationLocale("de_DE");
+    }
 
-    void configureDbConfig(ServerConfig config, DatabaseConfiguration configuration) throws DatabaseSetupException;
-
-    void installDDL();
-
-    void removeDDL();
-
-    String replaceDatabaseString(String input);
-
-    Boolean isDatabaseEnabled();
 }

@@ -22,7 +22,6 @@
 
 package de.cubenation.bedrock.bukkit.plugin.command;
 
-import de.cubenation.bedrock.bukkit.api.helper.BedrockEbeanHelper;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
@@ -65,19 +64,19 @@ public class BedrockPlayerInfoCommand extends Command {
         }
 
         final String player = (args.length == 0) ? sender.getName() : args[0];
-
-        if (UUIDUtil.isUUID(player)) {
-            BedrockEbeanHelper.requestBedrockPlayer(player, bedrockPlayer -> {
-                sender.sendMessage("Results: (1)");
-                sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
-            }, e -> sender.sendMessage("No player found for: " + player));
-        } else {
-            BedrockEbeanHelper.requestBedrockPlayerForLastKnownName(player, false, bedrockPlayers -> {
-                sender.sendMessage("Results: (" + bedrockPlayers.size() + ")");
-                for (BedrockOfflinePlayer bedrockPlayer : bedrockPlayers) {
-                    sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
-                }
-            }, e -> sender.sendMessage("No player found for: " + player));
-        }
+// TODO:
+//        if (UUIDUtil.isUUID(player)) {
+//            BedrockEbeanHelper.requestBedrockPlayer(player, bedrockPlayer -> {
+//                sender.sendMessage("Results: (1)");
+//                sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
+//            }, e -> sender.sendMessage("No player found for: " + player));
+//        } else {
+//            BedrockEbeanHelper.requestBedrockPlayerForLastKnownName(player, false, bedrockPlayers -> {
+//                sender.sendMessage("Results: (" + bedrockPlayers.size() + ")");
+//                for (BedrockOfflinePlayer bedrockPlayer : bedrockPlayers) {
+//                    sender.sendMessage(bedrockPlayer.getUsername() + ": " + bedrockPlayer.getLastlogin());
+//                }
+//            }, e -> sender.sendMessage("No player found for: " + player));
+//        }
     }
 }

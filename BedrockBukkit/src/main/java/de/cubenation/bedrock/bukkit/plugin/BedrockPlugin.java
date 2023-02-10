@@ -23,20 +23,16 @@
 package de.cubenation.bedrock.bukkit.plugin;
 
 import de.cubenation.bedrock.bukkit.api.BasePlugin;
-import de.cubenation.bedrock.bukkit.plugin.command.BedrockPlayerInfoCommand;
 import de.cubenation.bedrock.bukkit.plugin.io.BungeeTeleportInputHandler;
 import de.cubenation.bedrock.bukkit.plugin.io.IOVerbs;
 import de.cubenation.bedrock.bukkit.plugin.listener.BungeeTeleportListener;
 import de.cubenation.bedrock.bukkit.plugin.listener.EbeanListener;
 import de.cubenation.bedrock.core.annotation.ConfigurationFile;
-import de.cubenation.bedrock.core.config.BedrockDefaults;
+import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
+import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
-import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
-import javax.persistence.PersistenceException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -46,7 +42,6 @@ import java.util.logging.Level;
  * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
-
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;
@@ -63,19 +58,11 @@ public class BedrockPlugin extends BasePlugin {
     public void onPostEnable() {
         // create default configuration
         try {
-            BedrockDefaults bd = new BedrockDefaults(this);
+            BedrockDefaultsConfig bd = new BedrockDefaultsConfig(this);
             bd.init();
         } catch (InvalidConfigurationException e) {
-            this.log(Level.SEVERE, "Error creating " + BedrockDefaults.getFilename(), e);
+            this.log(Level.SEVERE, "Error creating " + BedrockDefaultsConfig.getFilename(), e);
             this.disable(e);
-        }
-
-        // install database table
-        try {
-            this.getDatabase().find(BedrockOfflinePlayer.class).findRowCount();
-        } catch (PersistenceException e) {
-            getLogger().log(Level.INFO, "Installing database for " + getDescription().getName() + " due to first time usage");
-            installDDL();
         }
 
         // register events for creation of
@@ -85,18 +72,8 @@ public class BedrockPlugin extends BasePlugin {
         // register events for bungee support
         this.getServer().getPluginManager().registerEvents(new BungeeTeleportListener(), this);
         this.getServer().getMessenger().registerIncomingPluginChannel(this, IOVerbs.CHANNEL, new BungeeTeleportInputHandler());
-    }
 
-    /**
-     * Returns the database class that handles player mapping
-     *
-     * @return A list of database classes.
-     */
-    @Override
-    public List<Class<?>> getDatabaseClasses() {
-        return new ArrayList<Class<?>>() {{
-            add(BedrockOfflinePlayer.class);
-        }};
+
     }
 
 }

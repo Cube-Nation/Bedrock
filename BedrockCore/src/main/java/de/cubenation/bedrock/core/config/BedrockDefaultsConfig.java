@@ -23,7 +23,6 @@
 package de.cubenation.bedrock.core.config;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
-import de.cubenation.bedrock.core.database.DatabaseConfiguration;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.Comments;
 import net.cubespace.Yamler.Config.Path;
@@ -35,11 +34,12 @@ import java.io.File;
  * @author Cube-Nation
  * @version 1.0
  */
+
 @SuppressWarnings({"unused", "FieldCanBeLocal"})
-public class BedrockDefaults extends CustomConfigurationFile {
+public class BedrockDefaultsConfig extends CustomConfigurationFile {
 
     public static String getFilename() {
-        return "bedrock.yaml";
+        return "config/_bedrock.yaml";
     }
 
     public String[] getHeader() {
@@ -80,11 +80,11 @@ public class BedrockDefaults extends CustomConfigurationFile {
         };
     }
 
-    public BedrockDefaults() {
+    public BedrockDefaultsConfig() {
     }
 
-    public BedrockDefaults(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), getFilename());
+    public BedrockDefaultsConfig(FoundationPlugin plugin) {
+        CONFIG_FILE = new File(plugin.getPluginFolder(), getFilename());
         CONFIG_HEADER = getHeader();
     }
 
@@ -105,23 +105,23 @@ public class BedrockDefaults extends CustomConfigurationFile {
             "  flag: DARK_GRAY",
             "  text: WHITE"
     })
-    private String colorscheme_name         = "DEFAULT";
+    private String colorscheme_name = "DEFAULT";
 
     @Path("service.colorscheme.primary")
     @Comment("The primary color")
-    private String colorscheme_primary      = null;
+    private String colorscheme_primary = null;
 
     @Path("service.colorscheme.secondary")
     @Comment("The secondary color")
-    private String colorscheme_secondary    = null;
+    private String colorscheme_secondary = null;
 
     @Path("service.colorscheme.flag")
     @Comment("The flag color")
-    private String colorscheme_flag         = null;
+    private String colorscheme_flag = null;
 
     @Path("service.colorscheme.text")
     @Comment("The text color")
-    private String colorscheme_text         = null;
+    private String colorscheme_text = null;
 
 
     public void setColorSchemeName(String name) {
@@ -161,19 +161,17 @@ public class BedrockDefaults extends CustomConfigurationFile {
     }
 
 
-
     /**
      * Confirm Service
      */
 
     @Path("service.confirm.timeout")
     @Comment("The timeout value. After this time a confirm command is being invalidated")
-    private int confirm_timeout             = 30;
+    private int confirm_timeout = 30;
 
     public void setConfirmTimeout(int timeout) {
         this.confirm_timeout = timeout;
     }
-
 
 
     /**
@@ -182,7 +180,7 @@ public class BedrockDefaults extends CustomConfigurationFile {
 
     @Path("service.pageablelist.timeout")
     @Comment("After this timeout a pageable list is being invalidated")
-    private int pageablelist_timeout        = 180;
+    private int pageablelist_timeout = 180;
 
     @Path("service.pageablelist.next_amount")
     @Comment("mount of entries per page.")
@@ -197,14 +195,13 @@ public class BedrockDefaults extends CustomConfigurationFile {
     }
 
 
-
     /**
      * Localization Service
      */
 
     @Path("service.localization.locale")
     @Comment("the default locale that is being represented by a file, e.g. de_DE represents locale/de_DE.yml.")
-    private String localization_locale      = "de_DE";
+    private String localization_locale = "de_DE";
 
     public void setLocalizationLocale(String locale) {
         this.localization_locale = locale;
@@ -215,18 +212,17 @@ public class BedrockDefaults extends CustomConfigurationFile {
     }
 
 
-
     /**
      * Permission Service
      */
 
     @Path("service.permission.grant_all_permissions_to_op")
     @Comment("Does Operators have all permissions? Valid values are true or false.")
-    private boolean permission_grant_op     = true;
+    private boolean permission_grant_op = true;
 
     @Path("service.permission.prefix")
     @Comment("custom permission prefix. If left empty or undefined the lowercased plugin name will be taken as prefix.")
-    private String permission_prefix        = "";
+    private String permission_prefix = "";
 
     public void setPermission_grant_op(boolean grant_op) {
         this.permission_grant_op = grant_op;
@@ -243,53 +239,10 @@ public class BedrockDefaults extends CustomConfigurationFile {
 
     @Path("service.metrics.use")
     @Comment("Submit plugin metrics to mcstats.org. Defaults to true.")
-    private boolean metrics_use             = false;
+    private boolean metrics_use = false;
     //TODO: set to true for all plugins once the Bukkit/mcstats.org sites are set up
 
     public void setMetricsUse(boolean metrics_use) {
         this.metrics_use = metrics_use;
     }
-
-    /**
-     * Database
-     */
-
-    @Path("database.username")
-    private String username = "";
-
-    @Path("database.password")
-    private String password = "";
-
-    @Path("database.driver")
-    private String driver = "com.mysql.jdbc.Driver";
-
-    @Path("database.url")
-    private String url = "";
-
-    @Path("database.isolation")
-    private String isolation = "SERIALIZABLE";
-
-    public DatabaseConfiguration getDatabaseConfiguration() {
-        if (username == null || username.isEmpty() ||
-                password == null || password.isEmpty() ||
-                driver == null || driver.isEmpty() ||
-                url == null || url.isEmpty() ||
-                isolation == null || isolation.isEmpty()) {
-            return null;
-        }
-        return new DatabaseConfiguration(username, password, url, driver, isolation);
-    }
-
-    /**
-     * Config Service
-     */
-
-    @Path("service.config.do_not_delete_me")
-    @Comments({
-            "Indicates that this configuration file comes from Bedrock.",
-            "If you delete this entry (or file), the whole file will be regenerated.",
-            "You have been warned!"
-    })
-    private String config_dnd         = "Seriously. Do not delete this";
-
 }

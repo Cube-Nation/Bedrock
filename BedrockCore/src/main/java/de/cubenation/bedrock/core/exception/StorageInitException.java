@@ -20,24 +20,19 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bukkit.plugin.config;
-
-import de.cubenation.bedrock.core.FoundationPlugin;
-
-import java.io.File;
+package de.cubenation.bedrock.core.exception;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class BedrockDefaults extends de.cubenation.bedrock.core.config.BedrockDefaults {
+public class StorageInitException extends Exception {
 
-    public BedrockDefaults(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.bedrock.core.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
-
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
+    public StorageInitException(String message) {
+        super(message);
     }
 
+    public StorageInitException(Exception exception) {
+        super(exception);
+    }
 }

@@ -20,24 +20,27 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package de.cubenation.bedrock.bungee.plugin.config;
+package de.cubenation.bedrock.core.annotation;
 
-import de.cubenation.bedrock.core.FoundationPlugin;
 
-import java.io.File;
+import de.cubenation.bedrock.core.datastore.ReloadPolicy;
+
+import java.lang.annotation.*;
 
 /**
  * @author Cube-Nation
- * @version 1.0
+ * @version 2.0
  */
-public class BedrockDefaults extends de.cubenation.bedrock.core.config.BedrockDefaults {
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+@Repeatable(Datastores.class)
+public @interface Datastore {
 
-    public BedrockDefaults(FoundationPlugin plugin) {
-        CONFIG_FILE = new File(plugin.getDataFolder(), de.cubenation.bedrock.core.config.BedrockDefaults.getFilename());
-        CONFIG_HEADER = getHeader();
+    String name();
 
-        this.setColorSchemeName("RED");
-        this.setLocalizationLocale("de_DE");
-    }
+    Class<?> value();
+
+    ReloadPolicy reloadPolicy() default ReloadPolicy.RELOAD;
 
 }

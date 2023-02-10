@@ -46,7 +46,7 @@ public class SettingsService extends AbstractService {
 
     public SettingsService(FoundationPlugin plugin) {
         super(plugin);
-        this.settingsDirectory = new File(plugin.getDataFolder() + File.separator + SETTINGSDIR);
+        this.settingsDirectory = new File(plugin.getPluginFolder() + File.separator + SETTINGSDIR);
     }
 
     /**
