@@ -2,7 +2,7 @@ package de.cubenation.bedrock.core.database;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.DatabaseConfig;
-import de.cubenation.bedrock.core.exception.DatastoreInitException;
+import de.cubenation.bedrock.core.exception.StorageInitException;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -15,34 +15,20 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.spi.ServiceException;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class HibernateOrmDatabase extends AbstractDatabase {
-
-//    private static final HashMap<String, Object> settingsMap = new HashMap<>(){{
-//        put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
-//        put("hibernate.hikari.minimumIdle", "5");
-//        put("hibernate.hikari.maximumPoolSize", "10");
-//        put("hibernate.hikari.idleTimeout", "30000");
-//        put("hibernate.hikari.dataSourceClassName", "org.h2.jdbcx.JdbcDataSource");
-//        put("hibernate.hikari.dataSource.user", "sa");
-//        put("hibernate.show_sql", "true");
-//        put("hibernate.hbm2ddl.auto", "create-drop");
-//    }};
+public class HibernateOrmDatabase extends Database {
 
     private static final HashMap<String, Object> hiddenDefaultConfig = new HashMap<>(){{
         put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
         put("hibernate.hikari.minimumIdle", "5");
         put("hibernate.hikari.maximumPoolSize", "10");
         put("hibernate.hikari.idleTimeout", "30000");
-//        put("hibernate.hikari.dataSourceClassName", "com.mysql.cj.jdbc.MysqlDataSource");
-//        put("hibernate.hikari.dataSource.url", "jdbc:mysql://localhost:3306/minecraft");
-//        put("hibernate.hikari.dataSource.user", "root");
-//        put("hibernate.hikari.dataSource.password", "root");
-        put("hibernate.show_sql", "true");
-        put("hibernate.hbm2ddl.auto", "create-drop");
+        put("hibernate.hbm2ddl.auto", "update");
     }};
 
     private SessionFactory sessionFactory;
@@ -51,7 +37,7 @@ public class HibernateOrmDatabase extends AbstractDatabase {
         super(plugin, identifier);
     }
 
-    public void init(Class<?>... entities) throws DatastoreInitException {
+    public void init(Class<?>... entities) throws StorageInitException {
         try {
             initDatabase(entities);
         } catch (ServiceException e) {
@@ -59,7 +45,7 @@ public class HibernateOrmDatabase extends AbstractDatabase {
                 plugin.log(Level.SEVERE, "Database could not be initialized: Config or credentials are invalid!");
                 plugin.disable();
             } else {
-                throw new DatastoreInitException(e);
+                throw new StorageInitException(e);
             }
         }
     }
@@ -92,6 +78,17 @@ public class HibernateOrmDatabase extends AbstractDatabase {
         DatabaseConfig config = (DatabaseConfig) plugin.getConfigService().getConfig(DatabaseConfig.class);
         HashMap<String, Object> configMap = new HashMap<>(hiddenDefaultConfig);
         configMap.putAll(config.getDatabaseConfigMapOrInit(identifier));
+
+        // Reaaaally ugly hack to generate H2 database file on first start... Please don't crucify me
+        // TODO: Find real solution instead of this nonsense .-.
+        if (
+                configMap.get("hibernate.hikari.dataSourceClassName").equals("org.h2.jdbcx.JdbcDataSource") &&
+                configMap.get("hibernate.hbm2ddl.auto").equals("update") &&
+                !Files.exists(Paths.get(configMap.get("hibernate.hikari.dataSource.url").toString().replace("jdbc:h2:file:", "").replace(";AUTO_SERVER=TRUE", "")))
+        ) {
+            configMap.put("hibernate.hbm2ddl.auto", "create");
+        }
+
         return configMap;
     }
 

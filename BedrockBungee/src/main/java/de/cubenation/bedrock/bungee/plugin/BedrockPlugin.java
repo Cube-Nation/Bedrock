@@ -31,6 +31,7 @@ import de.cubenation.bedrock.core.annotation.Datastore;
 import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.config.DatastoreConfig;
 import de.cubenation.bedrock.core.config.locale.de_DE;
+import de.cubenation.bedrock.core.datastore.ReloadPolicy;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 
 /**
@@ -38,7 +39,6 @@ import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
  * @version 1.0
  */
 @ConfigurationFile(de_DE.class)
-@ConfigurationFile(DataPersistenceConfig.class)
 @Database(name = "bedrock", entities = {
         BedrockOfflinePlayer.class
 })

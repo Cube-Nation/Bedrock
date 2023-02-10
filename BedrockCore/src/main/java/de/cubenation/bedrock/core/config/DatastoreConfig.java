@@ -20,10 +20,6 @@ public class DatastoreConfig extends CustomConfigurationFile {
         return "config/_datastores.yaml";
     }
 
-    public DatastoreConfig() {
-        super();
-    }
-
     @Path("datastores")
     @Comment("For help on how to configure your datastores view https://tbd/") // TODO: correct url
     private HashMap<String, Map<String, Object>> datastores = new HashMap<>();
