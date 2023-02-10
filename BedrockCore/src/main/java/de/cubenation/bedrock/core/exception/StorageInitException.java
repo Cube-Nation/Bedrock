@@ -26,13 +26,13 @@ package de.cubenation.bedrock.core.exception;
  * @author Cube-Nation
  * @version 2.0
  */
-public class DatastoreInitException extends Exception {
+public class StorageInitException extends Exception {
 
-    public DatastoreInitException(String message) {
+    public StorageInitException(String message) {
         super(message);
     }
 
-    public DatastoreInitException(Exception exception) {
+    public StorageInitException(Exception exception) {
         super(exception);
     }
 }

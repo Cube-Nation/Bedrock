@@ -32,15 +32,11 @@ public class DatabaseConfig extends CustomConfigurationFile {
      * Default values for initialization of new database configs.
      */
     private static final Map<String, Object> defaultConfigMap = new LinkedHashMap<>() {{
-        put("datasource", "");
-        put("url", "");
-        put("username", "");
-        put("password", "");
+        put("datasource", "org.h2.jdbcx.JdbcDataSource");
+        put("url", "jdbc:h2:file:./bedrock;AUTO_SERVER=TRUE");
+        put("username", "minecraft");
+        put("password", UUID.randomUUID()); // better than nothing
     }};
-
-    public DatabaseConfig() {
-        super();
-    }
 
     @Path("databases")
     @Comment("For help on how to configure your databases view https://tbd/") // TODO: correct url

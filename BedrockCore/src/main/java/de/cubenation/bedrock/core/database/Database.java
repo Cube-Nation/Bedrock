@@ -1,14 +1,20 @@
 package de.cubenation.bedrock.core.database;
 
-import de.cubenation.bedrock.core.exception.DatastoreInitException;
+import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.exception.StorageInitException;
+import lombok.AllArgsConstructor;
 import org.hibernate.Session;
 
 import java.io.Closeable;
 
-public interface Database extends Closeable {
+@AllArgsConstructor
+public abstract class Database implements Closeable {
 
-    void init(Class<?>... entities) throws DatastoreInitException;
+    protected final FoundationPlugin plugin;
 
-    Session openSession();
+    protected final String identifier;
 
+    abstract public void init(Class<?>... entities) throws StorageInitException;
+
+    abstract public Session openSession();
 }

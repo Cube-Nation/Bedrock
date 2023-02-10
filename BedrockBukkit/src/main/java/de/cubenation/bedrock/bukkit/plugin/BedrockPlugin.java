@@ -42,7 +42,6 @@ import java.util.logging.Level;
  * @version 2.0
  */
 @ConfigurationFile(de_DE.class)
-@ConfigurationFile(DatabaseConfig.class)
 public class BedrockPlugin extends BasePlugin {
 
     private static BedrockPlugin instance;
