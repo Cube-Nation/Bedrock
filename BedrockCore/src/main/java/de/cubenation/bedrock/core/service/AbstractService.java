@@ -31,8 +31,7 @@ import lombok.Setter;
 import java.util.logging.Level;
 
 /**
- * @author Cube-Nation
- * @version 1.0
+ * A service get created once per plugin and has the necessary hooks for lifecycle events.
  */
 public abstract class AbstractService {
 
@@ -40,37 +39,29 @@ public abstract class AbstractService {
 
     /**
      * If true, the service was successfully initialized.
-     * Has to be set manually, if service is not registered via {@link ServiceManager#registerService(Class)}.
+     * Has to be set manually, if service is not registered via {@link de.cubenation.bedrock.core.annotation.Service} annotation.
      */
     @Getter
     @Setter
     protected boolean initialized = false;
 
     public AbstractService(FoundationPlugin plugin) {
-        this.setPlugin(plugin);
-    }
-
-    protected void setPlugin(FoundationPlugin plugin) {
         this.plugin = plugin;
-    }
-
-    protected FoundationPlugin getPlugin() {
-        return this.plugin;
     }
 
     protected Object getConfigurationValue(String path, Object def) {
         Object value;
 
-        this.plugin.log(Level.FINER, "Retrieving configuration path " + path + " from plugin configuration");
+        plugin.log(Level.FINER, "Retrieving configuration path " + path + " from plugin configuration");
 
         try {
-            value = this.plugin.getConfigService().getReadOnlyConfig().get(path);
+            value = plugin.getConfigService().getReadOnlyConfig().get(path);
             if (value == null || value.toString().isEmpty())
                 throw new NullPointerException();
 
             return value;
         } catch (NullPointerException e) {
-            this.plugin.log(Level.FINER, "Could not fetch path from plugin configuration");
+            plugin.log(Level.FINER, "Could not fetch path from plugin configuration");
         }
 
         // Don't do this for Bedrock Plugin Instance
@@ -82,15 +73,24 @@ public abstract class AbstractService {
 
                 return value;
             } catch (NullPointerException e) {
-                this.plugin.log(Level.FINER, "Could not fetch path from Bedrock plugin configuration");
+                plugin.log(Level.FINER, "Could not fetch path from Bedrock plugin configuration");
             }
         }
 
         return def;
     }
 
+    /**
+     * Initialize the service. Used to initialize actual service functionality after all dependencies are loaded.
+     * Automatically called after registration of the service through the {@link de.cubenation.bedrock.core.annotation.Service} annotation.
+     * @throws ServiceInitException in case the initialization fails
+     */
     public abstract void init() throws ServiceInitException;
 
+    /**
+     * Reload the service. Used to reload service functionality. Only implement if applicable.
+     * @throws ServiceReloadException in case the reload fails
+     */
     public abstract void reload() throws ServiceReloadException;
 
 }

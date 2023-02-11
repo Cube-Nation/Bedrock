@@ -31,8 +31,10 @@ import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
 import de.cubenation.bedrock.core.command.predefined.*;
 import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.exception.CommandInitException;
+import de.cubenation.bedrock.core.exception.InjectionException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
+import de.cubenation.bedrock.core.injection.InstanceInjector;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import lombok.Getter;
@@ -66,7 +68,7 @@ public abstract class CommandService extends AbstractService {
     public void init() throws ServiceInitException {
         try {
             // Create plugin command handler
-            String pluginCommandLabel = getPlugin().getPluginDescription().getName().toLowerCase();
+            String pluginCommandLabel = plugin.getPluginDescription().getName().toLowerCase();
             pluginCommandManager = new CommandTreeNestedNode(plugin);
             registerCommand(pluginCommandManager, pluginCommandLabel);
 
@@ -110,9 +112,10 @@ public abstract class CommandService extends AbstractService {
         try {
             Constructor<? extends CommandTreeNode> constructor = clazz.getConstructor(FoundationPlugin.class);
             CommandTreeNode nodeInstance = constructor.newInstance(plugin);
+            InstanceInjector.performInjection(plugin, nodeInstance);
             registerCommand(nodeInstance, label);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new ServiceInitException(String.format("Command instance '%s' could not be created.", this.getClass().getName()));
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException | InjectionException e) {
+            throw new ServiceInitException(String.format("Command instance '%s' could not be created.", this.getClass().getName()), e);
         }
     }
 
@@ -224,7 +227,7 @@ public abstract class CommandService extends AbstractService {
         } catch (ClassNotFoundException e) {
             throw new InstantiationException(String.format("Could not find class %s in plugin %s",
                     class_name,
-                    this.getPlugin().getPluginDescription().getName())
+                    plugin.getPluginDescription().getName())
             );
         }
         return clazz;

@@ -52,7 +52,7 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             CommandTreeRoot root = new CommandTreeRoot(plugin, commandTreePathItem);
             try {
                 BungeeCommand bungeeCommand = new BungeeCommand(plugin, root, label);
-                getPlugin().getProxy().getPluginManager().registerCommand(getPlugin(), bungeeCommand);
+                ((BasePlugin) plugin).getProxy().getPluginManager().registerCommand(((BasePlugin) plugin), bungeeCommand);
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ServiceInitException("Can't setup command tree for " + label);
@@ -60,11 +60,6 @@ public class CommandService extends de.cubenation.bedrock.core.service.command.C
             CommandTreePathItem item = CommandTreePathItem.create(root, label, labels);
             commandHandlers.put(label, item);
         }
-    }
-
-    @Override
-    public BasePlugin getPlugin() {
-        return ((BasePlugin) plugin);
     }
 
     @Override

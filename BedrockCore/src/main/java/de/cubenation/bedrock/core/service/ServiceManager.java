@@ -24,97 +24,159 @@ package de.cubenation.bedrock.core.service;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Service;
-import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
+import de.cubenation.bedrock.core.exception.InjectionException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
+import de.cubenation.bedrock.core.injection.InstanceInjector;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.UnknownServiceException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 
 /**
- * @author Cube-Nation
- * @version 1.0
+ * Manages available instances of {@link AbstractService}
  */
 public class ServiceManager {
 
-    private FoundationPlugin plugin;
+    private final FoundationPlugin plugin;
 
-    private boolean intentionally_ready = false;
+    private boolean intentionallyReady = false;
 
     // A LinkedHashMap preserves the order of its elements which is elementary for all services
-    private LinkedHashMap<Class<? extends AbstractService>, AbstractService> services = new LinkedHashMap<>();
+    private final LinkedHashMap<Class<? extends AbstractService>, AbstractService> services = new LinkedHashMap<>();
 
     public ServiceManager(FoundationPlugin plugin) {
         this.plugin = plugin;
     }
 
-    protected FoundationPlugin getPlugin() {
-        return this.plugin;
-    }
-
-    public void registerServices() throws ServiceInitException {
-        try {
-
-            // find and register custom Service annotations
-            for (Service service : this.getPlugin().getClass().getAnnotationsByType(Service.class)) {
-                this.getPlugin().log(Level.INFO, "Registering custom service " + service.value());
-                this.registerService(service.value());
-            }
-
-        } catch (ServiceAlreadyExistsException e) {
-            throw new ServiceInitException(e.getMessage());
+    /**
+     * Register a service for each {@link Service} annotation on the plugin class.
+     * @throws ServiceInitException in case at least one registration fails
+     */
+    public void registerCustomServices() throws ServiceInitException {
+        // Find and register custom Service annotations
+        for (Service service : plugin.getClass().getAnnotationsByType(Service.class)) {
+            plugin.log(Level.INFO, "Registering custom service " + service.value());
+            registerService(service.value());
         }
     }
 
-    public void registerService(Class<? extends AbstractService> clazz) throws ServiceAlreadyExistsException, ServiceInitException {
-        if (this.exists(clazz))
-            throw new ServiceAlreadyExistsException(clazz.toString());
+    /**
+     * Register an implementation of the {@link AbstractService} class.
+     * @param clazz class to register
+     * @throws ServiceInitException in case the registration fails
+     * @return the created service instance
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public AbstractService registerAndInitializeService(Class<? extends AbstractService> clazz) throws ServiceInitException {
+        AbstractService service = registerService(clazz);
+        initService(service);
+        return service;
+    }
+
+    /**
+     * Register an implementation of the {@link AbstractService} class.
+     * @param clazz class to register
+     * @throws ServiceInitException in case the registration fails
+     * @return the created service instance
+     */
+    public AbstractService registerService(Class<? extends AbstractService> clazz) throws ServiceInitException {
+        if (this.exists(clazz)) {
+            throw new ServiceInitException(String.format("A service of the class %s is already registered", clazz.toString()));
+        }
 
         AbstractService service;
         try {
-            Constructor<? extends AbstractService> cosntructor = clazz.getConstructor(FoundationPlugin.class);
-            service = cosntructor.newInstance(this.plugin);
+            Constructor<? extends AbstractService> constructor = clazz.getConstructor(FoundationPlugin.class);
+            service = constructor.newInstance(plugin);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new ServiceInitException(e.getMessage());
+            throw new ServiceInitException(e);
         }
 
-        service.init();
-        service.setInitialized(true);
         this.services.put(clazz, service);
+        return service;
     }
 
+    /**
+     * Initialize all registered services which are not initialized yet.
+     * @throws ServiceInitException in case at least one initialization fails
+     */
+    public void initServices() throws ServiceInitException {
+        Collection<AbstractService> remainingServices = services.values().stream().filter(Predicate.not(AbstractService::isInitialized)).toList();
+        for (AbstractService service : remainingServices) {
+            initService(service);
+        }
+    }
+
+    /**
+     * Initialize a service.
+     * @throws ServiceInitException in case at least one initialization fails
+     */
+    private void initService(AbstractService service) throws ServiceInitException {
+        try {
+            InstanceInjector.performInjection(plugin, service);
+        } catch (InjectionException e) {
+            throw new ServiceInitException(e);
+        }
+        service.init();
+        service.setInitialized(true);
+    }
+
+    /**
+     * Checks whether a class is already registered as a {@link AbstractService}.
+     * @param clazz class to check
+     * @return true if the class is already registered
+     */
     public boolean exists(Class<? extends AbstractService> clazz) {
         return this.services.containsKey(clazz);
     }
 
+    /**
+     * Get the instance of a registered {@link AbstractService}.
+     * @param clazz class of the {@link AbstractService}
+     * @return instance of {@link AbstractService} or {@literal null} if not existent
+     */
     public AbstractService getService(Class<? extends AbstractService> clazz) {
-        if (!this.exists(clazz) && this.intentionally_ready) {
-            this.getPlugin().log(Level.SEVERE, "Could not retrieve service: " + clazz.toString() + ":");
+        if (!this.exists(clazz) && intentionallyReady) {
+            plugin.log(Level.SEVERE, "Could not retrieve service: " + clazz.toString() + ":");
             Arrays.stream(Thread.currentThread().getStackTrace()).forEach(
-                    stackTraceElement -> this.getPlugin().log(Level.SEVERE, stackTraceElement.toString())
+                    stackTraceElement -> plugin.log(Level.SEVERE, stackTraceElement.toString())
             );
         }
 
-        return this.services.getOrDefault(clazz, null);
+        return services.getOrDefault(clazz, null);
     }
 
-    public void reload(Class<? extends AbstractService> clazz) throws UnknownServiceException, ServiceReloadException {
-        if (!this.exists(clazz)) throw new UnknownServiceException(clazz.toString());
+    /**
+     * Reload a specific {@link AbstractService}.
+     * @param clazz class of the {@link AbstractService}.
+     * @throws ServiceReloadException in case at least one reload fails
+     */
+    public void reload(Class<? extends AbstractService> clazz) throws ServiceReloadException {
+        if (!this.exists(clazz)) throw new IllegalArgumentException(String.format("%s is no valid service or was never registered", clazz.toString()));
         this.getService(clazz).reload();
     }
 
+    /**
+     * Reload all services.
+     * @throws ServiceReloadException in case the reload fails
+     */
     public void reload() throws ServiceReloadException {
         for (Class<? extends AbstractService> clazz : this.services.keySet()) {
             this.getService(clazz).reload();
         }
     }
 
-    public void setIntentionallyReady(boolean intentionally_ready) {
-        this.intentionally_ready = intentionally_ready;
+    /**
+     * Set whether all base services were initialized.
+     * @param intentionallyReady value
+     */
+    public void setIntentionallyReady(boolean intentionallyReady) {
+        this.intentionallyReady = intentionallyReady;
     }
 }
 

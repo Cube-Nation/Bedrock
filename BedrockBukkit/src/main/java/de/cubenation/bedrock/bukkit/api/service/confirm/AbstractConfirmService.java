@@ -28,6 +28,8 @@ import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.bukkit.plugin.BedrockPlugin;
 import de.cubenation.bedrock.core.service.confirm.ConfirmInterface;
 import de.cubenation.bedrock.core.service.confirm.ConfirmStorable;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -42,86 +44,77 @@ import java.util.logging.Level;
 @SuppressWarnings("unused")
 public abstract class AbstractConfirmService extends AbstractService implements ConfirmInterface {
 
+    @Getter @Setter
     private int timeout;
 
-    private long created							    = (long) new Date().getTime();
+    private final long created = new Date().getTime();
 
     protected BukkitTask task;
 
-    @SuppressWarnings("rawtypes")
-    private HashMap<String, ConfirmStorable> storage;
+    private HashMap<String, ConfirmStorable<?>> storage;
 
     public AbstractConfirmService(BasePlugin plugin) {
         super(plugin);
-        this.init((Integer) this.getConfigurationValue("service.confirm.timeout", 30));
+        init((Integer) getConfigurationValue("service.confirm.timeout", 30));
     }
 
     public AbstractConfirmService(BasePlugin plugin, int timeout) {
         super(plugin);
-        this.init(timeout);
+        init(timeout);
     }
 
     private void init(int timeout) {
-        this.storage = new HashMap<>();
-        this.setTimeout(timeout);
+        storage = new HashMap<>();
+        setTimeout(timeout);
 
         //this.getPlugin().log(Level.INFO, "  confirm service: New confirm service registered " + this.toString());
 
         final AbstractConfirmService csi = this;
         // create task with timeout
         // this task needs to be canceled when call() is executed via task.cancel();
-        task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), csi::abort, (long) this.getTimeout() * 20L);
+        task = Bukkit.getServer().getScheduler().runTaskLater(BedrockPlugin.getInstance(), csi::abort, (long) getTimeout() * 20L);
 
     }
 
     @Override
     public void init() {
-        this.init((Integer) this.getConfigurationValue("service.confirm.timeout", 30));
+        init((Integer) getConfigurationValue("service.confirm.timeout", 30));
     }
 
     @Override
     final public void invalidate() {
-        this.task.cancel();
+        task.cancel();
     }
 
     @Override
     public void reload() {
-        this.getPlugin().log(Level.WARNING, "  confirm service: Reloading of service confirm not supported");
+        plugin.log(Level.WARNING, "  confirm service: Reloading of service confirm not supported");
     }
 
     /*
      * storage stuff
      */
     public void store(String key, ConfirmStorable<?> cs) {
-        this.storage.put(key, cs);
+        storage.put(key, cs);
     }
 
     public ConfirmStorable<?> get(String key) {
-        return this.storage.get(key);
+        return storage.get(key);
     }
 
     /*
      * timeout stuff
      */
-    private void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public int getTimeout() {
-        return this.timeout;
-    }
-
     public void checkExceeded() throws TimeoutException {
-        if (new Date().getTime() > this.created + ( this.timeout * 1000)) {
-            this.abort();
+        if (new Date().getTime() > created + ( timeout * 1000L)) {
+            abort();
             throw new TimeoutException();
         }
     }
 
     @Override
     public String toString() {
-        return "(timeout: " + this.getTimeout() + ")";
+        return "(timeout: " + getTimeout() + ")";
     }
 
 }

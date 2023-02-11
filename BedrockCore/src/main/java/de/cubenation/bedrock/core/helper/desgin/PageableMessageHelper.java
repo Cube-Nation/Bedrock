@@ -83,7 +83,7 @@ public class PageableMessageHelper {
                                      AbstractPageableListService listService) {
         int itemsPerPage = listService.getGeneralPageSize();
         int totalPages = listService.getPages();
-        List<PageableListStorable> pageableList = listService.getPage(pageIndex);
+        List<PageableListStorable<?>> pageableList = listService.getPage(pageIndex);
 
         if (jsonHeadline != null) {
             JsonMessage jsonMessage = new JsonMessage(plugin,

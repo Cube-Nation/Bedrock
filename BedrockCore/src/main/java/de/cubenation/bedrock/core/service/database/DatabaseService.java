@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.core.service.database;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.database.Database;
 import de.cubenation.bedrock.core.database.HibernateOrmDatabase;
@@ -8,6 +9,7 @@ import de.cubenation.bedrock.core.exception.StorageInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 
@@ -16,6 +18,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 public class DatabaseService extends AbstractService {
+
+    @Inject
+    private ConfigService configService;
 
     private final HashMap<String, Database> databases = new HashMap<>();
 
@@ -27,7 +32,7 @@ public class DatabaseService extends AbstractService {
     public void init() throws ServiceInitException {
         // Load config
         try {
-            plugin.getConfigService().registerClass(DatabaseConfig.class);
+            configService.registerClass(DatabaseConfig.class);
         } catch (InstantiationException e) {
             throw new ServiceInitException(e.getMessage());
         }

@@ -39,14 +39,14 @@ import java.util.UUID;
 public class SettingsService extends AbstractService {
 
     public static final String SETTINGSDIR = "settings";
-    private File settingsDirectory;
+    private final File settingsDirectory;
 
     private HashMap<String, SettingsManager> settingsMap;
     private HashMap<Class<?>, SettingsManager> settingsClassMap;
 
     public SettingsService(FoundationPlugin plugin) {
         super(plugin);
-        this.settingsDirectory = new File(plugin.getPluginFolder() + File.separator + SETTINGSDIR);
+        settingsDirectory = new File(plugin.getPluginFolder() + File.separator + SETTINGSDIR);
     }
 
     /**
@@ -56,10 +56,10 @@ public class SettingsService extends AbstractService {
      */
     @Override
     public void init() throws ServiceInitException {
-        this.loadSettings();
+        loadSettings();
         if (!settingsMap.isEmpty()) {
             // Create folder if there is a settings file
-            this.createDataFolder();
+            createDataFolder();
         }
     }
 
@@ -80,10 +80,10 @@ public class SettingsService extends AbstractService {
         settingsMap = new HashMap<>();
         settingsClassMap = new HashMap<>();
         // next, add all custom files
-        if (this.getPlugin().getCustomSettingsFiles() != null) {
-            for (Class<?> className : this.getPlugin().getCustomSettingsFiles()) {
+        if (plugin.getCustomSettingsFiles() != null) {
+            for (Class<?> className : plugin.getCustomSettingsFiles()) {
                 try {
-                    SettingsManager value = new SettingsManager(getPlugin(), className);
+                    SettingsManager value = new SettingsManager(plugin, className);
                     settingsMap.put(value.getName(), value);
                     settingsClassMap.put(className, value);
                 } catch (ServiceInitException e) {
@@ -99,8 +99,8 @@ public class SettingsService extends AbstractService {
      * @throws ServiceInitException if the directory could not be created
      */
     private void createDataFolder() throws ServiceInitException {
-        if (!this.settingsDirectory.exists() && !this.settingsDirectory.mkdirs())
-            throw new ServiceInitException("Could not create folder " + this.settingsDirectory.getName());
+        if (!this.settingsDirectory.exists() && !settingsDirectory.mkdirs())
+            throw new ServiceInitException("Could not create folder " + settingsDirectory.getName());
     }
 
     public HashMap<String, SettingsManager> getSettingsMap() {
