@@ -145,7 +145,6 @@ public class ServiceManager {
         Collection<AbstractService> remainingServices = services.values().stream().filter(Predicate.not(AbstractService::isInitialized)).toList();
         for (AbstractService service : remainingServices) {
             initService(service);
-            plugin.log(Level.WARNING, "Init "+service.getClass().getName());
         }
     }
 

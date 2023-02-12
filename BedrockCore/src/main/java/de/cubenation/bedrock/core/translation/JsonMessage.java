@@ -51,7 +51,8 @@ public class JsonMessage extends Component {
     @Inject
     private LocalizationService localizationService;
 
-    private final LocalizationService fallbackLocalizationService = (LocalizationService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(LocalizationService.class);
+    @Inject(from = "Bedrock")
+    private LocalizationService fallbackLocalizationService;
 
     @Inject
     private ColorSchemeService colorSchemeService;

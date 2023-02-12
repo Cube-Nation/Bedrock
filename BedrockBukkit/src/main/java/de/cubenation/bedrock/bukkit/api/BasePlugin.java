@@ -173,7 +173,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
      * @throws NoSuchPluginException if a Plugin is missing.
      */
     @SuppressWarnings("unused")
-    public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
+    public JavaPlugin getJavaPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
         if (plugin == null) {
             throw new NoSuchPluginException(name);
@@ -383,13 +383,13 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     protected void assertPluginDependency(String name, String version) throws DependencyException, NoSuchPluginException {
 
-        JavaPlugin plugin = getPlugin(name);
+        JavaPlugin plugin = getJavaPlugin(name);
         if (plugin == null) {
             throw new NoSuchPluginException("Dependency error: Could not find plugin " + name);
         }
 
         VersionComparator cmp = new VersionComparator();
-        String pluginVersion = getPlugin("Yamler").getDescription().getVersion();
+        String pluginVersion = getJavaPlugin("Yamler").getDescription().getVersion();
 
         if (pluginVersion.matches(".+-.+")) {
             pluginVersion = pluginVersion.split("-")[0];
@@ -420,16 +420,26 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
 
     @Override
     public FoundationPlugin getFallbackBedrockPlugin(){
-        try {
-            return (FoundationPlugin) getPlugin(PLUGIN_NAME);
-        } catch (NoSuchPluginException e) {
-            return null;
-        }
+        return getPlugin(PLUGIN_NAME);
     }
 
     @Override
     public boolean isFallbackBedrockPlugin() {
         return getName().equalsIgnoreCase(PLUGIN_NAME);
+    }
+
+    @Override
+    public FoundationPlugin getPlugin(String pluginName){
+        JavaPlugin pluginInstance;
+        try {
+            pluginInstance = getJavaPlugin(pluginName);
+        } catch (NoSuchPluginException e) {
+            return null;
+        }
+        if (!(pluginInstance instanceof BasePlugin)) {
+            return null;
+        }
+        return (FoundationPlugin) pluginInstance;
     }
 
     @Override

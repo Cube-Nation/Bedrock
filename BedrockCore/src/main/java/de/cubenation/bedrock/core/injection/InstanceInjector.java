@@ -23,8 +23,18 @@ public class InstanceInjector {
     }
 
     private static void performInjection(FoundationPlugin plugin, Object target, Field field) throws InjectionException {
+        String pluginName = field.getAnnotation(Inject.class).from();
+        FoundationPlugin pluginInstance;
+        if (pluginName.equals("")) {
+            pluginInstance = plugin;
+        } else if (pluginName.equals("Bedrock")) {
+            pluginInstance = plugin.getFallbackBedrockPlugin();
+        } else {
+            pluginInstance = plugin.getPlugin(pluginName);
+        }
+
         Class<?> fieldType = field.getType();
-        InstanceSupplier<?> supplier = getInstanceSupplier(plugin, fieldType);
+        InstanceSupplier<?> supplier = getInstanceSupplier(pluginInstance, fieldType);
         if (supplier == null) {
             throw new InjectionException(String.format("Could create %s for %s; not a known class", InstanceSupplier.class.getName(), fieldType.getName()));
         }

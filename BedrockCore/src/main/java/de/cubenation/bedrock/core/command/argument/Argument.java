@@ -81,7 +81,6 @@ public class Argument extends Component {
     }
 
     private ArgumentType<?> createArgumentTypeInstance(Range rangeAnnotation) throws CommandInitException {
-        plugin.log(Level.WARNING, "createArgumentTypeInstance");
         if (dataType == null) {
             return null;
         } else {

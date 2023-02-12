@@ -50,7 +50,8 @@ public class LocalizationService extends AbstractService {
     @Inject
     private ConfigService configService;
 
-    private final ConfigService fallbackConfigService = (ConfigService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ConfigService.class);
+    @Inject(from = "Bedrock")
+    private ConfigService fallbackConfigService;
 
     @Getter
     private String locale;

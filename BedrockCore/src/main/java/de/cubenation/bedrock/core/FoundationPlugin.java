@@ -137,6 +137,8 @@ public interface FoundationPlugin {
 
     boolean isFallbackBedrockPlugin();
 
+    FoundationPlugin getPlugin(String pluginName);
+
     BedrockDefaultsConfig getBedrockDefaults();
 
     BedrockServer getBedrockServer();

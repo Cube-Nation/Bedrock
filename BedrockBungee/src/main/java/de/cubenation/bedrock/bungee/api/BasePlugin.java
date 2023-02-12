@@ -273,12 +273,21 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
 
     @Override
     public FoundationPlugin getFallbackBedrockPlugin(){
-        return (FoundationPlugin) getProxy().getPluginManager().getPlugin(PLUGIN_NAME);
+        return getPlugin(PLUGIN_NAME);
     }
 
     @Override
     public boolean isFallbackBedrockPlugin() {
         return getDescription().getName().equalsIgnoreCase(PLUGIN_NAME);
+    }
+
+    @Override
+    public FoundationPlugin getPlugin(String pluginName){
+        Plugin pluginInstance = getProxy().getPluginManager().getPlugin(pluginName);
+        if (!(pluginInstance instanceof BasePlugin)) {
+            return null;
+        }
+        return (FoundationPlugin) pluginInstance;
     }
 
     @Override
