@@ -23,11 +23,16 @@
 package de.cubenation.bedrock.core.translation;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
+import de.cubenation.bedrock.core.injection.Component;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -41,34 +46,39 @@ import java.util.Arrays;
  * @version 2.0
  */
 @SuppressWarnings("unused")
-public class JsonMessage {
+public class JsonMessage extends Component {
 
-    private final FoundationPlugin plugin;
+    @Inject
+    private LocalizationService localizationService;
 
+    private final LocalizationService fallbackLocalizationService = (LocalizationService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(LocalizationService.class);
+
+    @Inject
+    private ColorSchemeService colorSchemeService;
+
+    @Getter @Setter
     private String localeIdentifier;
 
+    @Getter
     private String json;
 
+    @Getter
     private String[] localeArgs;
-
-    private final LocalizationService service;
 
     public JsonMessage(FoundationPlugin plugin, String localeIdentifier) {
         this(plugin, localeIdentifier, new String[]{});
     }
 
     public JsonMessage(FoundationPlugin plugin, String localeIdentifier, String... localeArgs) {
-        this.plugin = plugin;
+        super(plugin);
         this.localeIdentifier = localeIdentifier;
-        this.setLocaleArgs(localeArgs);
-        this.service = plugin.getLocalizationService();
+        setLocaleArgs(localeArgs);
 
         json = getTranslation();
     }
 
     public JsonMessage(FoundationPlugin plugin, JSONObject bedrockJson) {
-        this.plugin = plugin;
-        this.service = plugin.getLocalizationService();
+        super(plugin);
 
         json = bedrockJson.toJSONString();
     }
@@ -124,7 +134,7 @@ public class JsonMessage {
 
     private BaseComponent[] createBaseComponent() {
         // color scheme service
-        ColorScheme colorScheme = plugin.getColorSchemeService().getColorScheme();
+        ColorScheme colorScheme = colorSchemeService.getColorScheme();
 
         // apply colors from color scheme to message
         json = colorScheme.applyColorSchemeForJson(json);
@@ -144,16 +154,14 @@ public class JsonMessage {
     public String getTranslation() {
         // try to get the localized string from the plugins locale file
         try {
-            return this.service.getTranslation(this.localeIdentifier, this.localeArgs);
+            return localizationService.getTranslation(localeIdentifier, localeArgs);
         } catch (LocalizationNotFoundException ignored) {
         }
 
         if (!plugin.isFallbackBedrockPlugin()) {
             // if the above failed, we try to get the string from Bedrocks locale file
             try {
-                return plugin.getFallbackBedrockPlugin().getLocalizationService().getTranslation(
-                        this.localeIdentifier, this.localeArgs
-                );
+                return fallbackLocalizationService.getTranslation(localeIdentifier, localeArgs);
             } catch (LocalizationNotFoundException ignored) {
             }
         }
@@ -168,16 +176,14 @@ public class JsonMessage {
     public String[] getTranslationStrings() {
         // try to get the localized string from the plugins locale file
         try {
-            return this.service.getTranslationStrings(this.localeIdentifier, this.localeArgs);
+            return localizationService.getTranslationStrings(localeIdentifier, localeArgs);
         } catch (LocalizationNotFoundException ignored) {
         }
 
         if (!plugin.isFallbackBedrockPlugin()) {
             // if the above failed, we try to get the string from Bedrocks locale file
             try {
-                return plugin.getFallbackBedrockPlugin().getLocalizationService().getTranslationStrings(
-                        this.localeIdentifier, this.localeArgs
-                );
+                return fallbackLocalizationService.getTranslationStrings(localeIdentifier, localeArgs);
             } catch (LocalizationNotFoundException ignored) {
             }
         }
@@ -189,51 +195,25 @@ public class JsonMessage {
         return new String[]{};
     }
 
-
-    public FoundationPlugin getPlugin() {
-        return plugin;
-    }
-
-    public String getJson() {
-        return json;
-    }
-
-    public String getLocaleIdentifier() {
-        return localeIdentifier;
-    }
-
-    public String[] getLocaleArgs() {
-        return localeArgs;
-    }
-
-    public LocalizationService getService() {
-        return service;
-    }
-
-    public void setLocaleIdentifier(String localeIdentifier) {
-        this.localeIdentifier = localeIdentifier;
-    }
-
     public void setLocaleArgs(String[] localeArgs) {
         ArrayList<String> args = new ArrayList<>(Arrays.asList(localeArgs));
 
-        boolean custom_prefix = false;
+        boolean customPrefix = false;
         for (String localeArg : localeArgs) {
             if (localeArg.equals("plugin_prefix")) {
-                custom_prefix = true;
+                customPrefix = true;
                 break;
             }
         }
 
-        if (!custom_prefix) {
+        if (!customPrefix) {
             args.add("plugin_prefix");
-            args.add(this.getPlugin().getMessagePrefix());
+            args.add(plugin.getMessagePrefix());
         }
 
         // cast back to String[]
-        String[] string_args = new String[args.size()];
-        localeArgs = args.toArray(string_args);
-        this.localeArgs = localeArgs;
+        String[] stringArgs = new String[args.size()];
+        this.localeArgs = args.toArray(stringArgs);
     }
 }
 

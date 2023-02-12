@@ -23,7 +23,10 @@
 package de.cubenation.bedrock.core.authorization;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.injection.Component;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
+import lombok.ToString;
 
 /**
  * The Permission class
@@ -32,6 +35,7 @@ import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
  * @version 2.0
  */
 @SuppressWarnings("unused")
+@ToString
 public class Permission {
 
     private FoundationPlugin plugin;
@@ -60,7 +64,7 @@ public class Permission {
         Role role = Role.NO_ROLE;
 
         for (Role commandRole : Role.values()) {
-            if (commandRole.getType().toLowerCase().equals(roleName.toLowerCase())) {
+            if (commandRole.getType().equalsIgnoreCase(roleName)) {
                 role = Role.valueOf(roleName.toUpperCase());
             }
         }
@@ -71,7 +75,7 @@ public class Permission {
     public boolean userHasPermission(BedrockChatSender sender) {
         return getPlugin() != null &&
                         sender != null &&
-                        plugin.getPermissionService().hasPermission(sender, this);
+                ((PermissionService) plugin.getServiceManager().getService(PermissionService.class)).hasPermission(sender, this);
     }
 
     public FoundationPlugin getPlugin() {
@@ -125,7 +129,7 @@ public class Permission {
             }
         }
 
-        String permissionPrefix = this.getPlugin().getPermissionService().getPermissionPrefix();
+        String permissionPrefix = ((PermissionService) plugin.getServiceManager().getService(PermissionService.class)).getPermissionPrefix();
         if (this.getRole().equals(Role.NO_ROLE)) {
             return String.format("%s.%s", permissionPrefix, this.getName());
         }
@@ -136,15 +140,5 @@ public class Permission {
                 this.getName()
         );
     }
-
-    @Override
-    public String toString() {
-        return "Permission{" +
-                "name='" + name + '\'' +
-                ", role=" + role +
-                ", descriptionLocaleIdent='" + descriptionLocaleIdent + '\'' +
-                '}';
-    }
-
 }
 

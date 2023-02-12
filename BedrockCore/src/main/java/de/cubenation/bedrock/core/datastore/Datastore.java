@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.core.datastore;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.injection.Component;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
@@ -8,16 +9,19 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.util.HashMap;
 
-@AllArgsConstructor
-public abstract class Datastore<Entity> {
-
-    protected final FoundationPlugin plugin;
+public abstract class Datastore<Entity> extends Component {
 
     @Getter
     public final String identifier;
     protected final Class<Entity> entityClass;
 
     protected final HashMap<String, Entity> entityInstances = new HashMap<>();
+
+    public Datastore(FoundationPlugin plugin, String identifier, Class<Entity> entityClass) {
+        super(plugin);
+        this.identifier = identifier;
+        this.entityClass = entityClass;
+    }
 
     public void persist(String key, Entity value) throws IOException {
         if (key == null || StringUtils.isBlank(key)) {

@@ -25,6 +25,7 @@ package de.cubenation.bedrock.core.helper.desgin;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.pageablelist.AbstractPageableListService;
 import de.cubenation.bedrock.core.service.pageablelist.PageableListStorable;
 import de.cubenation.bedrock.core.translation.JsonMessage;
@@ -79,7 +80,6 @@ public class PageableMessageHelper {
                                      BedrockChatSender sender,
                                      String headline,
                                      ArrayList<BedrockJson> jsonHeadline,
-
                                      AbstractPageableListService listService) {
         int itemsPerPage = listService.getGeneralPageSize();
         int totalPages = listService.getPages();
@@ -102,7 +102,7 @@ public class PageableMessageHelper {
 
         // Send entries of page
         if (!pageableList.isEmpty()) {
-            for (PageableListStorable storable : pageableList) {
+            for (PageableListStorable<?> storable : pageableList) {
                 if (storable.get() instanceof JsonMessage) {
                     ((JsonMessage) storable.get()).send(sender);
                 }
@@ -126,8 +126,9 @@ public class PageableMessageHelper {
             return null;
         }
 
-        ChatColor secondary = plugin.getColorSchemeService().getColorScheme().getSecondary();
-        ChatColor flag = plugin.getColorSchemeService().getColorScheme().getFlag();
+        ColorSchemeService colorSchemeService = (ColorSchemeService) plugin.getServiceManager().getService(ColorSchemeService.class);
+        ChatColor secondary = colorSchemeService.getColorScheme().getSecondary();
+        ChatColor flag = colorSchemeService.getColorScheme().getFlag();
 
         ComponentBuilder pagination = new ComponentBuilder("");
         if (page > 1) {

@@ -23,11 +23,15 @@
 package de.cubenation.bedrock.core.service.localization;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.configuration.BedrockYaml;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.service.config.ConfigService;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -43,13 +47,20 @@ import java.util.logging.Level;
 @ToString
 public class LocalizationService extends AbstractService {
 
+    @Inject
+    private ConfigService configService;
+
+    private final ConfigService fallbackConfigService = (ConfigService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ConfigService.class);
+
+    @Getter
     private String locale;
 
+    @Getter @Setter
     private String relativeLocaleFile;
 
     private BedrockYaml pluginData;
 
-    private BedrockYaml bedrock_data;
+    private BedrockYaml bedrockData;
 
     public LocalizationService(FoundationPlugin plugin) {
         super(plugin);
@@ -79,19 +90,6 @@ public class LocalizationService extends AbstractService {
         locale = (String) getConfigurationValue("service.localization.locale", "en_US");
     }
 
-    public String getLocale() {
-        return locale;
-    }
-
-    public String getRelativeLocaleFile() {
-        return relativeLocaleFile;
-    }
-
-    private void setRelativeLocaleFile(String relativeLocaleFile) {
-        this.relativeLocaleFile = relativeLocaleFile;
-    }
-
-    @SuppressWarnings("deprecation")
     /**
      * We suppress deprecation warnings in here, because handling the access to locale strings
      * is easier when we can use the built-in YAMLConfiguration methods.
@@ -102,7 +100,7 @@ public class LocalizationService extends AbstractService {
      * In the future there will be an abstract LocalizationConfig class that can manage this stuff
      */
     private void loadPluginLocaleFile() {
-        pluginData = plugin.getConfigService().getReadOnlyConfig(getRelativeLocaleFile());
+        pluginData = configService.getReadOnlyConfig(getRelativeLocaleFile());
 
         if (pluginData == null)
             plugin.log(Level.SEVERE, String.format(
@@ -112,7 +110,6 @@ public class LocalizationService extends AbstractService {
             ));
     }
 
-    @SuppressWarnings("deprecation")
     /**
      * We suppress deprecation warnings in here, because handling the access to locale strings
      * is easier when we can use the built-in YAMLConfiguration methods.
@@ -123,9 +120,9 @@ public class LocalizationService extends AbstractService {
      * In the future there will be an abstract LocalizationConfig class that can manage this stuff
      */
     private void loadBedrockLocaleFile() throws ServiceInitException {
-        bedrock_data = plugin.getFallbackBedrockPlugin().getConfigService().getReadOnlyConfig(getRelativeLocaleFile());
+        bedrockData = fallbackConfigService.getReadOnlyConfig(getRelativeLocaleFile());
 
-        if (bedrock_data == null)
+        if (bedrockData == null)
             throw new ServiceInitException(String.format(
                     "Could not find locale file %s in plugin BedrockPlugin. Please restart server and use a supported locale",
                     getRelativeLocaleFile()
@@ -147,7 +144,7 @@ public class LocalizationService extends AbstractService {
         } catch (LocalizationNotFoundException ignored) {
         }
 
-        return this.getTranslationStringsFromBedrock(path, args);
+        return getTranslationStringsFromBedrock(path, args);
     }
 
     private String getTranslationFromPlugin(String path, String[] args) throws LocalizationNotFoundException {
@@ -160,15 +157,15 @@ public class LocalizationService extends AbstractService {
             throw new LocalizationNotFoundException(path);
         }
 
-        return this.applyArgs(s, args);
+        return applyArgs(s, args);
     }
 
     private String getTranslationFromBedrock(String path, String[] args) throws LocalizationNotFoundException {
-        if (bedrock_data == null) {
+        if (bedrockData == null) {
             return null;
         }
 
-        String s = bedrock_data.getString(path);
+        String s = bedrockData.getString(path);
         if (s == null || s.isEmpty()) {
             throw new LocalizationNotFoundException(path);
         }
@@ -200,11 +197,11 @@ public class LocalizationService extends AbstractService {
 
     @SuppressWarnings("unchecked")
     private String[] getTranslationStringsFromBedrock(String path, String[] args) throws LocalizationNotFoundException {
-        if (bedrock_data == null) {
+        if (bedrockData == null) {
             return null;
         }
 
-        List<String> list = (List<String>) bedrock_data.getList(path);
+        List<String> list = (List<String>) bedrockData.getList(path);
         if (list == null || list.size() == 0) {
             throw new LocalizationNotFoundException(path);
         }

@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.core.message;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.argument.Argument;
@@ -30,7 +31,11 @@ import de.cubenation.bedrock.core.command.argument.Option;
 import de.cubenation.bedrock.core.command.tree.CommandTreePath;
 import de.cubenation.bedrock.core.command.tree.CommandTreePathItem;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.injection.Component;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.localization.LocalizationService;
+import de.cubenation.bedrock.core.service.permission.PermissionService;
 import de.cubenation.bedrock.core.translation.JsonMessage;
 import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.translation.parts.BedrockClickEvent;
@@ -39,7 +44,6 @@ import de.cubenation.bedrock.core.translation.parts.BedrockJson;
 import de.cubenation.bedrock.core.translation.parts.JsonColor;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
-import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -48,21 +52,28 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Cube-Nation
  * @version 2.0
  */
-public abstract class Messages {
+public abstract class Messages extends Component {
 
-    @Getter
-    private final FoundationPlugin plugin;
+    @Inject
+    private LocalizationService localizationService;
+
+    private final LocalizationService fallbackLocalizationService = (LocalizationService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(LocalizationService.class);
+
+    @Inject
+    private ColorSchemeService colorSchemeService;
+
+    @Inject
+    private PermissionService permissionService;
 
     private final Error error;
 
-    public Messages(FoundationPlugin foundationPlugin) {
-        this.plugin = foundationPlugin;
+    public Messages(FoundationPlugin plugin) {
+        super(plugin);
         error = new Error();
     }
 
@@ -71,28 +82,28 @@ public abstract class Messages {
     }
 
     public void commandExecutionError(BedrockChatSender sender, Exception e) {
-        sender.sendMessage(getPlugin().getMessagePrefix() + " " + e.getMessage());
+        sender.sendMessage(plugin.getMessagePrefix() + " " + e.getMessage());
     }
 
     public void insufficientPermission(BedrockChatSender sender) {
-        new JsonMessage(getPlugin(), "permission.insufficient").send(sender);
+        new JsonMessage(plugin, "permission.insufficient").send(sender);
     }
 
     public void noPermission(BedrockChatSender sender) {
-        new JsonMessage(getPlugin(), "json.no_permissions").send(sender);
+        new JsonMessage(plugin, "json.no_permissions").send(sender);
     }
 
     public void invalidCommand(BedrockChatSender sender) {
-        JsonMessage jsonMessage = new JsonMessage(getPlugin(), "command.invalid");
+        JsonMessage jsonMessage = new JsonMessage(plugin, "command.invalid");
         jsonMessage.send(sender);
     }
 
     public void mustBePlayer(BedrockChatSender commandSender) {
-        new JsonMessage(getPlugin(), "must_be_player").send(commandSender);
+        new JsonMessage(plugin, "must_be_player").send(commandSender);
     }
 
     public JsonMessage getNoSuchPlayer(String player) {
-        return new JsonMessage(getPlugin(), "no_such_player.specific", "player", player);
+        return new JsonMessage(plugin, "no_such_player.specific", "player", player);
     }
 
     public void noSuchPlayer(BedrockChatSender commandSender, String player) {
@@ -180,7 +191,7 @@ public abstract class Messages {
             return;
 
         // color scheme service
-        ColorScheme color_scheme = plugin.getColorSchemeService().getColorScheme();
+        ColorScheme color_scheme = colorSchemeService.getColorScheme();
 
         // apply colors from color scheme to message
         component = color_scheme.applyColorScheme(component);
@@ -208,8 +219,7 @@ public abstract class Messages {
                 // check for multiline string
                 if (hover_message.toString().contains("\n")) {
 
-                    ArrayList<String> lines = new ArrayList<>();
-                    lines.addAll(Arrays.asList(hover_message.toString().split("\\r?\\n")));
+                    ArrayList<String> lines = new ArrayList<>(Arrays.asList(hover_message.toString().split("\\r?\\n")));
 
                     int max_len = longestLength(lines);
 
@@ -334,11 +344,9 @@ public abstract class Messages {
 
         BedrockJson cmdDesc = BedrockJson.JsonWithText("");
 
-        if (split.length > 0) {
-            for (String aSplit : split) {
-                cmdDesc.addExtra(BedrockJson.NewLine());
-                cmdDesc.addExtra(BedrockJson.JsonWithText(aSplit));
-            }
+        for (String aSplit : split) {
+            cmdDesc.addExtra(BedrockJson.NewLine());
+            cmdDesc.addExtra(BedrockJson.JsonWithText(aSplit));
         }
 
         boolean separatorLinePlaced = false;
@@ -414,14 +422,14 @@ public abstract class Messages {
     public String getPlainText(String localeIdentifier, String... localeArgs) {
         // try to get the localized string from the plugins locale file
         try {
-            return plugin.getLocalizationService().getTranslation(localeIdentifier, localeArgs);
+            return localizationService.getTranslation(localeIdentifier, localeArgs);
         } catch (LocalizationNotFoundException ignored) {
         }
 
         if (!plugin.isFallbackBedrockPlugin()) {
             // if the above failed, we try to get the string from Bedrocks locale file
             try {
-                return plugin.getFallbackBedrockPlugin().getLocalizationService().getTranslation(
+                return fallbackLocalizationService.getTranslation(
                         localeIdentifier, localeArgs
                 );
             } catch (LocalizationNotFoundException ignored) {
@@ -447,13 +455,13 @@ public abstract class Messages {
     }
 
     public void displayPermissions(BedrockChatSender sender, List<Permission> permissions) {
-        String permission_prefix = plugin.getPermissionService().getPermissionPrefix();
+        String permission_prefix = permissionService.getPermissionPrefix();
 
         new JsonMessage(plugin, "permission.list.header").send(sender);
         permissions.stream()
                 .map(Permission::getRole)
                 .distinct()
-                .collect(Collectors.toList())
+                .toList()
                 .forEach(commandRole -> {
                     new JsonMessage(plugin, "permission.list.role",
                             "role", String.format("%s.%s", permission_prefix, commandRole.getType().toLowerCase())
@@ -461,7 +469,7 @@ public abstract class Messages {
 
                     permissions.stream()
                             .filter(permission -> permission.getRole().equals(commandRole))
-                            .collect(Collectors.toList()).forEach(permission -> {
+                            .toList().forEach(permission -> {
 
                         // avoid empty description message
                         String description = new Translation(plugin, permission.getDescriptionLocaleIdent()).getTranslation();

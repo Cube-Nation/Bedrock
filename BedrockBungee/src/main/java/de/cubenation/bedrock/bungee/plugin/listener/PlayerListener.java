@@ -4,6 +4,7 @@ import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bungee.plugin.event.PlayerChangeNameEvent;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
 import jakarta.persistence.NoResultException;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -29,7 +30,7 @@ public class PlayerListener implements Listener {
     public void onPostLogin(PostLoginEvent event) {
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             BedrockOfflinePlayer bp;
-            try (Session hibernateSession = plugin.getDatabaseService().openSession("bedrock")) {
+            try (Session hibernateSession = ((DatabaseService) plugin.getServiceManager().getService(DatabaseService.class)).openSession("bedrock")) {
                 String uuid = event.getPlayer().getUniqueId().toString();
                 String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
                 try {

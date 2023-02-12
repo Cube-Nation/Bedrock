@@ -22,9 +22,11 @@
 
 package de.cubenation.bedrock.bungee.api.command.predefined;
 
+import de.cubenation.bedrock.bungee.api.service.command.CommandService;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.CommandException;
@@ -42,6 +44,9 @@ import java.util.HashMap;
 @Permission(Name = "command.list", Role = Role.USER)
 public class CommandListCommand extends Command {
 
+    @Inject
+    private CommandService commandService;
+
     public CommandListCommand(FoundationPlugin plugin) {
         super(plugin);
     }
@@ -50,7 +55,7 @@ public class CommandListCommand extends Command {
 
         HashMap<String, String> commandList = new HashMap<>();
 
-        for (String label : getPlugin().getCommandService().getCommandHandlers().keySet()) {
+        for (String label : commandService.getCommandHandlers().keySet()) {
             if (label.equalsIgnoreCase(getPlugin().getPluginDescription().getName())) {
                 continue;
             }

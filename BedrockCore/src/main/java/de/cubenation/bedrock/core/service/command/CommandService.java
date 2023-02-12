@@ -25,6 +25,7 @@ package de.cubenation.bedrock.core.service.command;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.CommandToken;
 import de.cubenation.bedrock.core.annotation.HelpMenu;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNode;
 import de.cubenation.bedrock.core.command.tree.CommandTreeNestedNode;
@@ -39,7 +40,6 @@ import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.settings.SettingsService;
 import lombok.Getter;
 import lombok.ToString;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -54,6 +54,9 @@ import java.util.logging.Level;
  */
 @ToString
 public abstract class CommandService extends AbstractService {
+
+    @Inject
+    private SettingsService settingService;
 
     protected CommandTreeNestedNode pluginCommandManager;
 
@@ -78,7 +81,6 @@ public abstract class CommandService extends AbstractService {
             // Add default commands that all plugins are capable of
             registerPredefinedPluginCommands();
 
-            SettingsService settingService = plugin.getSettingService();
             if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
                 CommandTreeNestedNode settingsManager = pluginCommandManager.addCommandHandler(CommandTreeNestedNode.class, "settings");
                 settingsManager.addCommandHandler(SettingsInfoCommand.class, "info", "i");

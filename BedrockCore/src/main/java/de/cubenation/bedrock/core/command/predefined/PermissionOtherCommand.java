@@ -26,6 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.PlayerNotFoundException;
@@ -41,6 +42,9 @@ import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 @Permission(Name = "permissions.self", Role = Role.USER)
 public class PermissionOtherCommand extends Command {
 
+    @Inject
+    private PermissionService permissionService;
+
     public PermissionOtherCommand(FoundationPlugin plugin) {
         super(plugin);
     }
@@ -54,7 +58,6 @@ public class PermissionOtherCommand extends Command {
 
         String player = name != null ? name : sender.getName();
 
-        PermissionService permissionService = getPlugin().getPermissionService();
         if (permissionService == null) {
             plugin.messages().noPermission(sender);
             return;

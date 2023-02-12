@@ -102,6 +102,42 @@ public class ServiceManager {
     }
 
     /**
+     * Register an implementation of the {@link AbstractService} class under another class name.
+     * @param clazz class to register
+     * @throws ServiceInitException in case the registration fails
+     * @return the created service instance
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public AbstractService registerAndInitializeService(Class<? extends AbstractService> target, Class<? extends AbstractService> clazz) throws ServiceInitException {
+        AbstractService service = registerService(target, clazz);
+        initService(service);
+        return service;
+    }
+
+    /**
+     * Register an implementation of the {@link AbstractService} class under another class name.
+     * @param clazz class to register
+     * @throws ServiceInitException in case the registration fails
+     * @return the created service instance
+     */
+    public AbstractService registerService(Class<? extends AbstractService> target, Class<? extends AbstractService> clazz) throws ServiceInitException {
+        if (this.exists(clazz)) {
+            throw new ServiceInitException(String.format("A service of the class %s is already registered", clazz.toString()));
+        }
+
+        AbstractService service;
+        try {
+            Constructor<? extends AbstractService> constructor = clazz.getConstructor(FoundationPlugin.class);
+            service = constructor.newInstance(plugin);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new ServiceInitException(e);
+        }
+
+        this.services.put(target, service);
+        return service;
+    }
+
+    /**
      * Initialize all registered services which are not initialized yet.
      * @throws ServiceInitException in case at least one initialization fails
      */
@@ -109,6 +145,7 @@ public class ServiceManager {
         Collection<AbstractService> remainingServices = services.values().stream().filter(Predicate.not(AbstractService::isInitialized)).toList();
         for (AbstractService service : remainingServices) {
             initService(service);
+            plugin.log(Level.WARNING, "Init "+service.getClass().getName());
         }
     }
 

@@ -2,8 +2,10 @@ package de.cubenation.bedrock.core.datastore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.config.DatastoreConfig;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +16,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JsonDatastore<Entity> extends Datastore<Entity> {
+
+    @Inject
+    ConfigService configService;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -52,7 +57,7 @@ public class JsonDatastore<Entity> extends Datastore<Entity> {
      * @return config map
      */
     private Map<String, Object> getConfigMap() {
-        DatastoreConfig config = (DatastoreConfig) plugin.getConfigService().getConfig(DatastoreConfig.class);
+        DatastoreConfig config = (DatastoreConfig) configService.getConfig(DatastoreConfig.class);
         HashMap<String, Object> configMap = new HashMap<>();
         configMap.putAll(config.getDatastoreConfigMapOrInit(identifier));
         return configMap;

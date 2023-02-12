@@ -131,7 +131,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
 
             // Register and init the base services first since they
             // will be needed for the other services as well.
-            serviceManager.registerAndInitializeService(ConfigService.class);
+            serviceManager.registerAndInitializeService(de.cubenation.bedrock.core.service.config.ConfigService.class, ConfigService.class);
             serviceManager.registerAndInitializeService(ColorSchemeService.class);
             serviceManager.registerAndInitializeService(DatabaseService.class);
             serviceManager.registerAndInitializeService(DatastoreService.class);
@@ -141,7 +141,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
             serviceManager.registerService(ArgumentTypeService.class);
-            serviceManager.registerService(CommandService.class);
+            serviceManager.registerService(de.cubenation.bedrock.core.service.command.CommandService.class, CommandService.class);
             serviceManager.registerService(PermissionService.class);
             // TODO: registerService(InventoryService.class);
 

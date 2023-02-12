@@ -13,7 +13,7 @@ public class ServiceSupplier extends InstanceSupplier<AbstractService> {
 
     @Override
     public AbstractService getInstance(Field field) {
-        Class<? extends AbstractService> declaringClass = (Class<? extends AbstractService>) field.getDeclaringClass();
-        return plugin.getServiceManager().getService(declaringClass);
+        Class<? extends AbstractService> fieldType = (Class<? extends AbstractService>) field.getType();
+        return plugin.getServiceManager().getService(fieldType);
     }
 }

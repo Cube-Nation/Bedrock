@@ -23,8 +23,10 @@
 package de.cubenation.bedrock.core.service;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,6 +39,9 @@ public abstract class AbstractService {
 
     protected FoundationPlugin plugin;
 
+    private final ConfigService configService;
+    private final ConfigService fallbackConfigService;
+
     /**
      * If true, the service was successfully initialized.
      * Has to be set manually, if service is not registered via {@link de.cubenation.bedrock.core.annotation.Service} annotation.
@@ -47,6 +52,8 @@ public abstract class AbstractService {
 
     public AbstractService(FoundationPlugin plugin) {
         this.plugin = plugin;
+        this.configService = (ConfigService) plugin.getServiceManager().getService(ConfigService.class);
+        this.fallbackConfigService = (ConfigService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ConfigService.class);
     }
 
     protected Object getConfigurationValue(String path, Object def) {
@@ -55,7 +62,7 @@ public abstract class AbstractService {
         plugin.log(Level.FINER, "Retrieving configuration path " + path + " from plugin configuration");
 
         try {
-            value = plugin.getConfigService().getReadOnlyConfig().get(path);
+            value = configService.getReadOnlyConfig().get(path);
             if (value == null || value.toString().isEmpty())
                 throw new NullPointerException();
 
@@ -67,7 +74,7 @@ public abstract class AbstractService {
         // Don't do this for Bedrock Plugin Instance
         if (!plugin.isFallbackBedrockPlugin()) {
             try {
-                value = plugin.getFallbackBedrockPlugin().getConfigService().getReadOnlyConfig().get(path);
+                value = fallbackConfigService.getReadOnlyConfig().get(path);
                 if (value == null || value.toString().isEmpty())
                     throw new NullPointerException();
 
