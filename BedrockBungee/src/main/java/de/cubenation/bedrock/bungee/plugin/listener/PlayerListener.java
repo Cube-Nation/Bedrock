@@ -3,6 +3,9 @@ package de.cubenation.bedrock.bungee.plugin.listener;
 import de.cubenation.bedrock.bungee.api.BasePlugin;
 import de.cubenation.bedrock.bungee.plugin.event.MultiAccountJoinEvent;
 import de.cubenation.bedrock.bungee.plugin.event.PlayerChangeNameEvent;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
+import de.cubenation.bedrock.core.database.Database;
+import de.cubenation.bedrock.core.injection.Component;
 import de.cubenation.bedrock.core.model.BedrockOfflinePlayer;
 import de.cubenation.bedrock.core.service.database.DatabaseService;
 import jakarta.persistence.NoResultException;
@@ -18,19 +21,23 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
-public class PlayerListener implements Listener {
+public class PlayerListener extends Component implements Listener {
 
-    private final BasePlugin plugin;
+    private final BasePlugin basePlugin;
+
+    @Inject
+    private Database database;
 
     public PlayerListener(BasePlugin plugin) {
-        this.plugin = plugin;
+        super(plugin);
+        basePlugin = plugin;
     }
 
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
-        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+        basePlugin.getProxy().getScheduler().runAsync(basePlugin, () -> {
             BedrockOfflinePlayer bp;
-            try (Session hibernateSession = ((DatabaseService) plugin.getServiceManager().getService(DatabaseService.class)).openSession("bedrock")) {
+            try (Session hibernateSession = database.openSession()) {
                 String uuid = event.getPlayer().getUniqueId().toString();
                 String ip = event.getPlayer().getAddress().getAddress().getHostAddress();
                 try {
@@ -48,7 +55,7 @@ public class PlayerListener implements Listener {
                                 event.getPlayer().getUniqueId(),
                                 bp.getUsername(),
                                 event.getPlayer().getName());
-                        plugin.getProxy().getPluginManager().callEvent(changeNameEvent);
+                        basePlugin.getProxy().getPluginManager().callEvent(changeNameEvent);
 
                         // update username
                         bp.setUsername(event.getPlayer().getName());
@@ -81,7 +88,7 @@ public class PlayerListener implements Listener {
 
                     if (bedrockPlayers.size() > 0) {
                         MultiAccountJoinEvent joinEvent = new MultiAccountJoinEvent(ip, bedrockPlayers);
-                        plugin.getProxy().getPluginManager().callEvent(joinEvent);
+                        basePlugin.getProxy().getPluginManager().callEvent(joinEvent);
                     }
                 }
             }

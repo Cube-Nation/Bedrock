@@ -3,6 +3,7 @@ package de.cubenation.bedrock.core.injection;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.config.CustomConfigurationFile;
+import de.cubenation.bedrock.core.database.Database;
 import de.cubenation.bedrock.core.exception.InjectionException;
 import de.cubenation.bedrock.core.service.AbstractService;
 
@@ -45,6 +46,8 @@ public class InstanceInjector {
             return new ServiceSupplier(plugin);
         } else if (CustomConfigurationFile.class.isAssignableFrom(fieldClass)) {
             return new ConfigSupplier(plugin);
+        } else if (Database.class.equals(fieldClass)) {
+            return new DatabaseSupplier(plugin);
         }
         return null;
     }

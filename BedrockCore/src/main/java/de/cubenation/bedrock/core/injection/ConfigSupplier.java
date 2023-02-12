@@ -14,7 +14,7 @@ public class ConfigSupplier extends InstanceSupplier<CustomConfigurationFile> {
 
     @Override
     public CustomConfigurationFile getInstance(Field field) {
-        Class<?> configClass = field.getDeclaringClass();
+        Class<?> configClass = field.getType();
         ConfigService service = (ConfigService) plugin.getServiceManager().getService(ConfigService.class);
         return service.getConfig(configClass);
     }

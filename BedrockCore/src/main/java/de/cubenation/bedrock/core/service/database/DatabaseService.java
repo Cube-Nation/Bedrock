@@ -76,12 +76,12 @@ public class DatabaseService extends AbstractService {
         }
     }
 
-    public Session openSession(String dbIdentifier) {
+    public Database getDatabase(String dbIdentifier) {
         String id = dbIdentifier.toLowerCase();
         if (!databases.containsKey(id)) {
             throw new IllegalArgumentException(id + " is not a valid database identifier");
         }
-        return databases.get(id).openSession();
+        return databases.get(id);
     }
 
     private void clear() throws IOException {

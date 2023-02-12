@@ -75,7 +75,7 @@ public class BedrockOfflinePlayer {
     public void persist(FoundationPlugin plugin) throws IOException {
         // TODO: Remove this method. Move to a repository class?
         DatabaseService databaseService = (DatabaseService) plugin.getServiceManager().getService(DatabaseService.class);
-        try (Session session = databaseService.openSession("bedrock")) {
+        try (Session session = databaseService.getDatabase("bedrock").openSession()) {
             Transaction transaction = session.beginTransaction();
             session.merge(this);
             transaction.commit();
