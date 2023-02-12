@@ -44,7 +44,7 @@ import java.util.logging.Level;
 @ToString
 public abstract class ConfigService extends AbstractService {
 
-    private final HashMap<Class<?>, CustomConfigurationFile> configuration_files = new HashMap<>();
+    private final HashMap<Class<?>, CustomConfigurationFile> configurationFiles = new HashMap<>();
 
     @SuppressWarnings("FieldCanBeLocal")
     private final String do_not_delete_me = "Seriously. Do not delete this";
@@ -65,19 +65,19 @@ public abstract class ConfigService extends AbstractService {
 
         // try to create the plugin bedrock.yaml
         try {
-            registerFile(BedrockDefaultsConfig.class, this.instantiatePluginConfig());
+            registerFile(BedrockDefaultsConfig.class, instantiatePluginConfig());
         } catch (InstantiationException | InvalidConfigurationException ignored) {
 
             // try to create the bedrock.yaml from Bedrock (yes, for this plugin)
             try {
-                registerFile(BedrockDefaultsConfig.class, this.instantiateBedrockConfig());
+                registerFile(BedrockDefaultsConfig.class, instantiateBedrockConfig());
             } catch (InstantiationException | InvalidConfigurationException e) {
                 throw new ServiceInitException(e.getMessage());
             }
         }
 
         // add all custom configuration files by their annotation
-        Arrays.stream(this.getPlugin().getClass().getAnnotationsByType(ConfigurationFile.class)).forEach(configurationFile -> {
+        Arrays.stream(plugin.getClass().getAnnotationsByType(ConfigurationFile.class)).forEach(configurationFile -> {
             try {
                 registerClass(configurationFile.value());
             } catch (InstantiationException e) {
@@ -93,7 +93,7 @@ public abstract class ConfigService extends AbstractService {
      */
     @Override
     public void reload() throws ServiceReloadException {
-        for (Map.Entry<Class<?>, CustomConfigurationFile> pair : this.configuration_files.entrySet()) {
+        for (Map.Entry<Class<?>, CustomConfigurationFile> pair : configurationFiles.entrySet()) {
             Class<?> name = pair.getKey();
 
             try {
@@ -120,7 +120,7 @@ public abstract class ConfigService extends AbstractService {
     private void createDataFolder() throws ServiceInitException {
         // check if plugin data folder exists and create if not
         if (!plugin.getPluginFolder().exists() && !plugin.getPluginFolder().mkdirs()) {
-            throw new ServiceInitException("Could not create folder " + this.getPlugin().getPluginFolder().getName());
+            throw new ServiceInitException("Could not create folder " + plugin.getPluginFolder().getName());
         }
     }
 
@@ -134,9 +134,9 @@ public abstract class ConfigService extends AbstractService {
      * @throws InvalidConfigurationException on error
      */
     private CustomConfigurationFile instantiatePluginConfig() throws InstantiationException, InvalidConfigurationException {
-        Class<?> clazz = getPluginConfigClass();
-        CustomConfigurationFile config = this.createPluginConfig(
-                this.getPlugin(),
+        Class<? extends CustomConfigurationFile> clazz = getPluginConfigClass();
+        CustomConfigurationFile config = createPluginConfig(
+                plugin,
                 clazz
         );
         config.init();
@@ -151,8 +151,8 @@ public abstract class ConfigService extends AbstractService {
      * @throws InvalidConfigurationException on error
      */
     private CustomConfigurationFile instantiateBedrockConfig() throws InstantiationException, InvalidConfigurationException {
-        CustomConfigurationFile config = this.createPluginConfig(
-                this.getPlugin(),
+        CustomConfigurationFile config = createPluginConfig(
+                plugin,
                 BedrockDefaultsConfig.class
         );
         config.init();
@@ -164,17 +164,17 @@ public abstract class ConfigService extends AbstractService {
      * Create the plugin configuration file
      *
      * @param plugin        The BasePlugin reference
-     * @param class_name    Class name of the CustomConfigurationFile object
+     * @param configClass   Class name of the CustomConfigurationFile object
      * @return CustomConfiguration File
      * @throws InstantiationException on error
      */
-    private CustomConfigurationFile createPluginConfig(FoundationPlugin plugin, Class<?> class_name) throws InstantiationException {
+    private CustomConfigurationFile createPluginConfig(FoundationPlugin plugin, Class<? extends CustomConfigurationFile> configClass) throws InstantiationException {
         try {
-            Constructor<?> constructor = class_name.getConstructor(FoundationPlugin.class);
+            Constructor<?> constructor = configClass.getConstructor(FoundationPlugin.class);
             return (CustomConfigurationFile) constructor.newInstance(plugin);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InstantiationException("Could not instantiate class " + class_name + ": " + e.getMessage());
+            throw new InstantiationException("Could not instantiate class " + configClass + ": " + e.getMessage());
         }
     }
 
@@ -185,16 +185,16 @@ public abstract class ConfigService extends AbstractService {
      * @throws InstantiationException   on error
      */
     public void registerClass(Class<? extends CustomConfigurationFile> configClass) throws InstantiationException {
-        this.registerFile(configClass, this.createPluginConfig(plugin, configClass));
+        this.registerFile(configClass, createPluginConfig(plugin, configClass));
     }
 
     /**
      * Register a CustomConfigurationFile object
      *
-     * @param clazz     class name
+     * @param configClass     class name
      * @param file      CustomConfigurationFile object
      */
-    public void registerFile(Class<?> clazz, CustomConfigurationFile file) {
+    public void registerFile(Class<? extends CustomConfigurationFile> configClass, CustomConfigurationFile file) {
         if (file == null) {
             return;
         }
@@ -202,32 +202,32 @@ public abstract class ConfigService extends AbstractService {
         try {
             file.init();
         } catch (InvalidConfigurationException e) {
-            plugin.log(Level.SEVERE, "  config service: Could not register file for " + clazz.getName(), e);
+            plugin.log(Level.SEVERE, "  config service: Could not register file for " + configClass.getName(), e);
             return;
         }
 
-        this.configuration_files.put(clazz, file);
+        this.configurationFiles.put(configClass, file);
     }
 
 
     public CustomConfigurationFile getConfig(Class<?> clazz) {
-        if (clazz == null || !configuration_files.containsKey(clazz)) {
+        if (clazz == null || !configurationFiles.containsKey(clazz)) {
             return null;
         }
 
-        return configuration_files.get(clazz);
+        return configurationFiles.get(clazz);
     }
 
     public abstract BedrockYaml getReadOnlyConfig();
 
     public abstract BedrockYaml getReadOnlyConfig(String name);
 
-    private Class<?> getPluginConfigClass() throws InstantiationException {
+    private Class<? extends CustomConfigurationFile> getPluginConfigClass() throws InstantiationException {
         String className = String.format("%s.config.BedrockDefaults", plugin.getClass().getPackage().getName());
 
-        Class<?> clazz;
+        Class<? extends CustomConfigurationFile> clazz;
         try {
-            clazz = Class.forName(className);
+            clazz = (Class<? extends CustomConfigurationFile>) Class.forName(className);
         } catch (ClassNotFoundException e) {
             throw new InstantiationException(String.format("Could not find class %s in plugin %s",
                     className,

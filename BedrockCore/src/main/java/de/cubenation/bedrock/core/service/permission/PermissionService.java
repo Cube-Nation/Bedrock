@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.core.service.permission;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.authorization.Role;
@@ -32,6 +33,7 @@ import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
 import de.cubenation.bedrock.core.service.config.ConfigService;
+import lombok.ToString;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 
 import java.util.ArrayList;
@@ -43,11 +45,13 @@ import java.util.stream.Collectors;
  * @author Cube-Nation
  * @version 1.0
  */
+@ToString
 public class PermissionService extends AbstractService {
 
+    @Inject
     private ConfigService configService;
 
-    private ArrayList<Permission> externalPermissions = new ArrayList<>();
+    private final ArrayList<Permission> externalPermissions = new ArrayList<>();
 
     private ArrayList<Permission> localPermissionCache = new ArrayList<>();
 
@@ -56,47 +60,45 @@ public class PermissionService extends AbstractService {
     }
 
     public String getPermissionPrefix() {
-        return (String) this.getConfigurationValue(
+        return (String) getConfigurationValue(
                 "service.permission.prefix",
-                this.getPlugin().getPluginDescription().getName().toLowerCase()
+                plugin.getPluginDescription().getName().toLowerCase()
         );
     }
 
     @Override
     public void init() throws ServiceInitException {
         //this.getPlugin().log(Level.INFO, "  permission service: setting up " + this.toString());
-        this.configService = plugin.getConfigService();
-
         try {
-            this.configService.registerFile(
+            configService.registerFile(
                     PermissionsConfig.class,
-                    new PermissionsConfig(this.getPlugin())
+                    new PermissionsConfig(plugin)
             );
         } catch (Exception e) {
             throw new ServiceInitException(e.getMessage());
         }
 
-        this.initializePermissions();
+        initializePermissions();
     }
 
     @Override
     public void reload() throws ServiceReloadException {
-        this.initializePermissions();
+        initializePermissions();
     }
 
     @Deprecated
     public void registerPermission(String role, String permission) throws NullPointerException {
-        this.registerPermission(permission, Role.valueOf(role));
+        registerPermission(permission, Role.valueOf(role));
     }
 
     @SuppressWarnings("unused")
     public void registerPermission(String permission) {
-        this.registerPermission(new Permission(permission));
+        registerPermission(new Permission(permission));
     }
 
     @SuppressWarnings("WeakerAccess")
     public void registerPermission(String permission, Role role) {
-        this.registerPermission(new Permission(permission, role));
+        registerPermission(new Permission(permission, role));
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -104,33 +106,34 @@ public class PermissionService extends AbstractService {
         List<Permission> exists = this.externalPermissions.stream()
                 .filter(permissionObject ->
                         permissionObject.getName().equals(permission.getName()) && permissionObject.getRole().equals(permission.getRole()))
-                .collect(Collectors.toList());
+                .toList();
 
         if (exists.size() == 0) {
-            this.externalPermissions.add(permission);
-            this.initializePermissions();
+            externalPermissions.add(permission);
+            initializePermissions();
         }
     }
 
     private void addPermission(Permission permission) {
         if (permission.getName() == null) return;
 
-        permission.setPlugin(getPlugin());
+        permission.setPlugin(plugin);
 
-        List<Permission> exists = this.localPermissionCache.stream()
+        List<Permission> exists = localPermissionCache.stream()
                 .filter(cachedPermission ->
                         cachedPermission.getName().equals(permission.getName())
-                ).collect(Collectors.toList());
+                ).toList();
 
         if (exists.size() == 0) {
-            this.localPermissionCache.add(permission);
+            localPermissionCache.add(permission);
         }
     }
 
     @SuppressWarnings("unused")
     public Permission getPermission(String rawPermission) {
-        if (rawPermission == null)
+        if (rawPermission == null) {
             return null;
+        }
 
         return getPermissions().stream()
                 .filter(permission -> permission.getName().equalsIgnoreCase(rawPermission))
@@ -140,7 +143,7 @@ public class PermissionService extends AbstractService {
 
     private void initializePermissions() {
         // re-initialize local permission cache
-        this.localPermissionCache = new ArrayList<>();
+        localPermissionCache = new ArrayList<>();
 
         /*
         We need to reload the permission file first to make sure the Permissions class knows its current
@@ -149,7 +152,7 @@ public class PermissionService extends AbstractService {
         The YamlConfiguration object would not know about the move/remove and would still have the permission
         in it's cache, so the move/remove would not be recognized.
         */
-        PermissionsConfig permissions = (PermissionsConfig) this.configService.getConfig(PermissionsConfig.class);
+        PermissionsConfig permissions = (PermissionsConfig) configService.getConfig(PermissionsConfig.class);
         try {
             permissions.reload();
 
@@ -162,7 +165,7 @@ public class PermissionService extends AbstractService {
                             return;
                         }
 
-                        this.addPermission(new Permission(permission, commandRole));
+                        addPermission(new Permission(permission, commandRole));
                     }));
         } catch (InvalidConfigurationException e) {
             plugin.log(Level.SEVERE, "While reloading permissions: " + e.getCause(), e);
@@ -185,9 +188,9 @@ public class PermissionService extends AbstractService {
 //                }));
 
         // collect externally registered permissions from userland
-        this.externalPermissions.forEach(this::addPermission);
+        externalPermissions.forEach(this::addPermission);
 
-        this.savePermissions(permissions);
+        savePermissions(permissions);
     }
 
     private void savePermissions(PermissionsConfig permissions) {
@@ -195,7 +198,7 @@ public class PermissionService extends AbstractService {
         permissions.removeRole(Role.NO_ROLE);
 
         // restore missing permissions
-        this.localPermissionCache.forEach(permission -> {
+        localPermissionCache.forEach(permission -> {
             if (permissions.getRoleForPermission(permission.getName()) == null) {
                 permissions.addPermission(permission);
             }
@@ -207,14 +210,14 @@ public class PermissionService extends AbstractService {
             permissions.save();
             permissions.reload();
         } catch (InvalidConfigurationException e) {
-            this.getPlugin().log(Level.SEVERE, "  permission service: Could not save permission file", e);
+            plugin.log(Level.SEVERE, "  permission service: Could not save permission file", e);
         }
     }
 
     @SuppressWarnings("WeakerAccess")
     public boolean hasPermission(BedrockChatSender sender, Permission permission) {
         // op check
-        if (sender.isOp() && (Boolean) this.getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {
+        if (sender.isOp() && (Boolean) getConfigurationValue("service.permission.grant_all_permissions_to_op", true)) {
             return true;
         }
 
@@ -225,11 +228,9 @@ public class PermissionService extends AbstractService {
         }
 
         // check again with full permission node (including permission prefix for role)
-        Role role = ((PermissionsConfig) plugin.getConfigService().getConfig(PermissionsConfig.class)).getRoleForPermission(permission.getName());
+        Role role = ((PermissionsConfig) configService.getConfig(PermissionsConfig.class)).getRoleForPermission(permission.getName());
         if (role != null) {
-            if (sender.hasPermission(String.format("%s.%s.%s", this.getPermissionPrefix(), role.getType().toLowerCase(), permission.getName()))) {
-                return true;
-            }
+            return sender.hasPermission(String.format("%s.%s.%s", getPermissionPrefix(), role.getType().toLowerCase(), permission.getName()));
         }
 
         return false;
@@ -237,42 +238,30 @@ public class PermissionService extends AbstractService {
 
     @SuppressWarnings("unused")
     public boolean hasPermission(BedrockChatSender sender, String permission) {
-        List<Permission> filtered = this.localPermissionCache.stream()
+        List<Permission> filtered = localPermissionCache.stream()
                 .filter(cachedPermission -> cachedPermission.getName().equals(permission))
-                .collect(Collectors.toList());
+                .toList();
 
         for (Permission filteredPermission : filtered) {
-            if (this.hasPermission(sender, filteredPermission))
+            if (hasPermission(sender, filteredPermission)) {
                 return true;
+            }
         }
 
         return false;
     }
 
     public List<Permission> getPermissions() {
-        return this.localPermissionCache;
+        return localPermissionCache;
     }
 
     public List<Permission> getPermissions(BedrockChatSender player) throws PlayerNotFoundException {
-        if (player == null)
+        if (player == null) {
             throw new PlayerNotFoundException();
+        }
 
-        return this.localPermissionCache.stream()
+        return localPermissionCache.stream()
                 .filter(permission -> permission.userHasPermission(player))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    protected FoundationPlugin getPlugin() {
-        return super.getPlugin();
-    }
-
-    @Override
-    public String toString() {
-        return "PermissionService{" +
-                "configService=" + configService +
-                ", localPermissionCache=" + localPermissionCache.stream().map(Permission::toString) +
-                ", externalPermissions=" + externalPermissions.stream().map(Permission::toString) +
-                '}';
     }
 }

@@ -25,6 +25,7 @@ package de.cubenation.bedrock.core.command.predefined;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.service.permission.PermissionService;
@@ -38,13 +39,14 @@ import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 @Permission(Name = "permission.list", Role = Role.MODERATOR)
 public class PermissionListCommand extends Command {
 
+    @Inject
+    private PermissionService permissionService;
+
     public PermissionListCommand(FoundationPlugin plugin) {
         super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {
-        PermissionService permissionService = this.getPlugin().getPermissionService();
-
         if (permissionService != null) {
             plugin.messages().displayPermissions(sender, permissionService.getPermissions());
 

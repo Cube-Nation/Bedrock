@@ -23,11 +23,16 @@
 package de.cubenation.bedrock.core.translation;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.exception.LocalizationNotFoundException;
+import de.cubenation.bedrock.core.injection.Component;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
 import de.cubenation.bedrock.core.service.localization.LocalizationService;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
+import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -38,22 +43,30 @@ import java.util.Arrays;
  * @author Cube-Nation
  * @version 1.0
  */
-public class Translation {
+public class Translation extends Component {
 
-    private FoundationPlugin plugin;
+    @Inject
+    private LocalizationService localizationService;
 
-    private String locale_ident;
+    @Inject(from = "Bedrock")
+    private LocalizationService fallbackLocalizationService;
 
-    private String[] locale_args;
+    @Inject
+    private ColorSchemeService colorSchemeService;
 
-    private final LocalizationService service;
+    @Getter @Setter
+    private String localeIdent;
+
+    @Getter
+    private String[] localeArgs;
 
 
-    public Translation(FoundationPlugin plugin, String locale_ident) {
-        this(plugin, locale_ident, new String[]{});
+    public Translation(FoundationPlugin plugin, String localeIdent) {
+        this(plugin, localeIdent, new String[]{});
     }
 
-    public Translation(FoundationPlugin plugin, String locale_ident, String[] locale_args) {
+    public Translation(FoundationPlugin plugin, String localeIdent, String[] localeArgs) {
+        super(plugin);
         /*
         if (plugin instanceof BedrockPlugin) {
             StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
@@ -68,11 +81,8 @@ public class Translation {
         }
         */
 
-        this.setPlugin(plugin);
-        this.setLocale_ident(locale_ident);
-        this.setLocale_args(locale_args);
-
-        this.service = plugin.getLocalizationService();
+        setLocaleIdent(localeIdent);
+        setLocaleArgs(localeArgs);
     }
 
     public void send(BedrockChatSender commandSender) {
@@ -82,14 +92,13 @@ public class Translation {
         }
 
         // color scheme service
-        ColorScheme colorScheme = plugin.getColorSchemeService().getColorScheme();
+        ColorScheme colorScheme = colorSchemeService.getColorScheme();
 
         // apply colors from color scheme to message
         message = colorScheme.applyColorScheme(message);
         TextComponent component = new TextComponent(message);
 
-        if (commandSender instanceof BedrockPlayer) {
-            BedrockPlayer player = (BedrockPlayer) commandSender;
+        if (commandSender instanceof BedrockPlayer player) {
             sendPlayer(player, component);
         } else {
             sendConsole(commandSender, component);
@@ -111,63 +120,40 @@ public class Translation {
         commandSender.sendMessage(legacyText);
     }
 
+    private void setLocaleArgs(String[] myLocaleArgs) {
+        ArrayList<String> args = new ArrayList<>(Arrays.asList(myLocaleArgs));
 
-    private FoundationPlugin getPlugin() {
-        return plugin;
-    }
-
-    private void setPlugin(FoundationPlugin plugin) {
-        this.plugin = plugin;
-    }
-
-    private String getLocale_ident() {
-        return locale_ident;
-    }
-
-    private void setLocale_ident(String locale_ident) {
-        this.locale_ident = locale_ident;
-    }
-
-    private String[] getLocale_args() {
-        return locale_args;
-    }
-
-    private void setLocale_args(String[] my_locale_args) {
-        ArrayList<String> args = new ArrayList<>(Arrays.asList(my_locale_args));
-
-        boolean custom_prefix = false;
-        for (String my_locale_arg : my_locale_args) {
+        boolean customPrefix = false;
+        for (String my_locale_arg : myLocaleArgs) {
             if (my_locale_arg.equals("plugin_prefix")) {
-                custom_prefix = true;
+                customPrefix = true;
                 break;
             }
         }
 
-        if (!custom_prefix) {
+        if (!customPrefix) {
             args.add("plugin_prefix");
-            args.add(this.getPlugin().getMessagePrefix());
+            args.add(plugin.getMessagePrefix());
         }
 
         // cast back to String[]
-        String[] string_args = new String[args.size()];
-        my_locale_args = args.toArray(string_args);
-        this.locale_args = my_locale_args;
+        String[] stringArgs = new String[args.size()];
+        myLocaleArgs = args.toArray(stringArgs);
+        localeArgs = myLocaleArgs;
     }
 
 
     public String getTranslation() {
         // try to get the localized string from the plugins locale file
         try {
-            return this.service.getTranslation(this.getLocale_ident(), this.getLocale_args());
+            return localizationService.getTranslation(getLocaleIdent(), getLocaleArgs());
         } catch (LocalizationNotFoundException ignored) {
         }
 
         if (!plugin.isFallbackBedrockPlugin()) {
             // if the above failed, we try to get the string from Bedrocks locale file
             try {
-                return plugin.getFallbackBedrockPlugin().getLocalizationService().getTranslation(
-                        this.getLocale_ident(), this.getLocale_args()
-                );
+                return fallbackLocalizationService.getTranslation(getLocaleIdent(), getLocaleArgs());
             } catch (LocalizationNotFoundException ignored) {
             }
         }
@@ -176,7 +162,7 @@ public class Translation {
         // If you see a not translated string somewhere
         //  a) the locale file is damaged/incomplete - try deleting it and restart the server
         //  b) check if the plugin refers to the correct path in the YamlConfiguration object
-        return locale_ident;
+        return localeIdent;
     }
 
     public TextComponent getTextComponent() {
@@ -186,16 +172,14 @@ public class Translation {
     public String[] getTranslationStrings() {
         // try to get the localized string from the plugins locale file
         try {
-            return this.service.getTranslationStrings(this.getLocale_ident(), this.getLocale_args());
+            return localizationService.getTranslationStrings(getLocaleIdent(), getLocaleArgs());
         } catch (LocalizationNotFoundException ignored) {
         }
 
         if (!plugin.isFallbackBedrockPlugin()) {
             // if the above failed, we try to get the string from Bedrocks locale file
             try {
-                return plugin.getFallbackBedrockPlugin().getLocalizationService().getTranslationStrings(
-                        this.getLocale_ident(), this.getLocale_args()
-                );
+                return fallbackLocalizationService.getTranslationStrings(getLocaleIdent(), getLocaleArgs());
             } catch (LocalizationNotFoundException ignored) {
             }
         }

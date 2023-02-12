@@ -23,6 +23,7 @@
 package de.cubenation.bedrock.core;
 
 import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
+import de.cubenation.bedrock.core.injection.InstanceInjector;
 import de.cubenation.bedrock.core.message.Messages;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -88,86 +89,7 @@ public interface FoundationPlugin {
      */
     ServiceManager getServiceManager();
 
-    /**
-     * Returns the Bedrock CommandService object instance.
-     * If the CommandService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock CommandService
-     * @see CommandService
-     */
-    CommandService getCommandService();
-
-    /**
-     * Returns the Bedrock ConfigService object instance.
-     * If the ConfigService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ConfigService
-     * @see ConfigService
-     */
-    ConfigService getConfigService();
-
-    /**
-     * Returns the Bedrock ColorSchemeService object instance.
-     * If the ColorSchemeService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ColorSchemeService
-     * @see ColorSchemeService
-     */
-    ColorSchemeService getColorSchemeService();
-
-    /**
-     * Returns the Bedrock PermissionService object instance.
-     * If the PermissionService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock PermissionService
-     * @see PermissionService
-     */
-    PermissionService getPermissionService();
-
-    /**
-     * Returns the Bedrock LocalizationService object instance.
-     * If the LocalizationService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock LocalizationService
-     * @see LocalizationService
-     */
-    LocalizationService getLocalizationService();
-
-    /**
-     * Returns the Bedrock DatabaseService object instance.
-     *
-     * @return The Bedrock DatabaseService
-     * @see DatabaseService
-     */
-    DatabaseService getDatabaseService();
-
-    /**
-     * Returns the Bedrock DatastoreService object instance.
-     *
-     * @return The Bedrock DatastoreService
-     * @see DatastoreService
-     */
-    DatastoreService getDatastoreService();
-
-    /**
-     * Returns the Bedrock SettingsService object instance.
-     * If the SettingsService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock SettingsService
-     * @see SettingsService
-     */
-    SettingsService getSettingService();
-
     ArrayList<Class<?>> getCustomSettingsFiles();
-
-    /**
-     * Returns the Bedrock ArgumentTypeService object instance.
-     * If the ArgumentTypeService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ArgumentTypeService
-     * @see ArgumentTypeService
-     */
-    ArgumentTypeService getArgumentTypeService();
 
     /**
      * Returns a colored string of the current plugin, known as the message prefix.
@@ -214,6 +136,8 @@ public interface FoundationPlugin {
     FoundationPlugin getFallbackBedrockPlugin();
 
     boolean isFallbackBedrockPlugin();
+
+    FoundationPlugin getPlugin(String pluginName);
 
     BedrockDefaultsConfig getBedrockDefaults();
 

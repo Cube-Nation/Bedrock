@@ -24,6 +24,8 @@ package de.cubenation.bedrock.core.service.colorscheme.scheme;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.service.colorscheme.ColorScheme;
+import de.cubenation.bedrock.core.service.colorscheme.ColorSchemeService;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 import net.md_5.bungee.api.ChatColor;
 
 /**
@@ -42,26 +44,27 @@ public class CustomColorScheme extends ColorScheme {
 
     @SuppressWarnings("deprecation")
     public CustomColorScheme(FoundationPlugin plugin) {
+        // TODO: clean up
         super(
                 ColorSchemeName.CUSTOM,
                 ChatColor.valueOf(
-                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.primary",
-                                plugin.getFallbackBedrockPlugin().getColorSchemeService().getColorScheme().getPrimary().toString())
+                        ((ConfigService) plugin.getServiceManager().getService(ConfigService.class)).getReadOnlyConfig().getString("service.colorscheme.primary",
+                                ((ColorSchemeService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ColorSchemeService.class)).getColorScheme().getPrimary().toString())
 
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.secondary",
-                                plugin.getFallbackBedrockPlugin().getColorSchemeService().getColorScheme().getSecondary().toString()
+                        ((ConfigService) plugin.getServiceManager().getService(ConfigService.class)).getReadOnlyConfig().getString("service.colorscheme.secondary",
+                                ((ColorSchemeService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ColorSchemeService.class)).getColorScheme().getSecondary().toString()
                         )
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.flag",
-                                plugin.getFallbackBedrockPlugin().getColorSchemeService().getColorScheme().getFlag().toString()
+                        ((ConfigService) plugin.getServiceManager().getService(ConfigService.class)).getReadOnlyConfig().getString("service.colorscheme.flag",
+                                ((ColorSchemeService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ColorSchemeService.class)).getColorScheme().getFlag().toString()
                         )
                 ),
                 ChatColor.valueOf(
-                        plugin.getConfigService().getReadOnlyConfig().getString("service.colorscheme.text",
-                                plugin.getFallbackBedrockPlugin().getColorSchemeService().getColorScheme().getText().toString()
+                        ((ConfigService) plugin.getServiceManager().getService(ConfigService.class)).getReadOnlyConfig().getString("service.colorscheme.text",
+                                ((ColorSchemeService) plugin.getFallbackBedrockPlugin().getServiceManager().getService(ColorSchemeService.class)).getColorScheme().getText().toString()
                         )
                 )
         );

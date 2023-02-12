@@ -1,8 +1,10 @@
 package de.cubenation.bedrock.core.database;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.config.DatabaseConfig;
 import de.cubenation.bedrock.core.exception.StorageInitException;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,6 +24,9 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class HibernateOrmDatabase extends Database {
+
+    @Inject
+    private ConfigService configService;
 
     private static final HashMap<String, Object> hiddenDefaultConfig = new HashMap<>(){{
         put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
@@ -75,7 +80,7 @@ public class HibernateOrmDatabase extends Database {
      * @return config map
      */
     private Map<String, Object> getConfigMap() {
-        DatabaseConfig config = (DatabaseConfig) plugin.getConfigService().getConfig(DatabaseConfig.class);
+        DatabaseConfig config = (DatabaseConfig) configService.getConfig(DatabaseConfig.class);
         HashMap<String, Object> configMap = new HashMap<>(hiddenDefaultConfig);
         configMap.putAll(config.getDatabaseConfigMapOrInit(identifier));
 

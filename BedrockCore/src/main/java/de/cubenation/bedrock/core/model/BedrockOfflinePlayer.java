@@ -2,6 +2,7 @@ package de.cubenation.bedrock.core.model;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.service.database.DatabaseService;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -72,7 +73,9 @@ public class BedrockOfflinePlayer {
     }
 
     public void persist(FoundationPlugin plugin) throws IOException {
-        try (Session session = plugin.getDatabaseService().openSession("bedrock")) {
+        // TODO: Remove this method. Move to a repository class?
+        DatabaseService databaseService = (DatabaseService) plugin.getServiceManager().getService(DatabaseService.class);
+        try (Session session = databaseService.getDatabase("bedrock").openSession()) {
             Transaction transaction = session.beginTransaction();
             session.merge(this);
             transaction.commit();

@@ -25,15 +25,12 @@ package de.cubenation.bedrock.bukkit.api;
 import de.cubenation.bedrock.bukkit.api.message.Messages;
 import de.cubenation.bedrock.bukkit.api.service.command.CommandService;
 import de.cubenation.bedrock.bukkit.api.service.config.ConfigService;
-import de.cubenation.bedrock.bukkit.api.service.inventory.InventoryService;
 import de.cubenation.bedrock.bukkit.api.service.stats.MetricsLite;
-import de.cubenation.bedrock.core.config.DatastoreConfig;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
 import de.cubenation.bedrock.core.exception.DependencyException;
 import de.cubenation.bedrock.core.exception.NoSuchPluginException;
-import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.helper.version.VersionComparator;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
@@ -105,44 +102,58 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @Override
     public final void onEnable() {
         try {
-            this.onPreEnable();
+            onPreEnable();
         } catch (Exception e) {
-            this.disable(e);
+            disable(e);
             return;
         }
 
-        // initialize ServiceManager
-        this.serviceManager = new ServiceManager(this);
+        // Initialize ServiceManager
+        setupServiceManager();
+
+        messages = new Messages(this);
+
+        // Enable bStats metrics
+        new MetricsLite(this);
+
+        // Call onPostEnable after we've set everything up
         try {
-            // TODO: tbd
+            onPostEnable();
+        } catch (Exception e) {
+            disable(e);
+        }
+    }
+
+    private void setupServiceManager() {
+        serviceManager = new ServiceManager(this);
+        try {
             // DO NOT MODIFY THIS ORDER!
-            serviceManager.registerService(ConfigService.class);
-            serviceManager.registerService(ColorSchemeService.class);
-            serviceManager.registerService(DatabaseService.class);
+
+            // Register and init the base services first since they
+            // will be needed for the other services as well.
+            serviceManager.registerAndInitializeService(de.cubenation.bedrock.core.service.config.ConfigService.class, ConfigService.class);
+            serviceManager.registerAndInitializeService(ColorSchemeService.class);
+            serviceManager.registerAndInitializeService(DatabaseService.class);
+            serviceManager.registerAndInitializeService(DatastoreService.class);
             serviceManager.setIntentionallyReady(true);
+
+            // Register secondary core services
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
             serviceManager.registerService(ArgumentTypeService.class);
-            serviceManager.registerService(CommandService.class);
+            serviceManager.registerService(de.cubenation.bedrock.core.service.command.CommandService.class, CommandService.class);
             serviceManager.registerService(PermissionService.class);
-            serviceManager.registerService(InventoryService.class);
+            // TODO: registerService(InventoryService.class);
 
-            this.serviceManager.registerServices();
-        } catch (ServiceInitException | ServiceAlreadyExistsException e) {
-            this.log(Level.SEVERE, "Loading services failed");
-            this.disable(e);
-        }
+            // Register custom services
+            serviceManager.registerCustomServices();
 
-        this.messages = new Messages(this);
-
-        // enable bStats metrics
-        new MetricsLite(this);
-
-        // call onPostEnable after we've set everything up
-        try {
-            this.onPostEnable();
-        } catch (Exception e) {
-            this.disable(e);
+            // Only at the end init all registered services to circumvent dependency
+            // issues in case services depend on each other. Same order as before.
+            serviceManager.initServices();
+        } catch (ServiceInitException e) {
+            log(Level.SEVERE, "Loading services failed");
+            disable(e);
         }
     }
 
@@ -162,7 +173,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
      * @throws NoSuchPluginException if a Plugin is missing.
      */
     @SuppressWarnings("unused")
-    public JavaPlugin getPlugin(String name) throws NoSuchPluginException {
+    public JavaPlugin getJavaPlugin(String name) throws NoSuchPluginException {
         JavaPlugin plugin = (JavaPlugin) Bukkit.getServer().getPluginManager().getPlugin(name);
         if (plugin == null) {
             throw new NoSuchPluginException(name);
@@ -191,7 +202,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
      */
     @Override
     public String getMessagePrefix() {
-        return this.getMessagePrefix(this);
+        return getMessagePrefix(this);
     }
 
 
@@ -208,7 +219,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @SuppressWarnings("WeakerAccess")
     @Override
     public String getMessagePrefix(FoundationPlugin plugin) {
-        return this.getMessagePrefix(plugin.getPluginDescription().getName());
+        return getMessagePrefix(plugin.getPluginDescription().getName());
     }
 
     /**
@@ -224,18 +235,19 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @SuppressWarnings("WeakerAccess")
     @Override
     public String getMessagePrefix(String plugin) {
+        ColorSchemeService colorSchemeService = (ColorSchemeService) getServiceManager().getService(ColorSchemeService.class);
         try {
-            if (this.getColorSchemeService() == null)
+            if (colorSchemeService == null) {
                 return "[" + plugin + "]";
+            }
         } catch (NullPointerException e) {
             return "[" + plugin + "]";
         }
 
-        return
-                this.getColorSchemeService().getColorScheme().getFlag() + "[" +
-                        this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
-                        this.getColorSchemeService().getColorScheme().getFlag() + "]" +
-                        ChatColor.RESET;
+        return colorSchemeService.getColorScheme().getFlag() + "[" +
+                colorSchemeService.getColorScheme().getPrimary() + plugin +
+                colorSchemeService.getColorScheme().getFlag() + "]" +
+                ChatColor.RESET;
     }
 
 
@@ -245,7 +257,8 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     }
 
     public BedrockDefaultsConfig getBedrockDefaults() {
-        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaultsConfig.class);
+        ConfigService configService = (ConfigService) getServiceManager().getService(ConfigService.class);
+        CustomConfigurationFile config = configService.getConfig(BedrockDefaultsConfig.class);
         if (config instanceof BedrockDefaultsConfig) {
             return (BedrockDefaultsConfig) config;
         }
@@ -262,7 +275,7 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     public void log(Level level, String message) {
         Logger.getLogger("Minecraft").log(
                 level,
-                ChatColor.stripColor(String.format("%s %s", this.getMessagePrefix(), message))
+                ChatColor.stripColor(String.format("%s %s", getMessagePrefix(), message))
         );
     }
 
@@ -311,102 +324,14 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
      */
     @SuppressWarnings("unused")
     public void disable(Exception e, CommandSender sender) {
-        sender.sendMessage(this.getMessagePrefix() + "Unrecoverable error. Disabling plugin");
+        sender.sendMessage(getMessagePrefix() + "Unrecoverable error. Disabling plugin");
         disable(e);
     }
 
     @Override
     public void disable() {
         log(Level.SEVERE, "Disabling plugin");
-        this.getPluginLoader().disablePlugin(this);
-    }
-
-    /**
-     * Returns the Bedrock ConfigService object instance.
-     * If the ConfigService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ConfigService
-     * @see de.cubenation.bedrock.core.service.config.ConfigService
-     */
-    public ConfigService getConfigService() {
-        return (ConfigService) this.getServiceManager().getService(ConfigService.class);
-    }
-
-    /**
-     * Returns the Bedrock ColorSchemeService object instance.
-     * If the ColorSchemeService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ColorSchemeService
-     * @see ColorSchemeService
-     */
-    public ColorSchemeService getColorSchemeService() {
-        return (ColorSchemeService) this.getServiceManager().getService(ColorSchemeService.class);
-    }
-
-    /**
-     * Returns the Bedrock CommandService object instance.
-     * If the CommandService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock CommandService
-     * @see CommandService
-     */
-    public CommandService getCommandService() {
-        return (CommandService) this.getServiceManager().getService(CommandService.class);
-    }
-
-    /**
-     * Returns the Bedrock PermissionService object instance.
-     * If the PermissionService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock PermissionService
-     * @see PermissionService
-     */
-    public PermissionService getPermissionService() {
-        return (PermissionService) this.getServiceManager().getService(PermissionService.class);
-    }
-
-    /**
-     * Returns the Bedrock LocalizationService object instance.
-     * If the LocalizationService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock LocalizationService
-     * @see LocalizationService
-     */
-    public LocalizationService getLocalizationService() {
-        return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
-    }
-
-    @Override
-    public DatabaseService getDatabaseService() {
-        return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
-    }
-
-    @Override
-    public DatastoreService getDatastoreService() {
-        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
-    }
-
-    /**
-     * Returns the Bedrock InventoryService object instance.
-     * If the InventoryService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock InventoryService
-     * @see InventoryService
-     */
-    @SuppressWarnings("unused")
-    public InventoryService getInventoryService() {
-        return (InventoryService) this.getServiceManager().getService(InventoryService.class);
-    }
-
-    /**
-     * Returns the Bedrock SettingsService object instance.
-     * If the SettingsService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock SettingsService
-     * @see SettingsService
-     */
-    public SettingsService getSettingService() {
-        return (SettingsService) this.getServiceManager().getService(SettingsService.class);
+        getPluginLoader().disablePlugin(this);
     }
 
     /**
@@ -420,38 +345,27 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     }
 
     /**
-     * Returns the Bedrock ArgumentTypeService object instance.
-     * If the ArgumentTypeService is not ready, <code>null</code> is returned.
-     *
-     * @return The Bedrock ArgumentTypeService
-     * @see ArgumentTypeService
-     */
-    public ArgumentTypeService getArgumentTypeService() {
-        return (ArgumentTypeService) this.getServiceManager().getService(ArgumentTypeService.class);
-    }
-
-    /**
      * Disabled Bukkit Commands
      */
     @Override
     public final FileConfiguration getConfig() {
-        this.logProhibitedAccess("JavaPlugin#getConfig()", "ConfigurationService / CustomConfigurationFile");
+        logProhibitedAccess("JavaPlugin#getConfig()", "ConfigurationService / CustomConfigurationFile");
         return null;
     }
 
     @Override
     public final void saveConfig() {
-        this.logProhibitedAccess("JavaPlugin#saveConfig()", "ConfigurationService / CustomConfigurationFile");
+        logProhibitedAccess("JavaPlugin#saveConfig()", "ConfigurationService / CustomConfigurationFile");
     }
 
     @Override
     public final void reloadConfig() {
-        this.logProhibitedAccess("JavaPlugin#reloadConfig()", "ConfigurationService / CustomConfigurationFile");
+        logProhibitedAccess("JavaPlugin#reloadConfig()", "ConfigurationService / CustomConfigurationFile");
     }
 
     @SuppressWarnings("SameParameterValue")
     private void logProhibitedAccess(String prohibited, String replacement) {
-        this.log(Level.SEVERE, String.format("Access to %s is prohibited. Please use %s instead",
+        log(Level.SEVERE, String.format("Access to %s is prohibited. Please use %s instead",
                 prohibited, replacement
         ));
     }
@@ -469,18 +383,19 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
     @SuppressWarnings({"SameParameterValue", "WeakerAccess"})
     protected void assertPluginDependency(String name, String version) throws DependencyException, NoSuchPluginException {
 
-        JavaPlugin plugin = this.getPlugin(name);
+        JavaPlugin plugin = getJavaPlugin(name);
         if (plugin == null) {
             throw new NoSuchPluginException("Dependency error: Could not find plugin " + name);
         }
 
         VersionComparator cmp = new VersionComparator();
-        String plugin_version = this.getPlugin("Yamler").getDescription().getVersion();
+        String pluginVersion = getJavaPlugin("Yamler").getDescription().getVersion();
 
-        if (plugin_version.matches(".+-.+"))
-            plugin_version = plugin_version.split("-")[0];
+        if (pluginVersion.matches(".+-.+")) {
+            pluginVersion = pluginVersion.split("-")[0];
+        }
 
-        int result = cmp.compare(plugin_version, version);
+        int result = cmp.compare(pluginVersion, version);
         if (result < 0)
             throw new DependencyException(String.format(
                     "Dependency error: You need at least version %s of the %s plugin",
@@ -505,16 +420,26 @@ public abstract class BasePlugin extends JavaPlugin implements FoundationPlugin 
 
     @Override
     public FoundationPlugin getFallbackBedrockPlugin(){
-        try {
-            return (FoundationPlugin) getPlugin(PLUGIN_NAME);
-        } catch (NoSuchPluginException e) {
-            return null;
-        }
+        return getPlugin(PLUGIN_NAME);
     }
 
     @Override
     public boolean isFallbackBedrockPlugin() {
         return getName().equalsIgnoreCase(PLUGIN_NAME);
+    }
+
+    @Override
+    public FoundationPlugin getPlugin(String pluginName){
+        JavaPlugin pluginInstance;
+        try {
+            pluginInstance = getJavaPlugin(pluginName);
+        } catch (NoSuchPluginException e) {
+            return null;
+        }
+        if (!(pluginInstance instanceof BasePlugin)) {
+            return null;
+        }
+        return (FoundationPlugin) pluginInstance;
     }
 
     @Override

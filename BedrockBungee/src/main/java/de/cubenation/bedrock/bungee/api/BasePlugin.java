@@ -28,7 +28,6 @@ import de.cubenation.bedrock.bungee.api.service.config.ConfigService;
 import de.cubenation.bedrock.core.model.BedrockServer;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.config.BedrockDefaultsConfig;
-import de.cubenation.bedrock.core.exception.ServiceAlreadyExistsException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.plugin.PluginDescription;
 import de.cubenation.bedrock.core.service.ServiceManager;
@@ -86,42 +85,53 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     @Override
     public void onEnable() {
         try {
-            this.onPreEnable();
+            onPreEnable();
         } catch (Exception e) {
-            this.disable(e);
+            disable(e);
             return;
         }
 
-        // initialize ServiceManager
-        this.serviceManager = new ServiceManager(this);
+        setupServiceManager();
+        messages = new Messages(this);
+
+        // Call onPostEnable after we've set everything up
         try {
-            // TODO: tbd
+            onPostEnable();
+        } catch (Exception e) {
+            disable(e);
+        }
+    }
+
+    private void setupServiceManager() {
+        serviceManager = new ServiceManager(this);
+        try {
             // DO NOT MODIFY THIS ORDER!
-            serviceManager.registerService(ConfigService.class);
-            serviceManager.registerService(ColorSchemeService.class);
-            serviceManager.registerService(DatabaseService.class);
-            serviceManager.registerService(DatastoreService.class);
+
+            // Register and init the base services first since they
+            // will be needed for the other services as well.
+            serviceManager.registerAndInitializeService(de.cubenation.bedrock.core.service.config.ConfigService.class, ConfigService.class);
+            serviceManager.registerAndInitializeService(ColorSchemeService.class);
+            serviceManager.registerAndInitializeService(DatabaseService.class);
+            serviceManager.registerAndInitializeService(DatastoreService.class);
             serviceManager.setIntentionallyReady(true);
+
+            // Register secondary core services
             serviceManager.registerService(LocalizationService.class);
             serviceManager.registerService(SettingsService.class);
             serviceManager.registerService(ArgumentTypeService.class);
-            serviceManager.registerService(CommandService.class);
+            serviceManager.registerService(de.cubenation.bedrock.core.service.command.CommandService.class, CommandService.class);
             serviceManager.registerService(PermissionService.class);
-//            this.registerService(InventoryService.class);
+            // TODO: registerService(InventoryService.class);
 
-            this.serviceManager.registerServices();
-        } catch (ServiceInitException | ServiceAlreadyExistsException e) {
-            this.log(Level.SEVERE, "Loading services failed");
-            this.disable(e);
-        }
+            // Register custom services
+            serviceManager.registerCustomServices();
 
-        this.messages = new Messages(this);
-
-        // call onPostEnable after we've set everything up
-        try {
-            this.onPostEnable();
-        } catch (Exception e) {
-            this.disable(e);
+            // Only at the end init all registered services to circumvent dependency
+            // issues in case services depend on each other. Same order as before.
+            serviceManager.initServices();
+        } catch (ServiceInitException e) {
+            log(Level.SEVERE, "Loading services failed");
+            disable(e);
         }
     }
 
@@ -132,7 +142,6 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
      */
     public void onPostEnable() throws Exception {
     }
-
 
     /**
      * Disables this plugin.
@@ -169,7 +178,7 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
 
     @Override
     public void log(Level level, String message, Throwable t) {
-        this.log(level, message);
+        log(level, message);
         t.printStackTrace();
     }
 
@@ -184,50 +193,6 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
         return this.serviceManager;
     }
 
-    public CommandService getCommandService() {
-        return (CommandService) this.getServiceManager().getService(CommandService.class);
-    }
-
-    @Override
-    public ConfigService getConfigService() {
-        return (ConfigService) this.getServiceManager().getService(ConfigService.class);
-    }
-
-    @Override
-    public ColorSchemeService getColorSchemeService() {
-        return (ColorSchemeService) this.getServiceManager().getService(ColorSchemeService.class);
-    }
-
-    @Override
-    public PermissionService getPermissionService() {
-        return (PermissionService) this.getServiceManager().getService(PermissionService.class);
-    }
-
-    @Override
-    public LocalizationService getLocalizationService() {
-        return (LocalizationService) this.getServiceManager().getService(LocalizationService.class);
-    }
-
-    @Override
-    public DatabaseService getDatabaseService() {
-        return (DatabaseService) this.getServiceManager().getService(DatabaseService.class);
-    }
-
-    @Override
-    public DatastoreService getDatastoreService() {
-        return (DatastoreService) this.getServiceManager().getService(DatastoreService.class);
-    }
-
-    @Override
-    public SettingsService getSettingService() {
-        return (SettingsService) this.getServiceManager().getService(SettingsService.class);
-    }
-
-    @Override
-    public ArgumentTypeService getArgumentTypeService() {
-        return (ArgumentTypeService) this.getServiceManager().getService(ArgumentTypeService.class);
-    }
-
     /**
      * Returns a colored string of the current plugin, known as the message prefix.
      * The message prefix is colored using the flag and primary colors from the current
@@ -238,7 +203,7 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
      * @return The message prefix
      */
     public String getMessagePrefix() {
-        return this.getMessagePrefix(this);
+        return getMessagePrefix(this);
     }
 
 
@@ -254,7 +219,7 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
      */
     @SuppressWarnings("WeakerAccess")
     public String getMessagePrefix(FoundationPlugin plugin) {
-        return this.getMessagePrefix(plugin.getPluginDescription().getName());
+        return getMessagePrefix(plugin.getPluginDescription().getName());
     }
 
     /**
@@ -269,18 +234,19 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
      */
     @SuppressWarnings("WeakerAccess")
     public String getMessagePrefix(String plugin) {
+        ColorSchemeService colorSchemeService = (ColorSchemeService) getServiceManager().getService(ColorSchemeService.class);
         try {
-            if (this.getColorSchemeService() == null)
+            if (colorSchemeService == null) {
                 return "[" + plugin + "]";
+            }
         } catch (NullPointerException e) {
             return "[" + plugin + "]";
         }
 
-        return
-                this.getColorSchemeService().getColorScheme().getFlag() + "[" +
-                        this.getColorSchemeService().getColorScheme().getPrimary() + plugin +
-                        this.getColorSchemeService().getColorScheme().getFlag() + "]" +
-                        ChatColor.RESET;
+        return colorSchemeService.getColorScheme().getFlag() + "[" +
+                colorSchemeService.getColorScheme().getPrimary() + plugin +
+                colorSchemeService.getColorScheme().getFlag() + "]" +
+                ChatColor.RESET;
     }
 
     @Override
@@ -307,7 +273,7 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
 
     @Override
     public FoundationPlugin getFallbackBedrockPlugin(){
-        return (FoundationPlugin) getProxy().getPluginManager().getPlugin(PLUGIN_NAME);
+        return getPlugin(PLUGIN_NAME);
     }
 
     @Override
@@ -316,8 +282,18 @@ public class BasePlugin extends Plugin implements FoundationPlugin {
     }
 
     @Override
+    public FoundationPlugin getPlugin(String pluginName){
+        Plugin pluginInstance = getProxy().getPluginManager().getPlugin(pluginName);
+        if (!(pluginInstance instanceof BasePlugin)) {
+            return null;
+        }
+        return (FoundationPlugin) pluginInstance;
+    }
+
+    @Override
     public BedrockDefaultsConfig getBedrockDefaults() {
-        CustomConfigurationFile config = getConfigService().getConfig(BedrockDefaultsConfig.class);
+        ConfigService configService = (ConfigService) getServiceManager().getService(ConfigService.class);
+        CustomConfigurationFile config = configService.getConfig(BedrockDefaultsConfig.class);
         if (config instanceof BedrockDefaultsConfig) {
             return (BedrockDefaultsConfig) config;
         }

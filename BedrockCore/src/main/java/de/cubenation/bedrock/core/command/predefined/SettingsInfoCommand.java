@@ -26,6 +26,7 @@ import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Argument;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.NoSuchPlayerException;
@@ -34,6 +35,7 @@ import de.cubenation.bedrock.core.service.settings.CustomSettingsFile;
 import de.cubenation.bedrock.core.service.settings.SettingsManager;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.model.wrapper.BedrockPlayer;
+import de.cubenation.bedrock.core.service.settings.SettingsService;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -45,6 +47,9 @@ import java.util.UUID;
 @Description("command.bedrock.info.desc")
 @Permission(Name = "settings.list", Role = Role.ADMIN)
 public class SettingsInfoCommand extends Command {
+
+    @Inject
+    private SettingsService settingsService;
 
     public SettingsInfoCommand(FoundationPlugin plugin) {
         super(plugin);
@@ -58,7 +63,7 @@ public class SettingsInfoCommand extends Command {
             String user
     ) {
 
-        SettingsManager settingsManager = plugin.getSettingService().getSettingsManager(settingsKey);
+        SettingsManager settingsManager = settingsService.getSettingsManager(settingsKey);
         if (settingsManager == null) {
             plugin.messages().error().SettingsNotFound(sender, settingsKey);
             return;
@@ -108,7 +113,7 @@ public class SettingsInfoCommand extends Command {
     public ArrayList<String> getTabArgumentCompletion(BedrockChatSender sender, int argumentIndex, String[] args) {
         if (argumentIndex == 0) {
             return new ArrayList<String>() {{
-                addAll(plugin.getSettingService().getSettingsMap().keySet());
+                addAll(settingsService.getSettingsMap().keySet());
             }};
 
         }

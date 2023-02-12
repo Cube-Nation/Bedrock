@@ -23,10 +23,12 @@
 package de.cubenation.bedrock.core.service.pageablelist;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import de.cubenation.bedrock.core.exception.NoSuchRegisterableException;
 import de.cubenation.bedrock.core.registry.AbstractRegistry;
 import de.cubenation.bedrock.core.registry.RegistryInterface;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 
 /**
  * @author Cube-Nation
@@ -35,10 +37,13 @@ import de.cubenation.bedrock.core.registry.RegistryInterface;
 @SuppressWarnings("unused")
 public class PageableListRegistry extends AbstractRegistry implements RegistryInterface {
 
+    @Inject
+    private ConfigService configService;
+
     private static int timeout;
 
     public PageableListRegistry(FoundationPlugin plugin) {
-        timeout = plugin.getConfigService().getReadOnlyConfig().getInt("service.pageablelist.timeout");
+        timeout = configService.getReadOnlyConfig().getInt("service.pageablelist.timeout");
     }
 
     public void register(final FoundationPlugin plugin, final String ident, final BedrockChatSender sender, AbstractPageableListService object) {

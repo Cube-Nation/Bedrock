@@ -1,6 +1,7 @@
 package de.cubenation.bedrock.core.service.datastore;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.config.DatastoreConfig;
 import de.cubenation.bedrock.core.datastore.Datastore;
 import de.cubenation.bedrock.core.datastore.JsonDatastore;
@@ -9,6 +10,7 @@ import de.cubenation.bedrock.core.exception.StorageInitException;
 import de.cubenation.bedrock.core.exception.ServiceInitException;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
 import de.cubenation.bedrock.core.service.AbstractService;
+import de.cubenation.bedrock.core.service.config.ConfigService;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
@@ -17,6 +19,9 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class DatastoreService extends AbstractService {
+
+    @Inject
+    private ConfigService configService;
 
     private final HashMap<String, Datastore<?>> datastores = new HashMap<>();
     private final HashMap<String, ReloadPolicy> reloadPolices = new HashMap<>();
@@ -29,7 +34,7 @@ public class DatastoreService extends AbstractService {
     public void init() throws ServiceInitException {
         // Load config
         try {
-            plugin.getConfigService().registerClass(DatastoreConfig.class);
+            configService.registerClass(DatastoreConfig.class);
         } catch (InstantiationException e) {
             throw new ServiceInitException(e.getMessage());
         }
@@ -46,7 +51,7 @@ public class DatastoreService extends AbstractService {
 
     @Override
     public void reload() throws ServiceReloadException {
-        for(Map.Entry<String, Datastore<?>> entry : datastores.entrySet()) {
+        for (Map.Entry<String, Datastore<?>> entry : datastores.entrySet()) {
             String key = entry.getKey();
             Datastore<?> datastore = entry.getValue();
             ReloadPolicy reloadPolicy = reloadPolices.get(key);

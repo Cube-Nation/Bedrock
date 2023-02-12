@@ -24,10 +24,13 @@ package de.cubenation.bedrock.core.command.argument;
 
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Range;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Permission;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentType;
 import de.cubenation.bedrock.core.command.argument.type.ArgumentTypeWithRange;
 import de.cubenation.bedrock.core.exception.CommandInitException;
+import de.cubenation.bedrock.core.injection.Component;
+import de.cubenation.bedrock.core.service.command.ArgumentTypeService;
 import de.cubenation.bedrock.core.translation.Translation;
 import de.cubenation.bedrock.core.model.wrapper.BedrockChatSender;
 import lombok.Getter;
@@ -36,6 +39,7 @@ import lombok.ToString;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
 
 /**
  * @author Cube-Nation
@@ -43,9 +47,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 
 @ToString
-public class Argument {
-
-    protected FoundationPlugin plugin;
+public class Argument extends Component {
 
     @Getter @Setter
     private String description;
@@ -69,13 +71,13 @@ public class Argument {
     private final ArgumentType<?> argumentType;
 
     public Argument(FoundationPlugin plugin, String description, String placeholder, boolean optional, boolean array, Class<?> dataType, Range rangeAnnotation) throws CommandInitException {
-        this.plugin = plugin;
+        super(plugin);
         this.setDescription(description);
         this.setPlaceholder(placeholder);
         this.optional = optional;
         this.array = array;
         this.dataType = dataType;
-        this.argumentType = this.createArgumentTypeInstance(rangeAnnotation);
+        this.argumentType = createArgumentTypeInstance(rangeAnnotation);
     }
 
     private ArgumentType<?> createArgumentTypeInstance(Range rangeAnnotation) throws CommandInitException {
@@ -83,9 +85,10 @@ public class Argument {
             return null;
         } else {
             // Get class type
-            Class<? extends ArgumentType<?>> argumentType = plugin.getArgumentTypeService().getType(this.dataType);
+            // TODO: use injection instead
+            Class<? extends ArgumentType<?>> argumentType = ((ArgumentTypeService) plugin.getServiceManager().getService(ArgumentTypeService.class)).getType(dataType);
             if (argumentType == null) {
-                throw new CommandInitException(getClass().getName() + ": " + this.dataType.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
+                throw new CommandInitException(getClass().getName() + ": " + dataType.getSimpleName() + " is not an allowed command argument type. Please contact plugin author.");
             }
 
             // Create instance

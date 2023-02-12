@@ -25,6 +25,7 @@ package de.cubenation.bedrock.core.command.predefined;
 import de.cubenation.bedrock.core.FoundationPlugin;
 import de.cubenation.bedrock.core.annotation.Description;
 import de.cubenation.bedrock.core.annotation.Permission;
+import de.cubenation.bedrock.core.annotation.injection.Inject;
 import de.cubenation.bedrock.core.authorization.Role;
 import de.cubenation.bedrock.core.command.Command;
 import de.cubenation.bedrock.core.exception.ServiceReloadException;
@@ -42,15 +43,16 @@ import java.util.logging.Level;
 @Permission(Name = "regeneratelocale", Role = Role.ADMIN)
 public class RegenerateLocaleCommand extends Command {
 
+    @Inject
+    private LocalizationService localizationService;
+
     public RegenerateLocaleCommand(FoundationPlugin plugin) {
         super(plugin);
     }
 
     public void execute(BedrockChatSender sender) {
-        LocalizationService localizationService = getPlugin().getLocalizationService();
-
         File localeFile = new File(
-                getPlugin().getPluginFolder().getAbsolutePath(),
+                plugin.getPluginFolder().getAbsolutePath(),
                 localizationService.getRelativeLocaleFile()
         );
         if (localeFile.exists() && !localeFile.delete()) {
@@ -62,7 +64,7 @@ public class RegenerateLocaleCommand extends Command {
             localizationService.reload();
             plugin.messages().reloadComplete(sender);
         } catch (ServiceReloadException e) {
-            this.getPlugin().log(
+            plugin.log(
                     Level.SEVERE,
                     String.format("Error while reloading LocalizationService for locale %s", localizationService.getLocale()),
                     e
