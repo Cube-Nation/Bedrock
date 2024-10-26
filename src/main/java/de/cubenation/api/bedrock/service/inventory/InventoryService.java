@@ -22,11 +22,14 @@
 
 package de.cubenation.api.bedrock.service.inventory;
 
+import com.google.gson.JsonSyntaxException;
 import de.cubenation.api.bedrock.BasePlugin;
 import de.cubenation.api.bedrock.exception.ServiceInitException;
 import de.cubenation.api.bedrock.exception.ServiceReloadException;
+import de.cubenation.api.bedrock.helper.InventoryUtil;
 import de.cubenation.api.bedrock.helper.MapUtil;
 import de.cubenation.api.bedrock.service.AbstractService;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -34,10 +37,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 /**
  * @author Cube-Nation
@@ -65,6 +70,65 @@ public class InventoryService extends AbstractService {
         this.createDataFolder();
         this.loadInventories();
         this.deleteOutdatedInventories();
+    }
+
+    public void upgrade() {
+        plugin.getLogger().info("Starting to upgrade files to new Inventory version...");
+
+        File fileBase = plugin.getDataFolder();
+        File fileInventoriesOld = new File(fileBase, "inventories_old");
+        if (!fileInventoriesOld.exists() && !fileInventoriesOld.mkdirs()) {
+            throw new IllegalStateException("Could not create directory: "+fileInventoriesOld);
+        }
+
+        File fileInventoriesNew = new File(fileBase, "inventories");
+        if (!fileInventoriesNew.exists() && !fileInventoriesNew.mkdirs()) {
+            throw new IllegalStateException("Could not create directory: "+fileInventoriesOld);
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                Files.walkFileTree(fileInventoriesOld.toPath(),
+                        new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                                String relative = fileInventoriesOld.toURI().relativize(dir.toUri()).getPath();
+                                plugin.getLogger().info("Upgrading "+relative+"...");
+                                //noinspection ResultOfMethodCallIgnored
+                                new File(fileInventoriesOld, relative).mkdirs();
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            @Override
+                            public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                                String relative = fileInventoriesOld.toURI().relativize(dir.toUri()).getPath();
+                                plugin.getLogger().info("\nSuccessfully upgraded "+relative+"!");
+                                return FileVisitResult.CONTINUE;
+                            }
+
+                            @Override
+                            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                                String relative = fileInventoriesOld.toURI().relativize(file.toUri()).getPath();
+                                try {
+                                    plugin.getLogger().info("* upgrading "+relative+"...");
+
+                                    File fileOld = new File(fileInventoriesOld, relative);
+                                    String identifier = fileOld.getName().replaceFirst("[.][^.]+$", "");;
+
+                                    ItemStack[] itemStacks = getLegacy(fileOld);
+                                    create(identifier, itemStacks, null);
+                                } catch (Exception e) {
+                                    plugin.getLogger().severe("Encountered exception while parsing inventory file ("+relative+"):");
+                                    e.printStackTrace();
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+            } catch (Exception e) {
+                plugin.getLogger().severe("Encountered exception while parsing inventory file:");
+                e.printStackTrace();
+            }
+        });
     }
 
     private void deleteOutdatedInventories() {
@@ -118,16 +182,16 @@ public class InventoryService extends AbstractService {
         this.loadInventories();
     }
 
-
     public Boolean create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta, final long lifetime) {
         File f = new File(this.inventoryDirectory, identifier + ".yaml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-        c.set("inventory", itemStacks);
+        c.set("inventory", InventoryUtil.serializeContainerInventory(itemStacks));
 
         final long time = new Date().getTime();
         c.set("meta", new HashMap<String, Object>() {{
             put("lifetime", lifetime);
             put("creation_date", time);
+            put("size", itemStacks.length);
         }});
 
         if (customMeta != null) {
@@ -144,20 +208,34 @@ public class InventoryService extends AbstractService {
         return true;
     }
 
-
     @SuppressWarnings("unused")
     public Boolean create(String identifier, ItemStack[] itemStacks, HashMap<String, Object> customMeta) {
         return this.create(identifier, itemStacks, customMeta, -1);
     }
 
-    @SuppressWarnings("unchecked")
     public ItemStack[] get(String identifier) throws IOException {
         File f = new File(this.inventoryDirectory, identifier + ".yaml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
+        if (c.get("meta.size") == null) throw new IOException("Inventory is malformed");
+        if (c.getConfigurationSection("inventory") == null) throw new IOException("Inventory is empty");
+
+        return InventoryUtil.deserializeContainerInventory(
+                Objects.requireNonNull(c.getConfigurationSection("inventory")).getValues(false),
+                c.getInt("meta.size")
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    public ItemStack[] getLegacy(File file) throws IOException {
+        FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+
         if (c.get("inventory") == null) throw new IOException("Inventory is empty");
 
-        return ((List<ItemStack>) c.get("inventory")).toArray(new ItemStack[((List<ItemStack>) c.get("inventory")).size()]);
+        List<ItemStack> itemList = ((List<ItemStack>) c.get("inventory"));
+
+        assert itemList != null;
+        return itemList.toArray(new ItemStack[0]);
     }
 
     @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})

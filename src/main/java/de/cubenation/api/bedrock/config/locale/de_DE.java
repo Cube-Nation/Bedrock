@@ -108,6 +108,7 @@ public class de_DE extends CustomConfigurationFile {
         put("version", "Die Version des Plugins anzeigen");
         put("reload", "Das Plugin neu laden");
         put("regeneratelocale", "Die Locale-Dateien des Plugins neu erzeugen");
+        put("upgradeinventories", "Die Inventar-Dateien werden zur neuen Version migriert");
         put("command.list", "Alle Befehle anzeigen, die dieses Plugin unterstützt");
         put("permissions.self", "Eigene Berechtigungen anzeigen");
         put("permissions.other", "Berechtigungen eines Spielers anzeigen");

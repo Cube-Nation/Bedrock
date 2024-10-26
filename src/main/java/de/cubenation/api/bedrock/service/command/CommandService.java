@@ -89,6 +89,7 @@ public class CommandService extends AbstractService {
         pluginCommandManager.addCommand(new PermissionListCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new PermissionOtherCommand(getPlugin(), pluginCommandManager));
         pluginCommandManager.addCommand(new RegenerateLocaleCommand(getPlugin(), pluginCommandManager));
+        pluginCommandManager.addCommand(new UpgradeInventoriesCommand(getPlugin(), pluginCommandManager));
 
         SettingsService settingService = plugin.getSettingService();
         if (settingService != null && settingService.getSettingsMap() != null && !settingService.getSettingsMap().isEmpty()) {
