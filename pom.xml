@@ -33,11 +33,11 @@
     <distributionManagement>
         <repository>
             <id>projectshard.releases</id>
-            <url>https://repo.projectshard.dev/repository/releases/</url>
+            <url>https://repo.projectshard.dev/repository/maven-cn-releases/</url>
         </repository>
         <snapshotRepository>
             <id>projectshard.snapshots</id>
-            <url>https://repo.projectshard.dev/repository/snapshots/</url>
+            <url>https://repo.projectshard.dev/repository/maven-cn-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     
